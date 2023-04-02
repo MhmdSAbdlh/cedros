@@ -1,0 +1,1310 @@
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Toolkit;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.net.URL;
+import java.text.NumberFormat;
+import java.util.ArrayList;
+
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JFormattedTextField;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JTextField;
+import javax.swing.UIManager;
+import javax.swing.border.Border;
+import javax.swing.border.LineBorder;
+import javax.swing.text.NumberFormatter;
+
+@SuppressWarnings("serial")
+public class FaturaR extends JFrame {
+	static Font myFont = new Font("Tahoma", Font.BOLD, 21);
+	static Font myFontS = new Font("Tahoma", Font.BOLD, 17);
+	static Color darkC = new Color(40, 40, 43);
+	static Color lightC = new Color(236, 236, 236);
+	static Color blueD = new Color(0, 32, 96);
+	static Color blueC = new Color(155, 194, 230);
+	static Color greenD = new Color(30, 90, 20);
+	static Color greenC = new Color(170, 230, 150);
+	static Color redD = new Color(190, 0, 0);
+	static Color redC = new Color(250, 110, 110);
+	static Color yellowD = new Color(200, 200, 0);
+	static Color yellowC = new Color(255, 255, 130);
+	static Color orangeD = new Color(170, 80, 0);
+	static Color orangeC = new Color(255, 180, 110);
+	private URL u100 = getClass().getResource("100.jpg");
+	private ImageIcon i100 = new ImageIcon(u100);
+	private URL u50 = getClass().getResource("50.jpg");
+	private ImageIcon i50 = new ImageIcon(u50);
+	private URL u20 = getClass().getResource("20.jpg");
+	private ImageIcon i20 = new ImageIcon(u20);
+	private URL u10 = getClass().getResource("10.jpg");
+	private ImageIcon i10 = new ImageIcon(u10);
+	private URL u5 = getClass().getResource("5.jpg");
+	private ImageIcon i5 = new ImageIcon(u5);
+	private URL u2 = getClass().getResource("2.jpg");
+	private ImageIcon i2 = new ImageIcon(u2);
+	private URL u1 = getClass().getResource("1.jpg");
+	private ImageIcon i1 = new ImageIcon(u1);
+	private URL main = getClass().getResource("home.png");
+	private ImageIcon mainIcon = new ImageIcon(main);
+	static Border border = new LineBorder(Color.white, 2);
+
+	// Def
+	static JTextField details[][] = new JTextField[9][3];
+	static JLabel detailsR[] = new JLabel[9];
+	static JLabel total = new JLabel("Total");
+	static JLabel cambio[] = new JLabel[6];
+	static JLabel[][] cajaTroco = new JLabel[2][7];
+	static JLabel[] trocoC = new JLabel[7];
+	static JFormattedTextField[] trocoCT = new JFormattedTextField[7];
+	static JLabel[][] troco = new JLabel[2][7];
+	static JLabel[][] troco2 = new JLabel[2][7];
+	static JLabel[][] troco3 = new JLabel[2][7];
+	static String numbers[] = new String[103];
+	static JLabel totalC = new JLabel("Total");
+
+	FaturaR() {
+		// Dimension
+		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+		int width = (int) screenSize.getWidth();
+		int height = (int) screenSize.getHeight();
+		this.setTitle("FATURA");
+		this.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+		this.setAlwaysOnTop(false);
+		if (width > 1800 && height > 1000) {
+			this.setSize(1820, 980);
+			myFont = new Font("Tahoma", Font.BOLD, 24);
+			myFontS = new Font("Tahoma", Font.BOLD, 20);
+		} else if (width > 1500 && height > 700)
+			this.setSize(1500, 800);
+		else {
+			this.setSize(1300, 700);
+			myFont = new Font("Tahoma", Font.BOLD, 17);
+			myFontS = new Font("Tahoma", Font.BOLD, 14);
+		}
+		this.setLocationRelativeTo(null);
+		this.setResizable(false);
+		this.setLayout(null);
+		this.getContentPane().setBackground(darkC);
+		this.setIconImage(new ImageIcon(getClass().getClassLoader().getResource("icon.png")).getImage());
+		// Close popup
+		this.addWindowListener(new java.awt.event.WindowAdapter() {
+			@Override
+			public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+				Object[] options = { "Si", "No" };
+				int selectedOption = JOptionPane.showOptionDialog(null, "¿Seguro que quieres salir?", "SALIR",
+						JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+
+				if (selectedOption == JOptionPane.YES_OPTION)
+					System.exit(0);
+			}
+		});
+
+		ArrayList<String> keywords = listMercadoria();
+		UIManager.put("Button.disabledText", Color.white);
+
+		JButton cambioN = new JButton("Metoda 1");
+		JButton cambioN2 = new JButton("Metoda 2");
+		JButton cambioN3 = new JButton("Metoda 3");
+		JButton calculate = new JButton("Magic");
+		JLabel cambioC = new JLabel("Cliente");
+		JLabel title[] = new JLabel[4];
+		JLabel caja = new JLabel("Caja");
+
+		// Open
+		BufferedReader dataOpened = null;
+		String line = "";
+		int z = 0;
+		try {
+			dataOpened = new BufferedReader(new FileReader(new File("cedros.txt")));
+			while ((line = dataOpened.readLine()) != null) {
+				numbers[z] = line.toString();
+				z++;
+			}
+			dataOpened.close();
+		} catch (Exception e) {
+		}
+
+		// Window1
+		for (int i = 0; i < 4; i++) {
+			title[i] = new JLabel();
+			title[i].setFont(myFont);
+			title[i].setForeground(blueC);
+			title[i].setBackground(blueD);
+			title[i].setHorizontalAlignment(0);
+			title[i].setBorder(border);
+			title[i].setOpaque(true);
+			this.add(title[i]);
+		}
+		title[0].setText("Cant");
+		if (width > 1800 && height > 1000)
+			title[0].setBounds(40, 40, 100, 60);
+		else if (width > 1500 && height > 700)
+			title[0].setBounds(40, 40, 70, 50);
+		else
+			title[0].setBounds(40, 40, 60, 40);
+		title[1].setText("Detalle");
+		if (width > 1800 && height > 1000)
+			title[1].setBounds(139, 40, 270, 60);
+		else if (width > 1500 && height > 700)
+			title[1].setBounds(108, 40, 250, 50);
+		else
+			title[1].setBounds(98, 40, 230, 40);
+		title[2].setText("P/Unit");
+		if (width > 1800 && height > 1000)
+			title[2].setBounds(408, 40, 110, 60);
+		else if (width > 1500 && height > 700)
+			title[2].setBounds(356, 40, 90, 50);
+		else
+			title[2].setBounds(326, 40, 70, 40);
+		title[3].setText("Importe");
+		if (width > 1800 && height > 1000)
+			title[3].setBounds(517, 40, 140, 60);
+		else if (width > 1500 && height > 700)
+			title[3].setBounds(444, 40, 120, 50);
+		else
+			title[3].setBounds(394, 40, 100, 40);
+		for (int i = 0; i < 9; i++) {
+			for (int j = 0; j < 3; j++) {
+				details[i][j] = new JTextField();
+				textFieldStyle(details[i][j]);
+				tableFocus(i, j, this);
+				this.add(details[i][j]);
+			}
+			// Autocomplete
+			AutoComplete autoComplete = new AutoComplete(details[i][1], keywords);
+			details[i][1].getDocument().addDocumentListener(autoComplete);
+			if (width > 1800 && height > 1000) {
+				details[i][0].setBounds(40, 99 + i * 60, 100, 60);
+				details[i][1].setBounds(139, 99 + i * 60, 270, 60);
+				details[i][2].setBounds(408, 99 + i * 60, 110, 60);
+			} else if (width > 1500 && height > 700) {
+				details[i][0].setBounds(40, 90 + i * 50, 70, 50);
+				details[i][1].setBounds(108, 90 + i * 50, 250, 50);
+				details[i][2].setBounds(356, 90 + i * 50, 90, 50);
+			} else {
+				details[i][0].setBounds(40, 80 + i * 40, 60, 40);
+				details[i][1].setBounds(98, 80 + i * 40, 230, 40);
+				details[i][2].setBounds(326, 80 + i * 40, 70, 40);
+			}
+		}
+		for (int i = 0; i < 9; i++) {
+			detailsR[i] = new JLabel();
+			if (width > 1800 && height > 1000)
+				detailsR[i].setBounds(517, 99 + i * 60, 140, 60);
+			else if (width > 1500 && height > 700)
+				detailsR[i].setBounds(444, 90 + i * 50, 120, 50);
+			else
+				detailsR[i].setBounds(394, 80 + i * 40, 100, 40);
+			detailsR[i].setFont(myFont);
+			detailsR[i].setForeground(blueD);
+			detailsR[i].setBackground(blueC);
+			detailsR[i].setHorizontalAlignment(0);
+			detailsR[i].setBorder(border);
+			detailsR[i].setOpaque(true);
+			this.add(detailsR[i]);
+		}
+		total.setFont(myFont);
+		total.setForeground(blueC);
+		total.setBackground(blueD);
+		total.setHorizontalAlignment(0);
+		total.setBorder(border);
+		total.setOpaque(true);
+		if (width > 1800 && height > 1000)
+			total.setBounds(517, 639, 140, 60);
+		else if (width > 1500 && height > 700)
+			total.setBounds(444, 538, 120, 50);
+		else
+			total.setBounds(394, 438, 100, 40);
+		this.add(total);
+
+		// Caja
+		if (width > 1800 && height > 1000)
+			caja.setBounds(20, 750, 100, 119);
+		else if (width > 1500 && height > 700)
+			caja.setBounds(20, 610, 60, 99);
+		else
+			caja.setBounds(20, 520, 50, 79);
+		caja.setFont(myFont);
+		caja.setHorizontalAlignment(0);
+		caja.setBorder(border);
+		caja.setForeground(greenC);
+		caja.setBackground(greenD);
+		caja.setOpaque(true);
+		this.add(caja);
+		for (int i = 0; i < 2; i++) {
+			for (int j = 0; j < 7; j++) {
+				cajaTroco[i][j] = new JLabel();
+				if (width > 1800 && height > 1000)
+					cajaTroco[i][j].setBounds(120 + 79 * j, 750 + 59 * i, 80, 60);
+				else if (width > 1500 && height > 700)
+					cajaTroco[i][j].setBounds(80 + 69 * j, 610 + 49 * i, 70, 50);
+				else
+					cajaTroco[i][j].setBounds(70 + 59 * j, 520 + 39 * i, 60, 40);
+				if (i == 0) {
+					switch (j) {
+					case 0:
+						cajaTroco[i][j].setIcon(i1);
+						break;
+					case 1:
+						cajaTroco[i][j].setIcon(i2);
+						break;
+					case 2:
+						cajaTroco[i][j].setIcon(i5);
+						break;
+					case 3:
+						cajaTroco[i][j].setIcon(i10);
+						break;
+					case 4:
+						cajaTroco[i][j].setIcon(i20);
+						break;
+					case 5:
+						cajaTroco[i][j].setIcon(i50);
+						break;
+					case 6:
+						cajaTroco[i][j].setIcon(i100);
+						break;
+					default:
+						break;
+					}
+				} else
+					cajaTroco[i][j].setText("0");
+				cajaTroco[i][j].setFont(myFont);
+				cajaTroco[i][j].setHorizontalAlignment(0);
+				cajaTroco[i][j].setBorder(border);
+				cajaTroco[i][j].setOpaque(true);
+				this.add(cajaTroco[i][j]);
+			}
+		}
+
+		// Cliente
+		if (width > 1800 && height > 1000)
+			cambioC.setBounds(800, 52, 554, 70);
+		else if (width > 1500 && height > 700)
+			cambioC.setBounds(620, 52, 484, 60);
+		else
+			cambioC.setBounds(550, 52, 414, 50);
+		cambioC.setFont(myFont);
+		cambioC.setBorder(border);
+		cambioC.setForeground(blueC);
+		cambioC.setBackground(blueD);
+		cambioC.setHorizontalAlignment(0);
+		cambioC.setOpaque(true);
+		NumberFormat format = NumberFormat.getInstance();
+		NumberFormatter formatter = new NumberFormatter(format);
+		formatter.setValueClass(Integer.class);
+		formatter.setMinimum(0);
+		formatter.setMaximum(9);
+		formatter.setAllowsInvalid(false);
+		formatter.setCommitsOnValidEdit(true);
+		this.add(cambioC);
+		for (int i = 0; i < 7; i++) {
+			trocoC[i] = new JLabel();
+			if (width > 1800 && height > 1000)
+				trocoC[i].setBounds(800 + 79 * i, 120, 80, 60);
+			else if (width > 1500 && height > 700)
+				trocoC[i].setBounds(620 + 69 * i, 110, 70, 50);
+			else
+				trocoC[i].setBounds(550 + 59 * i, 100, 60, 40);
+			switch (i) {
+			case 0:
+				trocoC[i].setIcon(i1);
+				break;
+			case 1:
+				trocoC[i].setIcon(i2);
+				break;
+			case 2:
+				trocoC[i].setIcon(i5);
+				break;
+			case 3:
+				trocoC[i].setIcon(i10);
+				break;
+			case 4:
+				trocoC[i].setIcon(i20);
+				break;
+			case 5:
+				trocoC[i].setIcon(i50);
+				break;
+			case 6:
+				trocoC[i].setIcon(i100);
+				break;
+			default:
+				break;
+			}
+			trocoC[i].setFont(myFont);
+			trocoC[i].setHorizontalAlignment(0);
+			trocoC[i].setBorder(border);
+			trocoC[i].setOpaque(true);
+			this.add(trocoC[i]);
+			trocoCT[i] = new JFormattedTextField(formatter);
+			if (width > 1800 && height > 1000)
+				trocoCT[i].setBounds(800 + 79 * i, 180, 80, 60);
+			else if (width > 1500 && height > 700)
+				trocoCT[i].setBounds(620 + 69 * i, 160, 70, 50);
+			else
+				trocoCT[i].setBounds(550 + 59 * i, 140, 60, 40);
+			trocoCT[i].setText("0");
+			formatedTextFieldStyle(trocoCT[i], cambioN, cambioN2, cambioN3);
+			clienteFocus(i, this);
+			this.add(trocoCT[i]);
+		}
+		if (width > 1800 && height > 1000)
+			totalC.setBounds(800, 238, 554, 60);
+		else if (width > 1500 && height > 700)
+			totalC.setBounds(620, 208, 484, 50);
+		else
+			totalC.setBounds(550, 178, 414, 40);
+		totalC.setFont(myFont);
+		totalC.setBorder(border);
+		totalC.setForeground(blueC);
+		totalC.setBackground(blueD);
+		totalC.setHorizontalAlignment(0);
+		totalC.setOpaque(true);
+		this.add(totalC);
+
+		// Cliente troco
+		for (int i = 0; i < 6; i++) {
+			cambio[i] = new JLabel();
+			cambio[i].setFont(myFont);
+			if (i < 3) {
+				cambio[i].setForeground(greenC);
+				cambio[i].setBackground(greenD);
+			} else {
+				cambio[i].setForeground(greenD);
+				cambio[i].setBackground(greenC);
+			}
+			if (i < 3)
+				if (width > 1800 && height > 1000)
+					cambio[i].setBounds(1450, 90 + 60 * i, 130, 60);
+				else if (width > 1500 && height > 700)
+					cambio[i].setBounds(1150, 80 + 50 * i, 110, 50);
+				else
+					cambio[i].setBounds(1020, 70 + 40 * i, 100, 40);
+			cambio[i].setHorizontalAlignment(0);
+			cambio[i].setBorder(border);
+			cambio[i].setOpaque(true);
+			this.add(cambio[i]);
+		}
+		cambio[0].setText("Cliente");
+		cambio[1].setText("Total");
+		cambio[2].setText("Troco");
+		if (width > 1800 && height > 1000) {
+			cambio[3].setBounds(1578, 150, 170, 60);
+			cambio[4].setBounds(1578, 210, 170, 60);
+			cambio[5].setBounds(1578, 90, 170, 60);
+		} else if (width > 1500 && height > 700) {
+			cambio[3].setBounds(1258, 130, 150, 50);
+			cambio[4].setBounds(1258, 180, 150, 50);
+			cambio[5].setBounds(1258, 80, 150, 50);
+		} else {
+			cambio[3].setBounds(1120, 110, 140, 40);
+			cambio[4].setBounds(1120, 150, 140, 40);
+			cambio[5].setBounds(1120, 70, 140, 40);
+		}
+
+		// 1ST CAMBIO
+		cambioN.setEnabled(false);
+		if (width > 1800 && height > 1000)
+			cambioN.setBounds(750, 370, 140, 119);
+		else if (width > 1500 && height > 700)
+			cambioN.setBounds(622, 320, 120, 99);
+		else
+			cambioN.setBounds(580, 270, 100, 79);
+		cambioN.setFont(myFont);
+		cambioN.setBorder(border);
+		cambioN.setForeground(redC);
+		cambioN.setBackground(redD);
+		cambioN.setFocusable(false);
+		cambioN.addActionListener(e -> {
+			cambioF();
+			cambioN.setText("Metoda 1");
+			cambioN2.setText("Metoda 2");
+			cambioN3.setText("Metoda 3");
+			cambioN.setEnabled(false);
+			cambioN2.setEnabled(false);
+			cambioN3.setEnabled(false);
+		});
+		this.add(cambioN);
+		for (int i = 0; i < 2; i++) {
+			for (int j = 0; j < 7; j++) {
+				troco[i][j] = new JLabel();
+				if (width > 1800 && height > 1000)
+					troco[i][j].setBounds(890 + 79 * j, 370 + 59 * i, 80, 60);
+				else if (width > 1500 && height > 700)
+					troco[i][j].setBounds(740 + 69 * j, 320 + 49 * i, 70, 50);
+				else
+					troco[i][j].setBounds(680 + 59 * j, 270 + 39 * i, 60, 40);
+				if (i == 0) {
+					switch (j) {
+					case 0:
+						troco[i][j].setIcon(i1);
+						break;
+					case 1:
+						troco[i][j].setIcon(i2);
+						break;
+					case 2:
+						troco[i][j].setIcon(i5);
+						break;
+					case 3:
+						troco[i][j].setIcon(i10);
+						break;
+					case 4:
+						troco[i][j].setIcon(i20);
+						break;
+					case 5:
+						troco[i][j].setIcon(i50);
+						break;
+					case 6:
+						troco[i][j].setIcon(i100);
+						break;
+					default:
+						break;
+					}
+				} else
+					troco[i][j].setText("0");
+				troco[i][j].setFont(myFont);
+				troco[i][j].setHorizontalAlignment(0);
+				troco[i][j].setBorder(border);
+				troco[i][j].setOpaque(true);
+				this.add(troco[i][j]);
+			}
+		}
+
+		// 2ND CAMBIO
+		cambioN2.setEnabled(false);
+		if (width > 1800 && height > 1000)
+			cambioN2.setBounds(750, 550, 142, 119);
+		else if (width > 1500 && height > 700)
+			cambioN2.setBounds(622, 450, 120, 99);
+		else
+			cambioN2.setBounds(580, 400, 100, 79);
+		cambioN2.setFont(myFont);
+		cambioN2.setBorder(border);
+		cambioN2.setForeground(yellowC);
+		cambioN2.setBackground(yellowD);
+		cambioN2.setFocusable(false);
+		cambioN2.addActionListener(e -> {
+			cambioF2();
+			cambioN.setText("Metoda 1");
+			cambioN2.setText("Metoda 2");
+			cambioN3.setText("Metoda 3");
+			cambioN.setEnabled(false);
+			cambioN2.setEnabled(false);
+			cambioN3.setEnabled(false);
+		});
+		this.add(cambioN2);
+		for (int i = 0; i < 2; i++) {
+			for (int j = 0; j < 7; j++) {
+				troco2[i][j] = new JLabel();
+				if (width > 1800 && height > 1000)
+					troco2[i][j].setBounds(890 + 79 * j, 550 + 59 * i, 80, 60);
+				else if (width > 1500 && height > 700)
+					troco2[i][j].setBounds(740 + 69 * j, 450 + 49 * i, 70, 50);
+				else
+					troco2[i][j].setBounds(680 + 59 * j, 400 + 39 * i, 60, 40);
+				if (i == 0) {
+					switch (j) {
+					case 0:
+						troco2[i][j].setIcon(i1);
+						break;
+					case 1:
+						troco2[i][j].setIcon(i2);
+						break;
+					case 2:
+						troco2[i][j].setIcon(i5);
+						break;
+					case 3:
+						troco2[i][j].setIcon(i10);
+						break;
+					case 4:
+						troco2[i][j].setIcon(i20);
+						break;
+					case 5:
+						troco2[i][j].setIcon(i50);
+						break;
+					case 6:
+						troco2[i][j].setIcon(i100);
+						break;
+					default:
+						break;
+					}
+				} else
+					troco2[i][j].setText("0");
+				troco2[i][j].setFont(myFont);
+				troco2[i][j].setHorizontalAlignment(0);
+				troco2[i][j].setBorder(border);
+				troco2[i][j].setOpaque(true);
+				this.add(troco2[i][j]);
+			}
+		}
+
+		// 3RD CAMBIO
+		cambioN3.setEnabled(false);
+		if (width > 1800 && height > 1000)
+			cambioN3.setBounds(750, 730, 142, 119);
+		else if (width > 1500 && height > 700)
+			cambioN3.setBounds(622, 580, 120, 99);
+		else
+			cambioN3.setBounds(580, 530, 100, 79);
+		cambioN3.setFont(myFont);
+		cambioN3.setBorder(border);
+		cambioN3.setForeground(orangeC);
+		cambioN3.setBackground(orangeD);
+		cambioN3.setFocusable(false);
+		cambioN3.addActionListener(e -> {
+			cambioF3();
+			cambioN.setText("Metoda 1");
+			cambioN2.setText("Metoda 2");
+			cambioN3.setText("Metoda 3");
+			cambioN.setEnabled(false);
+			cambioN2.setEnabled(false);
+			cambioN3.setEnabled(false);
+		});
+		this.add(cambioN3);
+		for (int i = 0; i < 2; i++) {
+			for (int j = 0; j < 7; j++) {
+				troco3[i][j] = new JLabel();
+				if (width > 1800 && height > 1000)
+					troco3[i][j].setBounds(890 + 79 * j, 730 + 59 * i, 80, 60);
+				else if (width > 1500 && height > 700)
+					troco3[i][j].setBounds(740 + 69 * j, 580 + 49 * i, 70, 50);
+				else
+					troco3[i][j].setBounds(680 + 59 * j, 530 + 39 * i, 60, 40);
+				if (i == 0) {
+					switch (j) {
+					case 0:
+						troco3[i][j].setIcon(i1);
+						break;
+					case 1:
+						troco3[i][j].setIcon(i2);
+						break;
+					case 2:
+						troco3[i][j].setIcon(i5);
+						break;
+					case 3:
+						troco3[i][j].setIcon(i10);
+						break;
+					case 4:
+						troco3[i][j].setIcon(i20);
+						break;
+					case 5:
+						troco3[i][j].setIcon(i50);
+						break;
+					case 6:
+						troco3[i][j].setIcon(i100);
+						break;
+					default:
+						break;
+					}
+				} else
+					troco3[i][j].setText("0");
+				troco3[i][j].setFont(myFont);
+				troco3[i][j].setHorizontalAlignment(0);
+				troco3[i][j].setBorder(border);
+				troco3[i][j].setOpaque(true);
+				this.add(troco3[i][j]);
+			}
+		}
+
+		// Button
+		JButton mainF = new JButton();
+		if (width > 1800 && height > 1000)
+			mainF.setBounds(1600, 540, 80, 60);
+		else if (width > 1500 && height > 700)
+			mainF.setBounds(1300, 480, 70, 70);
+		else
+			mainF.setBounds(1150, 380, 70, 70);
+		mainF.setFocusable(true);
+		mainF.setOpaque(false);
+		mainF.setContentAreaFilled(false);
+		mainF.setBorderPainted(false);
+		mainF.setIcon(mainIcon);
+		mainF.addActionListener(e -> {
+			this.dispose();
+			new Reales();
+		});
+		this.add(mainF);
+		calculate.addActionListener(e -> calTodo(cambioN, cambioN2, cambioN3));
+		this.add(calculate);
+
+		// Put the valores in the caja
+		z = 95;
+		for (int i = 0; i < 7; i++) {
+			cajaTroco[1][6 - i].setText(numbers[z] + "");
+			z++;
+		}
+
+		// MenuBar
+		JMenuBar mb = new JMenuBar();
+		JMenu file = new JMenu("ARCHIVO");
+		;
+		JMenu goTo = new JMenu("IR A");
+		JMenu help = new JMenu("AYUDA");
+		JMenuItem clear = new JMenuItem("BORRAR TODO");
+		JMenuItem calc = new JMenuItem("ASUMAR");
+		JMenuItem exit = new JMenuItem("SALIR");
+		JMenuItem reales = new JMenuItem("REALES");
+		JMenuItem getHelp = new JMenuItem("ATAJOS DE TECLADO");
+		JMenuItem hideBtn = new JMenuItem("ESCONDER EL BOTON");
+		JMenuItem about = new JMenuItem("SOBRE EL APLICATIVO");
+		calc.addActionListener(e -> calTodo(cambioN, cambioN2, cambioN3));
+		clear.addActionListener(e -> {
+			for (int i = 0; i < 7; i++)
+				trocoCT[i].setText("0");
+			for (int i = 0; i < 9; i++)
+				for (int j = 0; j < 3; j++)
+					details[i][j].setText("");
+			for (int i = 0; i < 9; i++)
+				detailsR[i].setText("");
+			calTodo(cambioN, cambioN2, cambioN3);
+			cambioN.setText("Metoda 1");
+			cambioN2.setText("Metoda 2");
+			cambioN3.setText("Metoda 3");
+			cambioN.setEnabled(false);
+			cambioN2.setEnabled(false);
+			cambioN3.setEnabled(false);
+		});
+		exit.addActionListener(e -> System.exit(0));
+		reales.addActionListener(e -> {
+			new Reales();
+			this.dispose();
+		});
+		getHelp.addActionListener(e -> JOptionPane.showMessageDialog(null, "• CTRL + S → ir la reales.\n"
+				+ "• SHIFT → cambiar entre las dos tablas.\n" + "• FLECHAS → subir, abajo, derecha e izquierda.\n",
+				"ATAJOS DE TECLADO", 1));
+		hideBtn.addActionListener(e -> {
+			if (mainF.isShowing()) {
+				mainF.hide();
+				hideBtn.setText("MONSTRAR EL BOTON");
+			} else {
+				mainF.show();
+				hideBtn.setText("ESCONDER EL BOTON");
+			}
+		});
+
+		about.addActionListener(
+				e -> JOptionPane.showMessageDialog(null, "Crédito y Diseñado por MhmdSAbdlh ©", "SOBRE MI", 1));
+		file.add(calc);
+		file.add(clear);
+		file.add(exit);
+		goTo.add(reales);
+		help.add(getHelp);
+		help.add(hideBtn);
+		help.add(about);
+		mb.add(file);
+		mb.add(goTo);
+		mb.add(help);
+		this.setJMenuBar(mb);
+
+		// Frame start
+		this.getRootPane().setDefaultButton(calculate);
+		this.setVisible(true);
+	}
+
+	// Focus for the fatura
+	private static void tableFocus(int i, int j, JFrame frame) {
+		details[i][j].addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				// GO TO Main
+				if ((e.getKeyCode() == KeyEvent.VK_S) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+					frame.dispose();
+					new Reales();
+				}
+				if ((e.getKeyCode() == KeyEvent.VK_SHIFT)) {
+					details[i][j].setNextFocusableComponent(trocoCT[0]);
+					details[i][j].nextFocus();
+				}
+				if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
+					if (j < 2) {
+						details[i][j].setNextFocusableComponent(details[i][j + 1]);
+						details[i][j].nextFocus();
+					}
+				} else if (e.getKeyCode() == KeyEvent.VK_LEFT) {
+					if (j > 0) {
+						details[i][j].setNextFocusableComponent(details[i][j - 1]);
+						details[i][j].nextFocus();
+					}
+				} else if (e.getKeyCode() == KeyEvent.VK_UP) {
+					if (i > 0) {
+						details[i][j].setNextFocusableComponent(details[i - 1][j]);
+						details[i][j].nextFocus();
+					}
+				} else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
+					if (i < 8) {
+						details[i][j].setNextFocusableComponent(details[i + 1][j]);
+						details[i][j].nextFocus();
+					}
+				}
+			}
+		});
+	}
+
+	// Focus for the cleinte
+	private static void clienteFocus(int i, JFrame frame) {
+		trocoCT[i].addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				// GO TO Main
+				if ((e.getKeyCode() == KeyEvent.VK_S) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+					frame.dispose();
+					new Reales();
+				} else if ((e.getKeyCode() == KeyEvent.VK_SHIFT)) {
+					trocoCT[i].setNextFocusableComponent(details[0][0]);
+					trocoCT[i].nextFocus();
+				} else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
+					if (i < 6) {
+						trocoCT[i].setNextFocusableComponent(trocoCT[i + 1]);
+						trocoCT[i].nextFocus();
+					} else {
+						trocoCT[i].setNextFocusableComponent(trocoCT[0]);
+						trocoCT[i].nextFocus();
+					}
+				} else if (e.getKeyCode() == KeyEvent.VK_LEFT)
+					if (i > 0) {
+						trocoCT[i].setNextFocusableComponent(trocoCT[i - 1]);
+						trocoCT[i].nextFocus();
+					} else {
+						trocoCT[i].setNextFocusableComponent(trocoCT[6]);
+						trocoCT[i].nextFocus();
+					}
+			}
+		});
+	}
+
+	// Method 1 work
+	private static void cambioF() {
+		for (int i = 0; i < 7; i++)
+			cajaTroco[1][i].setText(Integer.valueOf(cajaTroco[1][i].getText()) - Integer.valueOf(troco[1][i].getText())
+					+ Integer.valueOf(trocoCT[i].getText()) + "");
+		saveProgress();
+	}
+
+	// Method 2 work
+	private static void cambioF2() {
+		for (int i = 0; i < 7; i++)
+			cajaTroco[1][i].setText(Integer.valueOf(cajaTroco[1][i].getText()) - Integer.valueOf(troco2[1][i].getText())
+					+ Integer.valueOf(trocoCT[i].getText()) + "");
+		saveProgress();
+	}
+
+	// Method 3 work
+	private static void cambioF3() {
+		for (int i = 0; i < 7; i++)
+			cajaTroco[1][i].setText(Integer.valueOf(cajaTroco[1][i].getText()) - Integer.valueOf(troco3[1][i].getText())
+					+ Integer.valueOf(trocoCT[i].getText()) + "");
+		saveProgress();
+	}
+
+	// Calc everything
+	private static void calTodo(JButton cambioN, JButton cambioN2, JButton cambioN3) {
+		int alfa = 0;
+		for (int i = 0; i < 9; i++) {
+			if (!details[i][0].getText().isBlank() && !details[i][2].getText().isBlank()
+					&& isNumeric(details[i][0].getText()) && isNumeric(details[i][2].getText())) {
+				detailsR[i].setText(
+						Integer.valueOf(details[i][0].getText()) * Integer.valueOf(details[i][2].getText()) + "");
+				alfa += Integer.valueOf(detailsR[i].getText());
+			}
+		}
+		totalC.setText(Integer.valueOf(trocoCT[0].getText()) + Integer.valueOf(trocoCT[1].getText()) * 2
+				+ Integer.valueOf(trocoCT[2].getText()) * 5 + Integer.valueOf(trocoCT[3].getText()) * 10
+				+ Integer.valueOf(trocoCT[4].getText()) * 20 + Integer.valueOf(trocoCT[5].getText()) * 50
+				+ Integer.valueOf(trocoCT[6].getText()) * 100 + "");
+		total.setText("" + alfa);
+		cambio[3].setText("" + alfa);
+		cambio[5].setText("" + totalC.getText());
+		if (Integer.valueOf(cambio[5].getText()) < alfa)
+			cambio[4].setText("-R$" + (alfa - Integer.valueOf(totalC.getText())));
+		else
+			cambio[4].setText("" + (Integer.valueOf(totalC.getText()) - alfa));
+
+		// Trocos
+		if (isNumeric(cambio[4].getText())) {
+			int beta = Integer.valueOf(cambio[4].getText());
+			// Por 100
+			troco[1][6].setText((beta / 100) + "");
+			troco2[1][6].setText((beta / 100) + "");
+			troco3[1][6].setText((beta / 100) + "");
+			// Por 10,20,50
+			switch ((beta - (beta / 100) * 100) / 10) {
+			case 0: {
+				troco[1][5].setText("0");
+				troco[1][4].setText("0");
+				troco[1][3].setText("0");
+				troco2[1][5].setText("0");
+				troco2[1][4].setText("0");
+				troco2[1][3].setText("0");
+				troco3[1][5].setText("0");
+				troco3[1][4].setText("0");
+				troco3[1][3].setText("0");
+				break;
+			}
+			case 1: {
+				troco[1][5].setText("0");
+				troco[1][4].setText("0");
+				troco[1][3].setText("1");
+				troco2[1][5].setText("0");
+				troco2[1][4].setText("0");
+				troco2[1][3].setText("1");
+				troco3[1][5].setText("0");
+				troco3[1][4].setText("0");
+				troco3[1][3].setText("1");
+				break;
+			}
+			case 2: {
+				troco[1][5].setText("0");
+				troco[1][4].setText("1");
+				troco[1][3].setText("0");
+				troco2[1][5].setText("0");
+				troco2[1][4].setText("1");
+				troco2[1][3].setText("0");
+				troco3[1][5].setText("0");
+				troco3[1][4].setText("0");
+				troco3[1][3].setText("2");
+				break;
+			}
+			case 3: {
+				troco[1][5].setText("0");
+				troco[1][4].setText("1");
+				troco[1][3].setText("1");
+				troco2[1][5].setText("0");
+				troco2[1][4].setText("1");
+				troco2[1][3].setText("1");
+				troco3[1][5].setText("0");
+				troco3[1][4].setText("0");
+				troco3[1][3].setText("3");
+				break;
+			}
+			case 4: {
+				troco[1][5].setText("0");
+				troco[1][4].setText("2");
+				troco[1][3].setText("0");
+				troco2[1][5].setText("0");
+				troco2[1][4].setText("1");
+				troco2[1][3].setText("2");
+				troco3[1][5].setText("0");
+				troco3[1][4].setText("0");
+				troco3[1][3].setText("4");
+				break;
+			}
+			case 5: {
+				troco[1][5].setText("1");
+				troco[1][4].setText("0");
+				troco[1][3].setText("0");
+				troco2[1][5].setText("0");
+				troco2[1][4].setText("2");
+				troco2[1][3].setText("1");
+				troco3[1][5].setText("0");
+				troco3[1][4].setText("1");
+				troco3[1][3].setText("3");
+				break;
+			}
+			case 6: {
+				troco[1][5].setText("1");
+				troco[1][4].setText("0");
+				troco[1][3].setText("1");
+				troco2[1][5].setText("0");
+				troco2[1][4].setText("3");
+				troco2[1][3].setText("0");
+				troco3[1][5].setText("0");
+				troco3[1][4].setText("2");
+				troco3[1][3].setText("2");
+				break;
+			}
+			case 7: {
+				troco[1][5].setText("1");
+				troco[1][4].setText("1");
+				troco[1][3].setText("0");
+				troco2[1][5].setText("0");
+				troco2[1][4].setText("3");
+				troco2[1][3].setText("1");
+				troco3[1][5].setText("1");
+				troco3[1][4].setText("0");
+				troco3[1][3].setText("2");
+				break;
+			}
+			case 8: {
+				troco[1][5].setText("1");
+				troco[1][4].setText("1");
+				troco[1][3].setText("1");
+				troco2[1][5].setText("0");
+				troco2[1][4].setText("4");
+				troco2[1][3].setText("0");
+				troco3[1][5].setText("1");
+				troco3[1][4].setText("0");
+				troco3[1][3].setText("3");
+				break;
+			}
+			case 9: {
+				troco[1][5].setText("1");
+				troco[1][4].setText("2");
+				troco[1][3].setText("0");
+				troco2[1][5].setText("0");
+				troco2[1][4].setText("4");
+				troco2[1][3].setText("1");
+				troco3[1][5].setText("1");
+				troco3[1][4].setText("1");
+				troco3[1][3].setText("2");
+				break;
+			}
+			}
+			// Por 1,2,5
+			switch ((beta - (beta / 10) * 10)) {
+			case 0: {
+				troco[1][2].setText("0");
+				troco[1][1].setText("0");
+				troco[1][0].setText("0");
+				troco2[1][2].setText("0");
+				troco2[1][1].setText("0");
+				troco2[1][0].setText("0");
+				troco3[1][2].setText("0");
+				troco3[1][1].setText("0");
+				troco3[1][0].setText("0");
+				break;
+			}
+			case 1: {
+				troco[1][2].setText("0");
+				troco[1][1].setText("0");
+				troco[1][0].setText("1");
+				troco2[1][2].setText("0");
+				troco2[1][1].setText("0");
+				troco2[1][0].setText("1");
+				troco3[1][2].setText("0");
+				troco3[1][1].setText("0");
+				troco3[1][0].setText("1");
+				break;
+			}
+			case 2: {
+				troco[1][2].setText("0");
+				troco[1][1].setText("1");
+				troco[1][0].setText("0");
+				troco2[1][2].setText("0");
+				troco2[1][1].setText("1");
+				troco2[1][0].setText("0");
+				troco3[1][2].setText("0");
+				troco3[1][1].setText("0");
+				troco3[1][0].setText("2");
+				break;
+			}
+			case 3: {
+				troco[1][2].setText("0");
+				troco[1][1].setText("1");
+				troco[1][0].setText("1");
+				troco2[1][2].setText("0");
+				troco2[1][1].setText("1");
+				troco2[1][0].setText("1");
+				troco3[1][2].setText("0");
+				troco3[1][1].setText("0");
+				troco3[1][0].setText("3");
+				break;
+			}
+			case 4: {
+				troco[1][2].setText("0");
+				troco[1][1].setText("2");
+				troco[1][0].setText("0");
+				troco2[1][2].setText("0");
+				troco2[1][1].setText("1");
+				troco2[1][0].setText("2");
+				troco3[1][2].setText("0");
+				troco3[1][1].setText("0");
+				troco3[1][0].setText("4");
+				break;
+			}
+			case 5: {
+				troco[1][2].setText("1");
+				troco[1][1].setText("0");
+				troco[1][0].setText("0");
+				troco2[1][2].setText("0");
+				troco2[1][1].setText("2");
+				troco2[1][0].setText("1");
+				troco3[1][2].setText("0");
+				troco3[1][1].setText("1");
+				troco3[1][0].setText("3");
+				break;
+			}
+			case 6: {
+				troco[1][2].setText("1");
+				troco[1][1].setText("0");
+				troco[1][0].setText("1");
+				troco2[1][2].setText("0");
+				troco2[1][1].setText("3");
+				troco2[1][0].setText("0");
+				troco3[1][2].setText("0");
+				troco3[1][1].setText("2");
+				troco3[1][0].setText("2");
+				break;
+			}
+			case 7: {
+				troco[1][2].setText("1");
+				troco[1][1].setText("1");
+				troco[1][0].setText("0");
+				troco2[1][2].setText("0");
+				troco2[1][1].setText("3");
+				troco2[1][0].setText("1");
+				troco3[1][2].setText("1");
+				troco3[1][1].setText("0");
+				troco3[1][0].setText("2");
+				break;
+			}
+			case 8: {
+				troco[1][2].setText("1");
+				troco[1][1].setText("1");
+				troco[1][0].setText("1");
+				troco2[1][2].setText("0");
+				troco2[1][1].setText("4");
+				troco2[1][0].setText("0");
+				troco3[1][2].setText("1");
+				troco3[1][1].setText("0");
+				troco3[1][0].setText("3");
+				break;
+			}
+			case 9: {
+				troco[1][2].setText("1");
+				troco[1][1].setText("2");
+				troco[1][0].setText("0");
+				troco2[1][2].setText("0");
+				troco2[1][1].setText("4");
+				troco2[1][0].setText("1");
+				troco3[1][2].setText("1");
+				troco3[1][1].setText("1");
+				troco3[1][0].setText("2");
+				break;
+			}
+			}
+			if (Integer.valueOf(troco[1][0].getText()) <= Integer.valueOf((cajaTroco[1][0].getText()))
+					&& Integer.valueOf(troco[1][1].getText()) <= Integer.valueOf((cajaTroco[1][1].getText()))
+					&& Integer.valueOf(troco[1][2].getText()) <= Integer.valueOf((cajaTroco[1][2].getText()))
+					&& Integer.valueOf(troco[1][3].getText()) <= Integer.valueOf((cajaTroco[1][3].getText()))
+					&& Integer.valueOf(troco[1][4].getText()) <= Integer.valueOf((cajaTroco[1][4].getText()))
+					&& Integer.valueOf(troco[1][5].getText()) <= Integer.valueOf((cajaTroco[1][5].getText()))
+					&& Integer.valueOf(troco[1][6].getText()) <= Integer.valueOf((cajaTroco[1][6].getText())))
+				cambioN.setText("√");
+			else
+				cambioN.setText("X");
+			if (Integer.valueOf(troco2[1][0].getText()) <= Integer.valueOf((cajaTroco[1][0].getText()))
+					&& Integer.valueOf(troco2[1][1].getText()) <= Integer.valueOf((cajaTroco[1][1].getText()))
+					&& Integer.valueOf(troco2[1][2].getText()) <= Integer.valueOf((cajaTroco[1][2].getText()))
+					&& Integer.valueOf(troco2[1][3].getText()) <= Integer.valueOf((cajaTroco[1][3].getText()))
+					&& Integer.valueOf(troco2[1][4].getText()) <= Integer.valueOf((cajaTroco[1][4].getText()))
+					&& Integer.valueOf(troco2[1][5].getText()) <= Integer.valueOf((cajaTroco[1][5].getText()))
+					&& Integer.valueOf(troco2[1][6].getText()) <= Integer.valueOf((cajaTroco[1][6].getText())))
+				cambioN2.setText("√");
+			else
+				cambioN2.setText("X");
+			if (Integer.valueOf(troco3[1][0].getText()) <= Integer.valueOf((cajaTroco[1][0].getText()))
+					&& Integer.valueOf(troco3[1][1].getText()) <= Integer.valueOf((cajaTroco[1][1].getText()))
+					&& Integer.valueOf(troco3[1][2].getText()) <= Integer.valueOf((cajaTroco[1][2].getText()))
+					&& Integer.valueOf(troco3[1][3].getText()) <= Integer.valueOf((cajaTroco[1][3].getText()))
+					&& Integer.valueOf(troco3[1][4].getText()) <= Integer.valueOf((cajaTroco[1][4].getText()))
+					&& Integer.valueOf(troco3[1][5].getText()) <= Integer.valueOf((cajaTroco[1][5].getText()))
+					&& Integer.valueOf(troco3[1][6].getText()) <= Integer.valueOf((cajaTroco[1][6].getText())))
+				cambioN3.setText("√");
+			else
+				cambioN3.setText("X");
+		} else {
+			troco[1][6].setText("!");
+			troco[1][5].setText("!");
+			troco[1][4].setText("!");
+			troco[1][3].setText("!");
+			troco[1][2].setText("!");
+			troco[1][1].setText("!");
+			troco[1][0].setText("!");
+			troco2[1][6].setText("!");
+			troco2[1][5].setText("!");
+			troco2[1][4].setText("!");
+			troco2[1][3].setText("!");
+			troco2[1][2].setText("!");
+			troco2[1][1].setText("!");
+			troco2[1][0].setText("!");
+			troco3[1][6].setText("!");
+			troco3[1][5].setText("!");
+			troco3[1][4].setText("!");
+			troco3[1][3].setText("!");
+			troco3[1][2].setText("!");
+			troco3[1][1].setText("!");
+			troco3[1][0].setText("!");
+		}
+		if (cambioN.getText().equals("√"))
+			cambioN.setEnabled(true);
+		if (cambioN2.getText().equals("√"))
+			cambioN2.setEnabled(true);
+		if (cambioN3.getText().equals("√"))
+			cambioN3.setEnabled(true);
+
+	}
+
+	// Check the input text if it is a number
+	private static boolean isNumeric(String number) {
+		try {
+			Integer.parseInt(number);
+			return true;
+		} catch (NumberFormatException e) {
+			return false;
+		}
+	}
+
+	// SAVE NEW VALUE
+	private static void saveProgress() {
+		String temp = total.getText();
+		int z = 0;
+		try {
+			FileWriter savedF = new FileWriter("cedros.txt");
+			int i = 0;
+			while (i < 75) {
+				if ((numbers[i].isBlank() || Integer.valueOf(numbers[i]) == 0 || !isNumeric(numbers[i]))
+						&& Integer.valueOf(temp) != 0 && !totalC.getText().isBlank()) {
+					savedF.write(temp + System.lineSeparator());
+					temp = "0";
+					i++;
+				} else {
+					savedF.write(numbers[i] + System.lineSeparator());
+					i++;
+				}
+			}
+			savedF.write(numbers[i] + System.lineSeparator());
+			i++;
+			z = i + 8;
+			while (i < z) {
+				savedF.write(numbers[i] + System.lineSeparator());
+				i++;
+			}
+			z = i + 8;
+			while (i < z) {
+				savedF.write(numbers[i] + System.lineSeparator());
+				i++;
+			}
+			z = i + 3;
+			while (i < z) {
+				savedF.write(numbers[i] + System.lineSeparator());
+				i++;
+			}
+			z = i + 7;
+			while (i < z) {
+				savedF.write(cajaTroco[1][z - i - 1].getText() + System.lineSeparator());
+				i++;
+			}
+
+			savedF.close();
+		} catch (Exception e) {
+		}
+	}
+
+	// Style of textField
+	private static void textFieldStyle(JTextField tf) {
+		tf.setBackground(blueC);
+		tf.setForeground(blueD);
+		tf.setFont(myFont);
+		tf.setBorder(border);
+		tf.setHorizontalAlignment(0);
+		tf.addFocusListener(new FocusListener() {
+			@Override
+			public void focusGained(FocusEvent e) {
+				String str = tf.getText();
+				tf.setText(str);
+				tf.selectAll();
+			}
+
+			@Override
+			public void focusLost(FocusEvent e) {
+			}
+		});
+
+	}
+
+	// Style of formattedTextField
+	private static void formatedTextFieldStyle(JFormattedTextField tf, JButton cambioN, JButton cambioN2,
+			JButton cambioN3) {
+		tf.setBackground(blueC);
+		tf.setForeground(blueD);
+		tf.setFont(myFont);
+		tf.setBorder(border);
+		tf.setHorizontalAlignment(0);
+		tf.addFocusListener(new FocusListener() {
+			@Override
+			public void focusGained(FocusEvent e) {
+				String str = tf.getText();
+				tf.setText(str);
+				tf.selectAll();
+			}
+
+			@Override
+			public void focusLost(FocusEvent e) {
+				calTodo(cambioN, cambioN2, cambioN3);
+			}
+		});
+
+	}
+
+	// Auto
+	private ArrayList<String> listMercadoria() {
+		ArrayList<String> keywords = new ArrayList<String>(61);
+		keywords.add("frazada");
+		keywords.add("cobertor");
+		keywords.add("jarra");
+		keywords.add("alfombra");
+		keywords.add("tapete");
+		keywords.add("trilho");
+		keywords.add("jogo trilho");
+		keywords.add("juego lfombra");
+		keywords.add("tapete do banho");
+		keywords.add("alfombra de bano");
+		keywords.add("linterna");
+		keywords.add("lanterna");
+		keywords.add("martillo");
+		keywords.add("conj nino");
+		keywords.add("kit cocina");
+		keywords.add("f5");
+		keywords.add("f6");
+		keywords.add("toallas");
+		keywords.add("frutera");
+		keywords.add("saco LA");
+		keywords.add("labatida");
+		keywords.add("campera");
+		keywords.add("milano");
+		keywords.add("chaqueta");
+		keywords.add("soft fem");
+		keywords.add("soft mas");
+		keywords.add("chapinha");
+		keywords.add("azucarera");
+		keywords.add("bombonera");
+		keywords.add("caixa do som");
+		keywords.add("caja de son");
+		keywords.add("mk167");
+		keywords.add("mk168");
+		keywords.add("mk169");
+		keywords.add("mk410");
+		keywords.add("mk412");
+		keywords.add("mk416");
+		keywords.add("mk4105");
+		keywords.add("mk4101");
+		keywords.add("cobredom");
+		keywords.add("dz media");
+		keywords.add("vaso termico");
+		keywords.add("sarten");
+		keywords.add("kit vaso");
+		keywords.add("balanza");
+		keywords.add("balanza 40kg");
+		keywords.add("telefono");
+		keywords.add("reloj");
+		keywords.add("auto control");
+		keywords.add("caneta");
+		keywords.add("lapicera");
+		return keywords;
+	}
+
+}
