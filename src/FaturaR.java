@@ -82,6 +82,7 @@ public class FaturaR extends JFrame {
 	static JLabel[][] troco3 = new JLabel[2][7];
 	static String numbers[] = new String[103];
 	static JLabel totalC = new JLabel("Total");
+	static int totalFatura = 0, totalCV = 0, trocoV = 0;
 
 	FaturaR() {
 		// Dimension
@@ -354,9 +355,11 @@ public class FaturaR extends JFrame {
 		this.add(calculate);
 
 		// Put the valores in the caja
+		cajaTroco[1][4].setText("" + (Integer.valueOf(numbers[97]) + Integer.valueOf(numbers[93]) * 5));
 		z = 95;
 		for (int i = 0; i < 7; i++) {
-			cajaTroco[1][6 - i].setText(numbers[z] + "");
+			if (i != 2)
+				cajaTroco[1][6 - i].setText(numbers[z]);
 			z++;
 		}
 
@@ -406,7 +409,6 @@ public class FaturaR extends JFrame {
 				hideBtn.setText("ESCONDER EL BOTON");
 			}
 		});
-
 		about.addActionListener(
 				e -> JOptionPane.showMessageDialog(null, "Crédito y Diseñado por MhmdSAbdlh ©", "SOBRE MI", 1));
 		JMenu reso = new JMenu("RESOLUCIÓN");
@@ -561,36 +563,37 @@ public class FaturaR extends JFrame {
 
 	// Calc everything
 	private static void calTodo(JButton cambioN, JButton cambioN2, JButton cambioN3) {
-		int alfa = 0;
+		totalFatura = 0;
 		for (int i = 0; i < 9; i++) {
 			if (!details[i][0].getText().isBlank() && !details[i][2].getText().isBlank()
 					&& isNumeric(details[i][0].getText()) && isNumeric(details[i][2].getText())) {
 				detailsR[i].setText(
 						Integer.valueOf(details[i][0].getText()) * Integer.valueOf(details[i][2].getText()) + "");
-				alfa += Integer.valueOf(detailsR[i].getText());
+				totalFatura += Integer.valueOf(detailsR[i].getText());
 			}
 		}
-		totalC.setText(Integer.valueOf(trocoCT[0].getText()) + Integer.valueOf(trocoCT[1].getText()) * 2
+		total.setText("R$ " + totalFatura);
+		totalCV = Integer.valueOf(trocoCT[0].getText()) + Integer.valueOf(trocoCT[1].getText()) * 2
 				+ Integer.valueOf(trocoCT[2].getText()) * 5 + Integer.valueOf(trocoCT[3].getText()) * 10
 				+ Integer.valueOf(trocoCT[4].getText()) * 20 + Integer.valueOf(trocoCT[5].getText()) * 50
-				+ Integer.valueOf(trocoCT[6].getText()) * 100 + "");
-		total.setText("" + alfa);
-		cambio[3].setText("" + alfa);
-		cambio[5].setText("" + totalC.getText());
-		if (Integer.valueOf(cambio[5].getText()) < alfa)
-			cambio[4].setText("-R$" + (alfa - Integer.valueOf(totalC.getText())));
+				+ Integer.valueOf(trocoCT[6].getText()) * 100;
+		totalC.setText("R$ " + totalCV);
+		cambio[3].setText("R$ " + totalFatura);
+		cambio[5].setText("R$ " + totalCV);
+		trocoV = totalCV - totalFatura;
+		if (totalCV < totalFatura)
+			cambio[4].setText("R$ " + (totalFatura - totalCV));
 		else
-			cambio[4].setText("" + (Integer.valueOf(totalC.getText()) - alfa));
+			cambio[4].setText("R$ " + (totalCV - totalFatura));
 
 		// Trocos
-		if (isNumeric(cambio[4].getText())) {
-			int beta = Integer.valueOf(cambio[4].getText());
+		if (trocoV >= 0) {
 			// Por 100
-			troco[1][6].setText((beta / 100) + "");
-			troco2[1][6].setText((beta / 100) + "");
-			troco3[1][6].setText((beta / 100) + "");
+			troco[1][6].setText((trocoV / 100) + "");
+			troco2[1][6].setText((trocoV / 100) + "");
+			troco3[1][6].setText((trocoV / 100) + "");
 			// Por 10,20,50
-			switch ((beta - (beta / 100) * 100) / 10) {
+			switch ((trocoV - (trocoV / 100) * 100) / 10) {
 			case 0: {
 				troco[1][5].setText("0");
 				troco[1][4].setText("0");
@@ -713,7 +716,7 @@ public class FaturaR extends JFrame {
 			}
 			}
 			// Por 1,2,5
-			switch ((beta - (beta / 10) * 10)) {
+			switch ((trocoV - (trocoV / 10) * 10)) {
 			case 0: {
 				troco[1][2].setText("0");
 				troco[1][1].setText("0");
@@ -909,7 +912,7 @@ public class FaturaR extends JFrame {
 
 	// SAVE NEW VALUE
 	private static void saveProgress() {
-		String temp = total.getText();
+		String temp = totalFatura + "";
 		int z = 0;
 		try {
 			FileWriter savedF = new FileWriter("cedros.txt");
@@ -939,7 +942,10 @@ public class FaturaR extends JFrame {
 			}
 			z = i + 3;
 			while (i < z) {
-				savedF.write(numbers[i] + System.lineSeparator());
+				if (i == z - 2)
+					savedF.write("0" + System.lineSeparator());
+				else
+					savedF.write(numbers[i] + System.lineSeparator());
 				i++;
 			}
 			z = i + 7;

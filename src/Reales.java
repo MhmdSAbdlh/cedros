@@ -53,11 +53,9 @@ public class Reales extends JFrame {
 	static Color greenD = new Color(56, 161, 48);
 	static Color greenC = new Color(74, 220, 63);
 	static Border border = First.border;
-	static int beta = 0;
-	static int gama = 0;
-	static int calcR;
-	static int caja;
-	static int restN;
+	static int totalCol = 0, totalVenta = 0, totalO = 0;
+	static int gastosT = 0, agregadoT = 0;
+	static int restN, totalCaja = 0;
 	private URL u1000 = getClass().getResource("images/1000.png");
 	private ImageIcon i1000 = new ImageIcon(u1000);
 	private URL uS100 = getClass().getResource("images/s100.png");
@@ -413,6 +411,13 @@ public class Reales extends JFrame {
 		JMenuItem getHelp = new JMenuItem("ATAJOS DE TECLADO");
 		JMenuItem hideBtn = new JMenuItem("ESCONDER LOS BOTONES");
 		JMenuItem about = new JMenuItem("SOBRE EL APLICATIVO");
+		JMenu reso = new JMenu("RESOLUCIÓN");
+		JMenuItem resoD = new JMenuItem("ÓPTIMO");
+		JSeparator sep = new JSeparator();
+		JMenuItem reso1 = new JMenuItem("GRANDE");
+		JMenuItem reso2 = new JMenuItem("MEDIO");
+		JMenuItem reso3 = new JMenuItem("PEQUENA");
+		JMenuItem reso4 = new JMenuItem("X-PEQUENA");
 		novo.addActionListener(e -> newDay());
 		calc.addActionListener(e -> sumF());
 		clear.addActionListener(e -> clearAll());
@@ -443,13 +448,6 @@ public class Reales extends JFrame {
 				"ATAJOS DE TECLADO", 1));
 		about.addActionListener(
 				e -> JOptionPane.showMessageDialog(null, "Crédito y Diseñado por MhmdSAbdlh ©", "SOBRE MI", 1));
-		JMenu reso = new JMenu("RESOLUCIÓN");
-		JMenuItem resoD = new JMenuItem("ÓPTIMO");
-		JSeparator sep = new JSeparator();
-		JMenuItem reso1 = new JMenuItem("GRANDE");
-		JMenuItem reso2 = new JMenuItem("MEDIO");
-		JMenuItem reso3 = new JMenuItem("PEQUENA");
-		JMenuItem reso4 = new JMenuItem("X-PEQUENA");
 		reso.add(resoD);
 		reso.add(sep);
 		reso.add(reso4);
@@ -480,7 +478,6 @@ public class Reales extends JFrame {
 		help.add(getHelp);
 		help.add(hideBtn);
 		help.add(about);
-
 		mb.add(file);
 		mb.add(goTo);
 		mb.add(reso);
@@ -490,6 +487,7 @@ public class Reales extends JFrame {
 		// Frame Run
 		openProgress();
 		sumF();
+		// Open to the last value
 		int k = 0, l = 0;
 		schiffe_loop: while (k < 5) {
 			l = 0;
@@ -516,6 +514,15 @@ public class Reales extends JFrame {
 			resP(resoD, notasF, pesosF, newDay, clearEverthing);
 		else
 			resXP(resoD, notasF, pesosF, newDay, clearEverthing);
+
+		// Automatically add sets of 100 and 1000
+		if (aggBtn[0].isShowing() && aggBtn[1].isShowing()) {
+			addSetMil();
+			addSetHun();
+		} else if (aggBtn[0].isShowing())
+			addSetMil();
+		else if (aggBtn[1].isShowing())
+			addSetHun();
 	}
 
 	private void hideBtn(JButton notasF, JButton pesosF, JButton newDay, JButton clearEverthing, JMenuItem hideBtn) {
@@ -685,15 +692,6 @@ public class Reales extends JFrame {
 		}
 		panelCnum[1].setText(Integer.valueOf(panelCnum[1].getText()) + counter + "");
 		panelCnum[5].setText(Integer.valueOf(panelCnum[5].getText()) - 5 * counter + "");
-
-		numHun = Integer.valueOf(panelCnum[6].getText()) * 10;
-		counter = 0;
-		while (numHun > 100) {
-			numHun -= 100;
-			counter++;
-		}
-		panelCnum[1].setText(Integer.valueOf(panelCnum[1].getText()) + counter + "");
-		panelCnum[6].setText(Integer.valueOf(panelCnum[6].getText()) - 10 * counter + "");
 		aggBtn[1].hide();
 	}
 
@@ -705,16 +703,16 @@ public class Reales extends JFrame {
 				panelCnum[i].setText(0 + "");
 		if (!isNumeric(initialDay.getText()))// initial of the day 0
 			initialDay.setText(0 + "");
-		for (int i = 0; i < 4; i++) {// TitleCase gastos and agg
-			gastosTable[i].setText(capitalizeString(gastosTable[i].getText()));
-			agregadoTable[i].setText(capitalizeString(agregadoTable[i].getText()));
-		}
 		for (int i = 4; i < 8; i++)// spent 0
 			if (!isNumeric(gastosTable[i].getText()))
 				gastosTable[i].setText("");
 		for (int i = 4; i < 8; i++)// added 0
 			if (!isNumeric(agregadoTable[i].getText()))
 				agregadoTable[i].setText("");
+		for (int i = 0; i < 4; i++) {// TitleCase gastos and agg
+			gastosTable[i].setText(capitalizeString(gastosTable[i].getText()));
+			agregadoTable[i].setText(capitalizeString(agregadoTable[i].getText()));
+		}
 		// Add set of 1000
 		int numMil = Integer.valueOf(panelCnum[2].getText()) * 200 + Integer.valueOf(panelCnum[3].getText()) * 100
 				+ Integer.valueOf(panelCnum[4].getText()) * 50;
@@ -741,51 +739,45 @@ public class Reales extends JFrame {
 			numHund -= 100;
 			counter++;
 		}
-		numHund = Integer.valueOf(panelCnum[6].getText()) * 10;
-		while (numHund > 100) {
-			numHund -= 100;
-			counter++;
-		}
 		if (counter > 0) {
 			aggBtn[1].show();
 			aggBtn[1].setText("Mas " + counter);
 		} else
 			aggBtn[1].hide();
 		// Calculate the totals
-		gama = 0;
+		totalVenta = 0;
 		for (int i = 0; i < 5; i++) {
-			beta = 0;
+			totalCol = 0;
 			for (int j = 0; j < 15; j++) {
 				if (!isNumeric(details[i][j].getText())) {
 					details[i][j].setText("");
-					beta += 0;
-				} else {
-					beta += Integer.valueOf(details[i][j].getText());
-				}
+					totalCol += 0;
+				} else
+					totalCol += Integer.valueOf(details[i][j].getText());
 			}
-			total[i].setText(beta + "");
-			gama += Integer.valueOf(total[i].getText());
+			total[i].setText(totalCol + "");
+			totalVenta += Integer.valueOf(total[i].getText());
 		}
-		total[5].setText(gama + "");
+		total[5].setText("R$" + totalVenta);
 		// Calculate total of spent
-		summaryT[5].setText(((gastosTable[4].getText().equals("") ? 0 : Integer.valueOf(gastosTable[4].getText()))
+		gastosT = ((gastosTable[4].getText().equals("") ? 0 : Integer.valueOf(gastosTable[4].getText()))
 				+ (gastosTable[5].getText().equals("") ? 0 : Integer.valueOf(gastosTable[5].getText()))
 				+ (gastosTable[6].getText().equals("") ? 0 : Integer.valueOf(gastosTable[6].getText()))
-				+ (gastosTable[7].getText().equals("") ? 0 : Integer.valueOf(gastosTable[7].getText()))) + "");
+				+ (gastosTable[7].getText().equals("") ? 0 : Integer.valueOf(gastosTable[7].getText())));
+		summaryT[5].setText("" + gastosT);
 		// Calculate total of added
-		summaryT[6].setText(((agregadoTable[4].getText().equals("") ? 0 : Integer.valueOf(agregadoTable[4].getText()))
+		agregadoT = ((agregadoTable[4].getText().equals("") ? 0 : Integer.valueOf(agregadoTable[4].getText()))
 				+ (agregadoTable[5].getText().equals("") ? 0 : Integer.valueOf(agregadoTable[5].getText()))
 				+ (agregadoTable[6].getText().equals("") ? 0 : Integer.valueOf(agregadoTable[6].getText()))
-				+ (agregadoTable[7].getText().equals("") ? 0 : Integer.valueOf(agregadoTable[7].getText()))) + "");
-
-		summaryT[7].setText(total[5].getText());// Total of sells
+				+ (agregadoTable[7].getText().equals("") ? 0 : Integer.valueOf(agregadoTable[7].getText())));
+		summaryT[6].setText("" + agregadoT);
+		summaryT[7].setText("" + totalVenta);// Total of sells
 		// Calculate total
-		summaryT[8].setText(((initialDay.getText().equals("") ? 0 : Integer.valueOf(initialDay.getText()))
-				- (summaryT[5].getText().equals("") ? 0 : Integer.valueOf(summaryT[5].getText()))
-				+ (summaryT[6].getText().equals("") ? 0 : Integer.valueOf(summaryT[6].getText()))
-				+ (summaryT[7].getText().equals("") ? 0 : Integer.valueOf(summaryT[7].getText()))) + "");
+		totalO = ((initialDay.getText().equals("") ? 0 : Integer.valueOf(initialDay.getText())) - gastosT + agregadoT
+				+ totalVenta);
+		summaryT[8].setText("" + totalO);
 		// Calculate total of caja
-		total[6].setText("" + ((panelCnum[0].getText().equals("") ? 0 : Integer.valueOf(panelCnum[0].getText()) * 1000)
+		totalCaja = ((panelCnum[0].getText().equals("") ? 0 : Integer.valueOf(panelCnum[0].getText()) * 1000)
 				+ (panelCnum[1].getText().equals("") ? 0 : Integer.valueOf(panelCnum[1].getText()) * 100)
 				+ (panelCnum[2].getText().equals("") ? 0 : Integer.valueOf(panelCnum[2].getText()) * 200)
 				+ (panelCnum[3].getText().equals("") ? 0 : Integer.valueOf(panelCnum[3].getText()) * 100)
@@ -794,31 +786,28 @@ public class Reales extends JFrame {
 				+ (panelCnum[6].getText().equals("") ? 0 : Integer.valueOf(panelCnum[6].getText()) * 10)
 				+ (panelCnum[7].getText().equals("") ? 0 : Integer.valueOf(panelCnum[7].getText()) * 5)
 				+ (panelCnum[8].getText().equals("") ? 0 : Integer.valueOf(panelCnum[8].getText()) * 2)
-				+ (panelCnum[9].getText().equals("") ? 0 : Integer.valueOf(panelCnum[9].getText()) * 1)));
+				+ (panelCnum[9].getText().equals("") ? 0 : Integer.valueOf(panelCnum[9].getText()) * 1));
+		total[6].setText("R$" + totalCaja);
 		// Calculate the diferencia
-		caja = Integer.valueOf(total[6].getText());
-		calcR = Integer.valueOf(summaryT[8].getText());
-		if (caja == calcR) {
+		if (totalCaja == totalO) {
 			diffResult[1].setText("<html><center>No hay diferencia<br>Todo Bien</html>");
 			diffResult[1].setBackground(greenD);
 			diffResult[1].setForeground(Color.white);
 		} else {
-			if (caja > calcR) {
-				diffResult[1].setText("Sobro R$" + (caja - calcR));
+			if (totalCaja > totalO) {
+				diffResult[1].setText("Sobro R$" + (totalCaja - totalO));
 				diffResult[1].setBackground(Color.orange);
 				diffResult[1].setForeground(Color.black);
 			} else {
-				diffResult[1].setText("Falto R$" + (-caja + calcR));
+				diffResult[1].setText("Falto R$" + (totalO - totalCaja));
 				diffResult[1].setBackground(redD);
 				diffResult[1].setForeground(Color.white);
 			}
 		}
 		// Calculate the restTmrw
-		restN = caja - Integer.valueOf(panelCnum[0].getText()) * 1000 - Integer.valueOf(panelCnum[1].getText()) * 100
-				- Integer.valueOf(panelCnum[2].getText()) * 200 - Integer.valueOf(panelCnum[3].getText()) * 100
-				- Integer.valueOf(panelCnum[4].getText()) * 50;
-		if (restN > 200)
-			restN -= (20 * Integer.valueOf(panelCnum[5].getText()));
+		restN = totalCaja - Integer.valueOf(panelCnum[0].getText()) * 1000
+				- Integer.valueOf(panelCnum[1].getText()) * 100 - Integer.valueOf(panelCnum[2].getText()) * 200
+				- Integer.valueOf(panelCnum[3].getText()) * 100 - Integer.valueOf(panelCnum[4].getText()) * 50;
 		restTmrw[1].setText("R$" + restN);
 		restTmrw[1].setForeground(Color.black);
 		restTmrw[1].setBackground(lightC);
