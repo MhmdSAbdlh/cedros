@@ -18,6 +18,8 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.File;
@@ -38,24 +40,11 @@ import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.UIDefaults;
 import javax.swing.UIManager;
-import javax.swing.border.Border;
 import javax.swing.plaf.ColorUIResource;
 
 @SuppressWarnings("serial")
 public class Pesos extends JFrame {
-
-	static Font myFont = First.myFont;
-	static Font myFontS = First.myFontS;
-	static Color darkC = First.darkC;
-	static Color lightC = First.lightC;
-	static Color redC = new Color(254, 74, 74);
-	static Color redD = new Color(161, 48, 48);
-	static Color greenD = new Color(56, 161, 48);
-	static Color greenC = new Color(74, 220, 63);
-	static Border border = First.border;
-	static int totalCol = 0, totalVenta = 0, totalO = 0;
-	static int gastosT = 0, agregadoT = 0;
-	static int restN, totalCaja = 0;
+	// Fotos
 	private URL u2000 = getClass().getResource("images/p2000.jpg");
 	private ImageIcon i2000 = new ImageIcon(u2000);
 	private URL u1000 = getClass().getResource("images/p1000.jpg");
@@ -78,18 +67,19 @@ public class Pesos extends JFrame {
 	private ImageIcon i2 = new ImageIcon(u2);
 	private URL u1 = getClass().getResource("images/p1.jpg");
 	private ImageIcon i1 = new ImageIcon(u1);
-	private URL umg = getClass().getResource("images/nextd.png");
-	private ImageIcon mg = new ImageIcon(umg);
 	private URL uclear = getClass().getResource("images/clear.png");
 	private ImageIcon clear = new ImageIcon(uclear);
 	private URL reales = getClass().getResource("images/reales.png");
 	private ImageIcon realesI = new ImageIcon(reales);
+	private URL notas = getClass().getResource("images/notas.png");
+	private ImageIcon notasI = new ImageIcon(notas);
+
+	// Define Parameter
 	static JTextField details[][] = new JTextField[5][15];// Numbers of notes
 	static JTextField initialDay = new JTextField("0");// How much begin the day
 	static JTextField agregadoTable[] = new JTextField[8];// Added to cash detailed
 	static JTextField gastosTable[] = new JTextField[8];// Spend of the day detailed
 	static JTextField panelCnum[] = new JTextField[11];
-	// Define Parameter
 	static JLabel total[] = new JLabel[8];// Total of every column
 	static JLabel boletoN[] = new JLabel[6]; // B1,2,3,4,5
 	static JLabel summaryT[] = new JLabel[9];// Summary table
@@ -97,11 +87,20 @@ public class Pesos extends JFrame {
 	static JLabel agregado = new JLabel("A G R E G A D O");// Added to cash title
 	JLabel panelFoto[] = new JLabel[11];// Photo row
 	static JLabel[] diffResult = new JLabel[2];// calculate the difference
-	static JLabel[] restTmrw = new JLabel[2];// rest for tomorrow
-	int width;
-	int height;
+	static JLabel restTmrw = new JLabel();// rest for tomorrow
+	static int totalCol = 0, totalVenta = 0, totalO = 0;
+	static int gastosT = 0, agregadoT = 0;
+	static int restN, totalCaja = 0;
+	int width, height;
 
 	Pesos() {
+		// Buttons
+		JMenuItem hideBtn = new JMenuItem("ESCONDER LOS BOTONES");
+		JButton clearEverthing = new JButton();
+		JButton faturaBtn = new JButton();// FATURA BUTTON
+		JButton realesF = new JButton();
+		JButton newDay = new JButton("<html><center>Se Quedará<br>Para Mañana</center></html>");// REST
+
 		// Dimension
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		width = (int) screenSize.getWidth();
@@ -141,7 +140,6 @@ public class Pesos extends JFrame {
 				}
 			}
 		});
-
 		this.setAlwaysOnTop(false);
 
 		// Resolution
@@ -156,7 +154,7 @@ public class Pesos extends JFrame {
 		this.setLocationRelativeTo(null);
 		this.setLayout(null);
 		this.setResizable(false);
-		this.getContentPane().setBackground(darkC);
+		this.getContentPane().setBackground(First.darkC);
 		this.setIconImage(new ImageIcon(getClass().getClassLoader().getResource("images/icon.png")).getImage());
 		int temp;
 		ArrayList<String> keywords = listMercadoria();
@@ -165,14 +163,14 @@ public class Pesos extends JFrame {
 		for (int i = 0; i < 5; i++) {
 			temp = 0;
 			boletoN[i] = new JLabel("B" + (i + 1));
-			boletoN[i].setForeground(lightC);
+			boletoN[i].setForeground(First.lightC);
 			this.add(boletoN[i]);
 			for (int j = 0; j < 15; j++) {
 				details[i][j] = new JTextField("");
 				textFieldStyle(details[i][j]);
 				if (details[i][j].getText().equals(""))
 					temp += 0;
-				tableFocus(i, j, this);
+				tableFocus(i, j, this, newDay, faturaBtn, realesF, clearEverthing, hideBtn);
 				this.add(details[i][j]);
 			}
 			total[i] = new JLabel("");
@@ -181,7 +179,7 @@ public class Pesos extends JFrame {
 			this.add(total[i]);
 		}
 		boletoN[5] = new JLabel("______________________________________");
-		boletoN[5].setForeground(lightC);
+		boletoN[5].setForeground(First.lightC);
 		this.add(boletoN[5]);
 		total[5] = new JLabel("0");
 		First.labelStyle(total[5]);
@@ -219,24 +217,36 @@ public class Pesos extends JFrame {
 			}
 			this.add(summaryT[i]);
 		}
-		summaryT[0].setBackground(new Color(212, 212, 212));
+		summaryT[0].setBackground(First.grisD);
 		summaryT[0].setForeground(Color.black);
-		summaryT[1].setBackground(redD);
+		summaryT[1].setBackground(First.redD);
 		summaryT[1].setForeground(Color.white);
-		summaryT[2].setBackground(greenD);
+		summaryT[2].setBackground(First.greenD);
 		summaryT[2].setForeground(Color.white);
-		summaryT[3].setBackground(new Color(48, 107, 161));
+		summaryT[3].setBackground(First.blueD);
 		summaryT[3].setForeground(Color.white);
 		summaryT[4].setBackground(Color.black);
 		summaryT[4].setForeground(Color.white);
 		textFieldStyle(initialDay);
-		initialDay.setBackground(lightC);
+		initialDay.setBackground(First.lightC);
 		initialDay.setForeground(Color.black);
-		initialDay.setCaretColor(darkC);
+		initialDay.setCaretColor(First.darkC);
 		initialDay.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
-				// Clear
+				// Hide
+				if ((e.getKeyCode() == KeyEvent.VK_O) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0))
+					hideBtn(faturaBtn, realesF, newDay, clearEverthing, hideBtn);
+				// GO TO Notas
+				else if ((e.getKeyCode() == KeyEvent.VK_S) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+//					saveProgress();
+//					Pesos.this.dispose();
+//					FaturaR.totalC.setText("0");
+//					FaturaR.total.setText("0");
+//					new FaturaR();
+				}
+				// GO TO pesos
+				else// Clear
 				if ((e.getKeyCode() == KeyEvent.VK_C) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
 					clearAll();
 				}
@@ -265,16 +275,16 @@ public class Pesos extends JFrame {
 		this.add(initialDay);
 		for (int i = 5; i < 9; i++) {
 			summaryT[i] = new JLabel("0");
-			summaryT[i].setForeground(lightC);
-			summaryT[i].setBorder(border);
+			summaryT[i].setForeground(First.lightC);
+			summaryT[i].setBorder(First.border);
 			summaryT[i].setFocusable(false);
 			summaryT[i].setOpaque(true);
 			summaryT[i].setHorizontalAlignment(0);
 			this.add(summaryT[i]);
 		}
-		summaryT[5].setBackground(redC);
-		summaryT[6].setBackground(greenC);
-		summaryT[7].setBackground(new Color(70, 156, 235));
+		summaryT[5].setBackground(First.redC);
+		summaryT[6].setBackground(First.greenC);
+		summaryT[7].setBackground(First.blueC);
 		summaryT[8].setBackground(new Color(80, 80, 80));
 
 		// Panel 3
@@ -288,18 +298,17 @@ public class Pesos extends JFrame {
 			AutoComplete autoComplete = new AutoComplete(gastosTable[i], keywords);
 			gastosTable[i].getDocument().addDocumentListener(autoComplete);
 			textFieldStyle(gastosTable[i]);
-			gastosTable[i].setBackground(redD);
+			gastosTable[i].setBackground(First.redD);
 			gastosTable[i].setForeground(Color.white);
-			gasFocus(i, this);
+			gasFocus(i, this, newDay, faturaBtn, realesF, clearEverthing, hideBtn);
 			this.add(gastosTable[i]);
 		}
 		for (int i = 4; i < 8; i++) {
 			gastosTable[i] = new JTextField();
 			textFieldStyle(gastosTable[i]);
-			gastosTable[i].setBackground(redC);
-			gastosTable[i].setFont(myFontS);
+			gastosTable[i].setBackground(First.redC);
 			gastosTable[i].setForeground(Color.white);
-			gasFocus(i, this);
+			gasFocus(i, this, newDay, faturaBtn, realesF, clearEverthing, hideBtn);
 			this.add(gastosTable[i]);
 		}
 		First.labelStyle(agregado);
@@ -312,18 +321,17 @@ public class Pesos extends JFrame {
 			AutoComplete autoComplete = new AutoComplete(agregadoTable[i], keywords);
 			agregadoTable[i].getDocument().addDocumentListener(autoComplete);
 			textFieldStyle(agregadoTable[i]);
-			agregadoTable[i].setBackground(greenD);
+			agregadoTable[i].setBackground(First.greenD);
 			agregadoTable[i].setForeground(Color.white);
-			aggFocus(i, this);
+			aggFocus(i, this, newDay, faturaBtn, realesF, clearEverthing, hideBtn);
 			this.add(agregadoTable[i]);
 		}
 		for (int i = 4; i < 8; i++) {
 			agregadoTable[i] = new JTextField();
 			textFieldStyle(agregadoTable[i]);
-			agregadoTable[i].setBackground(greenC);
+			agregadoTable[i].setBackground(First.greenC);
 			agregadoTable[i].setForeground(Color.white);
-			agregadoTable[i].setFont(myFontS);
-			aggFocus(i, this);
+			aggFocus(i, this, newDay, faturaBtn, realesF, clearEverthing, hideBtn);
 			this.add(agregadoTable[i]);
 		}
 
@@ -337,10 +345,10 @@ public class Pesos extends JFrame {
 		for (int i = 0; i < 11; i++) {
 			panelCnum[i] = new JTextField("0");
 			textFieldStyle(panelCnum[i]);
-			panelCnum[i].setForeground(darkC);
-			panelCnum[i].setBackground(lightC);
-			panelCnum[i].setCaretColor(darkC);
-			cajaFocus(i, this);
+			panelCnum[i].setForeground(First.darkC);
+			panelCnum[i].setBackground(First.lightC);
+			panelCnum[i].setCaretColor(First.darkC);
+			cajaFocus(i, this, newDay, faturaBtn, realesF, clearEverthing, hideBtn);
 			this.add(panelCnum[i]);
 		}
 		total[6] = new JLabel("TOTAL");// Total Label
@@ -350,39 +358,52 @@ public class Pesos extends JFrame {
 		this.add(total[6]);
 
 		// Panel 5
-		diffResult[0] = new JLabel("Differencia");
+		diffResult[0] = new JLabel("Diferencia");// DIFFERENCE
 		First.labelStyle(diffResult[0]);
 		diffResult[0].setBackground(Color.black);
-		diffResult[0].setForeground(lightC);
+		diffResult[0].setForeground(First.lightC);
 		this.add(diffResult[0]);
-		diffResult[1] = new JLabel("No Hay Differencia");
+		diffResult[1] = new JLabel("No Hay Diferencia");
 		First.labelStyle(diffResult[1]);
 		this.add(diffResult[1]);
+		First.btnStyle(newDay);
+		newDay.setBackground(First.blueC);
+		newDay.setForeground(First.lightC);
+		newDay.addActionListener(e -> newDay());
+		newDay.addMouseListener(new MouseListener() {
+			@Override
+			public void mouseReleased(MouseEvent e) {
+			}
 
-		restTmrw[0] = new JLabel("Quedará para mañana");
-		First.labelStyle(restTmrw[0]);
-		restTmrw[0].setBackground(Color.black);
-		restTmrw[0].setForeground(lightC);
-		this.add(restTmrw[0]);
-		restTmrw[1] = new JLabel("$0");
-		First.labelStyle(restTmrw[1]);
-		this.add(restTmrw[1]);
+			@Override
+			public void mousePressed(MouseEvent e) {
+			}
 
-//		JButton notasF = new JButton();
-//		notasF.setBounds(800, 650, 70, 70);
-//		notasF.setFocusable(true);
-//		notasF.setOpaque(false);
-//		notasF.setContentAreaFilled(false);
-//		notasF.setBorderPainted(false);
-//		notasF.setIcon(notasI);
-//		notasF.addActionListener(e -> {
-//			saveProgress();
-//			this.dispose();
-//			new Notas();
-//		});
-//		this.add(notasF);
+			@Override
+			public void mouseClicked(MouseEvent e) {
+			}
 
-		JButton realesF = new JButton();
+			@Override
+			public void mouseExited(MouseEvent e) {
+				newDay.setBackground(First.blueC);
+				newDay.setForeground(First.lightC);
+			}
+
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				newDay.setBackground(First.blueD);
+				newDay.setForeground(First.lightC);
+			}
+		});
+		restTmrw.setText("R$0");
+		First.labelStyle(restTmrw);
+		this.add(restTmrw);
+		faturaBtn.setFocusable(true);
+		faturaBtn.setOpaque(false);
+		faturaBtn.setContentAreaFilled(false);
+		faturaBtn.setBorderPainted(false);
+		faturaBtn.addActionListener(e -> System.out.println("Fatura"));
+		this.add(faturaBtn);
 		realesF.setFocusable(true);
 		realesF.setOpaque(false);
 		realesF.setContentAreaFilled(false);
@@ -393,13 +414,6 @@ public class Pesos extends JFrame {
 			this.dispose();
 		});
 		this.add(realesF);
-		JButton newDay = new JButton();// Every calculate
-		JButton clearEverthing = new JButton();
-		newDay.setFocusable(false);
-		newDay.setOpaque(false);
-		newDay.setContentAreaFilled(false);
-		newDay.setBorderPainted(false);
-		newDay.addActionListener(e -> newDay());
 		clearEverthing.setOpaque(false);
 		clearEverthing.setContentAreaFilled(false);
 		clearEverthing.setBorderPainted(false);
@@ -420,9 +434,8 @@ public class Pesos extends JFrame {
 		JMenuItem save = new JMenuItem("SALVAR");
 		JMenuItem exit = new JMenuItem("SALIR");
 		JMenuItem reales = new JMenuItem("REALES");
-		// JMenuItem fatura = new JMenuItem("BORRAR TODO");
+		JMenuItem fatura = new JMenuItem("FATURA");
 		JMenuItem getHelp = new JMenuItem("ATAJOS DE TECLADO");
-		JMenuItem hideBtn = new JMenuItem("ESCONDER LOS BOTONES");
 		JMenuItem about = new JMenuItem("SOBRE EL APLICATIVO");
 		novo.addActionListener(e -> newDay());
 		calc.addActionListener(e -> sumF());
@@ -434,28 +447,23 @@ public class Pesos extends JFrame {
 			new Reales();
 			this.dispose();
 		});
+		fatura.addActionListener(e -> {
+			// saveProgress();
+			// FaturaR.totalC.setText("0");
+			// FaturaR.total.setText("0");
+			// this.dispose();
+			// new FaturaR();
+		});
 		getHelp.addActionListener(e -> JOptionPane.showMessageDialog(null,
-				// "• CTRL + S → ir la fatura.\n"
+				"• CTRL + S → ir la fatura.\n" +
 				"• CTRL + R → ir al reales.\n" + "• CTRL + B → borrar todo.\n"
 						+ "• CTRL + N → prepárate para el día siguiente.\n"
 						+ "• FLECHAS → subir, abajo, derecha e izquierda.\n" + "• CTRL + D → ir al detalles.\n"
 						+ "• CTRL + I → ir al inicio.\n" + "• CTRL + G → ir al gastos.\n"
 						+ "• CTRL + A → ir al agregado.\n" + "• CTRL + T → ir a la caja.\n"
-						+ "• CTRL + E → ir al ultimo numero.\n",
+						+ "• CTRL + E → ir al ultimo numero.\n" + "• CTRL + O → esconder los botones",
 				"ATAJOS DE TECLADO", 1));
-		hideBtn.addActionListener(e -> {
-			if (realesF.isShowing()) {
-				realesF.hide();
-				clearEverthing.hide();
-				newDay.hide();
-				hideBtn.setText("MONSTRAR LOS BOTONES");
-			} else {
-				realesF.show();
-				clearEverthing.show();
-				newDay.show();
-				hideBtn.setText("ESCONDER LOS BOTONES");
-			}
-		});
+		hideBtn.addActionListener(e -> hideBtn(faturaBtn, realesF, newDay, clearEverthing, hideBtn));
 		about.addActionListener(
 				e -> JOptionPane.showMessageDialog(null, "Crédito y Diseñado por MhmdSAbdlh ©", "SOBRE MI", 1));
 		JMenu reso = new JMenu("RESOLUCIÓN");
@@ -473,24 +481,25 @@ public class Pesos extends JFrame {
 		reso.add(reso1);
 		resoD.addActionListener(e -> {
 			if (width > 1800 && height > 1000) {
-				resG(resoD, realesF, newDay, clearEverthing);
+				resG(resoD, realesF, faturaBtn, newDay, clearEverthing);
 			} else if (width > 1500 && height > 700)
-				resM(resoD, realesF, newDay, clearEverthing);
+				resM(resoD, realesF, faturaBtn, newDay, clearEverthing);
 			else if (width > 1300 && height > 700)
-				resP(resoD, realesF, newDay, clearEverthing);
+				resP(resoD, realesF, faturaBtn, newDay, clearEverthing);
 			else
-				resXP(resoD, realesF, newDay, clearEverthing);
+				resXP(resoD, realesF, faturaBtn, newDay, clearEverthing);
 		});
-		reso1.addActionListener(e -> resG(resoD, realesF, newDay, clearEverthing));
-		reso2.addActionListener(e -> resM(resoD, realesF, newDay, clearEverthing));
-		reso3.addActionListener(e -> resP(resoD, realesF, newDay, clearEverthing));
-		reso4.addActionListener(e -> resXP(resoD, realesF, newDay, clearEverthing));
+		reso1.addActionListener(e -> resG(resoD, realesF, faturaBtn, newDay, clearEverthing));
+		reso2.addActionListener(e -> resM(resoD, realesF, faturaBtn, newDay, clearEverthing));
+		reso3.addActionListener(e -> resP(resoD, realesF, faturaBtn, newDay, clearEverthing));
+		reso4.addActionListener(e -> resXP(resoD, realesF, faturaBtn, newDay, clearEverthing));
 		file.add(novo);
 		file.add(calc);
 		file.add(clear);
 		file.add(save);
 		file.add(exit);
 		goTo.add(reales);
+		goTo.add(fatura);
 		help.add(getHelp);
 		help.add(hideBtn);
 		help.add(about);
@@ -524,13 +533,13 @@ public class Pesos extends JFrame {
 
 		// Resolution
 		if (width > 1800 && height > 1000) {
-			resG(resoD, realesF, newDay, clearEverthing);
+			resG(resoD, realesF, faturaBtn, newDay, clearEverthing);
 		} else if (width > 1500 && height > 700)
-			resM(resoD, realesF, newDay, clearEverthing);
+			resM(resoD, realesF, faturaBtn, newDay, clearEverthing);
 		else if (width > 1300 && height > 700)
-			resP(resoD, realesF, newDay, clearEverthing);
+			resP(resoD, realesF, faturaBtn, newDay, clearEverthing);
 		else
-			resXP(resoD, realesF, newDay, clearEverthing);
+			resXP(resoD, realesF, faturaBtn, newDay, clearEverthing);
 	}
 
 	// Check the input text if it is a number
@@ -575,9 +584,27 @@ public class Pesos extends JFrame {
 				gastosTable[i].setText("");
 			for (int i = 0; i < 8; i++)
 				agregadoTable[i].setText("");
-			for (int i = 0; i < 2; i++)
+			for (int i = 0; i < 1; i++)
 				panelCnum[i].setText("");
+			if (restN != totalCaja)
+				panelCnum[2].setText("");
 			sumF();
+		}
+	}
+
+	// Hide Btns
+	private static void hideBtn(JButton notasF, JButton pesosF, JButton newDay, JButton clearEverthing,
+			JMenuItem hideBtn) {
+		if (pesosF.isShowing()) {
+			pesosF.hide();
+			clearEverthing.hide();
+			notasF.hide();
+			hideBtn.setText("MONSTRAR LOS BOTONES");
+		} else {
+			pesosF.show();
+			clearEverthing.show();
+			notasF.show();
+			hideBtn.setText("ESCONDER LOS BOTONES");
 		}
 	}
 
@@ -704,34 +731,51 @@ public class Pesos extends JFrame {
 		total[6].setText("$" + totalCaja);
 		// Calculate the diferencia
 		if (totalCaja == totalO) {
-			diffResult[1].setText("<html><center>No hay diferencia<br>Todo Bien</html>");
-			diffResult[1].setBackground(greenD);
+			diffResult[1].setText("<html><center>No Hay Diferencia</html>");
+			diffResult[1].setBackground(First.greenD);
 			diffResult[1].setForeground(Color.white);
 		} else {
 			if (totalCaja > totalO) {
-				diffResult[1].setText("Sobro $" + (totalCaja - totalO));
+				diffResult[1].setText("Sobró $" + (totalCaja - totalO));
 				diffResult[1].setBackground(Color.orange);
 				diffResult[1].setForeground(Color.black);
 			} else {
-				diffResult[1].setText("Falto $" + (totalO - totalCaja));
-				diffResult[1].setBackground(redD);
+				diffResult[1].setText("Faltó $" + (totalO - totalCaja));
+				diffResult[1].setBackground(First.redD);
 				diffResult[1].setForeground(Color.white);
 			}
 		}
 		// Calculate the restTmrw
 		restN = totalCaja - Integer.valueOf(panelCnum[0].getText()) * 2000
-				- Integer.valueOf(panelCnum[1].getText()) * 1000 - Integer.valueOf(panelCnum[2].getText()) * 500;
-		restTmrw[1].setText("$" + restN);
-		restTmrw[1].setForeground(Color.black);
-		restTmrw[1].setBackground(lightC);
+				- Integer.valueOf(panelCnum[1].getText()) * 1000;
+		int nbOf500 = Integer.valueOf(panelCnum[2].getText());
+		while (restN > 1000 && nbOf500 > 0) {
+			restN -= 500;
+			nbOf500--;
+		}
+		restTmrw.setText("$" + restN);
+		restTmrw.setForeground(Color.black);
+		restTmrw.setBackground(First.lightC);
 	}
 
 	// Key listener for the table
-	private static void tableFocus(int i, int j, JFrame frame) {
+	private static void tableFocus(int i, int j, JFrame frame, JButton newDay, JButton notasF, JButton pesosF,
+			JButton clearEverthing, JMenuItem hideBtn) {
 		details[i][j].addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
-				if ((e.getKeyCode() == KeyEvent.VK_R) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+				// Hide
+				if ((e.getKeyCode() == KeyEvent.VK_O) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0))
+					hideBtn(notasF, pesosF, newDay, clearEverthing, hideBtn);
+				// GO TO Notas
+				else if ((e.getKeyCode() == KeyEvent.VK_S) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+//					saveProgress();
+//					frame.dispose();
+//					FaturaR.totalC.setText("0");
+//					FaturaR.total.setText("0");
+//					new FaturaR();
+				} // GO TO Reales
+				else if ((e.getKeyCode() == KeyEvent.VK_R) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
 					saveProgress();
 					frame.dispose();
 					new Reales();
@@ -835,11 +879,23 @@ public class Pesos extends JFrame {
 	}
 
 	// Key listener for the ADDITION
-	private static void aggFocus(int i, JFrame frame) {
+	private static void aggFocus(int i, JFrame frame, JButton newDay, JButton notasF, JButton pesosF,
+			JButton clearEverthing, JMenuItem hideBtn) {
 		agregadoTable[i].addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
-				if ((e.getKeyCode() == KeyEvent.VK_R) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+				// Hide
+				if ((e.getKeyCode() == KeyEvent.VK_O) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0))
+					hideBtn(notasF, pesosF, newDay, clearEverthing, hideBtn);
+				// GO TO Notas
+				else if ((e.getKeyCode() == KeyEvent.VK_S) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+//					saveProgress();
+//					frame.dispose();
+//					FaturaR.totalC.setText("0");
+//					FaturaR.total.setText("0");
+//					new FaturaR();
+				} // GO TO Reales
+				else if ((e.getKeyCode() == KeyEvent.VK_R) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
 					saveProgress();
 					frame.dispose();
 					new Reales();
@@ -905,11 +961,23 @@ public class Pesos extends JFrame {
 	}
 
 	// Key listener for the SPENT
-	private static void gasFocus(int i, JFrame frame) {
+	private static void gasFocus(int i, JFrame frame, JButton newDay, JButton notasF, JButton pesosF,
+			JButton clearEverthing, JMenuItem hideBtn) {
 		gastosTable[i].addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
-				if ((e.getKeyCode() == KeyEvent.VK_R) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+				// Hide
+				if ((e.getKeyCode() == KeyEvent.VK_O) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0))
+					hideBtn(notasF, pesosF, newDay, clearEverthing, hideBtn);
+				// GO TO Notas
+				else if ((e.getKeyCode() == KeyEvent.VK_S) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+//					saveProgress();
+//					frame.dispose();
+//					FaturaR.totalC.setText("0");
+//					FaturaR.total.setText("0");
+//					new FaturaR();
+				} // GO TO Reales
+				else if ((e.getKeyCode() == KeyEvent.VK_R) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
 					saveProgress();
 					frame.dispose();
 					new Reales();
@@ -976,11 +1044,23 @@ public class Pesos extends JFrame {
 	}
 
 	// Key listener for the CASH
-	private static void cajaFocus(int i, JFrame frame) {
+	private static void cajaFocus(int i, JFrame frame, JButton newDay, JButton notasF, JButton pesosF,
+			JButton clearEverthing, JMenuItem hideBtn) {
 		panelCnum[i].addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
-				if ((e.getKeyCode() == KeyEvent.VK_R) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+				// Hide
+				if ((e.getKeyCode() == KeyEvent.VK_O) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0))
+					hideBtn(notasF, pesosF, newDay, clearEverthing, hideBtn);
+				// GO TO Notas
+				else if ((e.getKeyCode() == KeyEvent.VK_S) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+//					saveProgress();
+//					frame.dispose();
+//					FaturaR.totalC.setText("0");
+//					FaturaR.total.setText("0");
+//					new FaturaR();
+				} // GO TO Reales
+				else if ((e.getKeyCode() == KeyEvent.VK_R) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
 					saveProgress();
 					frame.dispose();
 					new Reales();
@@ -1029,12 +1109,12 @@ public class Pesos extends JFrame {
 
 	// Style of textField
 	private static void textFieldStyle(JTextField tf) {
-		tf.setBackground(darkC);
-		tf.setForeground(lightC);
-		tf.setFont(myFont);
-		tf.setBorder(border);
+		tf.setBackground(First.darkC);
+		tf.setForeground(First.lightC);
+		tf.setFont(First.myFont);
+		tf.setBorder(First.border);
 		tf.setHorizontalAlignment(0);
-		tf.setCaretColor(lightC);
+		tf.setCaretColor(First.lightC);
 		tf.addFocusListener(new FocusListener() {
 			@Override
 			public void focusGained(FocusEvent e) {
@@ -1049,7 +1129,7 @@ public class Pesos extends JFrame {
 
 	}
 
-	private void resXP(JMenuItem resoD, JButton pesosF, JButton newDay, JButton clearEverthing) {
+	private void resXP(JMenuItem resoD, JButton pesosF, JButton notasF, JButton newDay, JButton clearEverthing) {
 		this.setSize(1000, 600);
 		if (width >= 1800)
 			if (this.getWidth() == 1820)
@@ -1071,15 +1151,15 @@ public class Pesos extends JFrame {
 				resoD.setEnabled(false);
 			else
 				resoD.setEnabled(true);
-		myFont = new Font("Tahoma", Font.BOLD, 17);
-		myFontS = new Font("Tahoma", Font.BOLD, 12);
+		First.myFont = new Font("Tahoma", Font.BOLD, 17);
+		First.myFontS = new Font("Tahoma", Font.BOLD, 12);
 		for (int i = 0; i < 5; i++) {
 			boletoN[i].setBounds(50 + i * 68, 5, 170, 40);
 			total[i].setBounds(30 + i * 70, 500, 50, 29);
-			boletoN[i].setFont(myFont);
-			total[i].setFont(myFont);
+			boletoN[i].setFont(First.myFont);
+			total[i].setFont(First.myFont);
 			for (int j = 0; j < 15; j++) {
-				details[i][j].setFont(myFontS);
+				details[i][j].setFont(First.myFontS);
 				details[i][j].setBounds(30 + i * 70, 50 + j * 29, 50, 22);
 			}
 		}
@@ -1087,34 +1167,34 @@ public class Pesos extends JFrame {
 		boletoN[5].setBounds(25, 472, 460, 20);
 		total[5].setBounds(390, 500, 58, 30);
 		total[7].setBounds(390, 470, 58, 30);
-		boletoN[5].setFont(myFont);
-		total[5].setFont(myFont);
-		initialDay.setFont(myFont);
-		total[7].setFont(myFont);
+		boletoN[5].setFont(First.myFont);
+		total[5].setFont(First.myFont);
+		initialDay.setFont(First.myFont);
+		total[7].setFont(First.myFont);
 		for (int i = 0; i < 5; i++) {
 			summaryT[i].setBounds(420, 50 + i * 30, 100, 30);
-			summaryT[i].setFont(myFont);
+			summaryT[i].setFont(First.myFont);
 		}
 		initialDay.setBounds(520, 50, 70, 30);
 		for (int i = 5; i < 9; i++) {
 			summaryT[i].setBounds(520, 50 + (i - 4) * 30, 70, 30);
-			summaryT[i].setFont(myFont);
+			summaryT[i].setFont(First.myFont);
 		}
 		gastos.setBounds(620, 50, 150, 30);
 		agregado.setBounds(800, 50, 150, 30);
-		gastos.setFont(myFont);
-		agregado.setFont(myFont);
+		gastos.setFont(First.myFont);
+		agregado.setFont(First.myFont);
 		for (int i = 0; i < 4; i++) {
 			gastosTable[i].setBounds(620, 80 + 30 * i, 100, 30);
 			agregadoTable[i].setBounds(800, 80 + 30 * i, 100, 30);
-			gastosTable[i].setFont(myFont);
-			agregadoTable[i].setFont(myFont);
+			gastosTable[i].setFont(First.myFont);
+			agregadoTable[i].setFont(First.myFont);
 		}
 		for (int i = 4; i < 8; i++) {
 			gastosTable[i].setBounds(720, 80 + 30 * (i - 4), 50, 30);
 			agregadoTable[i].setBounds(900, 80 + 30 * (i - 4), 50, 30);
-			gastosTable[i].setFont(myFont);
-			agregadoTable[i].setFont(myFont);
+			gastosTable[i].setFont(First.myFont);
+			agregadoTable[i].setFont(First.myFont);
 		}
 		for (int i = 0; i < 11; i++) {
 			switch (i) {
@@ -1161,27 +1241,27 @@ public class Pesos extends JFrame {
 				panelFoto[i].setBounds(780 + 40 * (i - 7), 250, 40, 40);
 				panelCnum[i].setBounds(780 + 40 * (i - 7), 290, 40, 40);
 			}
-			panelCnum[i].setFont(myFont);
+			panelCnum[i].setFont(First.myFont);
 		}
 		total[6].setBounds(430, 330, 510, 40);
-		diffResult[0].setBounds(500, 420, 150, 30);
-		diffResult[1].setBounds(500, 449, 150, 40);
-		restTmrw[0].setBounds(750, 420, 150, 40);
-		restTmrw[1].setBounds(750, 459, 150, 30);
-		total[6].setFont(myFont);
-		diffResult[0].setFont(myFontS);
-		diffResult[1].setFont(myFontS);
-		restTmrw[0].setFont(myFontS);
-		restTmrw[1].setFont(myFontS);
-		pesosF.setBounds(670, 440, 50, 50);
-		newDay.setBounds(920, 430, 50, 50);
+		diffResult[0].setBounds(500, 420, 150, 35);
+		diffResult[1].setBounds(500, 454, 150, 35);
+		newDay.setBounds(750, 420, 150, 45);
+		restTmrw.setBounds(750, 464, 150, 25);
+		notasF.setBounds(920, 430, 50, 50);
+		pesosF.setBounds(675, 430, 50, 50);
 		clearEverthing.setBounds(400, 400, 50, 50);
+		total[6].setFont(First.myFont);
+		diffResult[0].setFont(First.myFontS);
+		diffResult[1].setFont(First.myFontS);
+		restTmrw.setFont(First.myFontS);
+		newDay.setFont(First.myFontS);
+		notasF.setIcon(new ImageIcon(getScaledImage(notasI.getImage(), 50, 50)));
 		pesosF.setIcon(new ImageIcon(getScaledImage(realesI.getImage(), 50, 50)));
-		newDay.setIcon(new ImageIcon(getScaledImage(mg.getImage(), 48, 48)));
 		clearEverthing.setIcon(new ImageIcon(getScaledImage(clear.getImage(), 50, 50)));
 	}
 
-	private void resP(JMenuItem resoD, JButton pesosF, JButton newDay, JButton clearEverthing) {
+	private void resP(JMenuItem resoD, JButton pesosF, JButton notasF, JButton newDay, JButton clearEverthing) {
 		this.setSize(1300, 700);
 		if (width >= 1800)
 			if (this.getWidth() == 1820)
@@ -1203,50 +1283,50 @@ public class Pesos extends JFrame {
 				resoD.setEnabled(false);
 			else
 				resoD.setEnabled(true);
-		myFont = new Font("Tahoma", Font.BOLD, 18);
-		myFontS = new Font("Tahoma", Font.BOLD, 15);
+		First.myFont = new Font("Tahoma", Font.BOLD, 18);
+		First.myFontS = new Font("Tahoma", Font.BOLD, 15);
 		for (int i = 0; i < 5; i++) {
 			boletoN[i].setBounds(60 + i * 88, 5, 200, 50);
 			total[i].setBounds(30 + i * 90, 600, 70, 29);
-			boletoN[i].setFont(myFont);
-			total[i].setFont(myFont);
+			boletoN[i].setFont(First.myFont);
+			total[i].setFont(First.myFont);
 			for (int j = 0; j < 15; j++) {
 				details[i][j].setBounds(30 + i * 90, 55 + j * 35, 70, 25);
-				details[i][j].setFont(myFontS);
+				details[i][j].setFont(First.myFontS);
 			}
 		}
 		boletoN[5].setText("________________________________________");
 		boletoN[5].setBounds(25, 550, 570, 50);
 		total[5].setBounds(500, 590, 88, 35);
 		total[7].setBounds(500, 560, 88, 30);
-		boletoN[5].setFont(myFont);
-		total[5].setFont(myFont);
-		initialDay.setFont(myFont);
-		total[7].setFont(myFont);
+		boletoN[5].setFont(First.myFont);
+		total[5].setFont(First.myFont);
+		initialDay.setFont(First.myFont);
+		total[7].setFont(First.myFont);
 		for (int i = 0; i < 5; i++) {
 			summaryT[i].setBounds(550, 50 + i * 40, 120, 40);
-			summaryT[i].setFont(myFont);
+			summaryT[i].setFont(First.myFont);
 		}
 		initialDay.setBounds(670, 50, 80, 40);
 		for (int i = 5; i < 9; i++) {
 			summaryT[i].setBounds(670, 50 + (i - 4) * 40, 80, 40);
-			summaryT[i].setFont(myFont);
+			summaryT[i].setFont(First.myFont);
 		}
 		gastos.setBounds(800, 50, 210, 40);
 		agregado.setBounds(1050, 50, 210, 40);
-		gastos.setFont(myFont);
-		agregado.setFont(myFont);
+		gastos.setFont(First.myFont);
+		agregado.setFont(First.myFont);
 		for (int i = 0; i < 4; i++) {
 			gastosTable[i].setBounds(800, 90 + 40 * i, 150, 40);
 			agregadoTable[i].setBounds(1050, 90 + 40 * i, 150, 40);
-			gastosTable[i].setFont(myFont);
-			agregadoTable[i].setFont(myFont);
+			gastosTable[i].setFont(First.myFont);
+			agregadoTable[i].setFont(First.myFont);
 		}
 		for (int i = 4; i < 8; i++) {
 			gastosTable[i].setBounds(950, 90 + 40 * (i - 4), 60, 40);
 			agregadoTable[i].setBounds(1200, 90 + 40 * (i - 4), 60, 40);
-			gastosTable[i].setFont(myFont);
-			agregadoTable[i].setFont(myFont);
+			gastosTable[i].setFont(First.myFont);
+			agregadoTable[i].setFont(First.myFont);
 		}
 		for (int i = 0; i < 11; i++) {
 			if (i < 7) {
@@ -1256,7 +1336,7 @@ public class Pesos extends JFrame {
 				panelFoto[i].setBounds(1000 + 45 * (i - 7), 300, 45, 40);
 				panelCnum[i].setBounds(1000 + 45 * (i - 7), 340, 45, 40);
 			}
-			panelCnum[i].setFont(myFont);
+			panelCnum[i].setFont(First.myFont);
 			switch (i) {
 			case 0:
 				panelFoto[i].setIcon(new ImageIcon(getScaledImage(i2000.getImage(), 60, 40)));
@@ -1298,22 +1378,22 @@ public class Pesos extends JFrame {
 		total[6].setBounds(580, 380, 600, 40);
 		diffResult[0].setBounds(620, 480, 200, 40);
 		diffResult[1].setBounds(620, 519, 200, 50);
-		restTmrw[0].setBounds(950, 480, 210, 50);
-		restTmrw[1].setBounds(950, 529, 210, 40);
-		pesosF.setBounds(850, 500, 60, 60);
-		newDay.setBounds(1185, 490, 60, 60);
+		newDay.setBounds(950, 480, 210, 55);
+		restTmrw.setBounds(950, 534, 210, 35);
+		notasF.setBounds(1180, 500, 60, 60);
+		pesosF.setBounds(855, 500, 60, 60);
 		clearEverthing.setBounds(520, 460, 70, 70);
-		total[6].setFont(myFont);
-		diffResult[0].setFont(myFont);
-		diffResult[1].setFont(myFont);
-		restTmrw[0].setFont(myFont);
-		restTmrw[1].setFont(myFont);
+		total[6].setFont(First.myFont);
+		diffResult[0].setFont(First.myFont);
+		diffResult[1].setFont(First.myFont);
+		restTmrw.setFont(First.myFont);
+		newDay.setFont(First.myFont);
+		notasF.setIcon(new ImageIcon(getScaledImage(notasI.getImage(), 60, 60)));
 		pesosF.setIcon(new ImageIcon(getScaledImage(realesI.getImage(), 60, 60)));
-		newDay.setIcon(new ImageIcon(getScaledImage(mg.getImage(), 60, 60)));
 		clearEverthing.setIcon(new ImageIcon(getScaledImage(clear.getImage(), 70, 70)));
 	}
 
-	private void resM(JMenuItem resoD, JButton pesosF, JButton newDay, JButton clearEverthing) {
+	private void resM(JMenuItem resoD, JButton pesosF, JButton notasF, JButton newDay, JButton clearEverthing) {
 		this.setSize(1500, 800);
 		if (width >= 1800)
 			if (this.getWidth() == 1820)
@@ -1335,50 +1415,50 @@ public class Pesos extends JFrame {
 				resoD.setEnabled(false);
 			else
 				resoD.setEnabled(true);
-		myFont = First.myFont;
-		myFontS = First.myFontS;
+		First.myFont = new Font("Tahoma", Font.BOLD, 21);
+		First.myFontS = new Font("Tahoma", Font.BOLD, 17);
 		for (int i = 0; i < 5; i++) {
 			boletoN[i].setBounds(60 + i * 100, 5, 200, 50);
 			total[i].setBounds(25 + i * 100, 690, 90, 32);
-			boletoN[i].setFont(myFont);
-			total[i].setFont(myFont);
+			boletoN[i].setFont(First.myFont);
+			total[i].setFont(First.myFont);
 			for (int j = 0; j < 15; j++) {
 				details[i][j].setBounds(30 + i * 100, 55 + j * 40, 80, 30);
-				details[i][j].setFont(myFontS);
+				details[i][j].setFont(First.myFontS);
 			}
 		}
 		boletoN[5].setText("______________________________________");
 		boletoN[5].setBounds(25, 632, 600, 50);
 		total[5].setBounds(540, 680, 98, 35);
 		total[7].setBounds(540, 650, 98, 30);
-		boletoN[5].setFont(myFont);
-		total[5].setFont(myFont);
-		initialDay.setFont(myFont);
-		total[7].setFont(myFont);
+		boletoN[5].setFont(First.myFont);
+		total[5].setFont(First.myFont);
+		initialDay.setFont(First.myFont);
+		total[7].setFont(First.myFont);
 		for (int i = 0; i < 5; i++) {
 			summaryT[i].setBounds(570, 50 + i * 50, 140, 50);
-			summaryT[i].setFont(myFont);
+			summaryT[i].setFont(First.myFont);
 		}
 		initialDay.setBounds(710, 50, 90, 50);
 		for (int i = 5; i < 9; i++) {
 			summaryT[i].setBounds(710, 50 + (i - 4) * 50, 90, 50);
-			summaryT[i].setFont(myFont);
+			summaryT[i].setFont(First.myFont);
 		}
 		gastos.setBounds(870, 50, 230, 50);
 		agregado.setBounds(1170, 50, 230, 50);
-		gastos.setFont(myFont);
-		agregado.setFont(myFont);
+		gastos.setFont(First.myFont);
+		agregado.setFont(First.myFont);
 		for (int i = 0; i < 4; i++) {
 			gastosTable[i].setBounds(870, 100 + 50 * i, 160, 50);
 			agregadoTable[i].setBounds(1170, 100 + 50 * i, 160, 50);
-			gastosTable[i].setFont(myFont);
-			agregadoTable[i].setFont(myFont);
+			gastosTable[i].setFont(First.myFont);
+			agregadoTable[i].setFont(First.myFont);
 		}
 		for (int i = 4; i < 8; i++) {
 			gastosTable[i].setBounds(1030, 100 + 50 * (i - 4), 70, 50);
 			agregadoTable[i].setBounds(1330, 100 + 50 * (i - 4), 70, 50);
-			gastosTable[i].setFont(myFont);
-			agregadoTable[i].setFont(myFont);
+			gastosTable[i].setFont(First.myFont);
+			agregadoTable[i].setFont(First.myFont);
 		}
 		for (int i = 0; i < 11; i++) {
 			if (i < 7) {
@@ -1425,27 +1505,27 @@ public class Pesos extends JFrame {
 			default:
 				break;
 			}
-			panelCnum[i].setFont(myFont);
+			panelCnum[i].setFont(First.myFont);
 		}
 		total[6].setBounds(640, 480, 710, 50);
-		diffResult[0].setBounds(680, 570, 250, 50);
-		diffResult[1].setBounds(680, 620, 250, 60);
-		restTmrw[0].setBounds(1070, 570, 250, 60);
-		restTmrw[1].setBounds(1070, 620, 250, 50);
-		pesosF.setBounds(960, 600, 70, 70);
-		newDay.setBounds(1370, 580, 70, 70);
+		diffResult[0].setBounds(680, 570, 250, 55);
+		diffResult[1].setBounds(680, 624, 250, 55);
+		newDay.setBounds(1070, 570, 250, 65);
+		restTmrw.setBounds(1070, 634, 250, 45);
+		notasF.setBounds(1350, 580, 80, 80);
+		pesosF.setBounds(960, 590, 70, 70);
 		clearEverthing.setBounds(560, 540, 70, 70);
-		total[6].setFont(myFont);
-		diffResult[0].setFont(myFont);
-		diffResult[1].setFont(myFont);
-		restTmrw[0].setFont(myFont);
-		restTmrw[1].setFont(myFont);
+		total[6].setFont(First.myFont);
+		diffResult[0].setFont(First.myFont);
+		diffResult[1].setFont(First.myFont);
+		restTmrw.setFont(First.myFont);
+		newDay.setFont(First.myFont);
+		notasF.setIcon(new ImageIcon(getScaledImage(notasI.getImage(), 80, 80)));
 		pesosF.setIcon(new ImageIcon(getScaledImage(realesI.getImage(), 70, 70)));
-		newDay.setIcon(new ImageIcon(getScaledImage(mg.getImage(), 70, 70)));
 		clearEverthing.setIcon(new ImageIcon(getScaledImage(clear.getImage(), 70, 70)));
 	}
 
-	private void resG(JMenuItem resoD, JButton pesosF, JButton newDay, JButton clearEverthing) {
+	private void resG(JMenuItem resoD, JButton pesosF, JButton notasF, JButton newDay, JButton clearEverthing) {
 		this.setSize(1820, 980);
 		if (width >= 1800)
 			if (this.getWidth() == 1820)
@@ -1467,49 +1547,49 @@ public class Pesos extends JFrame {
 				resoD.setEnabled(false);
 			else
 				resoD.setEnabled(true);
-		myFont = new Font("Tahoma", Font.BOLD, 24);
-		myFontS = new Font("Tahoma", Font.BOLD, 20);
+		First.myFont = new Font("Tahoma", Font.BOLD, 24);
+		First.myFontS = new Font("Tahoma", Font.BOLD, 20);
 		for (int i = 0; i < 5; i++) {
 			boletoN[i].setBounds(60 + i * 120, 5, 200, 50);
 			total[i].setBounds(25 + i * 120, 850, 90, 32);
-			boletoN[i].setFont(myFont);
-			total[i].setFont(myFont);
+			boletoN[i].setFont(First.myFont);
+			total[i].setFont(First.myFont);
 			for (int j = 0; j < 15; j++) {
 				details[i][j].setBounds(30 + i * 120, 65 + j * 50, 80, 35);
-				details[i][j].setFont(myFontS);
+				details[i][j].setFont(First.myFontS);
 			}
 		}
 		boletoN[5].setText("______________________________________");
 		boletoN[5].setBounds(25, 790, 600, 50);
 		total[5].setBounds(625, 830, 98, 45);
 		total[7].setBounds(625, 790, 98, 40);
-		boletoN[5].setFont(myFont);
-		total[5].setFont(myFont);
-		initialDay.setFont(myFont);
-		total[7].setFont(myFont);
+		boletoN[5].setFont(First.myFont);
+		total[5].setFont(First.myFont);
+		initialDay.setFont(First.myFont);
+		total[7].setFont(First.myFont);
 		for (int i = 0; i < 5; i++) {
 			summaryT[i].setBounds(700, 50 + i * 60, 160, 60);
-			summaryT[i].setFont(myFont);
+			summaryT[i].setFont(First.myFont);
 		}
 		initialDay.setBounds(860, 50, 110, 60);
 		for (int i = 5; i < 9; i++) {
 			summaryT[i].setBounds(860, 50 + (i - 4) * 60, 110, 60);
-			summaryT[i].setFont(myFont);
+			summaryT[i].setFont(First.myFont);
 		}
 		gastos.setBounds(1100, 50, 270, 60);
-		gastos.setFont(myFont);
-		agregado.setFont(myFont);
+		gastos.setFont(First.myFont);
+		agregado.setFont(First.myFont);
 		for (int i = 0; i < 4; i++) {
 			gastosTable[i].setBounds(1100, 110 + 60 * i, 180, 60);
 			agregadoTable[i].setBounds(1500, 110 + 60 * i, 180, 60);
-			gastosTable[i].setFont(myFontS);
-			agregadoTable[i].setFont(myFontS);
+			gastosTable[i].setFont(First.myFontS);
+			agregadoTable[i].setFont(First.myFontS);
 		}
 		for (int i = 4; i < 8; i++) {
 			gastosTable[i].setBounds(1280, 110 + 60 * (i - 4), 90, 60);
 			agregadoTable[i].setBounds(1680, 110 + 60 * (i - 4), 90, 60);
-			gastosTable[i].setFont(myFontS);
-			agregadoTable[i].setFont(myFontS);
+			gastosTable[i].setFont(First.myFontS);
+			agregadoTable[i].setFont(First.myFontS);
 		}
 		agregado.setBounds(1500, 50, 270, 60);
 		for (int i = 0; i < 11; i++) {
@@ -1557,23 +1637,23 @@ public class Pesos extends JFrame {
 			default:
 				break;
 			}
-			panelCnum[i].setFont(myFont);
+			panelCnum[i].setFont(First.myFont);
 		}
 		total[6].setBounds(800, 570, 820, 60);
-		diffResult[0].setBounds(850, 700, 250, 60);
-		diffResult[1].setBounds(850, 759, 250, 70);
-		restTmrw[0].setBounds(1270, 700, 300, 70);
-		restTmrw[1].setBounds(1270, 769, 300, 60);
-		pesosF.setBounds(1150, 720, 80, 80);
-		newDay.setBounds(1650, 750, 80, 80);
+		diffResult[0].setBounds(850, 700, 250, 65);
+		diffResult[1].setBounds(850, 764, 250, 65);
+		newDay.setBounds(1270, 700, 300, 75);
+		restTmrw.setBounds(1270, 774, 300, 55);
+		pesosF.setBounds(1140, 730, 80, 80);
+		notasF.setBounds(1650, 700, 100, 100);
 		clearEverthing.setBounds(650, 650, 80, 80);
-		total[6].setFont(myFont);
-		diffResult[0].setFont(myFont);
-		diffResult[1].setFont(myFont);
-		restTmrw[0].setFont(myFont);
-		restTmrw[1].setFont(myFont);
+		total[6].setFont(First.myFont);
+		diffResult[0].setFont(First.myFont);
+		diffResult[1].setFont(First.myFont);
+		restTmrw.setFont(First.myFont);
+		newDay.setFont(First.myFont);
+		notasF.setIcon(new ImageIcon(getScaledImage(notasI.getImage(), 100, 100)));
 		pesosF.setIcon(new ImageIcon(getScaledImage(realesI.getImage(), 80, 80)));
-		newDay.setIcon(new ImageIcon(getScaledImage(mg.getImage(), 80, 80)));
 		clearEverthing.setIcon(new ImageIcon(getScaledImage(clear.getImage(), 80, 80)));
 	}
 

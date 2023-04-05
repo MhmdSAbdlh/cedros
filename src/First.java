@@ -33,6 +33,14 @@ public class First extends JFrame {
 	int showStatus = 0;
 	static Font myFont = new Font("Tahoma", Font.BOLD, 21);
 	static Font myFontS = new Font("Tahoma", Font.BOLD, 17);
+	// Colores
+	static Color redC = new Color(254, 74, 74);
+	static Color redD = new Color(161, 48, 48);
+	static Color greenD = new Color(56, 161, 48);
+	static Color greenC = new Color(74, 220, 63);
+	static Color grisD = new Color(212, 212, 212);
+	static Color blueD = new Color(48, 107, 161);
+	static Color blueC = new Color(70, 156, 235);
 	static Color darkC = new Color(40, 40, 43);
 	static Color lightC = new Color(236, 236, 236);
 	static Border border = new LineBorder(Color.white, 2);
