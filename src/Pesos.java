@@ -231,47 +231,7 @@ public class Pesos extends JFrame {
 		initialDay.setBackground(First.lightC);
 		initialDay.setForeground(Color.black);
 		initialDay.setCaretColor(First.darkC);
-		initialDay.addKeyListener(new KeyAdapter() {
-			@Override
-			public void keyPressed(KeyEvent e) {
-				// Hide
-				if ((e.getKeyCode() == KeyEvent.VK_O) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0))
-					hideBtn(faturaBtn, realesF, newDay, clearEverthing, hideBtn);
-				// GO TO Notas
-				else if ((e.getKeyCode() == KeyEvent.VK_S) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
-//					saveProgress();
-//					Pesos.this.dispose();
-//					FaturaR.totalC.setText("0");
-//					FaturaR.total.setText("0");
-//					new FaturaR();
-				}
-				// GO TO pesos
-				else// Clear
-				if ((e.getKeyCode() == KeyEvent.VK_C) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
-					clearAll();
-				}
-				// GO TO GASTOS
-				if ((e.getKeyCode() == KeyEvent.VK_G) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
-					initialDay.setNextFocusableComponent(gastosTable[0]);
-					initialDay.nextFocus();
-				}
-				// GO TO AGG
-				if ((e.getKeyCode() == KeyEvent.VK_A) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
-					initialDay.setNextFocusableComponent(agregadoTable[0]);
-					initialDay.nextFocus();
-				}
-				// GO TO Details
-				if ((e.getKeyCode() == KeyEvent.VK_D) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
-					initialDay.setNextFocusableComponent(details[0][0]);
-					initialDay.nextFocus();
-				}
-				// GO TO Troco
-				if ((e.getKeyCode() == KeyEvent.VK_T) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
-					initialDay.setNextFocusableComponent(panelCnum[0]);
-					initialDay.nextFocus();
-				}
-			}
-		});
+		iniFocus(newDay, faturaBtn, realesF, clearEverthing, hideBtn);
 		this.add(initialDay);
 		for (int i = 5; i < 9; i++) {
 			summaryT[i] = new JLabel("0");
@@ -395,14 +355,20 @@ public class Pesos extends JFrame {
 				newDay.setForeground(First.lightC);
 			}
 		});
-		restTmrw.setText("R$0");
+		restTmrw.setText("$0");
 		First.labelStyle(restTmrw);
 		this.add(restTmrw);
 		faturaBtn.setFocusable(true);
 		faturaBtn.setOpaque(false);
 		faturaBtn.setContentAreaFilled(false);
 		faturaBtn.setBorderPainted(false);
-		faturaBtn.addActionListener(e -> System.out.println("Fatura"));
+		faturaBtn.addActionListener(e -> {
+			saveProgress();
+			FaturaP.totalC.setText("0");
+			FaturaP.total.setText("0");
+			this.dispose();
+			new FaturaP();
+		});
 		this.add(faturaBtn);
 		realesF.setFocusable(true);
 		realesF.setOpaque(false);
@@ -448,15 +414,14 @@ public class Pesos extends JFrame {
 			this.dispose();
 		});
 		fatura.addActionListener(e -> {
-			// saveProgress();
-			// FaturaR.totalC.setText("0");
-			// FaturaR.total.setText("0");
-			// this.dispose();
-			// new FaturaR();
+			saveProgress();
+			FaturaP.totalC.setText("0");
+			FaturaP.total.setText("0");
+			this.dispose();
+			new FaturaP();
 		});
 		getHelp.addActionListener(e -> JOptionPane.showMessageDialog(null,
-				"• CTRL + S → ir la fatura.\n" +
-				"• CTRL + R → ir al reales.\n" + "• CTRL + B → borrar todo.\n"
+				"• CTRL + S → ir la fatura.\n" + "• CTRL + R → ir al reales.\n" + "• CTRL + B → borrar todo.\n"
 						+ "• CTRL + N → prepárate para el día siguiente.\n"
 						+ "• FLECHAS → subir, abajo, derecha e izquierda.\n" + "• CTRL + D → ir al detalles.\n"
 						+ "• CTRL + I → ir al inicio.\n" + "• CTRL + G → ir al gastos.\n"
@@ -540,16 +505,6 @@ public class Pesos extends JFrame {
 			resP(resoD, realesF, faturaBtn, newDay, clearEverthing);
 		else
 			resXP(resoD, realesF, faturaBtn, newDay, clearEverthing);
-	}
-
-	// Check the input text if it is a number
-	private static boolean isNumeric(String number) {
-		try {
-			Integer.parseInt(number);
-			return true;
-		} catch (NumberFormatException e) {
-			return false;
-		}
 	}
 
 	// Clear all funcion
@@ -669,26 +624,26 @@ public class Pesos extends JFrame {
 	private static void sumF() {
 		saveProgress();
 		for (int i = 0; i < 11; i++)// Caja empty values 0
-			if (!isNumeric(panelCnum[i].getText()))
+			if (!First.isNumeric(panelCnum[i].getText()))
 				panelCnum[i].setText(0 + "");
-		if (!isNumeric(initialDay.getText()))// initial of the day 0
+		if (!First.isNumeric(initialDay.getText()))// initial of the day 0
 			initialDay.setText(0 + "");
 		for (int i = 0; i < 4; i++) {// TitleCase gastos and agg
 			gastosTable[i].setText(capitalizeString(gastosTable[i].getText()));
 			agregadoTable[i].setText(capitalizeString(agregadoTable[i].getText()));
 		}
 		for (int i = 4; i < 8; i++)// spent 0
-			if (!isNumeric(gastosTable[i].getText()))
+			if (!First.isNumeric(gastosTable[i].getText()))
 				gastosTable[i].setText("");
 		for (int i = 4; i < 8; i++)// added 0
-			if (!isNumeric(agregadoTable[i].getText()))
+			if (!First.isNumeric(agregadoTable[i].getText()))
 				agregadoTable[i].setText("");
 		// Calculate the totals
 		totalVenta = 0;
 		for (int i = 0; i < 5; i++) {
 			totalCol = 0;
 			for (int j = 0; j < 15; j++) {
-				if (!isNumeric(details[i][j].getText())) {
+				if (!First.isNumeric(details[i][j].getText())) {
 					details[i][j].setText("");
 					totalCol += 0;
 				} else {
@@ -759,7 +714,7 @@ public class Pesos extends JFrame {
 	}
 
 	// Key listener for the table
-	private static void tableFocus(int i, int j, JFrame frame, JButton newDay, JButton notasF, JButton pesosF,
+	private void tableFocus(int i, int j, JFrame frame, JButton newDay, JButton notasF, JButton pesosF,
 			JButton clearEverthing, JMenuItem hideBtn) {
 		details[i][j].addKeyListener(new KeyAdapter() {
 			@Override
@@ -769,11 +724,11 @@ public class Pesos extends JFrame {
 					hideBtn(notasF, pesosF, newDay, clearEverthing, hideBtn);
 				// GO TO Notas
 				else if ((e.getKeyCode() == KeyEvent.VK_S) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
-//					saveProgress();
-//					frame.dispose();
-//					FaturaR.totalC.setText("0");
-//					FaturaR.total.setText("0");
-//					new FaturaR();
+					saveProgress();
+					FaturaP.totalC.setText("0");
+					FaturaP.total.setText("0");
+					frame.dispose();
+					new FaturaP();
 				} // GO TO Reales
 				else if ((e.getKeyCode() == KeyEvent.VK_R) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
 					saveProgress();
@@ -878,9 +833,44 @@ public class Pesos extends JFrame {
 		});
 	}
 
+	// Key listener for the initial
+	private void iniFocus(JButton newDay, JButton notasF, JButton pesosF, JButton clearEverthing, JMenuItem hideBtn) {
+		initialDay.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				// Hide
+				if ((e.getKeyCode() == KeyEvent.VK_O) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0))
+					hideBtn(notasF, pesosF, newDay, clearEverthing, hideBtn);
+				else // Clear
+				if ((e.getKeyCode() == KeyEvent.VK_B) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+					clearAll();
+				} else// new day
+				if ((e.getKeyCode() == KeyEvent.VK_N) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+					newDay();
+				} else // GO TO GASTOS
+				if ((e.getKeyCode() == KeyEvent.VK_G) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+					initialDay.setNextFocusableComponent(gastosTable[0]);
+					initialDay.nextFocus();
+				} else // GO TO AGG
+				if ((e.getKeyCode() == KeyEvent.VK_A) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+					initialDay.setNextFocusableComponent(agregadoTable[0]);
+					initialDay.nextFocus();
+				} else // GO TO Details
+				if ((e.getKeyCode() == KeyEvent.VK_D) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+					initialDay.setNextFocusableComponent(details[0][0]);
+					initialDay.nextFocus();
+				} else // GO TO Troco
+				if ((e.getKeyCode() == KeyEvent.VK_T) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+					initialDay.setNextFocusableComponent(panelCnum[0]);
+					initialDay.nextFocus();
+				}
+			}
+		});
+	}
+
 	// Key listener for the ADDITION
-	private static void aggFocus(int i, JFrame frame, JButton newDay, JButton notasF, JButton pesosF,
-			JButton clearEverthing, JMenuItem hideBtn) {
+	private void aggFocus(int i, JFrame frame, JButton newDay, JButton notasF, JButton pesosF, JButton clearEverthing,
+			JMenuItem hideBtn) {
 		agregadoTable[i].addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
@@ -889,11 +879,11 @@ public class Pesos extends JFrame {
 					hideBtn(notasF, pesosF, newDay, clearEverthing, hideBtn);
 				// GO TO Notas
 				else if ((e.getKeyCode() == KeyEvent.VK_S) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
-//					saveProgress();
-//					frame.dispose();
-//					FaturaR.totalC.setText("0");
-//					FaturaR.total.setText("0");
-//					new FaturaR();
+					saveProgress();
+					FaturaP.totalC.setText("0");
+					FaturaP.total.setText("0");
+					frame.dispose();
+					new FaturaP();
 				} // GO TO Reales
 				else if ((e.getKeyCode() == KeyEvent.VK_R) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
 					saveProgress();
@@ -961,8 +951,8 @@ public class Pesos extends JFrame {
 	}
 
 	// Key listener for the SPENT
-	private static void gasFocus(int i, JFrame frame, JButton newDay, JButton notasF, JButton pesosF,
-			JButton clearEverthing, JMenuItem hideBtn) {
+	private void gasFocus(int i, JFrame frame, JButton newDay, JButton notasF, JButton pesosF, JButton clearEverthing,
+			JMenuItem hideBtn) {
 		gastosTable[i].addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
@@ -971,11 +961,11 @@ public class Pesos extends JFrame {
 					hideBtn(notasF, pesosF, newDay, clearEverthing, hideBtn);
 				// GO TO Notas
 				else if ((e.getKeyCode() == KeyEvent.VK_S) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
-//					saveProgress();
-//					frame.dispose();
-//					FaturaR.totalC.setText("0");
-//					FaturaR.total.setText("0");
-//					new FaturaR();
+					saveProgress();
+					FaturaP.totalC.setText("0");
+					FaturaP.total.setText("0");
+					frame.dispose();
+					new FaturaP();
 				} // GO TO Reales
 				else if ((e.getKeyCode() == KeyEvent.VK_R) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
 					saveProgress();
@@ -1044,8 +1034,8 @@ public class Pesos extends JFrame {
 	}
 
 	// Key listener for the CASH
-	private static void cajaFocus(int i, JFrame frame, JButton newDay, JButton notasF, JButton pesosF,
-			JButton clearEverthing, JMenuItem hideBtn) {
+	private void cajaFocus(int i, JFrame frame, JButton newDay, JButton notasF, JButton pesosF, JButton clearEverthing,
+			JMenuItem hideBtn) {
 		panelCnum[i].addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
@@ -1054,11 +1044,11 @@ public class Pesos extends JFrame {
 					hideBtn(notasF, pesosF, newDay, clearEverthing, hideBtn);
 				// GO TO Notas
 				else if ((e.getKeyCode() == KeyEvent.VK_S) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
-//					saveProgress();
-//					frame.dispose();
-//					FaturaR.totalC.setText("0");
-//					FaturaR.total.setText("0");
-//					new FaturaR();
+					saveProgress();
+					FaturaP.totalC.setText("0");
+					FaturaP.total.setText("0");
+					frame.dispose();
+					new FaturaP();
 				} // GO TO Reales
 				else if ((e.getKeyCode() == KeyEvent.VK_R) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
 					saveProgress();

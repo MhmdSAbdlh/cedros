@@ -14,6 +14,8 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.RenderingHints;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyAdapter;
@@ -38,6 +40,8 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
+import javax.swing.Popup;
+import javax.swing.PopupFactory;
 import javax.swing.UIDefaults;
 import javax.swing.UIManager;
 import javax.swing.plaf.ColorUIResource;
@@ -233,7 +237,7 @@ public class Reales extends JFrame {
 		initialDay.setCaretColor(First.darkC);
 		initialDay.setBackground(First.lightC);
 		initialDay.setForeground(Color.black);
-		iniFocus(this, newDay, notasF, pesosF, clearEverthing, hideBtn);
+		iniFocus(newDay, notasF, pesosF, clearEverthing, hideBtn);
 		this.add(initialDay);
 		for (int i = 5; i < 9; i++) {
 			summaryT[i] = new JLabel("0");
@@ -591,16 +595,6 @@ public class Reales extends JFrame {
 		}
 	}
 
-	// Check the input text if it is a number
-	private static boolean isNumeric(String number) {
-		try {
-			Integer.parseInt(number);
-			return true;
-		} catch (NumberFormatException e) {
-			return false;
-		}
-	}
-
 	// saveProgress
 	private static void saveProgress() {
 		try {
@@ -711,15 +705,15 @@ public class Reales extends JFrame {
 	private static void sumF() {
 		saveProgress();
 		for (int i = 0; i < 10; i++)// Caja empty values 0
-			if (!isNumeric(panelCnum[i].getText()))
+			if (!First.isNumeric(panelCnum[i].getText()))
 				panelCnum[i].setText(0 + "");
-		if (!isNumeric(initialDay.getText()))// initial of the day 0
+		if (!First.isNumeric(initialDay.getText()))// initial of the day 0
 			initialDay.setText(0 + "");
 		for (int i = 4; i < 8; i++)// spent 0
-			if (!isNumeric(gastosTable[i].getText()))
+			if (!First.isNumeric(gastosTable[i].getText()))
 				gastosTable[i].setText("");
 		for (int i = 4; i < 8; i++)// added 0
-			if (!isNumeric(agregadoTable[i].getText()))
+			if (!First.isNumeric(agregadoTable[i].getText()))
 				agregadoTable[i].setText("");
 		for (int i = 0; i < 4; i++) {// TitleCase gastos and agg
 			gastosTable[i].setText(capitalizeString(gastosTable[i].getText()));
@@ -761,7 +755,7 @@ public class Reales extends JFrame {
 		for (int i = 0; i < 5; i++) {
 			totalCol = 0;
 			for (int j = 0; j < 15; j++) {
-				if (!isNumeric(details[i][j].getText())) {
+				if (!First.isNumeric(details[i][j].getText())) {
 					details[i][j].setText("");
 					totalCol += 0;
 				} else
@@ -828,7 +822,7 @@ public class Reales extends JFrame {
 	}
 
 	// Key listener for the table
-	private static void tableFocus(int i, int j, JFrame frame, JButton newDay, JButton notasF, JButton pesosF,
+	private void tableFocus(int i, int j, JFrame frame, JButton newDay, JButton notasF, JButton pesosF,
 			JButton clearEverthing, JMenuItem hideBtn) {
 		details[i][j].addKeyListener(new KeyAdapter() {
 			@Override
@@ -950,33 +944,34 @@ public class Reales extends JFrame {
 						addSetMil();
 					else if (aggBtn[1].isShowing())
 						addSetHun();
+					else {
+						// popup
+						JLabel label = new JLabel("No hay nada para armar");
+						Popup popup = PopupFactory.getSharedInstance().getPopup(e.getComponent(), label, width / 2,
+								height / 2);
+						popup.show();
+						javax.swing.Timer timer = new javax.swing.Timer(2000, new ActionListener() {
+
+							@Override
+							public void actionPerformed(ActionEvent e) {
+								popup.hide();
+							}
+						});
+						timer.start();
+					}
 			}
 		});
 	}
 
 	// Key listener for the initial
-	private void iniFocus(JFrame frame, JButton newDay, JButton notasF, JButton pesosF, JButton clearEverthing,
-			JMenuItem hideBtn) {
+	private void iniFocus(JButton newDay, JButton notasF, JButton pesosF, JButton clearEverthing, JMenuItem hideBtn) {
 		initialDay.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
 				// Hide
 				if ((e.getKeyCode() == KeyEvent.VK_O) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0))
 					hideBtn(notasF, pesosF, newDay, clearEverthing, hideBtn);
-				// GO TO Notas
-				else if ((e.getKeyCode() == KeyEvent.VK_S) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
-					saveProgress();
-					frame.dispose();
-					FaturaR.totalC.setText("0");
-					FaturaR.total.setText("0");
-					new FaturaR();
-				}
-				// GO TO pesos
-				else if ((e.getKeyCode() == KeyEvent.VK_P) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
-					saveProgress();
-					frame.dispose();
-					new Pesos();
-				} else // Clear
+				else // Clear
 				if ((e.getKeyCode() == KeyEvent.VK_B) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
 					clearAll();
 				} else// new day
@@ -1007,13 +1002,28 @@ public class Reales extends JFrame {
 						addSetMil();
 					else if (aggBtn[1].isShowing())
 						addSetHun();
+					else {
+						// popup
+						JLabel label = new JLabel("No hay nada para armar");
+						Popup popup = PopupFactory.getSharedInstance().getPopup(e.getComponent(), label, width / 2,
+								height / 2);
+						popup.show();
+						javax.swing.Timer timer = new javax.swing.Timer(2000, new ActionListener() {
+
+							@Override
+							public void actionPerformed(ActionEvent e) {
+								popup.hide();
+							}
+						});
+						timer.start();
+					}
 			}
 		});
 	}
 
 	// Key listener for the ADDITION
-	private static void aggFocus(int i, JFrame frame, JButton newDay, JButton notasF, JButton pesosF,
-			JButton clearEverthing, JMenuItem hideBtn) {
+	private void aggFocus(int i, JFrame frame, JButton newDay, JButton notasF, JButton pesosF, JButton clearEverthing,
+			JMenuItem hideBtn) {
 		agregadoTable[i].addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
@@ -1096,13 +1106,28 @@ public class Reales extends JFrame {
 						addSetMil();
 					else if (aggBtn[1].isShowing())
 						addSetHun();
+					else {
+						// popup
+						JLabel label = new JLabel("No hay nada para armar");
+						Popup popup = PopupFactory.getSharedInstance().getPopup(e.getComponent(), label, width / 2,
+								height / 2);
+						popup.show();
+						javax.swing.Timer timer = new javax.swing.Timer(2000, new ActionListener() {
+
+							@Override
+							public void actionPerformed(ActionEvent e) {
+								popup.hide();
+							}
+						});
+						timer.start();
+					}
 			}
 		});
 	}
 
 	// Key listener for the SPENT
-	private static void gasFocus(int i, JFrame frame, JButton newDay, JButton notasF, JButton pesosF,
-			JButton clearEverthing, JMenuItem hideBtn) {
+	private void gasFocus(int i, JFrame frame, JButton newDay, JButton notasF, JButton pesosF, JButton clearEverthing,
+			JMenuItem hideBtn) {
 		gastosTable[i].addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
@@ -1186,14 +1211,28 @@ public class Reales extends JFrame {
 						addSetMil();
 					else if (aggBtn[1].isShowing())
 						addSetHun();
+					else {
+						// popup
+						JLabel label = new JLabel("No hay nada para armar");
+						Popup popup = PopupFactory.getSharedInstance().getPopup(e.getComponent(), label, width / 2,
+								height / 2);
+						popup.show();
+						javax.swing.Timer timer = new javax.swing.Timer(2000, new ActionListener() {
 
+							@Override
+							public void actionPerformed(ActionEvent e) {
+								popup.hide();
+							}
+						});
+						timer.start();
+					}
 			}
 		});
 	}
 
 	// Key listener for the CASH
-	private static void cajaFocus(int i, JFrame frame, JButton newDay, JButton notasF, JButton pesosF,
-			JButton clearEverthing, JMenuItem hideBtn) {
+	private void cajaFocus(int i, JFrame frame, JButton newDay, JButton notasF, JButton pesosF, JButton clearEverthing,
+			JMenuItem hideBtn) {
 		panelCnum[i].addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
@@ -1259,6 +1298,21 @@ public class Reales extends JFrame {
 						addSetMil();
 					else if (aggBtn[1].isShowing())
 						addSetHun();
+					else {
+						// popup
+						JLabel label = new JLabel("No hay nada para armar");
+						Popup popup = PopupFactory.getSharedInstance().getPopup(e.getComponent(), label, width / 2,
+								height / 2);
+						popup.show();
+						javax.swing.Timer timer = new javax.swing.Timer(2000, new ActionListener() {
+
+							@Override
+							public void actionPerformed(ActionEvent e) {
+								popup.hide();
+							}
+						});
+						timer.start();
+					}
 			}
 		});
 	}

@@ -195,6 +195,16 @@ public class First extends JFrame {
 		return resizedImg;
 	}
 
+	// Check the input text if it is a number
+	static boolean isNumeric(String number) {
+		try {
+			Integer.parseInt(number);
+			return true;
+		} catch (NumberFormatException e) {
+			return false;
+		}
+	}
+
 }
 
 class InitialFocusSetter {
