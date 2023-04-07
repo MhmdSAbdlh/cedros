@@ -90,7 +90,7 @@ public class Pesos extends JFrame {
 	static JLabel restTmrw = new JLabel();// rest for tomorrow
 	static int totalCol = 0, totalVenta = 0, totalO = 0;
 	static int gastosT = 0, agregadoT = 0;
-	static int restN, totalCaja = 0;
+	static int restN, totalCaja = 0, nbOf500 = 0;
 	int width, height;
 
 	Pesos() {
@@ -508,7 +508,7 @@ public class Pesos extends JFrame {
 	}
 
 	// Clear all funcion
-	private static void clearAll() {
+	private void clearAll() {
 		int op = JOptionPane.showConfirmDialog(null, "¿QUIERES BORRAR TODO?", "BORRAR TODO",
 				JOptionPane.OK_CANCEL_OPTION);
 		if (op == 0) {
@@ -527,7 +527,7 @@ public class Pesos extends JFrame {
 	}
 
 	// NEW DAY
-	private static void newDay() {
+	private void newDay() {
 		int op = JOptionPane.showConfirmDialog(null, "¿QUIERES EMPEZAR NUEVO DIA?", "NUEVO DIA",
 				JOptionPane.OK_CANCEL_OPTION);
 		if (op == 0) {
@@ -539,17 +539,15 @@ public class Pesos extends JFrame {
 				gastosTable[i].setText("");
 			for (int i = 0; i < 8; i++)
 				agregadoTable[i].setText("");
-			for (int i = 0; i < 1; i++)
+			for (int i = 0; i < 2; i++)
 				panelCnum[i].setText("");
-			if (restN != totalCaja)
-				panelCnum[2].setText("");
+			panelCnum[2].setText("" + nbOf500);
 			sumF();
 		}
 	}
 
 	// Hide Btns
-	private static void hideBtn(JButton notasF, JButton pesosF, JButton newDay, JButton clearEverthing,
-			JMenuItem hideBtn) {
+	private void hideBtn(JButton notasF, JButton pesosF, JButton newDay, JButton clearEverthing, JMenuItem hideBtn) {
 		if (pesosF.isShowing()) {
 			pesosF.hide();
 			clearEverthing.hide();
@@ -621,7 +619,7 @@ public class Pesos extends JFrame {
 	}
 
 	// Calculate everything
-	private static void sumF() {
+	private void sumF() {
 		saveProgress();
 		for (int i = 0; i < 11; i++)// Caja empty values 0
 			if (!First.isNumeric(panelCnum[i].getText()))
@@ -629,8 +627,8 @@ public class Pesos extends JFrame {
 		if (!First.isNumeric(initialDay.getText()))// initial of the day 0
 			initialDay.setText(0 + "");
 		for (int i = 0; i < 4; i++) {// TitleCase gastos and agg
-			gastosTable[i].setText(capitalizeString(gastosTable[i].getText()));
-			agregadoTable[i].setText(capitalizeString(agregadoTable[i].getText()));
+			gastosTable[i].setText(First.capitalizeString(gastosTable[i].getText()));
+			agregadoTable[i].setText(First.capitalizeString(agregadoTable[i].getText()));
 		}
 		for (int i = 4; i < 8; i++)// spent 0
 			if (!First.isNumeric(gastosTable[i].getText()))
@@ -703,7 +701,7 @@ public class Pesos extends JFrame {
 		// Calculate the restTmrw
 		restN = totalCaja - Integer.valueOf(panelCnum[0].getText()) * 2000
 				- Integer.valueOf(panelCnum[1].getText()) * 1000;
-		int nbOf500 = Integer.valueOf(panelCnum[2].getText());
+		nbOf500 = Integer.valueOf(panelCnum[2].getText());
 		while (restN > 1000 && nbOf500 > 0) {
 			restN -= 500;
 			nbOf500--;
@@ -1098,7 +1096,7 @@ public class Pesos extends JFrame {
 	}
 
 	// Style of textField
-	private static void textFieldStyle(JTextField tf) {
+	private void textFieldStyle(JTextField tf) {
 		tf.setBackground(First.darkC);
 		tf.setForeground(First.lightC);
 		tf.setFont(First.myFont);
@@ -1656,22 +1654,6 @@ public class Pesos extends JFrame {
 		g2.dispose();
 
 		return resizedImg;
-	}
-
-	// String to titlecase
-	private static String capitalizeString(String string) {
-		char[] chars = string.toLowerCase().toCharArray();
-		boolean found = false;
-		for (int i = 0; i < chars.length; i++) {
-			if (!found && Character.isLetter(chars[i])) {
-				chars[i] = Character.toUpperCase(chars[i]);
-				found = true;
-			} else if (Character.isWhitespace(chars[i]) || chars[i] == '.' || chars[i] == '\'') { // You can add other
-																									// chars here
-				found = false;
-			}
-		}
-		return String.valueOf(chars);
 	}
 
 	// Auto

@@ -91,7 +91,7 @@ public class Reales extends JFrame {
 	static JLabel restTmrw = new JLabel();// rest for tomorrow
 	static int totalCol = 0, totalVenta = 0, totalO = 0;
 	static int gastosT = 0, agregadoT = 0;
-	static int restN, totalCaja = 0;
+	static int restN, totalCaja = 0, nbOf20 = 0;
 	int width, height;
 
 	Reales() {
@@ -532,8 +532,7 @@ public class Reales extends JFrame {
 			addSetHun();
 	}
 
-	private static void hideBtn(JButton notasF, JButton pesosF, JButton newDay, JButton clearEverthing,
-			JMenuItem hideBtn) {
+	private void hideBtn(JButton notasF, JButton pesosF, JButton newDay, JButton clearEverthing, JMenuItem hideBtn) {
 		if (pesosF.isShowing()) {
 			pesosF.hide();
 			clearEverthing.hide();
@@ -548,7 +547,7 @@ public class Reales extends JFrame {
 	}
 
 	// Clear all
-	private static void clearAll() {
+	private void clearAll() {
 		int op = JOptionPane.showConfirmDialog(null, "¿QUIERES BORRAR TODO?", "BORRAR TODO",
 				JOptionPane.OK_CANCEL_OPTION);
 		if (op == 0) {
@@ -567,7 +566,7 @@ public class Reales extends JFrame {
 	}
 
 	// NEW DAY
-	private static void newDay() {
+	private void newDay() {
 		int op = JOptionPane.showConfirmDialog(null, "¿QUIERES EMPEZAR NUEVO DIA?", "NUEVO DIA",
 				JOptionPane.OK_CANCEL_OPTION);
 		if (op == 0) {
@@ -579,14 +578,9 @@ public class Reales extends JFrame {
 				gastosTable[i].setText("");
 			for (int i = 0; i < 8; i++)
 				agregadoTable[i].setText("");
-			if ((totalCaja - Integer.valueOf(panelCnum[0].getText()) * 1000
-					- Integer.valueOf(panelCnum[1].getText()) * 100 - Integer.valueOf(panelCnum[2].getText()) * 200
-					- Integer.valueOf(panelCnum[3].getText()) * 100
-					- Integer.valueOf(panelCnum[4].getText()) * 50) > 200
-					&& Integer.valueOf(panelCnum[5].getText()) > 1)
-				panelCnum[5].setText("1");
 			for (int i = 0; i < 5; i++)
 				panelCnum[i].setText("");
+			panelCnum[5].setText("" + nbOf20);
 			sumF();
 		}
 	}
@@ -649,7 +643,7 @@ public class Reales extends JFrame {
 	}
 
 	// Add a set of 1000
-	private static void addSetMil() {
+	private void addSetMil() {
 		int numMil = Integer.valueOf(panelCnum[2].getText()) * 200 + Integer.valueOf(panelCnum[3].getText()) * 100
 				+ Integer.valueOf(panelCnum[4].getText()) * 50;
 		int counter = 0;
@@ -685,7 +679,7 @@ public class Reales extends JFrame {
 	}
 
 	// Add a set of 100
-	private static void addSetHun() {
+	private void addSetHun() {
 		int numHun = Integer.valueOf(panelCnum[5].getText()) * 20;
 		int counter = 0;
 		while (numHun > 100) {
@@ -698,7 +692,7 @@ public class Reales extends JFrame {
 	}
 
 	// Calculate everything
-	private static void sumF() {
+	private void sumF() {
 		saveProgress();
 		for (int i = 0; i < 10; i++)// Caja empty values 0
 			if (!First.isNumeric(panelCnum[i].getText()))
@@ -712,8 +706,8 @@ public class Reales extends JFrame {
 			if (!First.isNumeric(agregadoTable[i].getText()))
 				agregadoTable[i].setText("");
 		for (int i = 0; i < 4; i++) {// TitleCase gastos and agg
-			gastosTable[i].setText(capitalizeString(gastosTable[i].getText()));
-			agregadoTable[i].setText(capitalizeString(agregadoTable[i].getText()));
+			gastosTable[i].setText(First.capitalizeString(gastosTable[i].getText()));
+			agregadoTable[i].setText(First.capitalizeString(agregadoTable[i].getText()));
 		}
 		// Add set of 1000
 		int numMil = Integer.valueOf(panelCnum[2].getText()) * 200 + Integer.valueOf(panelCnum[3].getText()) * 100
@@ -810,8 +804,11 @@ public class Reales extends JFrame {
 		restN = totalCaja - Integer.valueOf(panelCnum[0].getText()) * 1000
 				- Integer.valueOf(panelCnum[1].getText()) * 100 - Integer.valueOf(panelCnum[2].getText()) * 200
 				- Integer.valueOf(panelCnum[3].getText()) * 100 - Integer.valueOf(panelCnum[4].getText()) * 50;
-		if (restN > 200 && Integer.valueOf(panelCnum[5].getText()) > 1)
-			restN -= (Integer.valueOf(panelCnum[5].getText()) - 1) * 20;
+		nbOf20 = Integer.valueOf(panelCnum[5].getText());
+		while (restN > 200 && nbOf20 > 1) {
+			restN -= 20;
+			nbOf20--;
+		}
 		restTmrw.setText("R$" + restN);
 		restTmrw.setForeground(Color.black);
 		restTmrw.setBackground(First.lightC);
@@ -1241,7 +1238,7 @@ public class Reales extends JFrame {
 	}
 
 	// Style of textField
-	private static void textFieldStyle(JTextField tf) {
+	private void textFieldStyle(JTextField tf) {
 		tf.setBackground(First.darkC);
 		tf.setForeground(First.lightC);
 		tf.setFont(First.myFont);
@@ -1259,7 +1256,6 @@ public class Reales extends JFrame {
 				sumF();
 			}
 		});
-
 	}
 
 	private void resXP(JMenuItem resoD, JButton notasF, JButton pesosF, JButton newDay, JButton clearEverthing) {
@@ -1806,22 +1802,6 @@ public class Reales extends JFrame {
 		g2.dispose();
 
 		return resizedImg;
-	}
-
-	// String to titlecase
-	private static String capitalizeString(String string) {
-		char[] chars = string.toLowerCase().toCharArray();
-		boolean found = false;
-		for (int i = 0; i < chars.length; i++) {
-			if (!found && Character.isLetter(chars[i])) {
-				chars[i] = Character.toUpperCase(chars[i]);
-				found = true;
-			} else if (Character.isWhitespace(chars[i]) || chars[i] == '.' || chars[i] == '\'') { // You can add other
-																									// chars here
-				found = false;
-			}
-		}
-		return String.valueOf(chars);
 	}
 
 	private ArrayList<String> listMercadoria() {

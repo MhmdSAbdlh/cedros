@@ -38,10 +38,10 @@ public class FaturaP extends JFrame {
 	static Color greenC = new Color(170, 230, 150);
 	static Color redD = new Color(190, 0, 0);
 	static Color redC = new Color(250, 110, 110);
-	static Color yellowD = new Color(200, 200, 0);
-	static Color yellowC = new Color(255, 255, 130);
-	static Color orangeD = new Color(170, 80, 0);
-	static Color orangeC = new Color(255, 180, 110);
+	static Color violetD = new Color(0x393646);
+	static Color violetC = new Color(0x6D5D6E);
+	static Color turD = new Color(0x245953);
+	static Color turC = new Color(0x408E91);
 	private URL u2000 = getClass().getResource("images/p2000.jpg");
 	private ImageIcon i2000 = new ImageIcon(u2000);
 	private URL u1000 = getClass().getResource("images/p1000.jpg");
@@ -69,8 +69,8 @@ public class FaturaP extends JFrame {
 	int width, height;
 
 	// Def
-	static JTextField details[][] = new JTextField[9][3];
-	static JLabel detailsR[] = new JLabel[9];
+	static JTextField details[][] = new JTextField[10][3];
+	static JLabel detailsR[] = new JLabel[10];
 	static JLabel total = new JLabel("Total");
 	static JLabel cambio[] = new JLabel[6];
 	static JLabel[][] cajaTroco = new JLabel[2][10];
@@ -158,7 +158,7 @@ public class FaturaP extends JFrame {
 		title[1].setText("Detalle");
 		title[2].setText("P/Unit");
 		title[3].setText("Importe");
-		for (int i = 0; i < 9; i++) {
+		for (int i = 0; i < 10; i++) {
 			for (int j = 0; j < 3; j++) {
 				details[i][j] = new JTextField();
 				textFieldStyle(details[i][j]);
@@ -170,7 +170,7 @@ public class FaturaP extends JFrame {
 			details[i][1].getDocument().addDocumentListener(autoComplete);
 		}
 		InitialFocusSetter.setInitialFocus(this, details[0][0]);
-		for (int i = 0; i < 9; i++) {
+		for (int i = 0; i < 10; i++) {
 			detailsR[i] = new JLabel();
 			detailsR[i].setForeground(blueD);
 			detailsR[i].setBackground(blueC);
@@ -193,7 +193,7 @@ public class FaturaP extends JFrame {
 		caja.setBackground(greenD);
 		caja.setOpaque(true);
 		this.add(caja);
-		for (int i = 0; i < 2; i++) {
+		for (int i = 0; i < 2; i++)
 			for (int j = 0; j < 10; j++) {
 				cajaTroco[i][j] = new JLabel();
 				if (i == 1)
@@ -201,9 +201,9 @@ public class FaturaP extends JFrame {
 				cajaTroco[i][j].setHorizontalAlignment(0);
 				cajaTroco[i][j].setBorder(First.border);
 				cajaTroco[i][j].setOpaque(true);
+				cajaTroco[i][j].setBackground(greenC);
 				this.add(cajaTroco[i][j]);
 			}
-		}
 
 		// Cliente
 		cambioC.setBorder(First.border);
@@ -252,7 +252,7 @@ public class FaturaP extends JFrame {
 		// 1ST CAMBIO
 		cambioN.setEnabled(false);
 		cambioN.setBorder(First.border);
-		cambioN.setForeground(redC);
+		cambioN.setForeground(First.lightC);
 		cambioN.setBackground(redD);
 		cambioN.setFocusable(false);
 		cambioN.addActionListener(e -> {
@@ -265,7 +265,7 @@ public class FaturaP extends JFrame {
 			cambioN3.setEnabled(false);
 		});
 		this.add(cambioN);
-		for (int i = 0; i < 2; i++) {
+		for (int i = 0; i < 2; i++)
 			for (int j = 0; j < 10; j++) {
 				troco[i][j] = new JLabel();
 				if (i == 1)
@@ -273,15 +273,16 @@ public class FaturaP extends JFrame {
 				troco[i][j].setHorizontalAlignment(0);
 				troco[i][j].setBorder(First.border);
 				troco[i][j].setOpaque(true);
+				troco[i][j].setBackground(redC);
+				troco[i][j].setForeground(Color.white);
 				this.add(troco[i][j]);
 			}
-		}
 
 		// 2ND CAMBIO
 		cambioN2.setEnabled(false);
 		cambioN2.setBorder(First.border);
-		cambioN2.setForeground(yellowC);
-		cambioN2.setBackground(yellowD);
+		cambioN2.setForeground(First.lightC);
+		cambioN2.setBackground(violetD);
 		cambioN2.setFocusable(false);
 		cambioN2.addActionListener(e -> {
 			cambioF2();
@@ -293,7 +294,7 @@ public class FaturaP extends JFrame {
 			cambioN3.setEnabled(false);
 		});
 		this.add(cambioN2);
-		for (int i = 0; i < 2; i++) {
+		for (int i = 0; i < 2; i++)
 			for (int j = 0; j < 10; j++) {
 				troco2[i][j] = new JLabel();
 				if (i == 1)
@@ -301,15 +302,16 @@ public class FaturaP extends JFrame {
 				troco2[i][j].setHorizontalAlignment(0);
 				troco2[i][j].setBorder(First.border);
 				troco2[i][j].setOpaque(true);
+				troco2[i][j].setBackground(violetC);
+				troco2[i][j].setForeground(Color.white);
 				this.add(troco2[i][j]);
 			}
-		}
 
 		// 3RD CAMBIO
 		cambioN3.setEnabled(false);
 		cambioN3.setBorder(First.border);
-		cambioN3.setForeground(orangeC);
-		cambioN3.setBackground(orangeD);
+		cambioN3.setForeground(First.lightC);
+		cambioN3.setBackground(turD);
 		cambioN3.setFocusable(false);
 		cambioN3.addActionListener(e -> {
 			cambioF3();
@@ -321,7 +323,7 @@ public class FaturaP extends JFrame {
 			cambioN3.setEnabled(false);
 		});
 		this.add(cambioN3);
-		for (int i = 0; i < 2; i++) {
+		for (int i = 0; i < 2; i++)
 			for (int j = 0; j < 10; j++) {
 				troco3[i][j] = new JLabel();
 				if (i == 1)
@@ -329,9 +331,10 @@ public class FaturaP extends JFrame {
 				troco3[i][j].setHorizontalAlignment(0);
 				troco3[i][j].setBorder(First.border);
 				troco3[i][j].setOpaque(true);
+				troco3[i][j].setBackground(turC);
+				troco3[i][j].setForeground(Color.white);
 				this.add(troco3[i][j]);
 			}
-		}
 
 		// Button
 		mainF.setFocusable(true);
@@ -469,20 +472,35 @@ public class FaturaP extends JFrame {
 				else if ((e.getKeyCode() == KeyEvent.VK_S) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
 					frame.dispose();
 					new Pesos();
-				}
-				if ((e.getKeyCode() == KeyEvent.VK_SHIFT)) {
+				} else if ((e.getKeyCode() == KeyEvent.VK_SHIFT)) {
 					details[i][j].setNextFocusableComponent(trocoCT[0]);
 					details[i][j].nextFocus();
-				}
-				if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
+				} else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
 					if (j < 2) {
 						details[i][j].setNextFocusableComponent(details[i][j + 1]);
 						details[i][j].nextFocus();
+					} else {
+						if (i < 9) {
+							details[i][j].setNextFocusableComponent(details[i + 1][0]);
+							details[i][j].nextFocus();
+						} else {
+							details[i][j].setNextFocusableComponent(details[0][0]);
+							details[i][j].nextFocus();
+						}
 					}
+
 				} else if (e.getKeyCode() == KeyEvent.VK_LEFT) {
 					if (j > 0) {
 						details[i][j].setNextFocusableComponent(details[i][j - 1]);
 						details[i][j].nextFocus();
+					} else {
+						if (i > 0) {
+							details[i][j].setNextFocusableComponent(details[i - 1][2]);
+							details[i][j].nextFocus();
+						} else {
+							details[i][j].setNextFocusableComponent(details[9][2]);
+							details[i][j].nextFocus();
+						}
 					}
 				} else if (e.getKeyCode() == KeyEvent.VK_UP) {
 					if (i > 0) {
@@ -490,7 +508,7 @@ public class FaturaP extends JFrame {
 						details[i][j].nextFocus();
 					}
 				} else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
-					if (i < 8) {
+					if (i < 9) {
 						details[i][j].setNextFocusableComponent(details[i + 1][j]);
 						details[i][j].nextFocus();
 					}
@@ -546,7 +564,7 @@ public class FaturaP extends JFrame {
 	}
 
 	// Method 1 work
-	private static void cambioF() {
+	private void cambioF() {
 		for (int i = 0; i < 10; i++)
 			cajaTroco[1][i].setText(Integer.valueOf(cajaTroco[1][i].getText()) - Integer.valueOf(troco[1][i].getText())
 					+ Integer.valueOf(trocoCT[i].getText()) + "");
@@ -569,17 +587,16 @@ public class FaturaP extends JFrame {
 		saveProgress();
 	}
 
-	// Calc everything
+	// Calculate everything
 	private void calTodo(JButton cambioN, JButton cambioN2, JButton cambioN3) {
 		totalFatura = 0;
-		for (int i = 0; i < 9; i++) {// Check if the value are number
+		for (int i = 0; i < 10; i++)// Check if the value are number
 			if (!details[i][0].getText().isBlank() && !details[i][2].getText().isBlank()
 					&& First.isNumeric(details[i][0].getText()) && First.isNumeric(details[i][2].getText())) {
 				detailsR[i].setText(
 						Integer.valueOf(details[i][0].getText()) * Integer.valueOf(details[i][2].getText()) + "");
 				totalFatura += Integer.valueOf(detailsR[i].getText());
 			}
-		}
 		for (int i = 0; i < 11; i++)
 			if (!First.isNumeric(trocoCT[i].getText()))
 				trocoCT[i].setText("0");
@@ -599,10 +616,7 @@ public class FaturaP extends JFrame {
 			cambio[4].setText("$ " + (totalFatura - totalCV));
 		else
 			cambio[4].setText("$ " + (totalCV - totalFatura));
-
-		// Trocos
-		if (trocoV >= 0) {
-			// Por 1000
+		if (trocoV >= 0) {// Trocos // Por 1000
 			troco[1][9].setText((trocoV / 1000) + "");
 			troco2[1][9].setText((trocoV / 1000) + "");
 			troco3[1][9].setText((trocoV / 1000) + "");
@@ -1052,7 +1066,6 @@ public class FaturaP extends JFrame {
 			cambioN2.setEnabled(true);
 		if (cambioN3.getText().equals("√"))
 			cambioN3.setEnabled(true);
-
 	}
 
 	// SAVE NEW VALUE
@@ -1175,36 +1188,34 @@ public class FaturaP extends JFrame {
 
 		for (int i = 0; i < 4; i++)
 			title[i].setFont(First.myFont);
-
 		title[0].setBounds(40, 40, 50, 35);
 		title[1].setBounds(89, 40, 140, 35);
 		title[2].setBounds(228, 40, 60, 35);
 		title[3].setBounds(287, 40, 100, 35);
-		for (int i = 0; i < 9; i++) {
+		for (int i = 0; i < 10; i++) {
 			for (int j = 0; j < 3; j++)
 				details[i][j].setFont(First.myFontS);
 			details[i][0].setBounds(40, 74 + i * 30, 50, 30);
 			details[i][1].setBounds(89, 74 + i * 30, 140, 30);
 			details[i][2].setBounds(228, 74 + i * 30, 60, 30);
 		}
-
-		for (int i = 0; i < 9; i++) {
+		for (int i = 0; i < 10; i++) {
 			detailsR[i].setBounds(287, 74 + i * 30, 100, 30);
 			detailsR[i].setFont(First.myFontS);
 		}
 		total.setFont(First.myFont);
-		total.setBounds(287, 342, 100, 35);
+		total.setBounds(287, 372, 100, 32);
 
 		// Caja
-		caja.setBounds(20, 400, 431, 30);
+		caja.setBounds(20, 420, 431, 30);
 		caja.setFont(First.myFont);
 
 		for (int i = 0; i < 2; i++)
 			for (int j = 0; j < 10; j++) {
 				if (j < 4)
-					cajaTroco[i][j].setBounds(20 + 34 * j, 430 + 34 * i, 35, 35);
+					cajaTroco[i][j].setBounds(20 + 34 * j, 450 + 34 * i, 35, 35);
 				else
-					cajaTroco[i][j].setBounds(156 + 49 * (j - 4), 430 + 34 * i, 50, 35);
+					cajaTroco[i][j].setBounds(156 + 49 * (j - 4), 450 + 34 * i, 50, 35);
 				cajaTroco[i][j].setFont(First.myFont);
 				if (i == 0) {
 					switch (j) {
@@ -1348,8 +1359,7 @@ public class FaturaP extends JFrame {
 					default:
 						break;
 					}
-				} else
-					troco[i][j].setText("0");
+				}
 				troco[i][j].setFont(First.myFont);
 			}
 
@@ -1396,8 +1406,7 @@ public class FaturaP extends JFrame {
 					default:
 						break;
 					}
-				} else
-					troco2[i][j].setText("0");
+				}
 				troco2[i][j].setFont(First.myFont);
 			}
 
@@ -1444,8 +1453,7 @@ public class FaturaP extends JFrame {
 					default:
 						break;
 					}
-				} else
-					troco3[i][j].setText("0");
+				}
 				troco3[i][j].setFont(First.myFont);
 			}
 		mainF.setBounds(410, 320, 50, 50);
@@ -1481,35 +1489,33 @@ public class FaturaP extends JFrame {
 
 		for (int i = 0; i < 4; i++)
 			title[i].setFont(First.myFont);
-
 		title[0].setBounds(40, 40, 60, 40);
 		title[1].setBounds(98, 40, 180, 40);
 		title[2].setBounds(276, 40, 70, 40);
 		title[3].setBounds(344, 40, 100, 40);
-		for (int i = 0; i < 9; i++) {
+		for (int i = 0; i < 10; i++) {
 			for (int j = 0; j < 3; j++)
 				details[i][j].setFont(First.myFont);
-			details[i][0].setBounds(40, 80 + i * 40, 60, 40);
-			details[i][1].setBounds(98, 80 + i * 40, 180, 40);
-			details[i][2].setBounds(276, 80 + i * 40, 70, 40);
+			details[i][0].setBounds(40, 80 + i * 35, 60, 35);
+			details[i][1].setBounds(98, 80 + i * 35, 180, 35);
+			details[i][2].setBounds(276, 80 + i * 35, 70, 35);
 		}
-
-		for (int i = 0; i < 9; i++) {
-			detailsR[i].setBounds(344, 80 + i * 40, 100, 40);
+		for (int i = 0; i < 10; i++) {
+			detailsR[i].setBounds(344, 80 + i * 35, 100, 35);
 			detailsR[i].setFont(First.myFont);
 		}
 		total.setFont(First.myFont);
-		total.setBounds(344, 438, 100, 40);
+		total.setBounds(344, 428, 100, 40);
 
 		// Caja
-		caja.setBounds(20, 500, 501, 51);
+		caja.setBounds(20, 490, 501, 51);
 		caja.setFont(First.myFont);
 		for (int i = 0; i < 2; i++)
 			for (int j = 0; j < 10; j++) {
 				if (j < 4)
-					cajaTroco[i][j].setBounds(20 + 44 * j, 550 + 39 * i, 45, 40);
+					cajaTroco[i][j].setBounds(20 + 44 * j, 540 + 39 * i, 45, 40);
 				else
-					cajaTroco[i][j].setBounds(196 + 54 * (j - 4), 550 + 39 * i, 55, 40);
+					cajaTroco[i][j].setBounds(196 + 54 * (j - 4), 540 + 39 * i, 55, 40);
 				cajaTroco[i][j].setFont(First.myFont);
 				if (i == 0) {
 					switch (j) {
@@ -1654,8 +1660,7 @@ public class FaturaP extends JFrame {
 					default:
 						break;
 					}
-				} else
-					troco[i][j].setText("0");
+				}
 				troco[i][j].setFont(First.myFont);
 			}
 		// Cambio 2
@@ -1790,16 +1795,16 @@ public class FaturaP extends JFrame {
 		title[1].setBounds(108, 40, 200, 50);
 		title[2].setBounds(306, 40, 90, 50);
 		title[3].setBounds(394, 40, 120, 50);
-		for (int i = 0; i < 9; i++) {
+		for (int i = 0; i < 10; i++) {
 			for (int j = 0; j < 3; j++)
 				details[i][j].setFont(First.myFont);
-			details[i][0].setBounds(40, 90 + i * 45, 70, 45);
-			details[i][1].setBounds(108, 90 + i * 45, 200, 45);
-			details[i][2].setBounds(306, 90 + i * 45, 90, 45);
+			details[i][0].setBounds(40, 90 + i * 40, 70, 45);
+			details[i][1].setBounds(108, 90 + i * 40, 200, 45);
+			details[i][2].setBounds(306, 90 + i * 40, 90, 45);
 		}
 
-		for (int i = 0; i < 9; i++) {
-			detailsR[i].setBounds(394, 90 + i * 45, 120, 45);
+		for (int i = 0; i < 10; i++) {
+			detailsR[i].setBounds(394, 90 + i * 40, 120, 45);
 			detailsR[i].setFont(First.myFont);
 		}
 		total.setFont(First.myFont);
@@ -2064,6 +2069,7 @@ public class FaturaP extends JFrame {
 
 	private void resG(JMenuItem resoD, JLabel[] title, JLabel caja, JLabel cambioC, JButton cambioN, JButton cambioN2,
 			JButton mainF, JButton cambioN3) {
+		// Definitions
 		this.setSize(1820, 980);
 		if (width >= 1800)
 			if (this.getWidth() == 1820)
@@ -2088,48 +2094,50 @@ public class FaturaP extends JFrame {
 		First.myFont = new Font("Tahoma", Font.BOLD, 24);
 		First.myFontS = new Font("Tahoma", Font.BOLD, 20);
 
+		// Panel 1 Invoice
 		for (int i = 0; i < 4; i++)
 			title[i].setFont(First.myFont);
-
-		title[0].setBounds(40, 40, 100, 60);
-		title[1].setBounds(139, 40, 270, 60);
-		title[2].setBounds(408, 40, 110, 60);
-		title[3].setBounds(517, 40, 140, 60);
-		for (int i = 0; i < 9; i++) {
+		title[0].setBounds(40, 40, 100, 50);
+		title[1].setBounds(139, 40, 270, 50);
+		title[2].setBounds(408, 40, 110, 50);
+		title[3].setBounds(517, 40, 140, 50);
+		for (int i = 0; i < 10; i++) {
 			for (int j = 0; j < 3; j++)
 				details[i][j].setFont(First.myFont);
-			details[i][0].setBounds(40, 99 + i * 60, 100, 60);
-			details[i][1].setBounds(139, 99 + i * 60, 270, 60);
-			details[i][2].setBounds(408, 99 + i * 60, 110, 60);
+			details[i][0].setBounds(40, 89 + i * 50, 100, 50);
+			details[i][1].setBounds(139, 89 + i * 50, 270, 50);
+			details[i][2].setBounds(408, 89 + i * 50, 110, 50);
 		}
-
-		for (int i = 0; i < 9; i++) {
-			detailsR[i].setBounds(517, 99 + i * 60, 140, 60);
+		for (int i = 0; i < 10; i++) {
+			detailsR[i].setBounds(517, 89 + i * 50, 140, 50);
 			detailsR[i].setFont(First.myFont);
 		}
 		total.setFont(First.myFont);
-		total.setBounds(517, 639, 140, 60);
+		total.setBounds(517, 588, 140, 55);
 
-		caja.setBounds(20, 750, 100, 119);
+		// Panel 2 Caja
+		caja.setBounds(20, 690, 711, 60);
 		caja.setFont(First.myFont);
-
 		for (int i = 0; i < 2; i++)
-			for (int j = 0; j < 7; j++) {
-				cajaTroco[i][j].setBounds(120 + 79 * j, 750 + 59 * i, 80, 60);
+			for (int j = 0; j < 10; j++) {
+				if (j < 4)
+					cajaTroco[i][j].setBounds(20 + 59 * j, 750 + 59 * i, 60, 60);
+				else
+					cajaTroco[i][j].setBounds(256 + 79 * (j - 4), 750 + 59 * i, 80, 60);
 				cajaTroco[i][j].setFont(First.myFont);
-				if (i == 0) {
+				if (i == 0)
 					switch (j) {
 					case 0:
-						cajaTroco[i][j].setIcon(new ImageIcon(getScaledImage(i1.getImage(), 80, 60)));
+						cajaTroco[i][j].setIcon(new ImageIcon(getScaledImage(i1.getImage(), 60, 60)));
 						break;
 					case 1:
-						cajaTroco[i][j].setIcon(new ImageIcon(getScaledImage(i2.getImage(), 80, 60)));
+						cajaTroco[i][j].setIcon(new ImageIcon(getScaledImage(i2.getImage(), 60, 60)));
 						break;
 					case 2:
-						cajaTroco[i][j].setIcon(new ImageIcon(getScaledImage(i5.getImage(), 80, 60)));
+						cajaTroco[i][j].setIcon(new ImageIcon(getScaledImage(i5.getImage(), 60, 60)));
 						break;
 					case 3:
-						cajaTroco[i][j].setIcon(new ImageIcon(getScaledImage(i10.getImage(), 80, 60)));
+						cajaTroco[i][j].setIcon(new ImageIcon(getScaledImage(i10.getImage(), 60, 60)));
 						break;
 					case 4:
 						cajaTroco[i][j].setIcon(new ImageIcon(getScaledImage(i20.getImage(), 80, 60)));
@@ -2140,28 +2148,43 @@ public class FaturaP extends JFrame {
 					case 6:
 						cajaTroco[i][j].setIcon(new ImageIcon(getScaledImage(i100.getImage(), 80, 60)));
 						break;
+					case 7:
+						cajaTroco[i][j].setIcon(new ImageIcon(getScaledImage(i200.getImage(), 80, 60)));
+						break;
+					case 8:
+						cajaTroco[i][j].setIcon(new ImageIcon(getScaledImage(i500.getImage(), 80, 60)));
+						break;
+					case 9:
+						cajaTroco[i][j].setIcon(new ImageIcon(getScaledImage(i1000.getImage(), 80, 60)));
+						break;
 					default:
 						break;
 					}
-				}
 			}
-		cambioC.setBounds(800, 52, 554, 70);
-		cambioC.setFont(First.myFont);
 
-		for (int i = 0; i < 7; i++) {
-			trocoC[i].setBounds(800 + 79 * i, 120, 80, 60);
+		// Cliente troco
+		cambioC.setBounds(700, 52, 790, 70);
+		cambioC.setFont(First.myFont);
+		for (int i = 0; i < 11; i++) {
+			if (i < 4) {
+				trocoC[i].setBounds(700 + 59 * i, 120, 60, 60);
+				trocoCT[i].setBounds(700 + 59 * i, 180, 60, 60);
+			} else {
+				trocoC[i].setBounds(936 + 79 * (i - 4), 120, 80, 60);
+				trocoCT[i].setBounds(936 + 79 * (i - 4), 180, 80, 60);
+			}
 			switch (i) {
 			case 0:
-				trocoC[i].setIcon(new ImageIcon(getScaledImage(i1.getImage(), 80, 60)));
+				trocoC[i].setIcon(new ImageIcon(getScaledImage(i1.getImage(), 60, 60)));
 				break;
 			case 1:
-				trocoC[i].setIcon(new ImageIcon(getScaledImage(i2.getImage(), 80, 60)));
+				trocoC[i].setIcon(new ImageIcon(getScaledImage(i2.getImage(), 60, 60)));
 				break;
 			case 2:
-				trocoC[i].setIcon(new ImageIcon(getScaledImage(i5.getImage(), 80, 60)));
+				trocoC[i].setIcon(new ImageIcon(getScaledImage(i5.getImage(), 60, 60)));
 				break;
 			case 3:
-				trocoC[i].setIcon(new ImageIcon(getScaledImage(i10.getImage(), 80, 60)));
+				trocoC[i].setIcon(new ImageIcon(getScaledImage(i10.getImage(), 60, 60)));
 				break;
 			case 4:
 				trocoC[i].setIcon(new ImageIcon(getScaledImage(i20.getImage(), 80, 60)));
@@ -2172,42 +2195,58 @@ public class FaturaP extends JFrame {
 			case 6:
 				trocoC[i].setIcon(new ImageIcon(getScaledImage(i100.getImage(), 80, 60)));
 				break;
+			case 7:
+				trocoC[i].setIcon(new ImageIcon(getScaledImage(i200.getImage(), 80, 60)));
+				break;
+			case 8:
+				trocoC[i].setIcon(new ImageIcon(getScaledImage(i500.getImage(), 80, 60)));
+				break;
+			case 9:
+				trocoC[i].setIcon(new ImageIcon(getScaledImage(i1000.getImage(), 80, 60)));
+				break;
+			case 10:
+				trocoC[i].setIcon(new ImageIcon(getScaledImage(i2000.getImage(), 80, 60)));
+				break;
 			default:
 				break;
 			}
 			trocoCT[i].setFont(First.myFont);
-			trocoCT[i].setBounds(800 + 79 * i, 180, 80, 60);
 		}
-
-		totalC.setBounds(800, 238, 554, 60);
+		totalC.setBounds(700, 238, 790, 60);
 		totalC.setFont(First.myFont);
 
+		// Cambio panel
 		for (int i = 0; i < 6; i++) {
 			cambio[i].setFont(First.myFont);
 			if (i < 3)
-				cambio[i].setBounds(1450, 90 + 60 * i, 130, 60);
+				cambio[i].setBounds(1500, 90 + 60 * i, 130, 60);
 		}
-		cambio[3].setBounds(1578, 150, 170, 60);
-		cambio[4].setBounds(1578, 210, 170, 60);
-		cambio[5].setBounds(1578, 90, 170, 60);
-		cambioN.setBounds(750, 370, 140, 119);
+		cambio[3].setBounds(1628, 150, 170, 60);
+		cambio[4].setBounds(1628, 210, 170, 60);
+		cambio[5].setBounds(1628, 90, 170, 60);
+
+		// 1st cambio
+		cambioN.setBounds(850, 370, 140, 119);
 		cambioN.setFont(First.myFont);
 		for (int i = 0; i < 2; i++)
-			for (int j = 0; j < 7; j++) {
-				troco[i][j].setBounds(890 + 79 * j, 370 + 59 * i, 80, 60);
+			for (int j = 0; j < 10; j++) {
+				if (j < 4)
+					troco[i][j].setBounds(990 + 60 * j, 370 + 59 * i, 60, 60);
+				else
+					troco[i][j].setBounds(1230 + 80 * (j - 4), 370 + 59 * i, 80, 60);
 				if (i == 0) {
 					switch (j) {
 					case 0:
-						troco[i][j].setIcon(new ImageIcon(getScaledImage(i1.getImage(), 80, 60)));
+						troco[i][j].setIcon(new ImageIcon(getScaledImage(i1.getImage(), 60, 60)));
 						break;
 					case 1:
-						troco[i][j].setIcon(new ImageIcon(getScaledImage(i2.getImage(), 80, 60)));
+						troco[i][j].setIcon(new ImageIcon(getScaledImage(i2.getImage(), 60, 60)));
 						break;
 					case 2:
-						troco[i][j].setIcon(new ImageIcon(getScaledImage(i5.getImage(), 80, 60)));
+						troco[i][j].setIcon(new ImageIcon(getScaledImage(i5.getImage(), 60, 60)));
 						break;
 					case 3:
-						troco[i][j].setIcon(new ImageIcon(getScaledImage(i10.getImage(), 80, 60)));
+						troco[i][j].setIcon(new ImageIcon(getScaledImage(i10.getImage(), 60, 60)));
 						break;
 					case 4:
 						troco[i][j].setIcon(new ImageIcon(getScaledImage(i20.getImage(), 80, 60)));
@@ -2218,32 +2257,44 @@ public class FaturaP extends JFrame {
 					case 6:
 						troco[i][j].setIcon(new ImageIcon(getScaledImage(i100.getImage(), 80, 60)));
 						break;
+					case 7:
+						troco[i][j].setIcon(new ImageIcon(getScaledImage(i200.getImage(), 80, 60)));
+						break;
+					case 8:
+						troco[i][j].setIcon(new ImageIcon(getScaledImage(i500.getImage(), 80, 60)));
+						break;
+					case 9:
+						troco[i][j].setIcon(new ImageIcon(getScaledImage(i1000.getImage(), 80, 60)));
+						break;
 					default:
 						break;
 					}
 				} else
-					troco[i][j].setText("0");
-				troco[i][j].setFont(First.myFont);
+					troco[i][j].setFont(First.myFont);
 			}
 
-		cambioN2.setBounds(750, 550, 142, 119);
+		// 2nd cambio
+		cambioN2.setBounds(850, 550, 140, 119);
 		cambioN2.setFont(First.myFont);
 		for (int i = 0; i < 2; i++)
-			for (int j = 0; j < 7; j++) {
-				troco2[i][j].setBounds(890 + 79 * j, 550 + 59 * i, 80, 60);
+			for (int j = 0; j < 10; j++) {
+				if (j < 4)
+					troco2[i][j].setBounds(990 + 60 * j, 550 + 59 * i, 60, 60);
+				else
+					troco2[i][j].setBounds(1230 + 80 * (j - 4), 550 + 59 * i, 80, 60);
 				if (i == 0) {
 					switch (j) {
 					case 0:
-						troco2[i][j].setIcon(new ImageIcon(getScaledImage(i1.getImage(), 80, 60)));
+						troco2[i][j].setIcon(new ImageIcon(getScaledImage(i1.getImage(), 60, 60)));
 						break;
 					case 1:
-						troco2[i][j].setIcon(new ImageIcon(getScaledImage(i2.getImage(), 80, 60)));
+						troco2[i][j].setIcon(new ImageIcon(getScaledImage(i2.getImage(), 60, 60)));
 						break;
 					case 2:
-						troco2[i][j].setIcon(new ImageIcon(getScaledImage(i5.getImage(), 80, 60)));
+						troco2[i][j].setIcon(new ImageIcon(getScaledImage(i5.getImage(), 60, 60)));
 						break;
 					case 3:
-						troco2[i][j].setIcon(new ImageIcon(getScaledImage(i10.getImage(), 80, 60)));
+						troco2[i][j].setIcon(new ImageIcon(getScaledImage(i10.getImage(), 60, 60)));
 						break;
 					case 4:
 						troco2[i][j].setIcon(new ImageIcon(getScaledImage(i20.getImage(), 80, 60)));
@@ -2254,30 +2305,44 @@ public class FaturaP extends JFrame {
 					case 6:
 						troco2[i][j].setIcon(new ImageIcon(getScaledImage(i100.getImage(), 80, 60)));
 						break;
+					case 7:
+						troco2[i][j].setIcon(new ImageIcon(getScaledImage(i200.getImage(), 80, 60)));
+						break;
+					case 8:
+						troco2[i][j].setIcon(new ImageIcon(getScaledImage(i500.getImage(), 80, 60)));
+						break;
+					case 9:
+						troco2[i][j].setIcon(new ImageIcon(getScaledImage(i1000.getImage(), 80, 60)));
+						break;
 					default:
 						break;
 					}
 				}
 				troco2[i][j].setFont(First.myFont);
 			}
-		cambioN3.setBounds(750, 730, 142, 119);
+
+		// 3rd cambio
+		cambioN3.setBounds(850, 730, 140, 119);
 		cambioN3.setFont(First.myFont);
 		for (int i = 0; i < 2; i++)
-			for (int j = 0; j < 7; j++) {
-				troco3[i][j].setBounds(890 + 79 * j, 730 + 59 * i, 80, 60);
+			for (int j = 0; j < 10; j++) {
+				if (j < 4)
+					troco3[i][j].setBounds(990 + 60 * j, 730 + 59 * i, 60, 60);
+				else
+					troco3[i][j].setBounds(1230 + 80 * (j - 4), 730 + 59 * i, 80, 60);
 				if (i == 0) {
 					switch (j) {
 					case 0:
-						troco3[i][j].setIcon(new ImageIcon(getScaledImage(i1.getImage(), 80, 60)));
+						troco3[i][j].setIcon(new ImageIcon(getScaledImage(i1.getImage(), 60, 60)));
 						break;
 					case 1:
-						troco3[i][j].setIcon(new ImageIcon(getScaledImage(i2.getImage(), 80, 60)));
+						troco3[i][j].setIcon(new ImageIcon(getScaledImage(i2.getImage(), 60, 60)));
 						break;
 					case 2:
-						troco3[i][j].setIcon(new ImageIcon(getScaledImage(i5.getImage(), 80, 60)));
+						troco3[i][j].setIcon(new ImageIcon(getScaledImage(i5.getImage(), 60, 60)));
 						break;
 					case 3:
-						troco3[i][j].setIcon(new ImageIcon(getScaledImage(i10.getImage(), 80, 60)));
+						troco3[i][j].setIcon(new ImageIcon(getScaledImage(i10.getImage(), 60, 60)));
 						break;
 					case 4:
 						troco3[i][j].setIcon(new ImageIcon(getScaledImage(i20.getImage(), 80, 60)));
@@ -2288,13 +2353,22 @@ public class FaturaP extends JFrame {
 					case 6:
 						troco3[i][j].setIcon(new ImageIcon(getScaledImage(i100.getImage(), 80, 60)));
 						break;
+					case 7:
+						troco3[i][j].setIcon(new ImageIcon(getScaledImage(i200.getImage(), 80, 60)));
+						break;
+					case 8:
+						troco3[i][j].setIcon(new ImageIcon(getScaledImage(i500.getImage(), 80, 60)));
+						break;
+					case 9:
+						troco3[i][j].setIcon(new ImageIcon(getScaledImage(i1000.getImage(), 80, 60)));
+						break;
 					default:
 						break;
 					}
 				}
 				troco3[i][j].setFont(First.myFont);
 			}
-		mainF.setBounds(1600, 540, 80, 80);
+		mainF.setBounds(720, 520, 80, 80);
 		mainF.setIcon(new ImageIcon(getScaledImage(mainIcon.getImage(), 80, 80)));
 
 	}
