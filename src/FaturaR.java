@@ -42,6 +42,8 @@ public class FaturaR extends JFrame {
 	static Color yellowC = new Color(255, 255, 130);
 	static Color orangeD = new Color(170, 80, 0);
 	static Color orangeC = new Color(255, 180, 110);
+	private URL u200 = getClass().getResource("images/200.jpg");
+	private ImageIcon i200 = new ImageIcon(u200);
 	private URL u100 = getClass().getResource("images/100.jpg");
 	private ImageIcon i100 = new ImageIcon(u100);
 	private URL u50 = getClass().getResource("images/50.jpg");
@@ -66,8 +68,8 @@ public class FaturaR extends JFrame {
 	static JLabel total = new JLabel("Total");
 	static JLabel cambio[] = new JLabel[6];
 	static JLabel[][] cajaTroco = new JLabel[2][7];
-	static JLabel[] trocoC = new JLabel[7];
-	static JFormattedTextField[] trocoCT = new JFormattedTextField[7];
+	static JLabel[] trocoC = new JLabel[8];
+	static JFormattedTextField[] trocoCT = new JFormattedTextField[8];
 	static JLabel[][] troco = new JLabel[2][7];
 	static JLabel[][] troco2 = new JLabel[2][7];
 	static JLabel[][] troco3 = new JLabel[2][7];
@@ -80,7 +82,7 @@ public class FaturaR extends JFrame {
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		width = (int) screenSize.getWidth();
 		height = (int) screenSize.getHeight();
-		this.setTitle("FATURA");
+		this.setTitle("FATURA - R$");
 		this.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 		this.setAlwaysOnTop(false);
 		// Resolution
@@ -120,6 +122,8 @@ public class FaturaR extends JFrame {
 		JLabel cambioC = new JLabel("Cliente");
 		JLabel title[] = new JLabel[4];
 		JLabel caja = new JLabel("Caja");
+		JButton mainF = new JButton();
+		JMenuItem hideBtn = new JMenuItem("ESCONDER EL BOTON");
 
 		// Open
 		BufferedReader dataOpened = null;
@@ -135,7 +139,7 @@ public class FaturaR extends JFrame {
 		} catch (Exception e) {
 		}
 
-		// Window1
+		// Invoice detailed
 		for (int i = 0; i < 4; i++) {
 			title[i] = new JLabel();
 			title[i].setForeground(blueC);
@@ -153,7 +157,7 @@ public class FaturaR extends JFrame {
 			for (int j = 0; j < 3; j++) {
 				details[i][j] = new JTextField();
 				textFieldStyle(details[i][j]);
-				tableFocus(i, j, this);
+				tableFocus(i, j, this, mainF, hideBtn);
 				this.add(details[i][j]);
 			}
 			// Autocomplete
@@ -203,7 +207,7 @@ public class FaturaR extends JFrame {
 		cambioC.setHorizontalAlignment(0);
 		cambioC.setOpaque(true);
 		this.add(cambioC);
-		for (int i = 0; i < 7; i++) {
+		for (int i = 0; i < 8; i++) {
 			trocoC[i] = new JLabel();
 			trocoC[i].setHorizontalAlignment(0);
 			trocoC[i].setBorder(First.border);
@@ -211,7 +215,7 @@ public class FaturaR extends JFrame {
 			this.add(trocoC[i]);
 			trocoCT[i] = new JFormattedTextField("0");
 			formatedTextFieldStyle(trocoCT[i], cambioN, cambioN2, cambioN3);
-			clienteFocus(i, this);
+			clienteFocus(i, this, mainF, hideBtn);
 			this.add(trocoCT[i]);
 		}
 		totalC.setBorder(First.border);
@@ -325,7 +329,6 @@ public class FaturaR extends JFrame {
 		}
 
 		// Button
-		JButton mainF = new JButton();
 		mainF.setFocusable(true);
 		mainF.setOpaque(false);
 		mainF.setContentAreaFilled(false);
@@ -357,7 +360,6 @@ public class FaturaR extends JFrame {
 		JMenuItem exit = new JMenuItem("SALIR");
 		JMenuItem reales = new JMenuItem("REALES");
 		JMenuItem getHelp = new JMenuItem("ATAJOS DE TECLADO");
-		JMenuItem hideBtn = new JMenuItem("ESCONDER EL BOTON");
 		JMenuItem about = new JMenuItem("SOBRE EL APLICATIVO");
 		calc.addActionListener(e -> calTodo(cambioN, cambioN2, cambioN3));
 		clear.addActionListener(e -> {
@@ -381,18 +383,12 @@ public class FaturaR extends JFrame {
 			new Reales();
 			this.dispose();
 		});
-		getHelp.addActionListener(e -> JOptionPane.showMessageDialog(null, "• CTRL + S → ir la reales.\n"
-				+ "• SHIFT → cambiar entre las dos tablas.\n" + "• FLECHAS → subir, abajo, derecha e izquierda.\n",
+		getHelp.addActionListener(e -> JOptionPane.showMessageDialog(null,
+				"• CTRL + S → ir la reales.\n" + "• CTRL + O → esconder los botones.\n"
+						+ "• SHIFT → cambiar entre las dos tablas.\n"
+						+ "• FLECHAS → subir, abajo, derecha e izquierda.\n",
 				"ATAJOS DE TECLADO", 1));
-		hideBtn.addActionListener(e -> {
-			if (mainF.isShowing()) {
-				mainF.hide();
-				hideBtn.setText("MONSTRAR EL BOTON");
-			} else {
-				mainF.show();
-				hideBtn.setText("ESCONDER EL BOTON");
-			}
-		});
+		hideBtn.addActionListener(e -> hideBtns(mainF, hideBtn));
 		about.addActionListener(
 				e -> JOptionPane.showMessageDialog(null, "Crédito y Diseñado por MhmdSAbdlh ©", "SOBRE MI", 1));
 		JMenu reso = new JMenu("RESOLUCIÓN");
@@ -450,29 +446,58 @@ public class FaturaR extends JFrame {
 			resXP(resoD, title, caja, cambioC, cambioN, cambioN2, mainF, cambioN3);
 	}
 
+	// Hide the button
+	private void hideBtns(JButton mainF, JMenuItem hideBtn) {
+		if (mainF.isShowing()) {
+			mainF.hide();
+			hideBtn.setText("MONSTRAR EL BOTON");
+		} else {
+			mainF.show();
+			hideBtn.setText("ESCONDER EL BOTON");
+		}
+	}
+
 	// Focus for the fatura
-	private static void tableFocus(int i, int j, JFrame frame) {
+	private void tableFocus(int i, int j, JFrame frame, JButton mainF, JMenuItem hideBtn) {
 		details[i][j].addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
+				// Hide
+				if ((e.getKeyCode() == KeyEvent.VK_O) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0))
+					hideBtns(mainF, hideBtn);
 				// GO TO Main
-				if ((e.getKeyCode() == KeyEvent.VK_S) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+				else if ((e.getKeyCode() == KeyEvent.VK_S) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
 					frame.dispose();
 					new Reales();
-				}
-				if ((e.getKeyCode() == KeyEvent.VK_SHIFT)) {
+				} else if ((e.getKeyCode() == KeyEvent.VK_SHIFT)) {
 					details[i][j].setNextFocusableComponent(trocoCT[0]);
 					details[i][j].nextFocus();
-				}
-				if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
+				} else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
 					if (j < 2) {
 						details[i][j].setNextFocusableComponent(details[i][j + 1]);
 						details[i][j].nextFocus();
+					} else {
+						if (i < 8) {
+							details[i][j].setNextFocusableComponent(details[i + 1][0]);
+							details[i][j].nextFocus();
+						} else {
+							details[i][j].setNextFocusableComponent(details[0][0]);
+							details[i][j].nextFocus();
+						}
 					}
+
 				} else if (e.getKeyCode() == KeyEvent.VK_LEFT) {
 					if (j > 0) {
 						details[i][j].setNextFocusableComponent(details[i][j - 1]);
 						details[i][j].nextFocus();
+					} else {
+						if (i > 0) {
+							details[i][j].setNextFocusableComponent(details[i - 1][2]);
+							details[i][j].nextFocus();
+						} else {
+							details[i][j].setNextFocusableComponent(details[8][2]);
+							details[i][j].nextFocus();
+						}
 					}
 				} else if (e.getKeyCode() == KeyEvent.VK_UP) {
 					if (i > 0) {
@@ -490,19 +515,22 @@ public class FaturaR extends JFrame {
 	}
 
 	// Focus for the cleinte
-	private static void clienteFocus(int i, JFrame frame) {
+	private void clienteFocus(int i, JFrame frame, JButton mainF, JMenuItem hideBtn) {
 		trocoCT[i].addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
+				// Hide
+				if ((e.getKeyCode() == KeyEvent.VK_O) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0))
+					hideBtns(mainF, hideBtn);
 				// GO TO Main
-				if ((e.getKeyCode() == KeyEvent.VK_S) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+				else if ((e.getKeyCode() == KeyEvent.VK_S) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
 					frame.dispose();
 					new Reales();
 				} else if ((e.getKeyCode() == KeyEvent.VK_SHIFT)) {
 					trocoCT[i].setNextFocusableComponent(details[0][0]);
 					trocoCT[i].nextFocus();
 				} else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-					if (i < 6) {
+					if (i < 7) {
 						trocoCT[i].setNextFocusableComponent(trocoCT[i + 1]);
 						trocoCT[i].nextFocus();
 					} else {
@@ -514,7 +542,7 @@ public class FaturaR extends JFrame {
 						trocoCT[i].setNextFocusableComponent(trocoCT[i - 1]);
 						trocoCT[i].nextFocus();
 					} else {
-						trocoCT[i].setNextFocusableComponent(trocoCT[6]);
+						trocoCT[i].setNextFocusableComponent(trocoCT[7]);
 						trocoCT[i].nextFocus();
 					}
 			}
@@ -522,7 +550,7 @@ public class FaturaR extends JFrame {
 	}
 
 	// Method 1 work
-	private static void cambioF() {
+	private void cambioF() {
 		for (int i = 0; i < 7; i++)
 			cajaTroco[1][i].setText(Integer.valueOf(cajaTroco[1][i].getText()) - Integer.valueOf(troco[1][i].getText())
 					+ Integer.valueOf(trocoCT[i].getText()) + "");
@@ -530,7 +558,7 @@ public class FaturaR extends JFrame {
 	}
 
 	// Method 2 work
-	private static void cambioF2() {
+	private void cambioF2() {
 		for (int i = 0; i < 7; i++)
 			cajaTroco[1][i].setText(Integer.valueOf(cajaTroco[1][i].getText()) - Integer.valueOf(troco2[1][i].getText())
 					+ Integer.valueOf(trocoCT[i].getText()) + "");
@@ -538,7 +566,7 @@ public class FaturaR extends JFrame {
 	}
 
 	// Method 3 work
-	private static void cambioF3() {
+	private void cambioF3() {
 		for (int i = 0; i < 7; i++)
 			cajaTroco[1][i].setText(Integer.valueOf(cajaTroco[1][i].getText()) - Integer.valueOf(troco3[1][i].getText())
 					+ Integer.valueOf(trocoCT[i].getText()) + "");
@@ -546,9 +574,9 @@ public class FaturaR extends JFrame {
 	}
 
 	// Calc everything
-	private static void calTodo(JButton cambioN, JButton cambioN2, JButton cambioN3) {
+	private void calTodo(JButton cambioN, JButton cambioN2, JButton cambioN3) {
 		totalFatura = 0;
-		for (int i = 0; i < 9; i++) {
+		for (int i = 0; i < 9; i++) {// if input wrong make it 0
 			if (!details[i][0].getText().isBlank() && !details[i][2].getText().isBlank()
 					&& First.isNumeric(details[i][0].getText()) && First.isNumeric(details[i][2].getText())) {
 				detailsR[i].setText(
@@ -556,15 +584,18 @@ public class FaturaR extends JFrame {
 				totalFatura += Integer.valueOf(detailsR[i].getText());
 			}
 		}
-		total.setText("R$ " + totalFatura);
+		for (int i = 0; i < 8; i++)// if input wrong make it 0
+			if (!First.isNumeric(trocoCT[i].getText()))
+				trocoCT[i].setText("0");
+		total.setText("R$ " + totalFatura);// total for the invoice
 		totalCV = Integer.valueOf(trocoCT[0].getText()) + Integer.valueOf(trocoCT[1].getText()) * 2
 				+ Integer.valueOf(trocoCT[2].getText()) * 5 + Integer.valueOf(trocoCT[3].getText()) * 10
 				+ Integer.valueOf(trocoCT[4].getText()) * 20 + Integer.valueOf(trocoCT[5].getText()) * 50
-				+ Integer.valueOf(trocoCT[6].getText()) * 100;
-		totalC.setText("R$ " + totalCV);
+				+ Integer.valueOf(trocoCT[6].getText()) * 100 + Integer.valueOf(trocoCT[7].getText()) * 200;
+		totalC.setText("R$ " + totalCV);// total for the cliente
 		cambio[3].setText("R$ " + totalFatura);
 		cambio[5].setText("R$ " + totalCV);
-		trocoV = totalCV - totalFatura;
+		trocoV = totalCV - totalFatura;// troco
 		if (totalCV < totalFatura)
 			cambio[4].setText("R$ " + (totalFatura - totalCV));
 		else
@@ -881,7 +912,6 @@ public class FaturaR extends JFrame {
 			cambioN2.setEnabled(true);
 		if (cambioN3.getText().equals("√"))
 			cambioN3.setEnabled(true);
-
 	}
 
 	// SAVE NEW VALUE
@@ -891,7 +921,7 @@ public class FaturaR extends JFrame {
 		try {
 			FileWriter savedF = new FileWriter("cedros.txt");
 			int i = 0;
-			while (i < 75) {
+			while (i < 75) {// Ventas + total
 				if ((numbers[i].isBlank() || Integer.valueOf(numbers[i]) == 0 || !First.isNumeric(numbers[i]))
 						&& Integer.valueOf(temp) != 0 && !totalC.getText().isBlank()) {
 					savedF.write(temp + System.lineSeparator());
@@ -901,40 +931,40 @@ public class FaturaR extends JFrame {
 					savedF.write(numbers[i] + System.lineSeparator());
 					i++;
 				}
-			}
+			} // Initial value
 			savedF.write(numbers[i] + System.lineSeparator());
 			i++;
 			z = i + 8;
-			while (i < z) {
+			while (i < z) {// gastos
 				savedF.write(numbers[i] + System.lineSeparator());
 				i++;
 			}
 			z = i + 8;
-			while (i < z) {
+			while (i < z) {// agregados
 				savedF.write(numbers[i] + System.lineSeparator());
 				i++;
 			}
-			z = i + 3;
-			while (i < z) {
-				if (i == z - 2)
-					savedF.write("0" + System.lineSeparator());
-				else
-					savedF.write(numbers[i] + System.lineSeparator());
-				i++;
-			}
+			savedF.write(numbers[i] + System.lineSeparator());// set of 1000
+			i++;
+			savedF.write("0" + System.lineSeparator());// set of 100
+			i++;// valor of 200 in the cash + that the cliente paid
+			if (!First.isNumeric(trocoCT[7].getText()))
+				trocoCT[7].setText("0");
+			int nb200 = Integer.valueOf(numbers[i]) + Integer.valueOf(trocoCT[7].getText());
+			savedF.write(nb200 + System.lineSeparator());
+			i++;
 			z = i + 7;
-			while (i < z) {
+			while (i < z) {// Valores from 1 to 100
 				savedF.write(cajaTroco[1][z - i - 1].getText() + System.lineSeparator());
 				i++;
 			}
-
 			savedF.close();
 		} catch (Exception e) {
 		}
 	}
 
 	// Style of textField
-	private static void textFieldStyle(JTextField tf) {
+	private void textFieldStyle(JTextField tf) {
 		tf.setBackground(blueC);
 		tf.setForeground(blueD);
 		tf.setFont(First.myFont);
@@ -957,8 +987,7 @@ public class FaturaR extends JFrame {
 	}
 
 	// Style of formattedTextField
-	private static void formatedTextFieldStyle(JFormattedTextField tf, JButton cambioN, JButton cambioN2,
-			JButton cambioN3) {
+	private void formatedTextFieldStyle(JFormattedTextField tf, JButton cambioN, JButton cambioN2, JButton cambioN3) {
 		tf.setBackground(blueC);
 		tf.setForeground(blueD);
 		tf.setFont(First.myFont);
@@ -983,6 +1012,7 @@ public class FaturaR extends JFrame {
 
 	private void resXP(JMenuItem resoD, JLabel[] title, JLabel caja, JLabel cambioC, JButton cambioN, JButton cambioN2,
 			JButton mainF, JButton cambioN3) {
+		// dimensions
 		this.setSize(1000, 600);
 		if (width >= 1800)
 			if (this.getWidth() == 1820)
@@ -1007,9 +1037,9 @@ public class FaturaR extends JFrame {
 		First.myFont = new Font("Tahoma", Font.BOLD, 16);
 		First.myFontS = new Font("Tahoma", Font.BOLD, 12);
 
+		// invoice
 		for (int i = 0; i < 4; i++)
 			title[i].setFont(First.myFont);
-
 		title[0].setBounds(40, 40, 50, 35);
 		title[1].setBounds(89, 40, 190, 35);
 		title[2].setBounds(278, 40, 60, 35);
@@ -1021,7 +1051,6 @@ public class FaturaR extends JFrame {
 			details[i][1].setBounds(89, 74 + i * 35, 190, 35);
 			details[i][2].setBounds(278, 74 + i * 35, 60, 35);
 		}
-
 		for (int i = 0; i < 9; i++) {
 			detailsR[i].setBounds(337, 74 + i * 35, 100, 35);
 			detailsR[i].setFont(First.myFontS);
@@ -1029,9 +1058,9 @@ public class FaturaR extends JFrame {
 		total.setFont(First.myFont);
 		total.setBounds(337, 387, 100, 40);
 
+		// caja
 		caja.setBounds(20, 450, 80, 70);
 		caja.setFont(First.myFont);
-
 		for (int i = 0; i < 2; i++)
 			for (int j = 0; j < 7; j++) {
 				cajaTroco[i][j].setBounds(100 + 49 * j, 450 + 35 * i, 50, 35);
@@ -1064,11 +1093,12 @@ public class FaturaR extends JFrame {
 					}
 				}
 			}
-		cambioC.setBounds(480, 52, 309, 50);
-		cambioC.setFont(First.myFont);
 
-		for (int i = 0; i < 7; i++) {
-			trocoC[i].setBounds(480 + 44 * i, 99, 45, 35);
+		// cambio for cliente
+		cambioC.setBounds(460, 52, 353, 50);
+		cambioC.setFont(First.myFont);
+		for (int i = 0; i < 8; i++) {
+			trocoC[i].setBounds(460 + 44 * i, 99, 45, 35);
 			switch (i) {
 			case 0:
 				trocoC[i].setIcon(new ImageIcon(getScaledImage(i1.getImage(), 45, 35)));
@@ -1091,25 +1121,29 @@ public class FaturaR extends JFrame {
 			case 6:
 				trocoC[i].setIcon(new ImageIcon(getScaledImage(i100.getImage(), 45, 35)));
 				break;
+			case 7:
+				trocoC[i].setIcon(new ImageIcon(getScaledImage(i200.getImage(), 45, 35)));
+				break;
 			default:
 				break;
 			}
 			trocoCT[i].setFont(First.myFont);
-			trocoCT[i].setBounds(480 + 44 * i, 133, 45, 35);
+			trocoCT[i].setBounds(460 + 44 * i, 133, 45, 35);
 		}
-
-		totalC.setBounds(480, 166, 309, 40);
+		totalC.setBounds(460, 166, 353, 40);
 		totalC.setFont(First.myFont);
 
+		// troco panel
 		for (int i = 0; i < 6; i++) {
 			cambio[i].setFont(First.myFont);
 			if (i < 3)
-				cambio[i].setBounds(810, 90 + 34 * i, 80, 35);
+				cambio[i].setBounds(820, 90 + 34 * i, 80, 35);
 		}
-		cambio[3].setBounds(890, 124, 80, 35);
-		cambio[4].setBounds(890, 158, 80, 35);
-		cambio[5].setBounds(890, 90, 80, 35);
+		cambio[3].setBounds(900, 124, 80, 35);
+		cambio[4].setBounds(900, 158, 80, 35);
+		cambio[5].setBounds(900, 90, 80, 35);
 
+		// cambio 1
 		cambioN.setBounds(480, 250, 100, 70);
 		cambioN.setFont(First.myFont);
 		for (int i = 0; i < 2; i++)
@@ -1146,6 +1180,7 @@ public class FaturaR extends JFrame {
 				troco[i][j].setFont(First.myFont);
 			}
 
+		// cambio 2
 		cambioN2.setBounds(480, 350, 100, 70);
 		cambioN2.setFont(First.myFont);
 		for (int i = 0; i < 2; i++)
@@ -1180,6 +1215,8 @@ public class FaturaR extends JFrame {
 				}
 				troco2[i][j].setFont(First.myFont);
 			}
+
+		// cambio 3
 		cambioN3.setBounds(480, 450, 100, 70);
 		cambioN3.setFont(First.myFont);
 		for (int i = 0; i < 2; i++)
@@ -1221,6 +1258,7 @@ public class FaturaR extends JFrame {
 
 	private void resP(JMenuItem resoD, JLabel[] title, JLabel caja, JLabel cambioC, JButton cambioN, JButton cambioN2,
 			JButton mainF, JButton cambioN3) {
+		// dimensions
 		this.setSize(1300, 700);
 		if (width >= 1800)
 			if (this.getWidth() == 1820)
@@ -1245,9 +1283,9 @@ public class FaturaR extends JFrame {
 		First.myFont = new Font("Tahoma", Font.BOLD, 17);
 		First.myFontS = new Font("Tahoma", Font.BOLD, 14);
 
+		// invoice
 		for (int i = 0; i < 4; i++)
 			title[i].setFont(First.myFont);
-
 		title[0].setBounds(40, 40, 60, 40);
 		title[1].setBounds(98, 40, 230, 40);
 		title[2].setBounds(326, 40, 70, 40);
@@ -1267,9 +1305,9 @@ public class FaturaR extends JFrame {
 		total.setFont(First.myFont);
 		total.setBounds(394, 438, 100, 40);
 
+		// caja
 		caja.setBounds(20, 520, 50, 79);
 		caja.setFont(First.myFont);
-
 		for (int i = 0; i < 2; i++)
 			for (int j = 0; j < 7; j++) {
 				cajaTroco[i][j].setBounds(70 + 59 * j, 520 + 39 * i, 60, 40);
@@ -1302,11 +1340,12 @@ public class FaturaR extends JFrame {
 					}
 				}
 			}
-		cambioC.setBounds(550, 52, 414, 50);
-		cambioC.setFont(First.myFont);
 
-		for (int i = 0; i < 7; i++) {
-			trocoC[i].setBounds(550 + 59 * i, 100, 60, 40);
+		// cambio for cliente
+		cambioC.setBounds(530, 52, 473, 50);
+		cambioC.setFont(First.myFont);
+		for (int i = 0; i < 8; i++) {
+			trocoC[i].setBounds(530 + 59 * i, 100, 60, 40);
 			switch (i) {
 			case 0:
 				trocoC[i].setIcon(new ImageIcon(getScaledImage(i1.getImage(), 60, 40)));
@@ -1329,16 +1368,19 @@ public class FaturaR extends JFrame {
 			case 6:
 				trocoC[i].setIcon(new ImageIcon(getScaledImage(i100.getImage(), 60, 40)));
 				break;
+			case 7:
+				trocoC[i].setIcon(new ImageIcon(getScaledImage(i200.getImage(), 60, 40)));
+				break;
 			default:
 				break;
 			}
 			trocoCT[i].setFont(First.myFont);
-			trocoCT[i].setBounds(550 + 59 * i, 140, 60, 40);
+			trocoCT[i].setBounds(530 + 59 * i, 140, 60, 40);
 		}
-
-		totalC.setBounds(550, 178, 414, 40);
+		totalC.setBounds(530, 178, 473, 40);
 		totalC.setFont(First.myFont);
 
+		// troco panel
 		for (int i = 0; i < 6; i++) {
 			cambio[i].setFont(First.myFont);
 			if (i < 3)
@@ -1347,6 +1389,8 @@ public class FaturaR extends JFrame {
 		cambio[3].setBounds(1120, 110, 140, 40);
 		cambio[4].setBounds(1120, 150, 140, 40);
 		cambio[5].setBounds(1120, 70, 140, 40);
+
+		// cambio 1
 		cambioN.setBounds(580, 270, 100, 79);
 		cambioN.setFont(First.myFont);
 		for (int i = 0; i < 2; i++)
@@ -1383,6 +1427,7 @@ public class FaturaR extends JFrame {
 				troco[i][j].setFont(First.myFont);
 			}
 
+		// cambio 2
 		cambioN2.setBounds(580, 400, 100, 79);
 		cambioN2.setFont(First.myFont);
 		for (int i = 0; i < 2; i++)
@@ -1417,6 +1462,8 @@ public class FaturaR extends JFrame {
 				}
 				troco2[i][j].setFont(First.myFont);
 			}
+
+		// cambio 3
 		cambioN3.setBounds(580, 530, 100, 79);
 		cambioN3.setFont(First.myFont);
 		for (int i = 0; i < 2; i++)
@@ -1457,6 +1504,7 @@ public class FaturaR extends JFrame {
 
 	private void resM(JMenuItem resoD, JLabel[] title, JLabel caja, JLabel cambioC, JButton cambioN, JButton cambioN2,
 			JButton mainF, JButton cambioN3) {
+		// dimensions
 		this.setSize(1500, 800);
 		if (width >= 1800)
 			if (this.getWidth() == 1820)
@@ -1481,9 +1529,9 @@ public class FaturaR extends JFrame {
 		First.myFont = new Font("Tahoma", Font.BOLD, 21);
 		First.myFontS = new Font("Tahoma", Font.BOLD, 17);
 
+		// invoice
 		for (int i = 0; i < 4; i++)
 			title[i].setFont(First.myFont);
-
 		title[0].setBounds(40, 40, 70, 50);
 		title[1].setBounds(108, 40, 250, 50);
 		title[2].setBounds(356, 40, 90, 50);
@@ -1495,7 +1543,6 @@ public class FaturaR extends JFrame {
 			details[i][1].setBounds(108, 90 + i * 50, 250, 50);
 			details[i][2].setBounds(356, 90 + i * 50, 90, 50);
 		}
-
 		for (int i = 0; i < 9; i++) {
 			detailsR[i].setBounds(444, 90 + i * 50, 120, 50);
 			detailsR[i].setFont(First.myFont);
@@ -1503,9 +1550,9 @@ public class FaturaR extends JFrame {
 		total.setFont(First.myFont);
 		total.setBounds(444, 538, 120, 50);
 
+		// caja
 		caja.setBounds(20, 610, 60, 99);
 		caja.setFont(First.myFont);
-
 		for (int i = 0; i < 2; i++)
 			for (int j = 0; j < 7; j++) {
 				cajaTroco[i][j].setBounds(80 + 69 * j, 610 + 49 * i, 70, 50);
@@ -1538,11 +1585,12 @@ public class FaturaR extends JFrame {
 					}
 				}
 			}
-		cambioC.setBounds(620, 52, 484, 60);
-		cambioC.setFont(First.myFont);
 
-		for (int i = 0; i < 7; i++) {
-			trocoC[i].setBounds(620 + 69 * i, 110, 70, 50);
+		// cambio for cliente
+		cambioC.setBounds(600, 52, 553, 60);
+		cambioC.setFont(First.myFont);
+		for (int i = 0; i < 8; i++) {
+			trocoC[i].setBounds(600 + 69 * i, 110, 70, 50);
 			switch (i) {
 			case 0:
 				trocoC[i].setIcon(new ImageIcon(getScaledImage(i1.getImage(), 70, 50)));
@@ -1565,24 +1613,29 @@ public class FaturaR extends JFrame {
 			case 6:
 				trocoC[i].setIcon(new ImageIcon(getScaledImage(i100.getImage(), 70, 50)));
 				break;
+			case 7:
+				trocoC[i].setIcon(new ImageIcon(getScaledImage(i200.getImage(), 70, 50)));
+				break;
 			default:
 				break;
 			}
 			trocoCT[i].setFont(First.myFont);
-			trocoCT[i].setBounds(620 + 69 * i, 160, 70, 50);
+			trocoCT[i].setBounds(600 + 69 * i, 160, 70, 50);
 		}
-
-		totalC.setBounds(620, 208, 484, 50);
+		totalC.setBounds(600, 208, 553, 50);
 		totalC.setFont(First.myFont);
 
+		// troco panel
 		for (int i = 0; i < 6; i++) {
 			cambio[i].setFont(First.myFont);
 			if (i < 3)
-				cambio[i].setBounds(1150, 80 + 50 * i, 110, 50);
+				cambio[i].setBounds(1180, 80 + 50 * i, 110, 50);
 		}
-		cambio[3].setBounds(1258, 130, 150, 50);
-		cambio[4].setBounds(1258, 180, 150, 50);
-		cambio[5].setBounds(1258, 80, 150, 50);
+		cambio[3].setBounds(1289, 130, 150, 50);
+		cambio[4].setBounds(1289, 180, 150, 50);
+		cambio[5].setBounds(1289, 80, 150, 50);
+
+		// cambio 1
 		cambioN.setBounds(622, 320, 120, 99);
 		cambioN.setFont(First.myFont);
 		for (int i = 0; i < 2; i++)
@@ -1618,8 +1671,8 @@ public class FaturaR extends JFrame {
 				troco[i][j].setFont(First.myFont);
 			}
 
+		// cambio 2
 		cambioN2.setBounds(622, 450, 120, 99);
-		;
 		cambioN2.setFont(First.myFont);
 		for (int i = 0; i < 2; i++)
 			for (int j = 0; j < 7; j++) {
@@ -1653,6 +1706,8 @@ public class FaturaR extends JFrame {
 				}
 				troco2[i][j].setFont(First.myFont);
 			}
+
+		// cambio 3
 		cambioN3.setBounds(622, 580, 120, 99);
 		cambioN3.setFont(First.myFont);
 		for (int i = 0; i < 2; i++)
@@ -1693,6 +1748,7 @@ public class FaturaR extends JFrame {
 
 	private void resG(JMenuItem resoD, JLabel[] title, JLabel caja, JLabel cambioC, JButton cambioN, JButton cambioN2,
 			JButton mainF, JButton cambioN3) {
+		// dimensions
 		this.setSize(1820, 980);
 		if (width >= 1800)
 			if (this.getWidth() == 1820)
@@ -1717,9 +1773,9 @@ public class FaturaR extends JFrame {
 		First.myFont = new Font("Tahoma", Font.BOLD, 24);
 		First.myFontS = new Font("Tahoma", Font.BOLD, 20);
 
+		// invoice
 		for (int i = 0; i < 4; i++)
 			title[i].setFont(First.myFont);
-
 		title[0].setBounds(40, 40, 100, 60);
 		title[1].setBounds(139, 40, 270, 60);
 		title[2].setBounds(408, 40, 110, 60);
@@ -1731,7 +1787,6 @@ public class FaturaR extends JFrame {
 			details[i][1].setBounds(139, 99 + i * 60, 270, 60);
 			details[i][2].setBounds(408, 99 + i * 60, 110, 60);
 		}
-
 		for (int i = 0; i < 9; i++) {
 			detailsR[i].setBounds(517, 99 + i * 60, 140, 60);
 			detailsR[i].setFont(First.myFont);
@@ -1739,9 +1794,9 @@ public class FaturaR extends JFrame {
 		total.setFont(First.myFont);
 		total.setBounds(517, 639, 140, 60);
 
+		// caja
 		caja.setBounds(20, 750, 100, 119);
 		caja.setFont(First.myFont);
-
 		for (int i = 0; i < 2; i++)
 			for (int j = 0; j < 7; j++) {
 				cajaTroco[i][j].setBounds(120 + 79 * j, 750 + 59 * i, 80, 60);
@@ -1774,11 +1829,12 @@ public class FaturaR extends JFrame {
 					}
 				}
 			}
-		cambioC.setBounds(800, 52, 554, 70);
-		cambioC.setFont(First.myFont);
 
-		for (int i = 0; i < 7; i++) {
-			trocoC[i].setBounds(800 + 79 * i, 120, 80, 60);
+		// cambio for cliente
+		cambioC.setBounds(770, 52, 633, 70);
+		cambioC.setFont(First.myFont);
+		for (int i = 0; i < 8; i++) {
+			trocoC[i].setBounds(770 + 79 * i, 120, 80, 60);
 			switch (i) {
 			case 0:
 				trocoC[i].setIcon(new ImageIcon(getScaledImage(i1.getImage(), 80, 60)));
@@ -1801,16 +1857,19 @@ public class FaturaR extends JFrame {
 			case 6:
 				trocoC[i].setIcon(new ImageIcon(getScaledImage(i100.getImage(), 80, 60)));
 				break;
+			case 7:
+				trocoC[i].setIcon(new ImageIcon(getScaledImage(i200.getImage(), 80, 60)));
+				break;
 			default:
 				break;
 			}
 			trocoCT[i].setFont(First.myFont);
-			trocoCT[i].setBounds(800 + 79 * i, 180, 80, 60);
+			trocoCT[i].setBounds(770 + 79 * i, 180, 80, 60);
 		}
-
-		totalC.setBounds(800, 238, 554, 60);
+		totalC.setBounds(770, 238, 633, 60);
 		totalC.setFont(First.myFont);
 
+		// troco panel
 		for (int i = 0; i < 6; i++) {
 			cambio[i].setFont(First.myFont);
 			if (i < 3)
@@ -1819,6 +1878,8 @@ public class FaturaR extends JFrame {
 		cambio[3].setBounds(1578, 150, 170, 60);
 		cambio[4].setBounds(1578, 210, 170, 60);
 		cambio[5].setBounds(1578, 90, 170, 60);
+
+		// cambio 1
 		cambioN.setBounds(750, 370, 140, 119);
 		cambioN.setFont(First.myFont);
 		for (int i = 0; i < 2; i++)
@@ -1855,6 +1916,7 @@ public class FaturaR extends JFrame {
 				troco[i][j].setFont(First.myFont);
 			}
 
+		// cambio 2
 		cambioN2.setBounds(750, 550, 142, 119);
 		cambioN2.setFont(First.myFont);
 		for (int i = 0; i < 2; i++)
@@ -1889,6 +1951,8 @@ public class FaturaR extends JFrame {
 				}
 				troco2[i][j].setFont(First.myFont);
 			}
+
+		// cambio 3
 		cambioN3.setBounds(750, 730, 142, 119);
 		cambioN3.setFont(First.myFont);
 		for (int i = 0; i < 2; i++)

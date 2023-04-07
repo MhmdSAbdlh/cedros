@@ -128,7 +128,8 @@ public class FaturaP extends JFrame {
 		JLabel cambioC = new JLabel("Cliente");
 		JLabel title[] = new JLabel[4];
 		JLabel caja = new JLabel("Caja");
-
+		JButton mainF = new JButton();
+		JMenuItem hideBtn = new JMenuItem("ESCONDER EL BOTON");
 		// Open
 		BufferedReader dataOpened = null;
 		String line = "";
@@ -161,7 +162,7 @@ public class FaturaP extends JFrame {
 			for (int j = 0; j < 3; j++) {
 				details[i][j] = new JTextField();
 				textFieldStyle(details[i][j]);
-				tableFocus(i, j, this);
+				tableFocus(i, j, this, mainF, hideBtn);
 				this.add(details[i][j]);
 			}
 			// Autocomplete
@@ -219,7 +220,7 @@ public class FaturaP extends JFrame {
 			this.add(trocoC[i]);
 			trocoCT[i] = new JFormattedTextField("0");
 			formatedTextFieldStyle(trocoCT[i], cambioN, cambioN2, cambioN3);
-			clienteFocus(i, this);
+			clienteFocus(i, this, mainF, hideBtn);
 			this.add(trocoCT[i]);
 		}
 		totalC.setBorder(First.border);
@@ -333,7 +334,6 @@ public class FaturaP extends JFrame {
 		}
 
 		// Button
-		JButton mainF = new JButton();
 		mainF.setFocusable(true);
 		mainF.setOpaque(false);
 		mainF.setContentAreaFilled(false);
@@ -363,7 +363,6 @@ public class FaturaP extends JFrame {
 		JMenuItem exit = new JMenuItem("SALIR");
 		JMenuItem reales = new JMenuItem("PESOS");
 		JMenuItem getHelp = new JMenuItem("ATAJOS DE TECLADO");
-		JMenuItem hideBtn = new JMenuItem("ESCONDER EL BOTON");
 		JMenuItem about = new JMenuItem("SOBRE EL APLICATIVO");
 		calc.addActionListener(e -> calTodo(cambioN, cambioN2, cambioN3));
 		clear.addActionListener(e -> {
@@ -387,8 +386,10 @@ public class FaturaP extends JFrame {
 			new Pesos();
 			this.dispose();
 		});
-		getHelp.addActionListener(e -> JOptionPane.showMessageDialog(null, "• CTRL + S → ir la pesos.\n"
-				+ "• SHIFT → cambiar entre las dos tablas.\n" + "• FLECHAS → subir, abajo, derecha e izquierda.\n",
+		getHelp.addActionListener(e -> JOptionPane.showMessageDialog(null,
+				"• CTRL + S → ir la pesos.\n" + "• CTRL + O → esconder los botones.\n"
+						+ "• SHIFT → cambiar entre las dos tablas.\n"
+						+ "• FLECHAS → subir, abajo, derecha e izquierda.\n",
 				"ATAJOS DE TECLADO", 1));
 		hideBtn.addActionListener(e -> {
 			if (mainF.isShowing()) {
@@ -457,12 +458,15 @@ public class FaturaP extends JFrame {
 	}
 
 	// Focus for the fatura
-	private static void tableFocus(int i, int j, JFrame frame) {
+	private void tableFocus(int i, int j, JFrame frame, JButton mainF, JMenuItem hideBtn) {
 		details[i][j].addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
+				// Hide
+				if ((e.getKeyCode() == KeyEvent.VK_O) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0))
+					hideBtns(mainF, hideBtn);
 				// GO TO Main
-				if ((e.getKeyCode() == KeyEvent.VK_S) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+				else if ((e.getKeyCode() == KeyEvent.VK_S) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
 					frame.dispose();
 					new Pesos();
 				}
@@ -496,12 +500,15 @@ public class FaturaP extends JFrame {
 	}
 
 	// Focus for the cleinte
-	private static void clienteFocus(int i, JFrame frame) {
+	private void clienteFocus(int i, JFrame frame, JButton mainF, JMenuItem hideBtn) {
 		trocoCT[i].addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
+				// Hide
+				if ((e.getKeyCode() == KeyEvent.VK_O) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0))
+					hideBtns(mainF, hideBtn);
 				// GO TO Main
-				if ((e.getKeyCode() == KeyEvent.VK_S) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+				else if ((e.getKeyCode() == KeyEvent.VK_S) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
 					frame.dispose();
 					new Pesos();
 				} else if ((e.getKeyCode() == KeyEvent.VK_SHIFT)) {
@@ -527,6 +534,17 @@ public class FaturaP extends JFrame {
 		});
 	}
 
+	// Hide the button
+	private void hideBtns(JButton mainF, JMenuItem hideBtn) {
+		if (mainF.isShowing()) {
+			mainF.hide();
+			hideBtn.setText("MONSTRAR EL BOTON");
+		} else {
+			mainF.show();
+			hideBtn.setText("ESCONDER EL BOTON");
+		}
+	}
+
 	// Method 1 work
 	private static void cambioF() {
 		for (int i = 0; i < 10; i++)
@@ -536,7 +554,7 @@ public class FaturaP extends JFrame {
 	}
 
 	// Method 2 work
-	private static void cambioF2() {
+	private void cambioF2() {
 		for (int i = 0; i < 10; i++)
 			cajaTroco[1][i].setText(Integer.valueOf(cajaTroco[1][i].getText()) - Integer.valueOf(troco2[1][i].getText())
 					+ Integer.valueOf(trocoCT[i].getText()) + "");
@@ -544,7 +562,7 @@ public class FaturaP extends JFrame {
 	}
 
 	// Method 3 work
-	private static void cambioF3() {
+	private void cambioF3() {
 		for (int i = 0; i < 10; i++)
 			cajaTroco[1][i].setText(Integer.valueOf(cajaTroco[1][i].getText()) - Integer.valueOf(troco3[1][i].getText())
 					+ Integer.valueOf(trocoCT[i].getText()) + "");
@@ -552,7 +570,7 @@ public class FaturaP extends JFrame {
 	}
 
 	// Calc everything
-	private static void calTodo(JButton cambioN, JButton cambioN2, JButton cambioN3) {
+	private void calTodo(JButton cambioN, JButton cambioN2, JButton cambioN3) {
 		totalFatura = 0;
 		for (int i = 0; i < 9; i++) {// Check if the value are number
 			if (!details[i][0].getText().isBlank() && !details[i][2].getText().isBlank()
@@ -1083,7 +1101,7 @@ public class FaturaP extends JFrame {
 	}
 
 	// Style of textField
-	private static void textFieldStyle(JTextField tf) {
+	private void textFieldStyle(JTextField tf) {
 		tf.setBackground(blueC);
 		tf.setForeground(blueD);
 		tf.setFont(First.myFont);
@@ -1106,8 +1124,7 @@ public class FaturaP extends JFrame {
 	}
 
 	// Style of formattedTextField
-	private static void formatedTextFieldStyle(JFormattedTextField tf, JButton cambioN, JButton cambioN2,
-			JButton cambioN3) {
+	private void formatedTextFieldStyle(JFormattedTextField tf, JButton cambioN, JButton cambioN2, JButton cambioN3) {
 		tf.setBackground(blueC);
 		tf.setForeground(blueD);
 		tf.setFont(First.myFont);

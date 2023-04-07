@@ -14,8 +14,6 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.RenderingHints;
 import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyAdapter;
@@ -32,6 +30,7 @@ import java.util.ArrayList;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -40,8 +39,6 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
-import javax.swing.Popup;
-import javax.swing.PopupFactory;
 import javax.swing.UIDefaults;
 import javax.swing.UIManager;
 import javax.swing.plaf.ColorUIResource;
@@ -533,7 +530,6 @@ public class Reales extends JFrame {
 			addSetMil();
 		else if (aggBtn[1].isShowing())
 			addSetHun();
-
 	}
 
 	private static void hideBtn(JButton notasF, JButton pesosF, JButton newDay, JButton clearEverthing,
@@ -937,28 +933,7 @@ public class Reales extends JFrame {
 					details[i][j].nextFocus();
 				} else // M for add set 100 and 1000
 				if ((e.getKeyCode() == KeyEvent.VK_M) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0))
-					if (aggBtn[0].isShowing() && aggBtn[1].isShowing()) {
-						addSetMil();
-						addSetHun();
-					} else if (aggBtn[0].isShowing())
-						addSetMil();
-					else if (aggBtn[1].isShowing())
-						addSetHun();
-					else {
-						// popup
-						JLabel label = new JLabel("No hay nada para armar");
-						Popup popup = PopupFactory.getSharedInstance().getPopup(e.getComponent(), label, width / 2,
-								height / 2);
-						popup.show();
-						javax.swing.Timer timer = new javax.swing.Timer(2000, new ActionListener() {
-
-							@Override
-							public void actionPerformed(ActionEvent e) {
-								popup.hide();
-							}
-						});
-						timer.start();
-					}
+					addSetKey();
 			}
 		});
 	}
@@ -1002,21 +977,8 @@ public class Reales extends JFrame {
 						addSetMil();
 					else if (aggBtn[1].isShowing())
 						addSetHun();
-					else {
-						// popup
-						JLabel label = new JLabel("No hay nada para armar");
-						Popup popup = PopupFactory.getSharedInstance().getPopup(e.getComponent(), label, width / 2,
-								height / 2);
-						popup.show();
-						javax.swing.Timer timer = new javax.swing.Timer(2000, new ActionListener() {
-
-							@Override
-							public void actionPerformed(ActionEvent e) {
-								popup.hide();
-							}
-						});
-						timer.start();
-					}
+					else
+						addSetKey();
 			}
 		});
 	}
@@ -1106,21 +1068,8 @@ public class Reales extends JFrame {
 						addSetMil();
 					else if (aggBtn[1].isShowing())
 						addSetHun();
-					else {
-						// popup
-						JLabel label = new JLabel("No hay nada para armar");
-						Popup popup = PopupFactory.getSharedInstance().getPopup(e.getComponent(), label, width / 2,
-								height / 2);
-						popup.show();
-						javax.swing.Timer timer = new javax.swing.Timer(2000, new ActionListener() {
-
-							@Override
-							public void actionPerformed(ActionEvent e) {
-								popup.hide();
-							}
-						});
-						timer.start();
-					}
+					else
+						addSetKey();
 			}
 		});
 	}
@@ -1211,21 +1160,8 @@ public class Reales extends JFrame {
 						addSetMil();
 					else if (aggBtn[1].isShowing())
 						addSetHun();
-					else {
-						// popup
-						JLabel label = new JLabel("No hay nada para armar");
-						Popup popup = PopupFactory.getSharedInstance().getPopup(e.getComponent(), label, width / 2,
-								height / 2);
-						popup.show();
-						javax.swing.Timer timer = new javax.swing.Timer(2000, new ActionListener() {
-
-							@Override
-							public void actionPerformed(ActionEvent e) {
-								popup.hide();
-							}
-						});
-						timer.start();
-					}
+					else
+						addSetKey();
 			}
 		});
 	}
@@ -1298,21 +1234,8 @@ public class Reales extends JFrame {
 						addSetMil();
 					else if (aggBtn[1].isShowing())
 						addSetHun();
-					else {
-						// popup
-						JLabel label = new JLabel("No hay nada para armar");
-						Popup popup = PopupFactory.getSharedInstance().getPopup(e.getComponent(), label, width / 2,
-								height / 2);
-						popup.show();
-						javax.swing.Timer timer = new javax.swing.Timer(2000, new ActionListener() {
-
-							@Override
-							public void actionPerformed(ActionEvent e) {
-								popup.hide();
-							}
-						});
-						timer.start();
-					}
+					else
+						addSetKey();
 			}
 		});
 	}
@@ -1356,11 +1279,10 @@ public class Reales extends JFrame {
 				resoD.setEnabled(false);
 			else
 				resoD.setEnabled(true);
-		else if (width >= 500)
-			if (this.getWidth() == 1000)
-				resoD.setEnabled(false);
-			else
-				resoD.setEnabled(true);
+		else if (this.getWidth() == 1000)
+			resoD.setEnabled(false);
+		else
+			resoD.setEnabled(true);
 		First.myFont = new Font("Tahoma", Font.BOLD, 16);
 		First.myFontS = new Font("Tahoma", Font.BOLD, 12);
 		for (int i = 0; i < 5; i++) {
@@ -1484,11 +1406,10 @@ public class Reales extends JFrame {
 				resoD.setEnabled(false);
 			else
 				resoD.setEnabled(true);
-		else if (width >= 500)
-			if (this.getWidth() == 1000)
-				resoD.setEnabled(false);
-			else
-				resoD.setEnabled(true);
+		else if (this.getWidth() == 1000)
+			resoD.setEnabled(false);
+		else
+			resoD.setEnabled(true);
 		First.myFont = new Font("Tahoma", Font.BOLD, 18);
 		First.myFontS = new Font("Tahoma", Font.BOLD, 15);
 		for (int i = 0; i < 5; i++) {
@@ -1611,11 +1532,10 @@ public class Reales extends JFrame {
 				resoD.setEnabled(false);
 			else
 				resoD.setEnabled(true);
-		else if (width >= 500)
-			if (this.getWidth() == 1000)
-				resoD.setEnabled(false);
-			else
-				resoD.setEnabled(true);
+		else if (this.getWidth() == 1000)
+			resoD.setEnabled(false);
+		else
+			resoD.setEnabled(true);
 		First.myFont = new Font("Tahoma", Font.BOLD, 21);
 		First.myFontS = new Font("Tahoma", Font.BOLD, 17);
 		for (int i = 0; i < 5; i++) {
@@ -1739,11 +1659,10 @@ public class Reales extends JFrame {
 				resoD.setEnabled(false);
 			else
 				resoD.setEnabled(true);
-		else if (width >= 500)
-			if (this.getWidth() == 1000)
-				resoD.setEnabled(false);
-			else
-				resoD.setEnabled(true);
+		else if (this.getWidth() == 1000)
+			resoD.setEnabled(false);
+		else
+			resoD.setEnabled(true);
 
 		First.myFont = new Font("Tahoma", Font.BOLD, 24);
 		First.myFontS = new Font("Tahoma", Font.BOLD, 20);
@@ -1850,6 +1769,32 @@ public class Reales extends JFrame {
 		notasF.setIcon(new ImageIcon(getScaledImage(notasI.getImage(), 100, 100)));
 		pesosF.setIcon(new ImageIcon(getScaledImage(pesosI.getImage(), 80, 80)));
 		clearEverthing.setIcon(new ImageIcon(getScaledImage(clear.getImage(), 80, 80)));
+	}
+
+	// Add set if available
+	private void addSetKey() {
+		if (aggBtn[0].isShowing() && aggBtn[1].isShowing()) {
+			addSetMil();
+			addSetHun();
+		} else if (aggBtn[0].isShowing())
+			addSetMil();
+		else if (aggBtn[1].isShowing())
+			addSetHun();
+		else {
+			JOptionPane opt = new JOptionPane("NO HAY NADA PARA ARMAR!", JOptionPane.ERROR_MESSAGE);
+			final JDialog dlg = opt.createDialog("Error");
+			new Thread(new Runnable() {
+				public void run() {
+					try {
+						Thread.sleep(2000);
+						dlg.dispose();
+
+					} catch (Throwable th) {
+					}
+				}
+			}).start();
+			dlg.setVisible(true);
+		}
 	}
 
 	private Image getScaledImage(Image srcImg, int w, int h) {
