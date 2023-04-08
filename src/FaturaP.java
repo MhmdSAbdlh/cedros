@@ -1798,17 +1798,17 @@ public class FaturaP extends JFrame {
 		for (int i = 0; i < 10; i++) {
 			for (int j = 0; j < 3; j++)
 				details[i][j].setFont(First.myFont);
-			details[i][0].setBounds(40, 90 + i * 40, 70, 45);
-			details[i][1].setBounds(108, 90 + i * 40, 200, 45);
-			details[i][2].setBounds(306, 90 + i * 40, 90, 45);
+			details[i][0].setBounds(40, 90 + i * 40, 70, 40);
+			details[i][1].setBounds(108, 90 + i * 40, 200, 40);
+			details[i][2].setBounds(306, 90 + i * 40, 90, 40);
 		}
 
 		for (int i = 0; i < 10; i++) {
-			detailsR[i].setBounds(394, 90 + i * 40, 120, 45);
+			detailsR[i].setBounds(394, 90 + i * 40, 120, 40);
 			detailsR[i].setFont(First.myFont);
 		}
 		total.setFont(First.myFont);
-		total.setBounds(394, 494, 120, 45);
+		total.setBounds(394, 489, 120, 45);
 
 		// Panel 2 Caja
 		caja.setBounds(20, 560, 551, 50);
