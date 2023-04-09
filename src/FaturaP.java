@@ -82,6 +82,7 @@ public class FaturaP extends JFrame {
 	static String numbers[] = new String[104];
 	static JLabel totalC = new JLabel("Total");
 	static int totalFatura = 0, totalCV = 0, trocoV = 0;
+	String conf[] = new String[2];
 
 	FaturaP() {
 		// Dimension
@@ -104,7 +105,29 @@ public class FaturaP extends JFrame {
 		this.setResizable(false);
 		this.setLayout(null);
 		this.getContentPane().setBackground(First.darkC);
-		this.setIconImage(new ImageIcon(getClass().getClassLoader().getResource("images/icon.png")).getImage());
+		// Open Conf
+		URL url;
+		BufferedReader dataOpened = null;
+		String line = "";
+		int tempC = 0;
+		try {
+			dataOpened = new BufferedReader(new FileReader(new File("conf.txt")));
+			while ((line = dataOpened.readLine()) != null) {
+				conf[tempC] = line.toString();
+				tempC++;
+			}
+			dataOpened.close();
+		} catch (Exception e) {
+		}
+		// Icon
+		if (conf[0] == null || conf[0].equals("0")) {
+			url = getClass().getResource("images/icon/icon.png");
+		} else if (conf[0].equals("1")) {
+			url = getClass().getResource("images/icon/cedros.png");
+		} else {
+			url = getClass().getResource("images/icon/narjes.png");
+		}
+		this.setIconImage(new ImageIcon(url).getImage());
 		// Close popup
 		this.addWindowListener(new java.awt.event.WindowAdapter() {
 			@Override
@@ -130,9 +153,10 @@ public class FaturaP extends JFrame {
 		JLabel caja = new JLabel("Caja");
 		JButton mainF = new JButton();
 		JMenuItem hideBtn = new JMenuItem("ESCONDER EL BOTON");
-		// Open
-		BufferedReader dataOpened = null;
-		String line = "";
+		
+		// Open Valores
+		dataOpened = null;
+		line = "";
 		int z = 0;
 		try {
 			dataOpened = new BufferedReader(new FileReader(new File("cedrosP.txt")));
@@ -1131,6 +1155,16 @@ public class FaturaP extends JFrame {
 
 			@Override
 			public void focusLost(FocusEvent e) {
+				totalFatura = 0;
+				for (int i = 0; i < 10; i++)// Check if the value are number
+					if (!details[i][0].getText().isBlank() && !details[i][2].getText().isBlank()
+							&& First.isNumeric(details[i][0].getText()) && First.isNumeric(details[i][2].getText())) {
+						detailsR[i].setText(
+								Integer.valueOf(details[i][0].getText()) * Integer.valueOf(details[i][2].getText()) + "");
+						totalFatura += Integer.valueOf(detailsR[i].getText());
+					}
+				// Calculate totals
+				total.setText("$ " + totalFatura);
 			}
 		});
 

@@ -111,6 +111,22 @@ public class Reales extends JFrame {
 		UIDefaults defaults = UIManager.getLookAndFeelDefaults();
 		defaults.put("Button.focus", new ColorUIResource(new Color(0, 0, 0, 0)));
 
+		//Open Conf
+		URL url;
+		BufferedReader dataOpened = null;
+		String line = "";
+		int z = 0;
+		String conf[] = new String[2];
+		try {
+			dataOpened = new BufferedReader(new FileReader(new File("conf.txt")));
+			while ((line = dataOpened.readLine()) != null) {
+				conf[z] = line.toString();
+				z++;
+			}
+			dataOpened.close();
+		} catch (Exception e) {
+		}
+		
 		// Define Frame
 		this.setTitle("CIERRE DE CAJA - R$");
 		this.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
@@ -128,7 +144,15 @@ public class Reales extends JFrame {
 		this.setLayout(null);
 		this.setResizable(false);
 		this.getContentPane().setBackground(First.darkC);
-		this.setIconImage(new ImageIcon(getClass().getClassLoader().getResource("images/icon.png")).getImage());
+		//Icon
+		if (conf[0] == null || conf[0].equals("0")) {
+			url = getClass().getResource("images/icon/icon.png");
+		} else if (conf[0].equals("1")) {
+			url = getClass().getResource("images/icon/cedros.png");
+		} else {
+			url = getClass().getResource("images/icon/narjes.png");
+		}
+		this.setIconImage(new ImageIcon(url).getImage());
 		// Close popup
 		this.addWindowListener(new java.awt.event.WindowAdapter() {
 			@Override

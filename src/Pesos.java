@@ -92,6 +92,7 @@ public class Pesos extends JFrame {
 	static int gastosT = 0, agregadoT = 0;
 	static int restN, totalCaja = 0, nbOf500 = 0;
 	int width, height;
+	String conf[] = new String[2];
 
 	Pesos() {
 		// Buttons
@@ -155,7 +156,22 @@ public class Pesos extends JFrame {
 		this.setLayout(null);
 		this.setResizable(false);
 		this.getContentPane().setBackground(First.darkC);
-		this.setIconImage(new ImageIcon(getClass().getClassLoader().getResource("images/icon.png")).getImage());
+
+		// Open Conf
+		URL url;
+		BufferedReader dataOpened = null;
+		String line = "";
+		int z = 0;
+		try {
+			dataOpened = new BufferedReader(new FileReader(new File("conf.txt")));
+			while ((line = dataOpened.readLine()) != null) {
+				conf[z] = line.toString();
+				z++;
+			}
+			dataOpened.close();
+		} catch (Exception e) {
+		}
+
 		int temp;
 		ArrayList<String> keywords = listMercadoria();
 
@@ -420,14 +436,23 @@ public class Pesos extends JFrame {
 			this.dispose();
 			new FaturaP();
 		});
-		getHelp.addActionListener(e -> JOptionPane.showMessageDialog(null,
-				"• CTRL + S → ir la fatura.\n" + "• CTRL + R → ir al reales.\n" + "• CTRL + B → borrar todo.\n"
-						+ "• CTRL + N → prepárate para el día siguiente.\n"
-						+ "• FLECHAS → subir, abajo, derecha e izquierda.\n" + "• CTRL + D → ir al detalles.\n"
-						+ "• CTRL + I → ir al inicio.\n" + "• CTRL + G → ir al gastos.\n"
-						+ "• CTRL + A → ir al agregado.\n" + "• CTRL + T → ir a la caja.\n"
-						+ "• CTRL + E → ir al ultimo numero.\n" + "• CTRL + O → esconder los botones",
-				"ATAJOS DE TECLADO", 1));
+		if (conf[0] == null || conf[0].equals("0") || conf[0].equals("1"))
+			getHelp.addActionListener(e -> JOptionPane.showMessageDialog(null,
+					"• CTRL + S → ir la fatura.\n" + "• CTRL + R → ir al reales.\n" + "• CTRL + B → borrar todo.\n"
+							+ "• CTRL + N → prepárate para el día siguiente.\n"
+							+ "• FLECHAS → subir, abajo, derecha e izquierda.\n" + "• CTRL + D → ir al detalles.\n"
+							+ "• CTRL + I → ir al inicio.\n" + "• CTRL + G → ir al gastos.\n"
+							+ "• CTRL + A → ir al agregado.\n" + "• CTRL + T → ir a la caja.\n"
+							+ "• CTRL + E → ir al ultimo numero.\n" + "• CTRL + O → esconder los botones",
+					"ATAJOS DE TECLADO", 1));
+		else
+			getHelp.addActionListener(e -> JOptionPane.showMessageDialog(null,
+					"• CTRL + S → ir la fatura.\n" + "• CTRL + R → ir al reales.\n" + "• CTRL + B → borrar todo.\n"
+							+ "• FLECHAS → subir, abajo, derecha e izquierda.\n" + "• CTRL + D → ir al detalles.\n"
+							+ "• CTRL + I → ir al inicio.\n" + "• CTRL + G → ir al gastos.\n"
+							+ "• CTRL + A → ir al agregado.\n" + "• CTRL + T → ir a la caja.\n"
+							+ "• CTRL + E → ir al ultimo numero.\n" + "• CTRL + O → esconder los botones",
+					"ATAJOS DE TECLADO", 1));
 		hideBtn.addActionListener(e -> hideBtn(faturaBtn, realesF, newDay, clearEverthing, hideBtn));
 		about.addActionListener(
 				e -> JOptionPane.showMessageDialog(null, "Crédito y Diseñado por MhmdSAbdlh ©", "SOBRE MI", 1));
@@ -505,6 +530,20 @@ public class Pesos extends JFrame {
 			resP(resoD, realesF, faturaBtn, newDay, clearEverthing);
 		else
 			resXP(resoD, realesF, faturaBtn, newDay, clearEverthing);
+
+		// Icon
+		if (conf[0] == null || conf[0].equals("0") || conf[0].equals("1")) {
+			url = getClass().getResource("images/icon/icon.png");
+			newDay.show();
+			restTmrw.show();
+			novo.show();
+		} else {
+			url = getClass().getResource("images/icon/narjes.png");
+			newDay.hide();
+			restTmrw.hide();
+			novo.hide();
+		}
+		this.setIconImage(new ImageIcon(url).getImage());
 	}
 
 	// Clear all funcion
@@ -739,7 +778,8 @@ public class Pesos extends JFrame {
 
 				else// new day
 				if ((e.getKeyCode() == KeyEvent.VK_N) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
-					newDay();
+					if (conf[0] == null || conf[0].equals("0") || conf[0].equals("1"))
+						newDay();
 				} else// Direction
 				if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
 					if (i < 4) {
@@ -844,7 +884,8 @@ public class Pesos extends JFrame {
 					clearAll();
 				} else// new day
 				if ((e.getKeyCode() == KeyEvent.VK_N) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
-					newDay();
+					if (conf[0] == null || conf[0].equals("0") || conf[0].equals("1"))
+						newDay();
 				} else // GO TO GASTOS
 				if ((e.getKeyCode() == KeyEvent.VK_G) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
 					initialDay.setNextFocusableComponent(gastosTable[0]);
@@ -892,7 +933,8 @@ public class Pesos extends JFrame {
 					clearAll();
 				} else// new day
 				if ((e.getKeyCode() == KeyEvent.VK_N) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
-					newDay();
+					if (conf[0] == null || conf[0].equals("0") || conf[0].equals("1"))
+						newDay();
 				} else// GO TO INITIAL
 				if ((e.getKeyCode() == KeyEvent.VK_I) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
 					agregadoTable[i].setNextFocusableComponent(initialDay);
@@ -975,7 +1017,8 @@ public class Pesos extends JFrame {
 				} else
 				// new day
 				if ((e.getKeyCode() == KeyEvent.VK_N) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
-					newDay();
+					if (conf[0] == null || conf[0].equals("0") || conf[0].equals("1"))
+						newDay();
 				} else// GO TO INITIAL
 				if ((e.getKeyCode() == KeyEvent.VK_I) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
 					gastosTable[i].setNextFocusableComponent(initialDay);
@@ -1057,7 +1100,8 @@ public class Pesos extends JFrame {
 					clearAll();
 				} else// new day
 				if ((e.getKeyCode() == KeyEvent.VK_N) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
-					newDay();
+					if (conf[0] == null || conf[0].equals("0") || conf[0].equals("1"))
+						newDay();
 				} else // GO TO INITIAL
 				if ((e.getKeyCode() == KeyEvent.VK_I) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
 					panelCnum[i].setNextFocusableComponent(initialDay);
@@ -1231,13 +1275,19 @@ public class Pesos extends JFrame {
 			}
 			panelCnum[i].setFont(First.myFont);
 		}
+		if (conf[0] == null || conf[0].equals("0") || conf[0].equals("1")) {
+			diffResult[0].setBounds(480, 420, 150, 45);
+			diffResult[1].setBounds(480, 464, 150, 45);
+			pesosF.setBounds(675, 430, 50, 50);
+		} else {
+			diffResult[0].setBounds(600, 420, 250, 35);
+			diffResult[1].setBounds(600, 454, 250, 35);
+			pesosF.setBounds(480, 430, 50, 50);
+		}
 		total[6].setBounds(430, 330, 510, 40);
-		diffResult[0].setBounds(500, 420, 150, 35);
-		diffResult[1].setBounds(500, 454, 150, 35);
 		newDay.setBounds(750, 420, 150, 45);
 		restTmrw.setBounds(750, 464, 150, 25);
 		notasF.setBounds(920, 430, 50, 50);
-		pesosF.setBounds(675, 430, 50, 50);
 		clearEverthing.setBounds(400, 400, 50, 50);
 		total[6].setFont(First.myFont);
 		diffResult[0].setFont(First.myFontS);
@@ -1363,13 +1413,19 @@ public class Pesos extends JFrame {
 				break;
 			}
 		}
+		if (conf[0] == null || conf[0].equals("0") || conf[0].equals("1")) {
+			diffResult[0].setBounds(620, 480, 200, 40);
+			diffResult[1].setBounds(620, 519, 200, 50);
+			pesosF.setBounds(855, 500, 60, 60);
+		} else {
+			diffResult[0].setBounds(750, 480, 300, 50);
+			diffResult[1].setBounds(750, 529, 300, 60);
+			pesosF.setBounds(620, 500, 60, 60);
+		}
 		total[6].setBounds(580, 380, 600, 40);
-		diffResult[0].setBounds(620, 480, 200, 40);
-		diffResult[1].setBounds(620, 519, 200, 50);
 		newDay.setBounds(950, 480, 210, 55);
 		restTmrw.setBounds(950, 534, 210, 35);
 		notasF.setBounds(1180, 500, 60, 60);
-		pesosF.setBounds(855, 500, 60, 60);
 		clearEverthing.setBounds(520, 460, 70, 70);
 		total[6].setFont(First.myFont);
 		diffResult[0].setFont(First.myFont);
@@ -1495,13 +1551,19 @@ public class Pesos extends JFrame {
 			}
 			panelCnum[i].setFont(First.myFont);
 		}
+		if (conf[0] == null || conf[0].equals("0") || conf[0].equals("1")) {
+			diffResult[0].setBounds(680, 570, 250, 55);
+			diffResult[1].setBounds(680, 624, 250, 55);
+			pesosF.setBounds(960, 590, 70, 70);
+		} else {
+			diffResult[0].setBounds(850, 570, 350, 55);
+			diffResult[1].setBounds(850, 625, 350, 55);
+			pesosF.setBounds(680, 600, 70, 70);
+		}
 		total[6].setBounds(640, 480, 710, 50);
-		diffResult[0].setBounds(680, 570, 250, 55);
-		diffResult[1].setBounds(680, 624, 250, 55);
 		newDay.setBounds(1070, 570, 250, 65);
 		restTmrw.setBounds(1070, 634, 250, 45);
 		notasF.setBounds(1350, 580, 80, 80);
-		pesosF.setBounds(960, 590, 70, 70);
 		clearEverthing.setBounds(560, 540, 70, 70);
 		total[6].setFont(First.myFont);
 		diffResult[0].setFont(First.myFont);
@@ -1627,12 +1689,18 @@ public class Pesos extends JFrame {
 			}
 			panelCnum[i].setFont(First.myFont);
 		}
+		if (conf[0] == null || conf[0].equals("0") || conf[0].equals("1")) {
+			diffResult[0].setBounds(850, 700, 250, 65);
+			diffResult[1].setBounds(850, 764, 250, 65);
+			pesosF.setBounds(1140, 730, 80, 80);
+		} else {
+			diffResult[0].setBounds(1030, 700, 350, 65);
+			diffResult[1].setBounds(1030, 764, 350, 65);
+			pesosF.setBounds(780, 730, 80, 80);
+		}
 		total[6].setBounds(800, 570, 820, 60);
-		diffResult[0].setBounds(850, 700, 250, 65);
-		diffResult[1].setBounds(850, 764, 250, 65);
 		newDay.setBounds(1270, 700, 300, 75);
 		restTmrw.setBounds(1270, 774, 300, 55);
-		pesosF.setBounds(1140, 730, 80, 80);
 		notasF.setBounds(1650, 700, 100, 100);
 		clearEverthing.setBounds(650, 650, 80, 80);
 		total[6].setFont(First.myFont);

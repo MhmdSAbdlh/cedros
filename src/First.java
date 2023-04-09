@@ -7,13 +7,20 @@ import java.awt.Image;
 import java.awt.RenderingHints;
 import java.awt.Toolkit;
 import java.awt.Window;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.net.URL;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -46,12 +53,29 @@ public class First extends JFrame {
 	static Border border = new LineBorder(Color.white, 2);
 	private URL enter = getClass().getResource("images/enter.png");
 	private ImageIcon enterI = new ImageIcon(enter);
+	private URL icon = getClass().getResource("images/icon/icon.png");
+	private ImageIcon iconI = new ImageIcon(icon);
 
 	public static void main(String[] args) {
 		new First();
 	}
 
 	First() {
+		URL url;
+		// Open Conf
+		BufferedReader dataOpened = null;
+		String line = "";
+		int z = 0;
+		String conf[] = new String[2];
+		try {
+			dataOpened = new BufferedReader(new FileReader(new File("conf.txt")));
+			while ((line = dataOpened.readLine()) != null) {
+				conf[z] = line.toString();
+				z++;
+			}
+			dataOpened.close();
+		} catch (Exception e) {
+		}
 		// Dimension
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		int width = (int) screenSize.getWidth() - 100;
@@ -59,6 +83,7 @@ public class First extends JFrame {
 		// remove button focus border
 		UIDefaults defaults = UIManager.getLookAndFeelDefaults();
 		defaults.put("Button.focus", new ColorUIResource(new Color(0, 0, 0, 0)));
+		iconI = new ImageIcon(getScaledImage(iconI.getImage(), 50, 50));
 		// Frame and panel
 		this.setTitle("CEDROS");
 		this.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
@@ -68,7 +93,6 @@ public class First extends JFrame {
 		this.setResizable(false);
 		this.setLayout(null);
 		this.getContentPane().setBackground(darkC);
-		this.setIconImage(new ImageIcon(getClass().getClassLoader().getResource("images/icon.png")).getImage());
 		// Close popup
 		this.addWindowListener(new java.awt.event.WindowAdapter() {
 			@Override
@@ -82,10 +106,21 @@ public class First extends JFrame {
 		});
 
 		// Logo
-		URL url = getClass().getResource("images/icon.png");
-		ImageIcon icon = new ImageIcon(url);
-		JLabel photo = new JLabel(icon);
-		photo.setBounds((width - width / 3) / 2, 0, width / 3, height / 2);
+		if (conf[0] == null || conf[0].equals("0")) {
+			this.setTitle("CEDROS");
+			url = getClass().getResource("images/icon/icon.png");
+		} else if (conf[0].equals("1")) {
+			url = getClass().getResource("images/icon/cedros.png");
+			this.setTitle("CEDROS");
+		} else {
+			url = getClass().getResource("images/icon/narjes.png");
+			this.setTitle("NARJES");
+		}
+		this.setIconImage(new ImageIcon(url).getImage());
+		ImageIcon photo = new ImageIcon(url);
+		photo = new ImageIcon(getScaledImage(photo.getImage(), height / 3, height / 3));
+		JLabel photoLabel = new JLabel(photo);
+		photoLabel.setBounds((width - width / 3) / 2, 0, width / 3, height / 2);
 
 		// Stuff
 		JLabel inputText = new JLabel("Escribe la contraseña");
@@ -136,16 +171,92 @@ public class First extends JFrame {
 		JMenu file = new JMenu("AYUDA");
 		JMenuItem exit = new JMenuItem("SALIR");
 		JMenuItem about = new JMenuItem("SOBRE EL APLICATIVO");
+		JMenuItem option = new JMenuItem("CONFIGURACIÓN");
 		about.addActionListener(
 				e -> JOptionPane.showMessageDialog(null, "Crédito y Diseñado por MhmdSAbdlh ©", "SOBRE MI", 1));
+		option.addActionListener(e -> {
+			JFrame temp = new JFrame();
+			temp.setTitle("CONFIGURACIÓN");
+			temp.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+			temp.setAlwaysOnTop(false);
+			temp.setSize(500, 500);
+			temp.setLocationRelativeTo(null);
+			temp.setResizable(false);
+			temp.setLayout(null);
+			temp.getContentPane().setBackground(lightC);
+
+			// Stuff
+			JLabel op1 = new JLabel("Icono");
+			op1.setBounds(50, 20, 150, 80);
+			op1.setFont(myFont);
+			URL cedros1 = getClass().getResource("images/icon/icon.png");
+			URL cedros2 = getClass().getResource("images/icon/cedros.png");
+			URL narjes = getClass().getResource("images/icon/narjes.png");
+			ImageIcon iconImages[] = new ImageIcon[3];
+			iconImages[0] = new ImageIcon(cedros1);
+			iconImages[1] = new ImageIcon(cedros2);
+			iconImages[2] = new ImageIcon(narjes);
+			iconImages[0] = new ImageIcon(getScaledImage(iconImages[0].getImage(), 50, 50));
+			iconImages[1] = new ImageIcon(getScaledImage(iconImages[1].getImage(), 50, 50));
+			iconImages[2] = new ImageIcon(getScaledImage(iconImages[2].getImage(), 50, 50));
+			JComboBox<ImageIcon> op1C = new JComboBox<>(iconImages);
+			op1C.setBounds(250, 20, 80, 80);
+			if (conf[0] != null)
+				op1C.setSelectedIndex(Integer.valueOf(conf[0]));
+			op1C.addActionListener(new ActionListener() {
+
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					iconImages[0] = new ImageIcon(
+							getScaledImage(new ImageIcon(cedros1).getImage(), height / 3, height / 3));
+					iconImages[1] = new ImageIcon(
+							getScaledImage(new ImageIcon(cedros2).getImage(), height / 3, height / 3));
+					iconImages[2] = new ImageIcon(
+							getScaledImage(new ImageIcon(narjes).getImage(), height / 3, height / 3));
+					photoLabel.setIcon(iconImages[op1C.getSelectedIndex()]);
+					First.this.setIconImage(iconImages[op1C.getSelectedIndex()].getImage());
+					if (op1C.getSelectedIndex() == 2)
+						First.this.setTitle("NARJES");
+					else
+						First.this.setTitle("CEDROS");
+					op1C.setSelectedIndex(op1C.getSelectedIndex());
+				}
+			});
+
+			JButton save = new JButton("Save");
+			save.setBounds(200, 400, 100, 50);
+			btnStyle(save);
+			save.setBackground(darkC);
+			save.setForeground(lightC);
+			save.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					try {
+						FileWriter savedF = new FileWriter("conf.txt");
+						savedF.write(op1C.getSelectedIndex() + System.lineSeparator());
+						savedF.close();
+					} catch (Exception e2) {
+					}
+					temp.dispose();
+				}
+			});
+
+			// Finalize
+			temp.setIconImage(iconImages[0].getImage());
+			temp.add(op1);
+			temp.add(op1C);
+			temp.add(save);
+			temp.setVisible(true);
+		});
 		exit.addActionListener(e -> System.exit(0));
+		file.add(option);
 		file.add(about);
 		file.add(exit);
 		mb.add(file);
 
 		// Add to frame
 		this.setJMenuBar(mb);
-		this.add(photo);
+		this.add(photoLabel);
 		this.add(login);
 		this.add(showHide);
 		this.add(passTF);

@@ -76,6 +76,7 @@ public class FaturaR extends JFrame {
 	static String numbers[] = new String[103];
 	static JLabel totalC = new JLabel("Total");
 	static int totalFatura = 0, totalCV = 0, trocoV = 0;
+	String conf[] = new String[2];
 
 	FaturaR() {
 		// Dimension
@@ -98,7 +99,30 @@ public class FaturaR extends JFrame {
 		this.setResizable(false);
 		this.setLayout(null);
 		this.getContentPane().setBackground(First.darkC);
-		this.setIconImage(new ImageIcon(getClass().getClassLoader().getResource("images/icon.png")).getImage());
+
+		// Open Conf
+		URL url;
+		BufferedReader dataOpened = null;
+		String line = "";
+		int tempC = 0;
+		try {
+			dataOpened = new BufferedReader(new FileReader(new File("conf.txt")));
+			while ((line = dataOpened.readLine()) != null) {
+				conf[tempC] = line.toString();
+				tempC++;
+			}
+			dataOpened.close();
+		} catch (Exception e) {
+		}
+		// Icon
+		if (conf[0] == null || conf[0].equals("0")) {
+			url = getClass().getResource("images/icon/icon.png");
+		} else if (conf[0].equals("1")) {
+			url = getClass().getResource("images/icon/cedros.png");
+		} else {
+			url = getClass().getResource("images/icon/narjes.png");
+		}
+		this.setIconImage(new ImageIcon(url).getImage());
 		// Close popup
 		this.addWindowListener(new java.awt.event.WindowAdapter() {
 			@Override
@@ -126,8 +150,8 @@ public class FaturaR extends JFrame {
 		JMenuItem hideBtn = new JMenuItem("ESCONDER EL BOTON");
 
 		// Open
-		BufferedReader dataOpened = null;
-		String line = "";
+		dataOpened = null;
+		line = "";
 		int z = 0;
 		try {
 			dataOpened = new BufferedReader(new FileReader(new File("cedros.txt")));
@@ -987,6 +1011,17 @@ public class FaturaR extends JFrame {
 
 			@Override
 			public void focusLost(FocusEvent e) {
+				totalFatura = 0;
+				for (int i = 0; i < 10; i++) {// if input wrong make it 0
+					if (!details[i][0].getText().isBlank() && !details[i][2].getText().isBlank()
+							&& First.isNumeric(details[i][0].getText()) && First.isNumeric(details[i][2].getText())) {
+						detailsR[i].setText(
+								Integer.valueOf(details[i][0].getText()) * Integer.valueOf(details[i][2].getText())
+										+ "");
+						totalFatura += Integer.valueOf(detailsR[i].getText());
+					}
+				}
+				total.setText("R$ " + totalFatura);// total for the invoice
 			}
 		});
 
