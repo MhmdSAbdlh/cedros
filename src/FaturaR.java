@@ -28,7 +28,6 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
-import javax.swing.UIManager;
 
 @SuppressWarnings("serial")
 public class FaturaR extends JFrame {
@@ -76,17 +75,26 @@ public class FaturaR extends JFrame {
 	static String numbers[] = new String[103];
 	static JLabel totalC = new JLabel("Total");
 	static int totalFatura = 0, totalCV = 0, trocoV = 0;
-	String conf[] = new String[2];
 
 	FaturaR() {
-		// Dimension
+		// Btns
+		JButton cambioN = new JButton("<html><center>" + "MÉTODO" + "<br>" + "SMART" + "</font></center></html>");
+		JButton cambioN2 = new JButton("<html><center>" + "MÉTODO" + "<br>" + "POPULAR" + "</font></center></html>");
+		JButton cambioN3 = new JButton("<html><center>" + "MÉTODO" + "<br>" + " BÁSICO" + "</font></center></html>");
+		JButton calculate = new JButton("Magic");
+		JLabel cambioC = new JLabel("Cliente");
+		JLabel title[] = new JLabel[4];
+		JLabel caja = new JLabel("Caja");
+		JButton mainF = new JButton();
+		JMenuItem hideBtn = new JMenuItem("ESCONDER EL BOTON");
+
+		// Frame
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		width = (int) screenSize.getWidth();
 		height = (int) screenSize.getHeight();
 		this.setTitle("FATURA - R$");
 		this.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 		this.setAlwaysOnTop(false);
-		// Resolution
 		if (width > 1800 && height > 1000)
 			this.setSize(1820, 980);
 		else if (width > 1500 && height > 700)
@@ -105,6 +113,7 @@ public class FaturaR extends JFrame {
 		BufferedReader dataOpened = null;
 		String line = "";
 		int tempC = 0;
+		String conf[] = new String[2];
 		try {
 			dataOpened = new BufferedReader(new FileReader(new File("conf.txt")));
 			while ((line = dataOpened.readLine()) != null) {
@@ -123,33 +132,17 @@ public class FaturaR extends JFrame {
 			url = getClass().getResource("images/icon/narjes.png");
 		}
 		this.setIconImage(new ImageIcon(url).getImage());
-		// Close popup
-		this.addWindowListener(new java.awt.event.WindowAdapter() {
-			@Override
-			public void windowClosing(java.awt.event.WindowEvent windowEvent) {
-				Object[] options = { "Si", "No" };
-				int selectedOption = JOptionPane.showOptionDialog(null, "¿Seguro que quieres salir?", "SALIR",
-						JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
 
-				if (selectedOption == JOptionPane.YES_OPTION)
-					System.exit(0);
-			}
-		});
+		// hide btns
+		if (conf[1] == null || conf[1].equals("false")) {
+			mainF.show();
+			hideBtn.setText("ESCONDER LOS BOTONES");
+		} else {
+			mainF.hide();
+			hideBtn.setText("MONSTRAR LOS BOTONES");
+		}
 
-		ArrayList<String> keywords = listMercadoria();
-		UIManager.put("Button.disabledText", Color.white);
-
-		JButton cambioN = new JButton("Metoda 1");
-		JButton cambioN2 = new JButton("Metoda 2");
-		JButton cambioN3 = new JButton("Metoda 3");
-		JButton calculate = new JButton("Magic");
-		JLabel cambioC = new JLabel("Cliente");
-		JLabel title[] = new JLabel[4];
-		JLabel caja = new JLabel("Caja");
-		JButton mainF = new JButton();
-		JMenuItem hideBtn = new JMenuItem("ESCONDER EL BOTON");
-
-		// Open
+		// Open values of cash
 		dataOpened = null;
 		line = "";
 		int z = 0;
@@ -177,6 +170,7 @@ public class FaturaR extends JFrame {
 		title[1].setText("Detalle");
 		title[2].setText("P/Unit");
 		title[3].setText("Importe");
+		ArrayList<String> keywords = listMercadoria();
 		for (int i = 0; i < 10; i++) {
 			for (int j = 0; j < 3; j++) {
 				details[i][j] = new JTextField();
@@ -212,7 +206,7 @@ public class FaturaR extends JFrame {
 		caja.setBackground(greenD);
 		caja.setOpaque(true);
 		this.add(caja);
-		for (int i = 0; i < 2; i++) {
+		for (int i = 0; i < 2; i++)
 			for (int j = 0; j < 7; j++) {
 				cajaTroco[i][j] = new JLabel();
 				if (i == 1)
@@ -223,7 +217,6 @@ public class FaturaR extends JFrame {
 				cajaTroco[i][j].setBackground(greenC);
 				this.add(cajaTroco[i][j]);
 			}
-		}
 
 		// Cliente
 		cambioC.setBorder(First.border);
@@ -277,15 +270,15 @@ public class FaturaR extends JFrame {
 		cambioN.setFocusable(false);
 		cambioN.addActionListener(e -> {
 			cambioF();
-			cambioN.setText("Metoda 1");
-			cambioN2.setText("Metoda 2");
-			cambioN3.setText("Metoda 3");
+			cambioN.setText("<html><center>" + "MÉTODO" + "<br>" + "SMART" + "</center></html>");
+			cambioN2.setText("<html><center>" + "MÉTODO" + "<br>" + " POPULAR" + "</center></html>");
+			cambioN3.setText("<html><center>" + "MÉTODO" + "<br>" + " BÁSICO" + "</center></html>");
 			cambioN.setEnabled(false);
 			cambioN2.setEnabled(false);
 			cambioN3.setEnabled(false);
 		});
 		this.add(cambioN);
-		for (int i = 0; i < 2; i++) {
+		for (int i = 0; i < 2; i++)
 			for (int j = 0; j < 7; j++) {
 				troco[i][j] = new JLabel();
 				if (i == 1)
@@ -297,7 +290,6 @@ public class FaturaR extends JFrame {
 				troco[i][j].setOpaque(true);
 				this.add(troco[i][j]);
 			}
-		}
 
 		// 2ND CAMBIO
 		cambioN2.setEnabled(false);
@@ -307,15 +299,15 @@ public class FaturaR extends JFrame {
 		cambioN2.setFocusable(false);
 		cambioN2.addActionListener(e -> {
 			cambioF2();
-			cambioN.setText("Metoda 1");
-			cambioN2.setText("Metoda 2");
-			cambioN3.setText("Metoda 3");
+			cambioN.setText("<html><center>" + "MÉTODO" + "<br>" + "SMART" + "</center></html>");
+			cambioN2.setText("<html><center>" + "MÉTODO" + "<br>" + " POPULAR" + "</center></html>");
+			cambioN3.setText("<html><center>" + "MÉTODO" + "<br>" + " BÁSICO" + "</center></html>");
 			cambioN.setEnabled(false);
 			cambioN2.setEnabled(false);
 			cambioN3.setEnabled(false);
 		});
 		this.add(cambioN2);
-		for (int i = 0; i < 2; i++) {
+		for (int i = 0; i < 2; i++)
 			for (int j = 0; j < 7; j++) {
 				troco2[i][j] = new JLabel();
 				if (i == 1)
@@ -327,7 +319,6 @@ public class FaturaR extends JFrame {
 				troco2[i][j].setForeground(Color.white);
 				this.add(troco2[i][j]);
 			}
-		}
 
 		// 3RD CAMBIO
 		cambioN3.setEnabled(false);
@@ -337,15 +328,15 @@ public class FaturaR extends JFrame {
 		cambioN3.setFocusable(false);
 		cambioN3.addActionListener(e -> {
 			cambioF3();
-			cambioN.setText("Metoda 1");
-			cambioN2.setText("Metoda 2");
-			cambioN3.setText("Metoda 3");
+			cambioN.setText("<html><center>" + "MÉTODO" + "<br>" + "SMART" + "</center></html>");
+			cambioN2.setText("<html><center>" + "MÉTODO" + "<br>" + " POPULAR" + "</center></html>");
+			cambioN3.setText("<html><center>" + "MÉTODO" + "<br>" + " BÁSICO" + "</center></html>");
 			cambioN.setEnabled(false);
 			cambioN2.setEnabled(false);
 			cambioN3.setEnabled(false);
 		});
 		this.add(cambioN3);
-		for (int i = 0; i < 2; i++) {
+		for (int i = 0; i < 2; i++)
 			for (int j = 0; j < 7; j++) {
 				troco3[i][j] = new JLabel();
 				if (i == 1)
@@ -357,7 +348,6 @@ public class FaturaR extends JFrame {
 				troco3[i][j].setForeground(Color.white);
 				this.add(troco3[i][j]);
 			}
-		}
 
 		// Button
 		mainF.setFocusable(true);
@@ -402,9 +392,9 @@ public class FaturaR extends JFrame {
 			for (int i = 0; i < 9; i++)
 				detailsR[i].setText("");
 			calTodo(cambioN, cambioN2, cambioN3);
-			cambioN.setText("Metoda 1");
-			cambioN2.setText("Metoda 2");
-			cambioN3.setText("Metoda 3");
+			cambioN.setText("<html><center>" + "MÉTODO" + "<br>" + "SMART" + "</center></html>");
+			cambioN2.setText("<html><center>" + "MÉTODO" + "<br>" + " POPULAR" + "</center></html>");
+			cambioN3.setText("<html><center>" + "MÉTODO" + "<br>" + " BÁSICO" + "</center></html>");
 			cambioN.setEnabled(false);
 			cambioN2.setEnabled(false);
 			cambioN3.setEnabled(false);
@@ -436,9 +426,9 @@ public class FaturaR extends JFrame {
 		reso.add(reso2);
 		reso.add(reso1);
 		resoD.addActionListener(e -> {
-			if (width > 1800 && height > 1000) {
+			if (width > 1800 && height > 1000)
 				resG(resoD, title, caja, cambioC, cambioN, cambioN2, mainF, cambioN3);
-			} else if (width > 1500 && height > 700)
+			else if (width > 1500 && height > 700)
 				resM(resoD, title, caja, cambioC, cambioN, cambioN2, mainF, cambioN3);
 			else if (width > 1300 && height > 700)
 				resP(resoD, title, caja, cambioC, cambioN, cambioN2, mainF, cambioN3);
@@ -467,14 +457,28 @@ public class FaturaR extends JFrame {
 		this.setVisible(true);
 
 		// Resolution
-		if (width > 1800 && height > 1000) {
+		if (width > 1800 && height > 1000)
 			resG(resoD, title, caja, cambioC, cambioN, cambioN2, mainF, cambioN3);
-		} else if (width > 1500 && height > 700)
+		else if (width > 1500 && height > 700)
 			resM(resoD, title, caja, cambioC, cambioN, cambioN2, mainF, cambioN3);
 		else if (width > 1300 && height > 700)
 			resP(resoD, title, caja, cambioC, cambioN, cambioN2, mainF, cambioN3);
 		else
 			resXP(resoD, title, caja, cambioC, cambioN, cambioN2, mainF, cambioN3);
+
+		// Close popup
+		this.addWindowListener(new java.awt.event.WindowAdapter() {
+			@Override
+			public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+				Object[] options = { "Si", "No" };
+				int selectedOption = JOptionPane.showOptionDialog(null, "¿Seguro que quieres salir?", "SALIR",
+						JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+
+				if (selectedOption == JOptionPane.YES_OPTION)
+					System.exit(0);
+			}
+		});
+
 	}
 
 	// Hide the button
@@ -607,14 +611,13 @@ public class FaturaR extends JFrame {
 	// Calc everything
 	private void calTodo(JButton cambioN, JButton cambioN2, JButton cambioN3) {
 		totalFatura = 0;
-		for (int i = 0; i < 10; i++) {// if input wrong make it 0
+		for (int i = 0; i < 10; i++) // if input wrong make it 0
 			if (!details[i][0].getText().isBlank() && !details[i][2].getText().isBlank()
 					&& First.isNumeric(details[i][0].getText()) && First.isNumeric(details[i][2].getText())) {
 				detailsR[i].setText(
 						Integer.valueOf(details[i][0].getText()) * Integer.valueOf(details[i][2].getText()) + "");
 				totalFatura += Integer.valueOf(detailsR[i].getText());
 			}
-		}
 		for (int i = 0; i < 8; i++)// if input wrong make it 0
 			if (!First.isNumeric(trocoCT[i].getText()))
 				trocoCT[i].setText("0");
@@ -633,266 +636,110 @@ public class FaturaR extends JFrame {
 			cambio[4].setText("R$ " + (totalCV - totalFatura));
 		// Trocos
 		if (trocoV >= 0) {
-			// Por 100
-			troco[1][6].setText((trocoV / 100) + "");
-			troco2[1][6].setText((trocoV / 100) + "");
-			troco3[1][6].setText((trocoV / 100) + "");
-			// Por 10,20,50
-			switch ((trocoV - (trocoV / 100) * 100) / 10) {
-			case 0: {
-				troco[1][5].setText("0");
-				troco[1][4].setText("0");
-				troco[1][3].setText("0");
-				troco2[1][5].setText("0");
-				troco2[1][4].setText("0");
-				troco2[1][3].setText("0");
-				troco3[1][5].setText("0");
-				troco3[1][4].setText("0");
-				troco3[1][3].setText("0");
-				break;
+			// Smart
+			int trocoRest = trocoV;
+			int nbOf100 = Integer.valueOf(cajaTroco[1][6].getText()),
+					nbOf50 = Integer.valueOf(cajaTroco[1][5].getText()),
+					nbOf20 = Integer.valueOf(cajaTroco[1][4].getText()),
+					nbOf10 = Integer.valueOf(cajaTroco[1][3].getText()),
+					nbOf5 = Integer.valueOf(cajaTroco[1][2].getText()),
+					nbOf2 = Integer.valueOf(cajaTroco[1][1].getText()),
+					nbOf1 = Integer.valueOf(cajaTroco[1][0].getText());
+			// 100
+			if (((trocoRest / 10) & 1) == 1 && nbOf10 == 0) {
+				if (trocoRest >= 50 && nbOf50 > 0) {
+					nbOf50--;
+					trocoRest -= 50;
+				}
+				if (((trocoRest / 10) & 1) == 0 && nbOf10 == 0)// we dont have 10
+					while (trocoRest >= 20 && nbOf20 > 0) {
+						nbOf20--;
+						trocoRest -= 20;
+					}
+				else {// normal
+					while (trocoRest >= 50 && nbOf50 > 0) {
+						nbOf50--;
+						trocoRest -= 50;
+					}
+					while (trocoRest >= 20 && nbOf20 > 0) {
+						nbOf20--;
+						trocoRest -= 20;
+					}
+					while (trocoRest >= 10 && nbOf10 > 0) {
+						nbOf10--;
+						trocoRest -= 10;
+					}
+				}
+			} else
+				while (trocoRest >= 100 && nbOf100 > 0) {
+					nbOf100--;
+					trocoRest -= 100;
+				}
+			// 10,20,50
+			if (((trocoRest / 10) & 1) == 0 && nbOf10 == 0)// we dont have 10
+				while (trocoRest >= 20 && nbOf20 > 0) {
+					nbOf20--;
+					trocoRest -= 20;
+				}
+			else {// normal
+				while (trocoRest >= 50 && nbOf50 > 0) {
+					nbOf50--;
+					trocoRest -= 50;
+				}
+				while (trocoRest >= 20 && nbOf20 > 0) {
+					nbOf20--;
+					trocoRest -= 20;
+				}
+				while (trocoRest >= 10 && nbOf10 > 0) {
+					nbOf10--;
+					trocoRest -= 10;
+				}
 			}
-			case 1: {
-				troco[1][5].setText("0");
-				troco[1][4].setText("0");
-				troco[1][3].setText("1");
-				troco2[1][5].setText("0");
-				troco2[1][4].setText("0");
-				troco2[1][3].setText("1");
-				troco3[1][5].setText("0");
-				troco3[1][4].setText("0");
-				troco3[1][3].setText("1");
-				break;
+			// 1,2,5
+			if ((trocoRest & 1) == 0 && nbOf1 == 0)// we dont have 1
+				while (trocoRest >= 2 && nbOf2 > 0) {
+					nbOf2--;
+					trocoRest -= 2;
+				}
+			else {// normal
+				while (trocoRest >= 5 && nbOf5 > 0) {
+					nbOf5--;
+					trocoRest -= 5;
+				}
+				while (trocoRest >= 2 && nbOf2 > 0) {
+					nbOf2--;
+					trocoRest -= 2;
+				}
+				while (trocoRest >= 1 && nbOf1 > 0) {
+					nbOf1--;
+					trocoRest--;
+				}
 			}
-			case 2: {
-				troco[1][5].setText("0");
-				troco[1][4].setText("1");
-				troco[1][3].setText("0");
-				troco2[1][5].setText("0");
-				troco2[1][4].setText("1");
-				troco2[1][3].setText("0");
-				troco3[1][5].setText("0");
-				troco3[1][4].setText("0");
-				troco3[1][3].setText("2");
-				break;
-			}
-			case 3: {
-				troco[1][5].setText("0");
-				troco[1][4].setText("1");
-				troco[1][3].setText("1");
-				troco2[1][5].setText("0");
-				troco2[1][4].setText("1");
-				troco2[1][3].setText("1");
-				troco3[1][5].setText("0");
-				troco3[1][4].setText("0");
-				troco3[1][3].setText("3");
-				break;
-			}
-			case 4: {
-				troco[1][5].setText("0");
-				troco[1][4].setText("2");
-				troco[1][3].setText("0");
-				troco2[1][5].setText("0");
-				troco2[1][4].setText("1");
-				troco2[1][3].setText("2");
-				troco3[1][5].setText("0");
-				troco3[1][4].setText("0");
-				troco3[1][3].setText("4");
-				break;
-			}
-			case 5: {
-				troco[1][5].setText("1");
-				troco[1][4].setText("0");
-				troco[1][3].setText("0");
-				troco2[1][5].setText("0");
-				troco2[1][4].setText("2");
-				troco2[1][3].setText("1");
-				troco3[1][5].setText("0");
-				troco3[1][4].setText("1");
-				troco3[1][3].setText("3");
-				break;
-			}
-			case 6: {
-				troco[1][5].setText("1");
-				troco[1][4].setText("0");
-				troco[1][3].setText("1");
-				troco2[1][5].setText("0");
-				troco2[1][4].setText("3");
-				troco2[1][3].setText("0");
-				troco3[1][5].setText("0");
-				troco3[1][4].setText("2");
-				troco3[1][3].setText("2");
-				break;
-			}
-			case 7: {
-				troco[1][5].setText("1");
-				troco[1][4].setText("1");
-				troco[1][3].setText("0");
-				troco2[1][5].setText("0");
-				troco2[1][4].setText("3");
-				troco2[1][3].setText("1");
-				troco3[1][5].setText("1");
-				troco3[1][4].setText("0");
-				troco3[1][3].setText("2");
-				break;
-			}
-			case 8: {
-				troco[1][5].setText("1");
-				troco[1][4].setText("1");
-				troco[1][3].setText("1");
-				troco2[1][5].setText("0");
-				troco2[1][4].setText("4");
-				troco2[1][3].setText("0");
-				troco3[1][5].setText("1");
-				troco3[1][4].setText("0");
-				troco3[1][3].setText("3");
-				break;
-			}
-			case 9: {
-				troco[1][5].setText("1");
-				troco[1][4].setText("2");
-				troco[1][3].setText("0");
-				troco2[1][5].setText("0");
-				troco2[1][4].setText("4");
-				troco2[1][3].setText("1");
-				troco3[1][5].setText("1");
-				troco3[1][4].setText("1");
-				troco3[1][3].setText("2");
-				break;
-			}
-			}
-			// Por 1,2,5
-			switch ((trocoV - (trocoV / 10) * 10)) {
-			case 0: {
-				troco[1][2].setText("0");
-				troco[1][1].setText("0");
-				troco[1][0].setText("0");
-				troco2[1][2].setText("0");
-				troco2[1][1].setText("0");
-				troco2[1][0].setText("0");
-				troco3[1][2].setText("0");
-				troco3[1][1].setText("0");
-				troco3[1][0].setText("0");
-				break;
-			}
-			case 1: {
-				troco[1][2].setText("0");
-				troco[1][1].setText("0");
-				troco[1][0].setText("1");
-				troco2[1][2].setText("0");
-				troco2[1][1].setText("0");
-				troco2[1][0].setText("1");
-				troco3[1][2].setText("0");
-				troco3[1][1].setText("0");
-				troco3[1][0].setText("1");
-				break;
-			}
-			case 2: {
-				troco[1][2].setText("0");
-				troco[1][1].setText("1");
-				troco[1][0].setText("0");
-				troco2[1][2].setText("0");
-				troco2[1][1].setText("1");
-				troco2[1][0].setText("0");
-				troco3[1][2].setText("0");
-				troco3[1][1].setText("0");
-				troco3[1][0].setText("2");
-				break;
-			}
-			case 3: {
-				troco[1][2].setText("0");
-				troco[1][1].setText("1");
-				troco[1][0].setText("1");
-				troco2[1][2].setText("0");
-				troco2[1][1].setText("1");
-				troco2[1][0].setText("1");
-				troco3[1][2].setText("0");
-				troco3[1][1].setText("0");
-				troco3[1][0].setText("3");
-				break;
-			}
-			case 4: {
-				troco[1][2].setText("0");
-				troco[1][1].setText("2");
-				troco[1][0].setText("0");
-				troco2[1][2].setText("0");
-				troco2[1][1].setText("1");
-				troco2[1][0].setText("2");
-				troco3[1][2].setText("0");
-				troco3[1][1].setText("0");
-				troco3[1][0].setText("4");
-				break;
-			}
-			case 5: {
-				troco[1][2].setText("1");
-				troco[1][1].setText("0");
-				troco[1][0].setText("0");
-				troco2[1][2].setText("0");
-				troco2[1][1].setText("2");
-				troco2[1][0].setText("1");
-				troco3[1][2].setText("0");
-				troco3[1][1].setText("1");
-				troco3[1][0].setText("3");
-				break;
-			}
-			case 6: {
-				troco[1][2].setText("1");
-				troco[1][1].setText("0");
-				troco[1][0].setText("1");
-				troco2[1][2].setText("0");
-				troco2[1][1].setText("3");
-				troco2[1][0].setText("0");
-				troco3[1][2].setText("0");
-				troco3[1][1].setText("2");
-				troco3[1][0].setText("2");
-				break;
-			}
-			case 7: {
-				troco[1][2].setText("1");
-				troco[1][1].setText("1");
-				troco[1][0].setText("0");
-				troco2[1][2].setText("0");
-				troco2[1][1].setText("3");
-				troco2[1][0].setText("1");
-				troco3[1][2].setText("1");
-				troco3[1][1].setText("0");
-				troco3[1][0].setText("2");
-				break;
-			}
-			case 8: {
-				troco[1][2].setText("1");
-				troco[1][1].setText("1");
-				troco[1][0].setText("1");
-				troco2[1][2].setText("0");
-				troco2[1][1].setText("4");
-				troco2[1][0].setText("0");
-				troco3[1][2].setText("1");
-				troco3[1][1].setText("0");
-				troco3[1][0].setText("3");
-				break;
-			}
-			case 9: {
-				troco[1][2].setText("1");
-				troco[1][1].setText("2");
-				troco[1][0].setText("0");
-				troco2[1][2].setText("0");
-				troco2[1][1].setText("4");
-				troco2[1][0].setText("1");
-				troco3[1][2].setText("1");
-				troco3[1][1].setText("1");
-				troco3[1][0].setText("2");
-				break;
-			}
-			}
-			if (Integer.valueOf(troco[1][0].getText()) <= Integer.valueOf((cajaTroco[1][0].getText()))
-					&& Integer.valueOf(troco[1][1].getText()) <= Integer.valueOf((cajaTroco[1][1].getText()))
-					&& Integer.valueOf(troco[1][2].getText()) <= Integer.valueOf((cajaTroco[1][2].getText()))
-					&& Integer.valueOf(troco[1][3].getText()) <= Integer.valueOf((cajaTroco[1][3].getText()))
-					&& Integer.valueOf(troco[1][4].getText()) <= Integer.valueOf((cajaTroco[1][4].getText()))
-					&& Integer.valueOf(troco[1][5].getText()) <= Integer.valueOf((cajaTroco[1][5].getText()))
-					&& Integer.valueOf(troco[1][6].getText()) <= Integer.valueOf((cajaTroco[1][6].getText())))
+			// Method 1
+			if (trocoRest == 0) {// smart
+				troco[1][6].setText(Integer.valueOf(cajaTroco[1][6].getText()) - nbOf100 + "");
+				troco[1][5].setText(Integer.valueOf(cajaTroco[1][5].getText()) - nbOf50 + "");
+				troco[1][4].setText(Integer.valueOf(cajaTroco[1][4].getText()) - nbOf20 + "");
+				troco[1][3].setText(Integer.valueOf(cajaTroco[1][3].getText()) - nbOf10 + "");
+				troco[1][2].setText(Integer.valueOf(cajaTroco[1][2].getText()) - nbOf5 + "");
+				troco[1][1].setText(Integer.valueOf(cajaTroco[1][1].getText()) - nbOf2 + "");
+				troco[1][0].setText(Integer.valueOf(cajaTroco[1][0].getText()) - nbOf1 + "");
 				cambioN.setText("√");
-			else
-				cambioN.setText("X");
+			} else {
+				methodeReservo();
+				if (Integer.valueOf(troco[1][0].getText()) <= Integer.valueOf((cajaTroco[1][0].getText()))
+						&& Integer.valueOf(troco[1][1].getText()) <= Integer.valueOf((cajaTroco[1][1].getText()))
+						&& Integer.valueOf(troco[1][2].getText()) <= Integer.valueOf((cajaTroco[1][2].getText()))
+						&& Integer.valueOf(troco[1][3].getText()) <= Integer.valueOf((cajaTroco[1][3].getText()))
+						&& Integer.valueOf(troco[1][4].getText()) <= Integer.valueOf((cajaTroco[1][4].getText()))
+						&& Integer.valueOf(troco[1][5].getText()) <= Integer.valueOf((cajaTroco[1][5].getText()))
+						&& Integer.valueOf(troco[1][6].getText()) <= Integer.valueOf((cajaTroco[1][6].getText())))
+					cambioN.setText("√");
+				else
+					cambioN.setText("X");
+			}
+			// Method 2
+			methodPopular();
 			if (Integer.valueOf(troco2[1][0].getText()) <= Integer.valueOf((cajaTroco[1][0].getText()))
 					&& Integer.valueOf(troco2[1][1].getText()) <= Integer.valueOf((cajaTroco[1][1].getText()))
 					&& Integer.valueOf(troco2[1][2].getText()) <= Integer.valueOf((cajaTroco[1][2].getText()))
@@ -903,6 +750,8 @@ public class FaturaR extends JFrame {
 				cambioN2.setText("√");
 			else
 				cambioN2.setText("X");
+			// Method 3
+			methodBasico();
 			if (Integer.valueOf(troco3[1][0].getText()) <= Integer.valueOf((cajaTroco[1][0].getText()))
 					&& Integer.valueOf(troco3[1][1].getText()) <= Integer.valueOf((cajaTroco[1][1].getText()))
 					&& Integer.valueOf(troco3[1][2].getText()) <= Integer.valueOf((cajaTroco[1][2].getText()))
@@ -942,6 +791,396 @@ public class FaturaR extends JFrame {
 			cambioN2.setEnabled(true);
 		if (cambioN3.getText().equals("√"))
 			cambioN3.setEnabled(true);
+	}
+
+	private void methodeReservo() {
+		troco[1][6].setText((trocoV / 100) + "");// 100
+		// Por 10,20,50
+		switch ((trocoV - (trocoV / 100) * 100) / 10) {
+		case 0: {
+			troco[1][5].setText("0");
+			troco[1][4].setText("0");
+			troco[1][3].setText("0");
+			break;
+		}
+		case 1: {
+			troco[1][5].setText("0");
+			troco[1][4].setText("0");
+			troco[1][3].setText("1");
+			break;
+		}
+		case 2: {
+			troco[1][5].setText("0");
+			troco[1][4].setText("0");
+			troco[1][3].setText("2");
+			break;
+		}
+		case 3: {
+			troco[1][5].setText("0");
+			troco[1][4].setText("0");
+			troco[1][3].setText("3");
+			break;
+		}
+		case 4: {
+			troco[1][5].setText("0");
+			troco[1][4].setText("0");
+			troco[1][3].setText("4");
+			break;
+		}
+		case 5: {
+			troco[1][5].setText("0");
+			troco[1][4].setText("1");
+			troco[1][3].setText("3");
+			break;
+		}
+		case 6: {
+			troco[1][5].setText("0");
+			troco[1][4].setText("2");
+			troco[1][3].setText("2");
+			break;
+		}
+		case 7: {
+			troco[1][5].setText("1");
+			troco[1][4].setText("0");
+			troco[1][3].setText("2");
+			break;
+		}
+		case 8: {
+			troco[1][5].setText("1");
+			troco[1][4].setText("0");
+			troco[1][3].setText("3");
+			break;
+		}
+		case 9: {
+			troco[1][5].setText("1");
+			troco[1][4].setText("1");
+			troco[1][3].setText("2");
+			break;
+		}
+		}
+		// Por 1,2,5
+		switch ((trocoV - (trocoV / 10) * 10)) {
+		case 0: {
+			troco[1][2].setText("0");
+			troco[1][1].setText("0");
+			troco[1][0].setText("0");
+			break;
+		}
+		case 1: {
+			troco[1][2].setText("0");
+			troco[1][1].setText("0");
+			troco[1][0].setText("1");
+			break;
+		}
+		case 2: {
+			troco[1][2].setText("0");
+			troco[1][1].setText("0");
+			troco[1][0].setText("2");
+			break;
+		}
+		case 3: {
+			troco[1][2].setText("0");
+			troco[1][1].setText("0");
+			troco[1][0].setText("3");
+			break;
+		}
+		case 4: {
+			troco[1][2].setText("0");
+			troco[1][1].setText("0");
+			troco[1][0].setText("4");
+			break;
+		}
+		case 5: {
+			troco[1][2].setText("0");
+			troco[1][1].setText("1");
+			troco[1][0].setText("3");
+			break;
+		}
+		case 6: {
+			troco[1][2].setText("0");
+			troco[1][1].setText("2");
+			troco[1][0].setText("2");
+			break;
+		}
+		case 7: {
+			troco[1][2].setText("1");
+			troco[1][1].setText("0");
+			troco[1][0].setText("2");
+			break;
+		}
+		case 8: {
+			troco[1][2].setText("1");
+			troco[1][1].setText("0");
+			troco[1][0].setText("3");
+			break;
+		}
+		case 9: {
+			troco[1][2].setText("1");
+			troco[1][1].setText("1");
+			troco[1][0].setText("2");
+			break;
+		}
+		}
+	}
+
+	private void methodBasico() {
+		troco3[1][6].setText((trocoV / 100) + "");// 100
+		// Por 10,20,50
+		switch ((trocoV - (trocoV / 100) * 100) / 10) {
+		case 0: {
+			troco3[1][5].setText("0");
+			troco3[1][4].setText("0");
+			troco3[1][3].setText("0");
+			break;
+		}
+		case 1: {
+			troco3[1][5].setText("0");
+			troco3[1][4].setText("0");
+			troco3[1][3].setText("1");
+			break;
+		}
+		case 2: {
+			troco3[1][5].setText("0");
+			troco3[1][4].setText("1");
+			troco3[1][3].setText("0");
+			break;
+		}
+		case 3: {
+			troco3[1][5].setText("0");
+			troco3[1][4].setText("1");
+			troco3[1][3].setText("1");
+			break;
+		}
+		case 4: {
+			troco3[1][5].setText("0");
+			troco3[1][4].setText("1");
+			troco3[1][3].setText("2");
+			break;
+		}
+		case 5: {
+			troco3[1][5].setText("0");
+			troco3[1][4].setText("2");
+			troco3[1][3].setText("1");
+			break;
+		}
+		case 6: {
+			troco3[1][5].setText("0");
+			troco3[1][4].setText("3");
+			troco3[1][3].setText("0");
+			break;
+		}
+		case 7: {
+			troco3[1][5].setText("0");
+			troco3[1][4].setText("3");
+			troco3[1][3].setText("1");
+			break;
+		}
+		case 8: {
+			troco3[1][5].setText("0");
+			troco3[1][4].setText("4");
+			troco3[1][3].setText("0");
+			break;
+		}
+		case 9: {
+			troco3[1][5].setText("0");
+			troco3[1][4].setText("4");
+			troco3[1][3].setText("1");
+			break;
+		}
+		}
+		// Por 1,2,5
+		switch ((trocoV - (trocoV / 10) * 10)) {
+		case 0: {
+			troco3[1][2].setText("0");
+			troco3[1][1].setText("0");
+			troco3[1][0].setText("0");
+			break;
+		}
+		case 1: {
+			troco3[1][2].setText("0");
+			troco3[1][1].setText("0");
+			troco3[1][0].setText("1");
+			break;
+		}
+		case 2: {
+			troco3[1][2].setText("0");
+			troco3[1][1].setText("1");
+			troco3[1][0].setText("0");
+			break;
+		}
+		case 3: {
+			troco3[1][2].setText("0");
+			troco3[1][1].setText("1");
+			troco3[1][0].setText("1");
+			break;
+		}
+		case 4: {
+			troco3[1][2].setText("0");
+			troco3[1][1].setText("1");
+			troco3[1][0].setText("2");
+			break;
+		}
+		case 5: {
+			troco3[1][2].setText("0");
+			troco3[1][1].setText("2");
+			troco3[1][0].setText("1");
+			break;
+		}
+		case 6: {
+			troco3[1][2].setText("0");
+			troco3[1][1].setText("3");
+			troco3[1][0].setText("0");
+			break;
+		}
+		case 7: {
+			troco3[1][2].setText("0");
+			troco3[1][1].setText("3");
+			troco3[1][0].setText("1");
+			break;
+		}
+		case 8: {
+			troco3[1][2].setText("0");
+			troco3[1][1].setText("4");
+			troco3[1][0].setText("0");
+			break;
+		}
+		case 9: {
+			troco3[1][2].setText("0");
+			troco3[1][1].setText("4");
+			troco3[1][0].setText("1");
+			break;
+		}
+		}
+	}
+
+	private void methodPopular() {
+		troco2[1][6].setText((trocoV / 100) + "");// 100
+		// Por 10,20,50
+		switch ((trocoV - (trocoV / 100) * 100) / 10) {
+		case 0: {
+			troco2[1][5].setText("0");
+			troco2[1][4].setText("0");
+			troco2[1][3].setText("0");
+			break;
+		}
+		case 1: {
+			troco2[1][5].setText("0");
+			troco2[1][4].setText("0");
+			troco2[1][3].setText("1");
+			break;
+		}
+		case 2: {
+			troco2[1][5].setText("0");
+			troco2[1][4].setText("1");
+			troco2[1][3].setText("0");
+			break;
+		}
+		case 3: {
+			troco2[1][5].setText("0");
+			troco2[1][4].setText("1");
+			troco2[1][3].setText("1");
+			break;
+		}
+		case 4: {
+			troco2[1][5].setText("0");
+			troco2[1][4].setText("2");
+			troco2[1][3].setText("0");
+			break;
+		}
+		case 5: {
+			troco2[1][5].setText("1");
+			troco2[1][4].setText("0");
+			troco2[1][3].setText("0");
+			break;
+		}
+		case 6: {
+			troco2[1][5].setText("1");
+			troco2[1][4].setText("0");
+			troco2[1][3].setText("1");
+			break;
+		}
+		case 7: {
+			troco2[1][5].setText("1");
+			troco2[1][4].setText("1");
+			troco2[1][3].setText("0");
+			break;
+		}
+		case 8: {
+			troco2[1][5].setText("1");
+			troco2[1][4].setText("1");
+			troco2[1][3].setText("1");
+			break;
+		}
+		case 9: {
+			troco2[1][5].setText("1");
+			troco2[1][4].setText("2");
+			troco2[1][3].setText("0");
+			break;
+		}
+		}
+		// Por 1,2,5
+		switch ((trocoV - (trocoV / 10) * 10)) {
+		case 0: {
+			troco2[1][2].setText("0");
+			troco2[1][1].setText("0");
+			troco2[1][0].setText("0");
+			break;
+		}
+		case 1: {
+			troco2[1][2].setText("0");
+			troco2[1][1].setText("0");
+			troco2[1][0].setText("1");
+			break;
+		}
+		case 2: {
+			troco2[1][2].setText("0");
+			troco2[1][1].setText("1");
+			troco2[1][0].setText("0");
+			break;
+		}
+		case 3: {
+			troco2[1][2].setText("0");
+			troco2[1][1].setText("1");
+			troco2[1][0].setText("1");
+			break;
+		}
+		case 4: {
+			troco2[1][2].setText("0");
+			troco2[1][1].setText("2");
+			troco2[1][0].setText("0");
+			break;
+		}
+		case 5: {
+			troco2[1][2].setText("1");
+			troco2[1][1].setText("0");
+			troco2[1][0].setText("0");
+			break;
+		}
+		case 6: {
+			troco2[1][2].setText("1");
+			troco2[1][1].setText("0");
+			troco2[1][0].setText("1");
+			break;
+		}
+		case 7: {
+			troco2[1][2].setText("1");
+			troco2[1][1].setText("1");
+			troco2[1][0].setText("0");
+			break;
+		}
+		case 8: {
+			troco2[1][2].setText("1");
+			troco2[1][1].setText("1");
+			troco2[1][0].setText("1");
+			break;
+		}
+		case 9: {
+			troco2[1][2].setText("1");
+			troco2[1][1].setText("2");
+			troco2[1][0].setText("0");
+			break;
+		}
+		}
 	}
 
 	// SAVE NEW VALUE
@@ -1019,7 +1258,8 @@ public class FaturaR extends JFrame {
 								Integer.valueOf(details[i][0].getText()) * Integer.valueOf(details[i][2].getText())
 										+ "");
 						totalFatura += Integer.valueOf(detailsR[i].getText());
-					}
+					} else
+						detailsR[i].setText("");
 				}
 				total.setText("R$ " + totalFatura);// total for the invoice
 			}

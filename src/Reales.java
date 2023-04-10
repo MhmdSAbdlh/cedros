@@ -39,9 +39,6 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
-import javax.swing.UIDefaults;
-import javax.swing.UIManager;
-import javax.swing.plaf.ColorUIResource;
 
 @SuppressWarnings("serial")
 public class Reales extends JFrame {
@@ -102,16 +99,27 @@ public class Reales extends JFrame {
 		JButton notasF = new JButton();// FATURA BUTTON
 		JButton newDay = new JButton("<html><center>Se Quedará<br>Para Mañana</center></html>");// REST
 
-		// Dimension
+		// Frame
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		width = (int) screenSize.getWidth();
 		height = (int) screenSize.getHeight();
+		this.setTitle("CIERRE DE CAJA - R$");
+		this.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+		this.setAlwaysOnTop(false);
+		if (width > 1800 && height > 1000)
+			this.setSize(1820, 980);
+		else if (width > 1500 && height > 700)
+			this.setSize(1500, 800);
+		else if (width > 1300 && height > 700)
+			this.setSize(1300, 700);
+		else
+			this.setSize(1000, 600);
+		this.setLocationRelativeTo(null);
+		this.setLayout(null);
+		this.setResizable(false);
+		this.getContentPane().setBackground(First.darkC);
 
-		// remove button focus border
-		UIDefaults defaults = UIManager.getLookAndFeelDefaults();
-		defaults.put("Button.focus", new ColorUIResource(new Color(0, 0, 0, 0)));
-
-		//Open Conf
+		// Open Conf
 		URL url;
 		BufferedReader dataOpened = null;
 		String line = "";
@@ -126,25 +134,7 @@ public class Reales extends JFrame {
 			dataOpened.close();
 		} catch (Exception e) {
 		}
-		
-		// Define Frame
-		this.setTitle("CIERRE DE CAJA - R$");
-		this.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
-		this.setAlwaysOnTop(false);
-		// Resolution
-		if (width > 1800 && height > 1000)
-			this.setSize(1820, 980);
-		else if (width > 1500 && height > 700)
-			this.setSize(1500, 800);
-		else if (width > 1300 && height > 700)
-			this.setSize(1300, 700);
-		else
-			this.setSize(1000, 600);
-		this.setLocationRelativeTo(null);
-		this.setLayout(null);
-		this.setResizable(false);
-		this.getContentPane().setBackground(First.darkC);
-		//Icon
+		// Icon
 		if (conf[0] == null || conf[0].equals("0")) {
 			url = getClass().getResource("images/icon/icon.png");
 		} else if (conf[0].equals("1")) {
@@ -153,36 +143,18 @@ public class Reales extends JFrame {
 			url = getClass().getResource("images/icon/narjes.png");
 		}
 		this.setIconImage(new ImageIcon(url).getImage());
-		// Close popup
-		this.addWindowListener(new java.awt.event.WindowAdapter() {
-			@Override
-			public void windowClosing(java.awt.event.WindowEvent windowEvent) {
-				Object[] options = { "Si", "No", "Si /Nuevo Dia" };
-				int selectedOption = JOptionPane.showOptionDialog(null, "¿Seguro que quieres salir?", "SALIR",
-						JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
-
-				if (selectedOption == JOptionPane.YES_OPTION)
-					System.exit(0);
-				else if (selectedOption == 1) {
-					// Do Nothing
-				} else if (selectedOption == 2) {
-					for (int i = 0; i < 5; i++)
-						for (int j = 0; j < 15; j++)
-							details[i][j].setText("");
-					initialDay.setText(restN + "");
-					for (int i = 0; i < 8; i++)
-						gastosTable[i].setText("");
-					for (int i = 0; i < 8; i++)
-						agregadoTable[i].setText("");
-					for (int i = 0; i < 5; i++)
-						panelCnum[i].setText("");
-					sumF();
-					System.exit(0);
-				}
-			}
-		});
-
-		ArrayList<String> keywords = listMercadoria();
+		// BUTTONS
+		if (conf[1] == null || conf[1].equals("false")) {
+			pesosF.show();
+			clearEverthing.show();
+			notasF.show();
+			hideBtn.setText("ESCONDER LOS BOTONES");
+		} else {
+			pesosF.hide();
+			clearEverthing.hide();
+			notasF.hide();
+			hideBtn.setText("MONSTRAR LOS BOTONES");
+		}
 
 		// Panel 1
 		int temp;
@@ -279,6 +251,7 @@ public class Reales extends JFrame {
 		gastos.setBackground(new Color(107, 35, 35));
 		gastos.setForeground(Color.white);
 		this.add(gastos);
+		ArrayList<String> keywords = gastosYagregados();
 		for (int i = 0; i < 4; i++) {
 			gastosTable[i] = new JTextField();
 			// Autocomplete
@@ -554,6 +527,36 @@ public class Reales extends JFrame {
 			addSetMil();
 		else if (aggBtn[1].isShowing())
 			addSetHun();
+
+		// Close popup
+		this.addWindowListener(new java.awt.event.WindowAdapter() {
+			@Override
+			public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+				Object[] options = { "Si", "No", "Si /Nuevo Dia" };
+				int selectedOption = JOptionPane.showOptionDialog(null, "¿Seguro que quieres salir?", "SALIR",
+						JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+
+				if (selectedOption == JOptionPane.YES_OPTION)
+					System.exit(0);
+				else if (selectedOption == 1) {
+					// Do Nothing
+				} else if (selectedOption == 2) {
+					for (int i = 0; i < 5; i++)
+						for (int j = 0; j < 15; j++)
+							details[i][j].setText("");
+					initialDay.setText(restN + "");
+					for (int i = 0; i < 8; i++)
+						gastosTable[i].setText("");
+					for (int i = 0; i < 8; i++)
+						agregadoTable[i].setText("");
+					for (int i = 0; i < 5; i++)
+						panelCnum[i].setText("");
+					sumF();
+					System.exit(0);
+				}
+			}
+		});
+
 	}
 
 	private void hideBtn(JButton notasF, JButton pesosF, JButton newDay, JButton clearEverthing, JMenuItem hideBtn) {
@@ -1828,7 +1831,7 @@ public class Reales extends JFrame {
 		return resizedImg;
 	}
 
-	private ArrayList<String> listMercadoria() {
+	private ArrayList<String> gastosYagregados() {
 		ArrayList<String> keywords = new ArrayList<String>(61);
 		keywords.add("narjes");
 		keywords.add("hamado");

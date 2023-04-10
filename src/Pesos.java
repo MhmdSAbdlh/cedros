@@ -38,9 +38,6 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
-import javax.swing.UIDefaults;
-import javax.swing.UIManager;
-import javax.swing.plaf.ColorUIResource;
 
 @SuppressWarnings("serial")
 public class Pesos extends JFrame {
@@ -101,49 +98,15 @@ public class Pesos extends JFrame {
 		JButton faturaBtn = new JButton();// FATURA BUTTON
 		JButton realesF = new JButton();
 		JButton newDay = new JButton("<html><center>Se Quedará<br>Para Mañana</center></html>");// REST
+		JMenuItem novo = new JMenuItem("NOVO DIA");
 
-		// Dimension
+		// Frame
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		width = (int) screenSize.getWidth();
 		height = (int) screenSize.getHeight();
-
-		// remove button focus border
-		UIDefaults defaults = UIManager.getLookAndFeelDefaults();
-		defaults.put("Button.focus", new ColorUIResource(new Color(0, 0, 0, 0)));
-
-		// Define Frame
 		this.setTitle("CIERRE DE CAJA - $");
 		this.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
-		this.addWindowListener(new java.awt.event.WindowAdapter() {
-			@Override
-			public void windowClosing(java.awt.event.WindowEvent windowEvent) {
-				Object[] options = { "Si", "No", "Si /Nuevo Dia" };
-				int selectedOption = JOptionPane.showOptionDialog(null, "¿Seguro que quieres salir?", "SALIR",
-						JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
-
-				if (selectedOption == 0)
-					System.exit(0);
-				else if (selectedOption == 1) {
-					// Do Nothing
-				} else if (selectedOption == 2) {
-					for (int i = 0; i < 5; i++)
-						for (int j = 0; j < 15; j++)
-							details[i][j].setText("");
-					initialDay.setText(restN + "");
-					for (int i = 0; i < 8; i++)
-						gastosTable[i].setText("");
-					for (int i = 0; i < 8; i++)
-						agregadoTable[i].setText("");
-					for (int i = 0; i < 2; i++)
-						panelCnum[i].setText("");
-					sumF();
-					System.exit(0);
-				}
-			}
-		});
 		this.setAlwaysOnTop(false);
-
-		// Resolution
 		if (width > 1800 && height > 1000)
 			this.setSize(1820, 980);
 		else if (width > 1500 && height > 700)
@@ -171,11 +134,39 @@ public class Pesos extends JFrame {
 			dataOpened.close();
 		} catch (Exception e) {
 		}
-
-		int temp;
-		ArrayList<String> keywords = listMercadoria();
+		// Icon
+		if (conf[0] == null || conf[0].equals("0")) {
+			url = getClass().getResource("images/icon/icon.png");
+			newDay.show();
+			restTmrw.show();
+			novo.show();
+		} else if (conf[0].equals("1")) {
+			url = getClass().getResource("images/icon/cedros.png");
+			newDay.show();
+			restTmrw.show();
+			novo.show();
+		} else {
+			url = getClass().getResource("images/icon/narjes.png");
+			newDay.hide();
+			restTmrw.hide();
+			novo.hide();
+		}
+		this.setIconImage(new ImageIcon(url).getImage());
+		// Hide and show BUTTONS
+		if (conf[1] == null || conf[1].equals("false")) {
+			realesF.show();
+			clearEverthing.show();
+			faturaBtn.show();
+			hideBtn.setText("ESCONDER LOS BOTONES");
+		} else {
+			realesF.hide();
+			clearEverthing.hide();
+			faturaBtn.hide();
+			hideBtn.setText("MONSTRAR LOS BOTONES");
+		}
 
 		// Panel 1
+		int temp;
 		for (int i = 0; i < 5; i++) {
 			temp = 0;
 			boletoN[i] = new JLabel("B" + (i + 1));
@@ -268,6 +259,7 @@ public class Pesos extends JFrame {
 		gastos.setBackground(new Color(107, 35, 35));
 		gastos.setForeground(Color.white);
 		this.add(gastos);
+		ArrayList<String> keywords = gastosYagregados();
 		for (int i = 0; i < 4; i++) {
 			gastosTable[i] = new JTextField();
 			// Autocomplete
@@ -410,7 +402,6 @@ public class Pesos extends JFrame {
 		JMenu file = new JMenu("ARCHIVO");
 		JMenu goTo = new JMenu("IR A");
 		JMenu help = new JMenu("AYUDA");
-		JMenuItem novo = new JMenuItem("NOVO DIA");
 		JMenuItem clear = new JMenuItem("BORRAR TODO");
 		JMenuItem calc = new JMenuItem("ASUMAR");
 		JMenuItem save = new JMenuItem("SALVAR");
@@ -531,19 +522,35 @@ public class Pesos extends JFrame {
 		else
 			resXP(resoD, realesF, faturaBtn, newDay, clearEverthing);
 
-		// Icon
-		if (conf[0] == null || conf[0].equals("0") || conf[0].equals("1")) {
-			url = getClass().getResource("images/icon/icon.png");
-			newDay.show();
-			restTmrw.show();
-			novo.show();
-		} else {
-			url = getClass().getResource("images/icon/narjes.png");
-			newDay.hide();
-			restTmrw.hide();
-			novo.hide();
-		}
-		this.setIconImage(new ImageIcon(url).getImage());
+		// Close Popup
+		this.addWindowListener(new java.awt.event.WindowAdapter() {
+			@Override
+			public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+				Object[] options = { "Si", "No", "Si /Nuevo Dia" };
+				int selectedOption = JOptionPane.showOptionDialog(null, "¿Seguro que quieres salir?", "SALIR",
+						JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+
+				if (selectedOption == 0)
+					System.exit(0);
+				else if (selectedOption == 1) {
+					// Do Nothing
+				} else if (selectedOption == 2) {
+					for (int i = 0; i < 5; i++)
+						for (int j = 0; j < 15; j++)
+							details[i][j].setText("");
+					initialDay.setText(restN + "");
+					for (int i = 0; i < 8; i++)
+						gastosTable[i].setText("");
+					for (int i = 0; i < 8; i++)
+						agregadoTable[i].setText("");
+					for (int i = 0; i < 2; i++)
+						panelCnum[i].setText("");
+					sumF();
+					System.exit(0);
+				}
+			}
+		});
+
 	}
 
 	// Clear all funcion
@@ -1725,7 +1732,7 @@ public class Pesos extends JFrame {
 	}
 
 	// Auto
-	private ArrayList<String> listMercadoria() {
+	private ArrayList<String> gastosYagregados() {
 		ArrayList<String> keywords = new ArrayList<String>(61);
 		keywords.add("narjes");
 		keywords.add("hamado");

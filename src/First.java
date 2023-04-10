@@ -9,6 +9,10 @@ import java.awt.Toolkit;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
@@ -29,11 +33,13 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
+import javax.swing.JToggleButton;
 import javax.swing.UIDefaults;
 import javax.swing.UIManager;
 import javax.swing.border.Border;
 import javax.swing.border.LineBorder;
 import javax.swing.plaf.ColorUIResource;
+import javax.swing.plaf.metal.MetalToggleButtonUI;
 
 @SuppressWarnings("serial")
 public class First extends JFrame {
@@ -61,7 +67,6 @@ public class First extends JFrame {
 	}
 
 	First() {
-		URL url;
 		// Open Conf
 		BufferedReader dataOpened = null;
 		String line = "";
@@ -76,16 +81,11 @@ public class First extends JFrame {
 			dataOpened.close();
 		} catch (Exception e) {
 		}
+
 		// Dimension
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		int width = (int) screenSize.getWidth() - 100;
 		int height = (int) screenSize.getHeight() - 100;
-		// remove button focus border
-		UIDefaults defaults = UIManager.getLookAndFeelDefaults();
-		defaults.put("Button.focus", new ColorUIResource(new Color(0, 0, 0, 0)));
-		iconI = new ImageIcon(getScaledImage(iconI.getImage(), 50, 50));
-		// Frame and panel
-		this.setTitle("CEDROS");
 		this.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 		this.setAlwaysOnTop(false);
 		this.setSize(width, height);
@@ -93,19 +93,10 @@ public class First extends JFrame {
 		this.setResizable(false);
 		this.setLayout(null);
 		this.getContentPane().setBackground(darkC);
-		// Close popup
-		this.addWindowListener(new java.awt.event.WindowAdapter() {
-			@Override
-			public void windowClosing(java.awt.event.WindowEvent windowEvent) {
-				Object[] options = { "Si", "No" };
-				int selectedOption = JOptionPane.showOptionDialog(null, "¿Seguro que quieres salir?", "SALIR",
-						JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
-				if (selectedOption == JOptionPane.YES_OPTION)
-					System.exit(0);
-			}
-		});
 
 		// Logo
+		URL url;
+		iconI = new ImageIcon(getScaledImage(iconI.getImage(), 50, 50));
 		if (conf[0] == null || conf[0].equals("0")) {
 			this.setTitle("CEDROS");
 			url = getClass().getResource("images/icon/icon.png");
@@ -117,12 +108,12 @@ public class First extends JFrame {
 			this.setTitle("NARJES");
 		}
 		this.setIconImage(new ImageIcon(url).getImage());
+
+		// Stuff
 		ImageIcon photo = new ImageIcon(url);
 		photo = new ImageIcon(getScaledImage(photo.getImage(), height / 3, height / 3));
 		JLabel photoLabel = new JLabel(photo);
 		photoLabel.setBounds((width - width / 3) / 2, 0, width / 3, height / 2);
-
-		// Stuff
 		JLabel inputText = new JLabel("Escribe la contraseña");
 		inputText.setBounds(0, height / 4, width, height / 2);
 		inputText.setHorizontalAlignment(0);
@@ -186,7 +177,7 @@ public class First extends JFrame {
 			temp.getContentPane().setBackground(lightC);
 
 			// Stuff
-			JLabel op1 = new JLabel("Icono");
+			JLabel op1 = new JLabel("ICONO");
 			op1.setBounds(50, 20, 150, 80);
 			op1.setFont(myFont);
 			URL cedros1 = getClass().getResource("images/icon/icon.png");
@@ -204,7 +195,6 @@ public class First extends JFrame {
 			if (conf[0] != null)
 				op1C.setSelectedIndex(Integer.valueOf(conf[0]));
 			op1C.addActionListener(new ActionListener() {
-
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					iconImages[0] = new ImageIcon(
@@ -223,6 +213,64 @@ public class First extends JFrame {
 				}
 			});
 
+			JLabel op2 = new JLabel("BOTONES");
+			op2.setBounds(50, 120, 150, 50);
+			op2.setFont(myFont);
+			JToggleButton btnsHideShow = new JToggleButton();
+			if (conf[1] == null || conf[1].equals("false")) {
+				btnsHideShow.setText("SI");
+			} else {
+				btnsHideShow.setText("NO");
+				btnsHideShow.setSelected(true);
+			}
+			btnsHideShow.setBounds(250, 120, 80, 50);
+			btnsHideShow.setFont(myFont);
+			btnsHideShow.setBorder(border);
+			btnsHideShow.setBackground(greenC);
+			btnsHideShow.setForeground(lightC);
+			btnsHideShow.setFocusable(false);
+			btnsHideShow.addMouseListener(new MouseListener() {
+
+				@Override
+				public void mouseReleased(MouseEvent e) {
+				}
+
+				@Override
+				public void mousePressed(MouseEvent e) {
+				}
+
+				@Override
+				public void mouseExited(MouseEvent e) {
+					btnsHideShow.setBackground(greenC);
+				}
+
+				@Override
+				public void mouseEntered(MouseEvent e) {
+					btnsHideShow.setBackground(greenD);
+				}
+
+				@Override
+				public void mouseClicked(MouseEvent e) {
+				}
+			});
+			btnsHideShow.setUI(new MetalToggleButtonUI() {
+				@Override
+				protected Color getSelectColor() {
+					return redC;
+				}
+			});
+			btnsHideShow.addItemListener(new ItemListener() {
+
+				@Override
+				public void itemStateChanged(ItemEvent e) {
+					if (e.getStateChange() == ItemEvent.SELECTED)
+						btnsHideShow.setText("NO");
+					else
+						btnsHideShow.setText("SI");
+				}
+			});
+
+			// SAVE
 			JButton save = new JButton("Save");
 			save.setBounds(200, 400, 100, 50);
 			btnStyle(save);
@@ -234,6 +282,7 @@ public class First extends JFrame {
 					try {
 						FileWriter savedF = new FileWriter("conf.txt");
 						savedF.write(op1C.getSelectedIndex() + System.lineSeparator());
+						savedF.write(btnsHideShow.isSelected() + System.lineSeparator());
 						savedF.close();
 					} catch (Exception e2) {
 					}
@@ -245,6 +294,8 @@ public class First extends JFrame {
 			temp.setIconImage(iconImages[0].getImage());
 			temp.add(op1);
 			temp.add(op1C);
+			temp.add(op2);
+			temp.add(btnsHideShow);
 			temp.add(save);
 			temp.setVisible(true);
 		});
@@ -263,6 +314,27 @@ public class First extends JFrame {
 		this.add(inputText);
 		this.getRootPane().setDefaultButton(login);
 		this.setVisible(true);
+
+		// remove button focus border
+		UIDefaults defaults = UIManager.getLookAndFeelDefaults();
+		defaults.put("Button.focus", new ColorUIResource(new Color(0, 0, 0, 0)));
+
+		// Close popup
+		this.addWindowListener(new java.awt.event.WindowAdapter() {
+			@Override
+			public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+				Object[] options = { "Si", "No" };
+				int selectedOption = JOptionPane.showOptionDialog(null, "¿Seguro que quieres salir?", "SALIR",
+						JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+				if (selectedOption == JOptionPane.YES_OPTION)
+					System.exit(0);
+			}
+		});
+
+		// Disable btn color
+		defaults.put("Button.disabledText", new ColorUIResource(Color.white));
+		defaults.put("textInactiveText", UIManager.get("Button.disabledText"));
+
 	}
 
 	// Style of the buttons
