@@ -124,7 +124,7 @@ public class Reales extends JFrame {
 		BufferedReader dataOpened = null;
 		String line = "";
 		int z = 0;
-		String conf[] = new String[2];
+		String conf[] = new String[3];
 		try {
 			dataOpened = new BufferedReader(new FileReader(new File("conf.txt")));
 			while ((line = dataOpened.readLine()) != null) {
@@ -169,7 +169,8 @@ public class Reales extends JFrame {
 				if (details[i][j].getText().equals("")) {
 					temp += 0;
 				}
-				tableFocus(i, j, this, newDay, notasF, pesosF, clearEverthing, hideBtn);
+				if (conf[2] == null || conf[2].equals("false"))
+					tableFocus(i, j, this, newDay, notasF, pesosF, clearEverthing, hideBtn);
 				this.add(details[i][j]);
 			}
 			total[i] = new JLabel("");
@@ -230,7 +231,8 @@ public class Reales extends JFrame {
 		initialDay.setCaretColor(First.darkC);
 		initialDay.setBackground(First.lightC);
 		initialDay.setForeground(Color.black);
-		iniFocus(newDay, notasF, pesosF, clearEverthing, hideBtn);
+		if (conf[2] == null || conf[2].equals("false"))
+			iniFocus(newDay, notasF, pesosF, clearEverthing, hideBtn);
 		this.add(initialDay);
 		for (int i = 5; i < 9; i++) {
 			summaryT[i] = new JLabel("0");
@@ -260,7 +262,8 @@ public class Reales extends JFrame {
 			textFieldStyle(gastosTable[i]);
 			gastosTable[i].setBackground(First.redD);
 			gastosTable[i].setForeground(Color.white);
-			gasFocus(i, this, newDay, notasF, pesosF, clearEverthing, hideBtn);
+			if (conf[2] == null || conf[2].equals("false"))
+				gasFocus(i, this, newDay, notasF, pesosF, clearEverthing, hideBtn);
 			this.add(gastosTable[i]);
 		}
 		for (int i = 4; i < 8; i++) {
@@ -268,7 +271,8 @@ public class Reales extends JFrame {
 			textFieldStyle(gastosTable[i]);
 			gastosTable[i].setBackground(First.redC);
 			gastosTable[i].setForeground(Color.white);
-			gasFocus(i, this, newDay, notasF, pesosF, clearEverthing, hideBtn);
+			if (conf[2] == null || conf[2].equals("false"))
+				gasFocus(i, this, newDay, notasF, pesosF, clearEverthing, hideBtn);
 			this.add(gastosTable[i]);
 		}
 		First.labelStyle(agregado);
@@ -283,7 +287,8 @@ public class Reales extends JFrame {
 			textFieldStyle(agregadoTable[i]);
 			agregadoTable[i].setBackground(First.greenD);
 			agregadoTable[i].setForeground(Color.white);
-			aggFocus(i, this, newDay, notasF, pesosF, clearEverthing, hideBtn);
+			if (conf[2] == null || conf[2].equals("false"))
+				aggFocus(i, this, newDay, notasF, pesosF, clearEverthing, hideBtn);
 			this.add(agregadoTable[i]);
 		}
 		for (int i = 4; i < 8; i++) {
@@ -291,7 +296,8 @@ public class Reales extends JFrame {
 			textFieldStyle(agregadoTable[i]);
 			agregadoTable[i].setBackground(First.greenC);
 			agregadoTable[i].setForeground(Color.white);
-			aggFocus(i, this, newDay, notasF, pesosF, clearEverthing, hideBtn);
+			if (conf[2] == null || conf[2].equals("false"))
+				aggFocus(i, this, newDay, notasF, pesosF, clearEverthing, hideBtn);
 			this.add(agregadoTable[i]);
 		}
 
@@ -307,7 +313,8 @@ public class Reales extends JFrame {
 			panelCnum[i].setCaretColor(First.darkC);
 			panelCnum[i].setForeground(First.darkC);
 			panelCnum[i].setBackground(First.lightC);
-			cajaFocus(i, this, newDay, notasF, pesosF, clearEverthing, hideBtn);
+			if (conf[2] == null || conf[2].equals("false"))
+				cajaFocus(i, this, newDay, notasF, pesosF, clearEverthing, hideBtn);
 			this.add(panelCnum[i]);
 		}
 		total[6] = new JLabel("TOTAL");// Total Label
@@ -441,15 +448,18 @@ public class Reales extends JFrame {
 			this.dispose();
 			new FaturaR();
 		});
-		getHelp.addActionListener(e -> JOptionPane.showMessageDialog(null,
-				"• CTRL + S → ir la fatura.\n" + "• CTRL + P → ir al pesos.\n" + "• CTRL + B → borrar todo.\n"
-						+ "• CTRL + N → prepárate para el día siguiente.\n"
-						+ "• FLECHAS → subir, abajo, derecha e izquierda.\n" + "• CTRL + D → ir al detalles.\n"
-						+ "• CTRL + I → ir al inicio.\n" + "• CTRL + G → ir al gastos.\n"
-						+ "• CTRL + A → ir al agregado.\n" + "• CTRL + T → ir a la caja.\n"
-						+ "• CTRL + E → ir al ultimo numero.\n" + "• CTRL + M → mas un 100 o de 1000 si posible.\n"
-						+ "• CTRL + O → esconder los botones",
-				"ATAJOS DE TECLADO", 1));
+		if (conf[2] == null || conf[2].equals("false"))
+			getHelp.addActionListener(e -> JOptionPane.showMessageDialog(null,
+					"• CTRL + S → ir la fatura.\n" + "• CTRL + P → ir al pesos.\n" + "• CTRL + B → borrar todo.\n"
+							+ "• CTRL + N → prepárate para el día siguiente.\n"
+							+ "• FLECHAS → subir, abajo, derecha e izquierda.\n" + "• CTRL + D → ir al detalles.\n"
+							+ "• CTRL + I → ir al inicio.\n" + "• CTRL + G → ir al gastos.\n"
+							+ "• CTRL + A → ir al agregado.\n" + "• CTRL + T → ir a la caja.\n"
+							+ "• CTRL + E → ir al ultimo numero.\n" + "• CTRL + M → mas un 100 o de 1000 si posible.\n"
+							+ "• CTRL + O → esconder los botones",
+					"ATAJOS DE TECLADO", 1));
+		else
+			getHelp.hide();
 		about.addActionListener(
 				e -> JOptionPane.showMessageDialog(null, "Crédito y Diseñado por MhmdSAbdlh ©", "SOBRE MI", 1));
 		reso.add(resoD);

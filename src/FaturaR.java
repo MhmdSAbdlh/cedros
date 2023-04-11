@@ -113,7 +113,7 @@ public class FaturaR extends JFrame {
 		BufferedReader dataOpened = null;
 		String line = "";
 		int tempC = 0;
-		String conf[] = new String[2];
+		String conf[] = new String[3];
 		try {
 			dataOpened = new BufferedReader(new FileReader(new File("conf.txt")));
 			while ((line = dataOpened.readLine()) != null) {
@@ -175,7 +175,8 @@ public class FaturaR extends JFrame {
 			for (int j = 0; j < 3; j++) {
 				details[i][j] = new JTextField();
 				textFieldStyle(details[i][j]);
-				tableFocus(i, j, this, mainF, hideBtn);
+				if (conf[2] == null || conf[2].equals("false"))
+					tableFocus(i, j, this, mainF, hideBtn);
 				this.add(details[i][j]);
 			}
 			// Autocomplete
@@ -233,7 +234,8 @@ public class FaturaR extends JFrame {
 			this.add(trocoC[i]);
 			trocoCT[i] = new JFormattedTextField("0");
 			formatedTextFieldStyle(trocoCT[i], cambioN, cambioN2, cambioN3);
-			clienteFocus(i, this, mainF, hideBtn);
+			if (conf[2] == null || conf[2].equals("false"))
+				clienteFocus(i, this, mainF, hideBtn);
 			this.add(trocoCT[i]);
 		}
 		totalC.setBorder(First.border);
@@ -404,11 +406,14 @@ public class FaturaR extends JFrame {
 			new Reales();
 			this.dispose();
 		});
-		getHelp.addActionListener(e -> JOptionPane.showMessageDialog(null,
-				"• CTRL + S → ir la reales.\n" + "• CTRL + O → esconder los botones.\n"
-						+ "• SHIFT → cambiar entre las dos tablas.\n"
-						+ "• FLECHAS → subir, abajo, derecha e izquierda.\n",
-				"ATAJOS DE TECLADO", 1));
+		if (conf[2] == null || conf[2].equals("false"))
+			getHelp.addActionListener(e -> JOptionPane.showMessageDialog(null,
+					"• CTRL + S → ir la reales.\n" + "• CTRL + O → esconder los botones.\n"
+							+ "• SHIFT → cambiar entre las dos tablas.\n"
+							+ "• FLECHAS → subir, abajo, derecha e izquierda.\n",
+					"ATAJOS DE TECLADO", 1));
+		else
+			getHelp.hide();
 		hideBtn.addActionListener(e -> hideBtns(mainF, hideBtn));
 		about.addActionListener(
 				e -> JOptionPane.showMessageDialog(null, "Crédito y Diseñado por MhmdSAbdlh ©", "SOBRE MI", 1));
@@ -631,7 +636,7 @@ public class FaturaR extends JFrame {
 		cambio[5].setText("R$ " + totalCV);
 		trocoV = totalCV - totalFatura;// troco
 		if (totalCV < totalFatura)
-			cambio[4].setText("R$ " + (totalFatura - totalCV));
+			cambio[4].setText("-R$ " + (totalFatura - totalCV));
 		else
 			cambio[4].setText("R$ " + (totalCV - totalFatura));
 		// Trocos
@@ -646,37 +651,20 @@ public class FaturaR extends JFrame {
 					nbOf2 = Integer.valueOf(cajaTroco[1][1].getText()),
 					nbOf1 = Integer.valueOf(cajaTroco[1][0].getText());
 			// 100
-			if (((trocoRest / 10) & 1) == 1 && nbOf10 == 0) {
-				if (trocoRest >= 50 && nbOf50 > 0) {
-					nbOf50--;
-					trocoRest -= 50;
-				}
-				if (((trocoRest / 10) & 1) == 0 && nbOf10 == 0)// we dont have 10
-					while (trocoRest >= 20 && nbOf20 > 0) {
-						nbOf20--;
-						trocoRest -= 20;
-					}
-				else {// normal
-					while (trocoRest >= 50 && nbOf50 > 0) {
+			if (trocoRest > 100)
+				if (((trocoRest / 10) & 1) == 1 && nbOf10 == 0 && nbOf20 * 20 >= (trocoRest - 50) && trocoRest < 150) {
+					if (nbOf50 > 0) {
 						nbOf50--;
 						trocoRest -= 50;
 					}
-					while (trocoRest >= 20 && nbOf20 > 0) {
-						nbOf20--;
-						trocoRest -= 20;
+				} else {
+					if (nbOf100 > 0) {
+						nbOf100--;
+						trocoRest -= 100;
 					}
-					while (trocoRest >= 10 && nbOf10 > 0) {
-						nbOf10--;
-						trocoRest -= 10;
-					}
-				}
-			} else
-				while (trocoRest >= 100 && nbOf100 > 0) {
-					nbOf100--;
-					trocoRest -= 100;
 				}
 			// 10,20,50
-			if (((trocoRest / 10) & 1) == 0 && nbOf10 == 0)// we dont have 10
+			if (((trocoRest / 10) & 1) == 0 && nbOf10 == 0 && nbOf20 * 20 >= trocoRest)// we dont have 10
 				while (trocoRest >= 20 && nbOf20 > 0) {
 					nbOf20--;
 					trocoRest -= 20;
@@ -762,7 +750,9 @@ public class FaturaR extends JFrame {
 				cambioN3.setText("√");
 			else
 				cambioN3.setText("X");
-		} else {
+		} else
+
+		{
 			troco[1][6].setText("!");
 			troco[1][5].setText("!");
 			troco[1][4].setText("!");
@@ -784,13 +774,22 @@ public class FaturaR extends JFrame {
 			troco3[1][2].setText("!");
 			troco3[1][1].setText("!");
 			troco3[1][0].setText("!");
+			cambioN.setText("X");
+			cambioN2.setText("X");
+			cambioN3.setText("X");
 		}
 		if (cambioN.getText().equals("√"))
 			cambioN.setEnabled(true);
+		else
+			cambioN.setEnabled(false);
 		if (cambioN2.getText().equals("√"))
 			cambioN2.setEnabled(true);
+		else
+			cambioN2.setEnabled(false);
 		if (cambioN3.getText().equals("√"))
 			cambioN3.setEnabled(true);
+		else
+			cambioN3.setEnabled(false);
 	}
 
 	private void methodeReservo() {
@@ -2338,6 +2337,11 @@ public class FaturaR extends JFrame {
 		keywords.add("auto control");
 		keywords.add("caneta");
 		keywords.add("lapicera");
+		keywords.add("xbox");
+		keywords.add("mando xbox");
+		keywords.add("auriculares");
+		keywords.add("fone");
+		keywords.add("a7");
 		return keywords;
 	}
 

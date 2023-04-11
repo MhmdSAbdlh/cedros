@@ -71,7 +71,7 @@ public class First extends JFrame {
 		BufferedReader dataOpened = null;
 		String line = "";
 		int z = 0;
-		String conf[] = new String[2];
+		String conf[] = new String[3];
 		try {
 			dataOpened = new BufferedReader(new FileReader(new File("conf.txt")));
 			while ((line = dataOpened.readLine()) != null) {
@@ -191,7 +191,7 @@ public class First extends JFrame {
 			iconImages[1] = new ImageIcon(getScaledImage(iconImages[1].getImage(), 50, 50));
 			iconImages[2] = new ImageIcon(getScaledImage(iconImages[2].getImage(), 50, 50));
 			JComboBox<ImageIcon> op1C = new JComboBox<>(iconImages);
-			op1C.setBounds(250, 20, 80, 80);
+			op1C.setBounds(320, 20, 80, 80);
 			if (conf[0] != null)
 				op1C.setSelectedIndex(Integer.valueOf(conf[0]));
 			op1C.addActionListener(new ActionListener() {
@@ -212,7 +212,7 @@ public class First extends JFrame {
 					op1C.setSelectedIndex(op1C.getSelectedIndex());
 				}
 			});
-
+			// OPTION 2 BUTTONS HIDE
 			JLabel op2 = new JLabel("BOTONES");
 			op2.setBounds(50, 120, 150, 50);
 			op2.setFont(myFont);
@@ -223,7 +223,7 @@ public class First extends JFrame {
 				btnsHideShow.setText("NO");
 				btnsHideShow.setSelected(true);
 			}
-			btnsHideShow.setBounds(250, 120, 80, 50);
+			btnsHideShow.setBounds(320, 120, 80, 50);
 			btnsHideShow.setFont(myFont);
 			btnsHideShow.setBorder(border);
 			btnsHideShow.setBackground(greenC);
@@ -269,6 +269,63 @@ public class First extends JFrame {
 						btnsHideShow.setText("SI");
 				}
 			});
+			// OPTION 3 DISABLE KEYBOARD SHORTCUT
+			JLabel op3 = new JLabel("ATAJO DE TECLADO");
+			op3.setBounds(50, 190, 250, 50);
+			op3.setFont(myFont);
+			JToggleButton btnsHideShow2 = new JToggleButton();
+			if (conf[2] == null || conf[2].equals("false")) {
+				btnsHideShow2.setText("SI");
+			} else {
+				btnsHideShow2.setText("NO");
+				btnsHideShow2.setSelected(true);
+			}
+			btnsHideShow2.setBounds(320, 190, 80, 50);
+			btnsHideShow2.setFont(myFont);
+			btnsHideShow2.setBorder(border);
+			btnsHideShow2.setBackground(greenC);
+			btnsHideShow2.setForeground(lightC);
+			btnsHideShow2.setFocusable(false);
+			btnsHideShow2.addMouseListener(new MouseListener() {
+
+				@Override
+				public void mouseReleased(MouseEvent e) {
+				}
+
+				@Override
+				public void mousePressed(MouseEvent e) {
+				}
+
+				@Override
+				public void mouseExited(MouseEvent e) {
+					btnsHideShow2.setBackground(greenC);
+				}
+
+				@Override
+				public void mouseEntered(MouseEvent e) {
+					btnsHideShow2.setBackground(greenD);
+				}
+
+				@Override
+				public void mouseClicked(MouseEvent e) {
+				}
+			});
+			btnsHideShow2.setUI(new MetalToggleButtonUI() {
+				@Override
+				protected Color getSelectColor() {
+					return redC;
+				}
+			});
+			btnsHideShow2.addItemListener(new ItemListener() {
+
+				@Override
+				public void itemStateChanged(ItemEvent e) {
+					if (e.getStateChange() == ItemEvent.SELECTED)
+						btnsHideShow2.setText("NO");
+					else
+						btnsHideShow2.setText("SI");
+				}
+			});
 
 			// SAVE
 			JButton save = new JButton("Save");
@@ -283,6 +340,7 @@ public class First extends JFrame {
 						FileWriter savedF = new FileWriter("conf.txt");
 						savedF.write(op1C.getSelectedIndex() + System.lineSeparator());
 						savedF.write(btnsHideShow.isSelected() + System.lineSeparator());
+						savedF.write(btnsHideShow2.isSelected() + System.lineSeparator());
 						savedF.close();
 					} catch (Exception e2) {
 					}
@@ -295,7 +353,9 @@ public class First extends JFrame {
 			temp.add(op1);
 			temp.add(op1C);
 			temp.add(op2);
+			temp.add(op3);
 			temp.add(btnsHideShow);
+			temp.add(btnsHideShow2);
 			temp.add(save);
 			temp.setVisible(true);
 		});

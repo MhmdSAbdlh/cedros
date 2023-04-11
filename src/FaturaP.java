@@ -119,7 +119,7 @@ public class FaturaP extends JFrame {
 		BufferedReader dataOpened = null;
 		String line = "";
 		int tempC = 0;
-		String conf[] = new String[2];
+		String conf[] = new String[3];
 		try {
 			dataOpened = new BufferedReader(new FileReader(new File("conf.txt")));
 			while ((line = dataOpened.readLine()) != null) {
@@ -181,7 +181,8 @@ public class FaturaP extends JFrame {
 			for (int j = 0; j < 3; j++) {
 				details[i][j] = new JTextField();
 				textFieldStyle(details[i][j]);
-				tableFocus(i, j, this, mainF, hideBtn);
+				if (conf[2] == null || conf[2].equals("false"))
+					tableFocus(i, j, this, mainF, hideBtn);
 				this.add(details[i][j]);
 			}
 			// Autocomplete
@@ -239,7 +240,8 @@ public class FaturaP extends JFrame {
 			this.add(trocoC[i]);
 			trocoCT[i] = new JFormattedTextField("0");
 			formatedTextFieldStyle(trocoCT[i], cambioN, cambioN2, cambioN3);
-			clienteFocus(i, this, mainF, hideBtn);
+			if (conf[2] == null || conf[2].equals("false"))
+				clienteFocus(i, this, mainF, hideBtn);
 			this.add(trocoCT[i]);
 		}
 		totalC.setBorder(First.border);
@@ -408,11 +410,14 @@ public class FaturaP extends JFrame {
 			new Pesos();
 			this.dispose();
 		});
-		getHelp.addActionListener(e -> JOptionPane.showMessageDialog(null,
-				"• CTRL + S → ir la pesos.\n" + "• CTRL + O → esconder los botones.\n"
-						+ "• SHIFT → cambiar entre las dos tablas.\n"
-						+ "• FLECHAS → subir, abajo, derecha e izquierda.\n",
-				"ATAJOS DE TECLADO", 1));
+		if (conf[2] == null || conf[2].equals("false"))
+			getHelp.addActionListener(e -> JOptionPane.showMessageDialog(null,
+					"• CTRL + S → ir la pesos.\n" + "• CTRL + O → esconder los botones.\n"
+							+ "• SHIFT → cambiar entre las dos tablas.\n"
+							+ "• FLECHAS → subir, abajo, derecha e izquierda.\n",
+					"ATAJOS DE TECLADO", 1));
+		else
+			getHelp.hide();
 		hideBtn.addActionListener(e -> {
 			if (mainF.isShowing()) {
 				mainF.hide();
@@ -646,7 +651,7 @@ public class FaturaP extends JFrame {
 		cambio[5].setText("$ " + totalCV);
 		trocoV = totalCV - totalFatura;
 		if (totalCV < totalFatura)
-			cambio[4].setText("$ " + (totalFatura - totalCV));
+			cambio[4].setText("-$ " + (totalFatura - totalCV));
 		else
 			cambio[4].setText("$ " + (totalCV - totalFatura));
 		// Trocos
@@ -664,34 +669,50 @@ public class FaturaP extends JFrame {
 					nbOf2 = Integer.valueOf(cajaTroco[1][1].getText()),
 					nbOf1 = Integer.valueOf(cajaTroco[1][0].getText());
 			// 1000
-			if (((trocoRest / 100) & 1) == 1 && nbOf100 == 0) {
-				if (trocoRest >= 500 && nbOf500 > 0) {
-					nbOf500--;
-					trocoRest -= 500;
-				}
-				if (((trocoRest / 100) & 1) == 0 && nbOf100 == 0)// we dont have 100
-					while (trocoRest >= 200 && nbOf200 > 0) {
-						nbOf200--;
-						trocoRest -= 200;
-					}
-				else {// normal
-					while (trocoRest >= 500 && nbOf500 > 0) {
+			if (trocoRest > 1000)
+				if (((trocoRest / 100) & 1) == 1 && nbOf100 == 0 && nbOf200 * 200 >= (trocoRest - 500)
+						&& trocoRest < 1500) {
+					if (nbOf500 > 0) {
 						nbOf500--;
 						trocoRest -= 500;
 					}
-					while (trocoRest >= 200 && nbOf200 > 0) {
-						nbOf200--;
-						trocoRest -= 200;
-					}
-					while (trocoRest >= 100 && nbOf100 > 0) {
-						nbOf100--;
-						trocoRest -= 100;
+				} else {
+					if (nbOf1000 > 0) {
+						nbOf1000--;
+						trocoRest -= 1000;
 					}
 				}
-			} else
-				while (trocoRest >= 1000 && nbOf1000 > 0) {
-					nbOf1000--;
-					trocoRest -= 1000;
+			// 100,200,500
+			if (((trocoRest / 100) & 1) == 0 && nbOf100 == 0 && nbOf200 * 200 >= trocoRest)// we dont have 100
+				while (trocoRest >= 200 && nbOf200 > 0) {
+					nbOf200--;
+					trocoRest -= 200;
+				}
+			else {// normal
+				while (trocoRest >= 500 && nbOf500 > 0) {
+					nbOf500--;
+					trocoRest -= 500;
+				}
+				while (trocoRest >= 200 && nbOf200 > 0) {
+					nbOf200--;
+					trocoRest -= 200;
+				}
+				while (trocoRest >= 100 && nbOf100 > 0) {
+					nbOf100--;
+					trocoRest -= 100;
+				}
+			}
+			// 100
+			if (trocoRest > 100)
+				if (((trocoRest / 10) & 1) == 1 && nbOf10 == 0 && nbOf20 * 20 >= (trocoRest - 50) && trocoRest < 150) {// To
+																														// prevent
+																														// the
+																														// 10s
+					nbOf50--;
+					trocoRest -= 50;
+				} else {
+					nbOf100--;
+					trocoRest -= 100;
 				}
 			// 100,200,500
 			if (((trocoRest / 100) & 1) == 0 && nbOf100 == 0)// we dont have 100
@@ -714,37 +735,20 @@ public class FaturaP extends JFrame {
 				}
 			}
 			// 100
-			if (((trocoRest / 10) & 1) == 1 && nbOf10 == 0) {
-				if (trocoRest >= 50 && nbOf50 > 0) {
-					nbOf50--;
-					trocoRest -= 50;
-				}
-				if (((trocoRest / 10) & 1) == 0 && nbOf10 == 0)// we dont have 10
-					while (trocoRest >= 20 && nbOf20 > 0) {
-						nbOf20--;
-						trocoRest -= 20;
-					}
-				else {// normal
-					while (trocoRest >= 50 && nbOf50 > 0) {
+			if (trocoRest > 100)
+				if (((trocoRest / 10) & 1) == 1 && nbOf10 == 0 && nbOf20 * 20 >= (trocoRest - 50) && trocoRest < 150) {
+					if (nbOf50 > 0) {
 						nbOf50--;
 						trocoRest -= 50;
 					}
-					while (trocoRest >= 20 && nbOf20 > 0) {
-						nbOf20--;
-						trocoRest -= 20;
+				} else {
+					if (nbOf100 > 0) {
+						nbOf100--;
+						trocoRest -= 100;
 					}
-					while (trocoRest >= 10 && nbOf10 > 0) {
-						nbOf10--;
-						trocoRest -= 10;
-					}
-				}
-			} else
-				while (trocoRest >= 100 && nbOf100 > 0) {
-					nbOf100--;
-					trocoRest -= 100;
 				}
 			// 10,20,50
-			if (((trocoRest / 10) & 1) == 0 && nbOf10 == 0)// we dont have 10
+			if (((trocoRest / 10) & 1) == 0 && nbOf10 == 0 && nbOf20 * 20 >= trocoRest)// we dont have 10
 				while (trocoRest >= 20 && nbOf20 > 0) {
 					nbOf20--;
 					trocoRest -= 20;
@@ -841,7 +845,9 @@ public class FaturaP extends JFrame {
 				cambioN3.setText("√");
 			else
 				cambioN3.setText("X");
-		} else {
+		} else
+
+		{
 			troco[1][9].setText("!");
 			troco[1][8].setText("!");
 			troco[1][7].setText("!");
@@ -2845,6 +2851,11 @@ public class FaturaP extends JFrame {
 		keywords.add("auto control");
 		keywords.add("caneta");
 		keywords.add("lapicera");
+		keywords.add("xbox");
+		keywords.add("mando xbox");
+		keywords.add("auriculares");
+		keywords.add("fone");
+		keywords.add("a7");
 		return keywords;
 	}
 
