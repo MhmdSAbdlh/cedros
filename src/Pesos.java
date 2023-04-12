@@ -7,37 +7,13 @@ Expand All -> Ctrl + Shift + * (Numpad Multiply)
 Ctrl + Shift + F : clean code
  */
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Graphics2D;
-import java.awt.Image;
-import java.awt.RenderingHints;
-import java.awt.Toolkit;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import java.awt.*;
+import java.awt.event.*;
 import java.awt.image.BufferedImage;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
+import java.io.*;
 import java.net.URL;
 import java.util.ArrayList;
-
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JSeparator;
-import javax.swing.JTextField;
+import javax.swing.*;
 
 @SuppressWarnings("serial")
 public class Pesos extends JFrame {
@@ -91,7 +67,7 @@ public class Pesos extends JFrame {
 	static int gastosT = 0, agregadoT = 0;
 	static int restN, totalCaja = 0, nbOf500 = 0;
 	int width, height;
-	String conf[] = new String[3];
+	String conf[] = new String[4];
 
 	Pesos() {
 		// Buttons
@@ -515,14 +491,23 @@ public class Pesos extends JFrame {
 		this.setVisible(true);
 
 		// Resolution
-		if (width > 1800 && height > 1000) {
-			resG(resoD, realesF, faturaBtn, newDay, clearEverthing);
-		} else if (width > 1500 && height > 700)
-			resM(resoD, realesF, faturaBtn, newDay, clearEverthing);
-		else if (width > 1300 && height > 700)
-			resP(resoD, realesF, faturaBtn, newDay, clearEverthing);
-		else
+		if (conf[3] == null || conf[3].equals("0")) {
+			if (width > 1800 && height > 1000)
+				resG(resoD, realesF, faturaBtn, newDay, clearEverthing);
+			else if (width > 1500 && height > 700)
+				resM(resoD, realesF, faturaBtn, newDay, clearEverthing);
+			else if (width > 1300 && height > 700)
+				resP(resoD, realesF, faturaBtn, newDay, clearEverthing);
+			else
+				resXP(resoD, realesF, faturaBtn, newDay, clearEverthing);
+		} else if (conf[3].equals("1"))
 			resXP(resoD, realesF, faturaBtn, newDay, clearEverthing);
+		else if (conf[3].equals("2"))
+			resP(resoD, realesF, faturaBtn, newDay, clearEverthing);
+		else if (conf[3].equals("3"))
+			resM(resoD, realesF, faturaBtn, newDay, clearEverthing);
+		else
+			resG(resoD, realesF, faturaBtn, newDay, clearEverthing);
 
 		// Close Popup
 		this.addWindowListener(new java.awt.event.WindowAdapter() {
@@ -1717,7 +1702,7 @@ public class Pesos extends JFrame {
 			newDay.setIcon(nextDI);
 			newDay.setContentAreaFilled(false);
 			newDay.setBorderPainted(false);
-			newDay.setBounds(1270, 730, 70, 70);
+			newDay.setBounds(1290, 730, 70, 70);
 		} else
 			newDay.setBounds(1270, 700, 300, 75);
 		total[6].setBounds(800, 570, 820, 60);

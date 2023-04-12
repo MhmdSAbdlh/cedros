@@ -1,33 +1,10 @@
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Graphics2D;
-import java.awt.Image;
-import java.awt.RenderingHints;
-import java.awt.Toolkit;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
+import java.awt.*;
+import java.awt.event.*;
 import java.awt.image.BufferedImage;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
+import java.io.*;
 import java.net.URL;
 import java.util.ArrayList;
-
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JFormattedTextField;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JSeparator;
-import javax.swing.JTextField;
+import javax.swing.*;
 
 @SuppressWarnings("serial")
 public class FaturaR extends JFrame {
@@ -41,6 +18,8 @@ public class FaturaR extends JFrame {
 	static Color violetC = new Color(0x6D5D6E);
 	static Color turD = new Color(0x245953);
 	static Color turC = new Color(0x408E91);
+	static Color cajaD = new Color(0x263A29);
+	static Color cajaC = new Color(0x41644A);
 	private URL u200 = getClass().getResource("images/200.jpg");
 	private ImageIcon i200 = new ImageIcon(u200);
 	private URL u100 = getClass().getResource("images/100.jpg");
@@ -75,6 +54,7 @@ public class FaturaR extends JFrame {
 	static String numbers[] = new String[103];
 	static JLabel totalC = new JLabel("Total");
 	static int totalFatura = 0, totalCV = 0, trocoV = 0;
+	private MouseListener m1, m2, m3;
 
 	FaturaR() {
 		// Btns
@@ -113,7 +93,7 @@ public class FaturaR extends JFrame {
 		BufferedReader dataOpened = null;
 		String line = "";
 		int tempC = 0;
-		String conf[] = new String[3];
+		String conf[] = new String[4];
 		try {
 			dataOpened = new BufferedReader(new FileReader(new File("conf.txt")));
 			while ((line = dataOpened.readLine()) != null) {
@@ -203,8 +183,8 @@ public class FaturaR extends JFrame {
 		// Caja
 		caja.setHorizontalAlignment(0);
 		caja.setBorder(First.border);
-		caja.setForeground(greenC);
-		caja.setBackground(greenD);
+		caja.setForeground(Color.white);
+		caja.setBackground(cajaD);
 		caja.setOpaque(true);
 		this.add(caja);
 		for (int i = 0; i < 2; i++)
@@ -215,7 +195,8 @@ public class FaturaR extends JFrame {
 				cajaTroco[i][j].setHorizontalAlignment(0);
 				cajaTroco[i][j].setBorder(First.border);
 				cajaTroco[i][j].setOpaque(true);
-				cajaTroco[i][j].setBackground(greenC);
+				cajaTroco[i][j].setBackground(cajaC);
+				cajaTroco[i][j].setForeground(Color.white);
 				this.add(cajaTroco[i][j]);
 			}
 
@@ -265,6 +246,93 @@ public class FaturaR extends JFrame {
 		cambio[2].setText("Troco");
 
 		// 1ST CAMBIO
+		m1 = new MouseListener() {
+			Popup p;
+
+			@Override
+			public void mouseReleased(MouseEvent e) {
+			}
+
+			@Override
+			public void mousePressed(MouseEvent e) {
+			}
+
+			@Override
+			public void mouseExited(MouseEvent e) {
+				cambioN.setBackground(redD);
+				p.hide();
+			}
+
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				cambioN.setBackground(redC);
+				p = PopupFactory.getSharedInstance().getPopup(cambioN, new JLabel("TOQUE AQUÍ PARA USARLO"),
+						cambioN.getHeight() + cambioN.getX(), cambioN.getWidth() + cambioN.getY());
+				p.show();
+			}
+
+			@Override
+			public void mouseClicked(MouseEvent e) {
+			}
+		};
+		m2 = new MouseListener() {
+			Popup p;
+
+			@Override
+			public void mouseReleased(MouseEvent e) {
+			}
+
+			@Override
+			public void mousePressed(MouseEvent e) {
+			}
+
+			@Override
+			public void mouseExited(MouseEvent e) {
+				cambioN2.setBackground(violetD);
+				p.hide();
+			}
+
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				cambioN2.setBackground(violetC);
+				p = PopupFactory.getSharedInstance().getPopup(cambioN2, new JLabel("TOQUE AQUÍ PARA USARLO"),
+						cambioN2.getHeight() + cambioN2.getX(), cambioN2.getWidth() + cambioN2.getY());
+				p.show();
+			}
+
+			@Override
+			public void mouseClicked(MouseEvent e) {
+			}
+		};
+		m3 = new MouseListener() {
+			Popup p;
+
+			@Override
+			public void mouseReleased(MouseEvent e) {
+			}
+
+			@Override
+			public void mousePressed(MouseEvent e) {
+			}
+
+			@Override
+			public void mouseExited(MouseEvent e) {
+				cambioN3.setBackground(turD);
+				p.hide();
+			}
+
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				cambioN3.setBackground(turC);
+				p = PopupFactory.getSharedInstance().getPopup(cambioN3, new JLabel("TOQUE AQUÍ PARA USARLO"),
+						cambioN3.getHeight() + cambioN3.getX(), cambioN3.getWidth() + cambioN3.getY());
+				p.show();
+			}
+
+			@Override
+			public void mouseClicked(MouseEvent e) {
+			}
+		};
 		cambioN.setEnabled(false);
 		cambioN.setBorder(First.border);
 		cambioN.setForeground(First.lightC);
@@ -462,14 +530,23 @@ public class FaturaR extends JFrame {
 		this.setVisible(true);
 
 		// Resolution
-		if (width > 1800 && height > 1000)
-			resG(resoD, title, caja, cambioC, cambioN, cambioN2, mainF, cambioN3);
-		else if (width > 1500 && height > 700)
-			resM(resoD, title, caja, cambioC, cambioN, cambioN2, mainF, cambioN3);
-		else if (width > 1300 && height > 700)
-			resP(resoD, title, caja, cambioC, cambioN, cambioN2, mainF, cambioN3);
-		else
+		if (conf[3] == null || conf[3].equals("0")) {
+			if (width > 1800 && height > 1000)
+				resG(resoD, title, caja, cambioC, cambioN, cambioN2, mainF, cambioN3);
+			else if (width > 1500 && height > 700)
+				resM(resoD, title, caja, cambioC, cambioN, cambioN2, mainF, cambioN3);
+			else if (width > 1300 && height > 700)
+				resP(resoD, title, caja, cambioC, cambioN, cambioN2, mainF, cambioN3);
+			else
+				resXP(resoD, title, caja, cambioC, cambioN, cambioN2, mainF, cambioN3);
+		} else if (conf[3].equals("1"))
 			resXP(resoD, title, caja, cambioC, cambioN, cambioN2, mainF, cambioN3);
+		else if (conf[3].equals("2"))
+			resP(resoD, title, caja, cambioC, cambioN, cambioN2, mainF, cambioN3);
+		else if (conf[3].equals("3"))
+			resM(resoD, title, caja, cambioC, cambioN, cambioN2, mainF, cambioN3);
+		else
+			resG(resoD, title, caja, cambioC, cambioN, cambioN2, mainF, cambioN3);
 
 		// Close popup
 		this.addWindowListener(new java.awt.event.WindowAdapter() {
@@ -778,18 +855,30 @@ public class FaturaR extends JFrame {
 			cambioN2.setText("X");
 			cambioN3.setText("X");
 		}
-		if (cambioN.getText().equals("√"))
+		cambioN.removeMouseListener(m1);
+		cambioN2.removeMouseListener(m2);
+		cambioN3.removeMouseListener(m3);
+		if (cambioN.getText().equals("√")) {
 			cambioN.setEnabled(true);
-		else
+			cambioN.addMouseListener(m1);
+		} else {
 			cambioN.setEnabled(false);
-		if (cambioN2.getText().equals("√"))
+			cambioN.removeMouseListener(m1);
+		}
+		if (cambioN2.getText().equals("√")) {
 			cambioN2.setEnabled(true);
-		else
+			cambioN2.addMouseListener(m2);
+		} else {
 			cambioN2.setEnabled(false);
-		if (cambioN3.getText().equals("√"))
+			cambioN2.removeMouseListener(m2);
+		}
+		if (cambioN3.getText().equals("√")) {
 			cambioN3.setEnabled(true);
-		else
+			cambioN3.addMouseListener(m3);
+		} else {
 			cambioN3.setEnabled(false);
+			cambioN3.removeMouseListener(m3);
+		}
 	}
 
 	private void methodeReservo() {
