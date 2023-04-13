@@ -7,13 +7,44 @@ Expand All -> Ctrl + Shift + * (Numpad Multiply)
 Ctrl + Shift + F : clean code
  */
 
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.RenderingHints;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.net.URL;
 import java.util.ArrayList;
-import javax.swing.*;
+
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JSeparator;
+import javax.swing.JTextField;
+import javax.swing.JToggleButton;
+import javax.swing.plaf.metal.MetalToggleButtonUI;
 
 @SuppressWarnings("serial")
 public class Pesos extends JFrame {
@@ -113,11 +144,13 @@ public class Pesos extends JFrame {
 		} catch (Exception e) {
 		}
 		// Icon
-		if (conf[0] == null || conf[0].equals("0"))
+		if (conf[0] == null || conf[0].equals("0")) {
 			url = getClass().getResource("images/icon/icon.png");
-		else if (conf[0].equals("1"))
+			restTmrw.show();
+		} else if (conf[0].equals("1")) {
 			url = getClass().getResource("images/icon/cedros.png");
-		else {
+			restTmrw.show();
+		} else {
 			url = getClass().getResource("images/icon/narjes.png");
 			restTmrw.hide();
 		}
@@ -380,15 +413,25 @@ public class Pesos extends JFrame {
 		JMenuItem clear = new JMenuItem("BORRAR TODO");
 		JMenuItem calc = new JMenuItem("ASUMAR");
 		JMenuItem save = new JMenuItem("SALVAR");
+		JMenuItem option = new JMenuItem("CONFIGURACIÓN");
 		JMenuItem exit = new JMenuItem("SALIR");
 		JMenuItem reales = new JMenuItem("REALES");
 		JMenuItem fatura = new JMenuItem("FATURA");
 		JMenuItem getHelp = new JMenuItem("ATAJOS DE TECLADO");
+		JMenuItem creator = new JMenuItem("SOBRE EL CREADOR");
 		JMenuItem about = new JMenuItem("SOBRE EL APLICATIVO");
+		JMenu reso = new JMenu("RESOLUCIÓN");
+		JMenuItem resoD = new JMenuItem("ÓPTIMO");
+		JSeparator sep = new JSeparator();
+		JMenuItem reso1 = new JMenuItem("GRANDE");
+		JMenuItem reso2 = new JMenuItem("MEDIO");
+		JMenuItem reso3 = new JMenuItem("PEQUENA");
+		JMenuItem reso4 = new JMenuItem("X-PEQUENA");
 		novo.addActionListener(e -> newDay());
 		calc.addActionListener(e -> sumF());
 		clear.addActionListener(e -> clearAll());
 		save.addActionListener(e -> saveProgress());
+		option.addActionListener(e -> confFrame(conf, faturaBtn, realesF, newDay, clearEverthing, hideBtn, resoD));
 		exit.addActionListener(e -> System.exit(0));
 		reales.addActionListener(e -> {
 			saveProgress();
@@ -423,15 +466,15 @@ public class Pesos extends JFrame {
 		else
 			getHelp.hide();
 		hideBtn.addActionListener(e -> hideBtn(faturaBtn, realesF, newDay, clearEverthing, hideBtn));
-		about.addActionListener(
+		creator.addActionListener(
 				e -> JOptionPane.showMessageDialog(null, "Crédito y Diseñado por MhmdSAbdlh ©", "SOBRE MI", 1));
-		JMenu reso = new JMenu("RESOLUCIÓN");
-		JMenuItem resoD = new JMenuItem("ÓPTIMO");
-		JSeparator sep = new JSeparator();
-		JMenuItem reso1 = new JMenuItem("GRANDE");
-		JMenuItem reso2 = new JMenuItem("MEDIO");
-		JMenuItem reso3 = new JMenuItem("PEQUENA");
-		JMenuItem reso4 = new JMenuItem("X-PEQUENA");
+		about.addActionListener(e -> JOptionPane.showMessageDialog(null,
+				"ESTA APLICACIÓN ESTÁ DISEÑADA PARA CEDROS Y NARJES FREE SHOP.\r\n"
+						+ "TIENE MARCO PARA CERRAR LA CAJA TANTO EN REALES COMO PESOS.\r\n"
+						+ "TIENE UN MARCO PARA CALCULAR EL TROCO DE UNA VENTA TANTO EN REALES COMO PESOS.\r\n"
+						+ "SABE CÓMO QUEDARÁ PARA EL PRÓXIMO DÍA.\r\n" + "3 MÉTODOS PARA DAR EL CAMBIO.\r\n"
+						+ "CAMBIARÁ TODO SEGÚN EL ICONO SELECCIONADO.\r\n" + "\r\n" + "MOHAMAD ABDALLAH ABBASS ©",
+				"CEDROS/NARJES", 1));
 		reso.add(resoD);
 		reso.add(sep);
 		reso.add(reso4);
@@ -456,11 +499,13 @@ public class Pesos extends JFrame {
 		file.add(calc);
 		file.add(clear);
 		file.add(save);
+		file.add(option);
 		file.add(exit);
 		goTo.add(reales);
 		goTo.add(fatura);
 		help.add(getHelp);
 		help.add(hideBtn);
+		help.add(creator);
 		help.add(about);
 		mb.add(file);
 		mb.add(goTo);
@@ -538,6 +583,242 @@ public class Pesos extends JFrame {
 			}
 		});
 
+	}
+
+	private void confFrame(String[] conf, JButton notasF, JButton pesosF, JButton newDay, JButton clearEverthing,
+			JMenuItem hideBtn, JMenuItem resoD) {
+		JFrame temp = new JFrame();
+		temp.setTitle("CONFIGURACIÓN");
+		temp.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+		temp.setAlwaysOnTop(false);
+		temp.setSize(500, 500);
+		temp.setLocationRelativeTo(null);
+		temp.setResizable(false);
+		temp.setLayout(null);
+		temp.getContentPane().setBackground(First.lightC);
+		// Stuff
+		JLabel op1 = new JLabel("ICONO");
+		op1.setBounds(50, 20, 150, 80);
+		op1.setFont(First.myFont);
+		URL cedros1 = getClass().getResource("images/icon/icon.png");
+		URL cedros2 = getClass().getResource("images/icon/cedros.png");
+		URL narjes = getClass().getResource("images/icon/narjes.png");
+		ImageIcon iconImages[] = new ImageIcon[3];
+		iconImages[0] = new ImageIcon(getScaledImage(new ImageIcon(cedros1).getImage(), 50, 50));
+		iconImages[1] = new ImageIcon(getScaledImage(new ImageIcon(cedros2).getImage(), 50, 50));
+		iconImages[2] = new ImageIcon(getScaledImage(new ImageIcon(narjes).getImage(), 50, 50));
+		JComboBox<ImageIcon> op1C = new JComboBox<>(iconImages);
+		op1C.setBounds(320, 20, 80, 80);
+		if (conf[0] != null)
+			op1C.setSelectedIndex(Integer.valueOf(conf[0]));
+		op1C.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				Pesos.this.setIconImage(iconImages[op1C.getSelectedIndex()].getImage());
+				op1C.setSelectedIndex(op1C.getSelectedIndex());
+			}
+		});
+		// OPTION 1 BUTTONS HIDE
+		JLabel op2 = new JLabel("BOTONES");
+		op2.setBounds(50, 120, 150, 50);
+		op2.setFont(First.myFont);
+		JToggleButton btnsHideShow = new JToggleButton();
+		if (conf[1] == null || conf[1].equals("false")) {
+			btnsHideShow.setText("SI");
+		} else {
+			btnsHideShow.setText("NO");
+			btnsHideShow.setSelected(true);
+		}
+		btnsHideShow.setBounds(320, 120, 80, 50);
+		btnsHideShow.setFont(First.myFont);
+		btnsHideShow.setBorder(First.border);
+		btnsHideShow.setBackground(First.greenC);
+		btnsHideShow.setForeground(First.lightC);
+		btnsHideShow.setFocusable(false);
+		btnsHideShow.addMouseListener(new MouseListener() {
+			@Override
+			public void mouseReleased(MouseEvent e) {
+			}
+
+			@Override
+			public void mousePressed(MouseEvent e) {
+			}
+
+			@Override
+			public void mouseExited(MouseEvent e) {
+				btnsHideShow.setBackground(First.greenC);
+			}
+
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				btnsHideShow.setBackground(First.greenD);
+			}
+
+			@Override
+			public void mouseClicked(MouseEvent e) {
+			}
+		});
+		btnsHideShow.setUI(new MetalToggleButtonUI() {
+			@Override
+			protected Color getSelectColor() {
+				return First.redC;
+			}
+		});
+		btnsHideShow.addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				if (e.getStateChange() == ItemEvent.SELECTED) {
+					btnsHideShow.setText("NO");
+					pesosF.hide();
+					clearEverthing.hide();
+					notasF.hide();
+					hideBtn.setText("MONSTRAR LOS BOTONES");
+					if (op1C.getSelectedIndex() == 2)
+						newDay.hide();
+				} else {
+					btnsHideShow.setText("SI");
+					pesosF.show();
+					clearEverthing.show();
+					notasF.show();
+					hideBtn.setText("ESCONDER LOS BOTONES");
+					if (op1C.getSelectedIndex() == 2)
+						newDay.show();
+				}
+			}
+		});
+		// OPTION 2 DISABLE KEYBOARD SHORTCUT
+		JLabel op3 = new JLabel("ATAJO DE TECLADO");
+		op3.setBounds(50, 190, 250, 50);
+		op3.setFont(First.myFont);
+		JToggleButton btnsHideShow2 = new JToggleButton();
+		if (conf[2] == null || conf[2].equals("false")) {
+			btnsHideShow2.setText("SI");
+		} else {
+			btnsHideShow2.setText("NO");
+			btnsHideShow2.setSelected(true);
+		}
+		btnsHideShow2.setBounds(320, 190, 80, 50);
+		btnsHideShow2.setFont(First.myFont);
+		btnsHideShow2.setBorder(First.border);
+		btnsHideShow2.setBackground(First.greenC);
+		btnsHideShow2.setForeground(First.lightC);
+		btnsHideShow2.setFocusable(false);
+		btnsHideShow2.addMouseListener(new MouseListener() {
+			@Override
+			public void mouseReleased(MouseEvent e) {
+			}
+
+			@Override
+			public void mousePressed(MouseEvent e) {
+			}
+
+			@Override
+			public void mouseExited(MouseEvent e) {
+				btnsHideShow2.setBackground(First.greenC);
+			}
+
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				btnsHideShow2.setBackground(First.greenD);
+			}
+
+			@Override
+			public void mouseClicked(MouseEvent e) {
+			}
+		});
+		btnsHideShow2.setUI(new MetalToggleButtonUI() {
+			@Override
+			protected Color getSelectColor() {
+				return First.redC;
+			}
+		});
+		btnsHideShow2.addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				if (e.getStateChange() == ItemEvent.SELECTED)
+					btnsHideShow2.setText("NO");
+				else
+					btnsHideShow2.setText("SI");
+			}
+		});
+
+		// OPTION 3 CHANGE RESOLUTION
+		JLabel op4 = new JLabel("RESOLUCIÓN");
+		op4.setBounds(50, 260, 250, 50);
+		op4.setFont(First.myFont);
+		String res[] = { "OPTIMAL", "X-P", "P", "M", "G" };
+		JComboBox<String> op2C = new JComboBox<>(res);
+		op2C.setBounds(280, 260, 140, 50);
+		op2C.setFont(First.myFont);
+		op2C.setBackground(First.blueC);
+		op2C.setForeground(First.darkC);
+		if (conf[3] != null)
+			op2C.setSelectedIndex(Integer.valueOf(conf[3]));
+		op2C.addActionListener(e -> {
+			op2C.setSelectedIndex(op2C.getSelectedIndex());
+			// Resolution
+			if (op2C.getSelectedIndex() == 0) {
+				if (width > 1800 && height > 1000)
+					resG(resoD, notasF, pesosF, newDay, clearEverthing);
+				else if (width > 1500 && height > 700)
+					resM(resoD, notasF, pesosF, newDay, clearEverthing);
+				else if (width > 1300 && height > 700)
+					resP(resoD, notasF, pesosF, newDay, clearEverthing);
+				else
+					resXP(resoD, notasF, pesosF, newDay, clearEverthing);
+			} else if (op2C.getSelectedIndex() == 1)
+				resXP(resoD, notasF, pesosF, newDay, clearEverthing);
+			else if (op2C.getSelectedIndex() == 2)
+				resP(resoD, notasF, pesosF, newDay, clearEverthing);
+			else if (op2C.getSelectedIndex() == 3)
+				resM(resoD, notasF, pesosF, newDay, clearEverthing);
+			else
+				resG(resoD, notasF, pesosF, newDay, clearEverthing);
+		});
+
+		// SAVE
+		JButton save = new JButton("Save");
+		save.setBounds(200, 400, 100, 50);
+		First.btnStyle(save);
+		save.setBackground(First.darkC);
+		save.setForeground(First.lightC);
+		save.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				try {
+					FileWriter savedF = new FileWriter("conf.txt");
+					savedF.write(op1C.getSelectedIndex() + System.lineSeparator());
+					savedF.write(btnsHideShow.isSelected() + System.lineSeparator());
+					savedF.write(btnsHideShow2.isSelected() + System.lineSeparator());
+					savedF.write(op2C.getSelectedIndex() + System.lineSeparator());
+					savedF.close();
+				} catch (Exception e2) {
+				}
+				temp.dispose();
+			}
+		});
+
+		// Escape to close
+		op1C.addKeyListener(new KeyAdapter() {
+			@SuppressWarnings("static-access")
+			public void keyPressed(KeyEvent ke) {
+				if (ke.getKeyCode() == ke.VK_ESCAPE)
+					temp.dispose();
+			}
+		});
+
+		// Finalize
+		temp.setIconImage(iconImages[0].getImage());
+		temp.add(op1);
+		temp.add(op1C);
+		temp.add(op2);
+		temp.add(op3);
+		temp.add(btnsHideShow);
+		temp.add(btnsHideShow2);
+		temp.add(op2C);
+		temp.add(op4);
+		temp.add(save);
+		temp.setVisible(true);
 	}
 
 	// Clear all funcion
@@ -1278,10 +1559,10 @@ public class Pesos extends JFrame {
 		if (conf[0] != null && !conf[0].equals("0") && !conf[0].equals("1")) {
 			newDay.setOpaque(false);
 			newDay.setText("");
-			newDay.setIcon(nextDI);
+			newDay.setIcon(new ImageIcon(getScaledImage(nextDI.getImage(), 50, 50)));
 			newDay.setContentAreaFilled(false);
 			newDay.setBorderPainted(false);
-			newDay.setBounds(750, 440, 70, 70);
+			newDay.setBounds(790, 430, 50, 50);
 		} else
 			newDay.setBounds(750, 420, 150, 45);
 		total[6].setBounds(430, 330, 510, 40);
@@ -1418,10 +1699,10 @@ public class Pesos extends JFrame {
 		if (conf[0] != null && !conf[0].equals("0") && !conf[0].equals("1")) {
 			newDay.setOpaque(false);
 			newDay.setText("");
-			newDay.setIcon(nextDI);
+			newDay.setIcon(new ImageIcon(getScaledImage(nextDI.getImage(), 70, 70)));
 			newDay.setContentAreaFilled(false);
 			newDay.setBorderPainted(false);
-			newDay.setBounds(950, 490, 70, 70);
+			newDay.setBounds(1000, 490, 70, 70);
 		} else {
 			newDay.setBounds(950, 480, 210, 55);
 		}
@@ -1559,10 +1840,10 @@ public class Pesos extends JFrame {
 		if (conf[0] != null && !conf[0].equals("0") && !conf[0].equals("1")) {
 			newDay.setOpaque(false);
 			newDay.setText("");
-			newDay.setIcon(nextDI);
+			newDay.setIcon(new ImageIcon(getScaledImage(nextDI.getImage(), 70, 70)));
 			newDay.setContentAreaFilled(false);
 			newDay.setBorderPainted(false);
-			newDay.setBounds(1070, 590, 70, 70);
+			newDay.setBounds(1130, 590, 70, 70);
 		} else
 			newDay.setBounds(1070, 570, 250, 65);
 		total[6].setBounds(640, 480, 710, 50);
@@ -1699,10 +1980,10 @@ public class Pesos extends JFrame {
 		if (conf[0] != null && !conf[0].equals("0") && !conf[0].equals("1")) {
 			newDay.setOpaque(false);
 			newDay.setText("");
-			newDay.setIcon(nextDI);
+			newDay.setIcon(new ImageIcon(getScaledImage(nextDI.getImage(), 80, 80)));
 			newDay.setContentAreaFilled(false);
 			newDay.setBorderPainted(false);
-			newDay.setBounds(1290, 730, 70, 70);
+			newDay.setBounds(1360, 730, 80, 80);
 		} else
 			newDay.setBounds(1270, 700, 300, 75);
 		total[6].setBounds(800, 570, 820, 60);

@@ -1,10 +1,44 @@
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.RenderingHints;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.net.URL;
 import java.util.ArrayList;
-import javax.swing.*;
+
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFormattedTextField;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JSeparator;
+import javax.swing.JTextField;
+import javax.swing.JToggleButton;
+import javax.swing.Popup;
+import javax.swing.PopupFactory;
+import javax.swing.plaf.metal.MetalToggleButtonUI;
 
 @SuppressWarnings("serial")
 public class FaturaP extends JFrame {
@@ -44,6 +78,8 @@ public class FaturaP extends JFrame {
 	private ImageIcon i1 = new ImageIcon(u1);
 	private URL main = getClass().getResource("images/home2.png");
 	private ImageIcon mainIcon = new ImageIcon(main);
+	private URL clearP = getClass().getResource("images/clear.png");
+	private ImageIcon clearI = new ImageIcon(clearP);
 	int width, height;
 
 	// Def
@@ -60,6 +96,9 @@ public class FaturaP extends JFrame {
 	static String numbers[] = new String[104];
 	static JLabel totalC = new JLabel("Total");
 	static int totalFatura = 0, totalCV = 0, trocoV = 0;
+	JLabel cambioC = new JLabel("Cliente");
+	JLabel title[] = new JLabel[4];
+	JLabel caja = new JLabel("Caja");
 	private MouseListener m1, m2, m3;
 
 	FaturaP() {
@@ -68,10 +107,8 @@ public class FaturaP extends JFrame {
 		JButton cambioN2 = new JButton("<html><center>" + "MÉTODO" + "<br>" + "POPULAR" + "</center></html>");
 		JButton cambioN3 = new JButton("<html><center>" + "MÉTODO" + "<br>" + " BÁSICO" + "</center></html>");
 		JButton calculate = new JButton("Magic");
-		JLabel cambioC = new JLabel("Cliente");
-		JLabel title[] = new JLabel[4];
-		JLabel caja = new JLabel("Caja");
 		JButton mainF = new JButton();
+		JButton clearB = new JButton();
 		JMenuItem hideBtn = new JMenuItem("ESCONDER EL BOTON");
 
 		// Frame
@@ -122,9 +159,11 @@ public class FaturaP extends JFrame {
 		// hide btns
 		if (conf[1] == null || conf[1].equals("false")) {
 			mainF.show();
+			clearB.show();
 			hideBtn.setText("ESCONDER LOS BOTONES");
 		} else {
 			mainF.hide();
+			clearB.hide();
 			hideBtn.setText("MONSTRAR LOS BOTONES");
 		}
 
@@ -162,7 +201,7 @@ public class FaturaP extends JFrame {
 				details[i][j] = new JTextField();
 				textFieldStyle(details[i][j]);
 				if (conf[2] == null || conf[2].equals("false"))
-					tableFocus(i, j, this, mainF, hideBtn);
+					tableFocus(i, j, this, mainF, clearB, hideBtn);
 				this.add(details[i][j]);
 			}
 			// Autocomplete
@@ -222,7 +261,7 @@ public class FaturaP extends JFrame {
 			trocoCT[i] = new JFormattedTextField("0");
 			formatedTextFieldStyle(trocoCT[i], cambioN, cambioN2, cambioN3);
 			if (conf[2] == null || conf[2].equals("false"))
-				clienteFocus(i, this, mainF, hideBtn);
+				clienteFocus(i, this, mainF, clearB, hideBtn);
 			this.add(trocoCT[i]);
 		}
 		totalC.setBorder(First.border);
@@ -435,6 +474,12 @@ public class FaturaP extends JFrame {
 			new Pesos();
 		});
 		this.add(mainF);
+		clearB.setFocusable(true);
+		clearB.setOpaque(false);
+		clearB.setContentAreaFilled(false);
+		clearB.setBorderPainted(false);
+		clearB.addActionListener(e -> clearAll(cambioN, cambioN2, cambioN3));
+		this.add(clearB);
 		calculate.addActionListener(e -> calTodo(cambioN, cambioN2, cambioN3));
 		this.add(calculate);
 
@@ -452,27 +497,22 @@ public class FaturaP extends JFrame {
 		JMenu help = new JMenu("AYUDA");
 		JMenuItem clear = new JMenuItem("BORRAR TODO");
 		JMenuItem calc = new JMenuItem("ASUMAR");
+		JMenuItem option = new JMenuItem("CONFIGURACIÓN");
 		JMenuItem exit = new JMenuItem("SALIR");
 		JMenuItem reales = new JMenuItem("PESOS");
 		JMenuItem getHelp = new JMenuItem("ATAJOS DE TECLADO");
+		JMenuItem creator = new JMenuItem("SOBRE EL CREADOR");
 		JMenuItem about = new JMenuItem("SOBRE EL APLICATIVO");
+		JMenu reso = new JMenu("RESOLUCIÓN");
+		JMenuItem resoD = new JMenuItem("ÓPTIMO");
+		JSeparator sep = new JSeparator();
+		JMenuItem reso1 = new JMenuItem("GRANDE");
+		JMenuItem reso2 = new JMenuItem("MEDIO");
+		JMenuItem reso3 = new JMenuItem("PEQUENA");
+		JMenuItem reso4 = new JMenuItem("X-PEQUENA");
 		calc.addActionListener(e -> calTodo(cambioN, cambioN2, cambioN3));
-		clear.addActionListener(e -> {
-			for (int i = 0; i < 10; i++)
-				trocoCT[i].setText("0");
-			for (int i = 0; i < 9; i++)
-				for (int j = 0; j < 3; j++)
-					details[i][j].setText("");
-			for (int i = 0; i < 9; i++)
-				detailsR[i].setText("");
-			calTodo(cambioN, cambioN2, cambioN3);
-			cambioN.setText("<html><center>" + "MÉTODO" + "<br>" + "SMART" + "</center></html>");
-			cambioN2.setText("<html><center>" + "MÉTODO" + "<br>" + " POPULAR" + "</center></html>");
-			cambioN3.setText("<html><center>" + "MÉTODO" + "<br>" + " BÁSICO" + "</center></html>");
-			cambioN.setEnabled(false);
-			cambioN2.setEnabled(false);
-			cambioN3.setEnabled(false);
-		});
+		clear.addActionListener(e -> clearAll(cambioN, cambioN2, cambioN3));
+		option.addActionListener(e -> confFrame(conf, mainF, clearB, hideBtn, resoD, cambioN, cambioN2, cambioN3));
 		exit.addActionListener(e -> System.exit(0));
 		reales.addActionListener(e -> {
 			new Pesos();
@@ -486,24 +526,16 @@ public class FaturaP extends JFrame {
 					"ATAJOS DE TECLADO", 1));
 		else
 			getHelp.hide();
-		hideBtn.addActionListener(e -> {
-			if (mainF.isShowing()) {
-				mainF.hide();
-				hideBtn.setText("MONSTRAR EL BOTON");
-			} else {
-				mainF.show();
-				hideBtn.setText("ESCONDER EL BOTON");
-			}
-		});
-		about.addActionListener(
+		hideBtn.addActionListener(e -> hideBtns(mainF, clearB, hideBtn));
+		creator.addActionListener(
 				e -> JOptionPane.showMessageDialog(null, "Crédito y Diseñado por MhmdSAbdlh ©", "SOBRE MI", 1));
-		JMenu reso = new JMenu("RESOLUCIÓN");
-		JMenuItem resoD = new JMenuItem("ÓPTIMO");
-		JSeparator sep = new JSeparator();
-		JMenuItem reso1 = new JMenuItem("GRANDE");
-		JMenuItem reso2 = new JMenuItem("MEDIO");
-		JMenuItem reso3 = new JMenuItem("PEQUENA");
-		JMenuItem reso4 = new JMenuItem("X-PEQUENA");
+		about.addActionListener(e -> JOptionPane.showMessageDialog(null,
+				"ESTA APLICACIÓN ESTÁ DISEÑADA PARA CEDROS Y NARJES FREE SHOP.\r\n"
+						+ "TIENE MARCO PARA CERRAR LA CAJA TANTO EN REALES COMO PESOS.\r\n"
+						+ "TIENE UN MARCO PARA CALCULAR EL TROCO DE UNA VENTA TANTO EN REALES COMO PESOS.\r\n"
+						+ "SABE CÓMO QUEDARÁ PARA EL PRÓXIMO DÍA.\r\n" + "3 MÉTODOS PARA DAR EL CAMBIO.\r\n"
+						+ "CAMBIARÁ TODO SEGÚN EL ICONO SELECCIONADO.\r\n" + "\r\n" + "MOHAMAD ABDALLAH ABBASS ©",
+				"CEDROS/NARJES", 1));
 		reso.add(resoD);
 		reso.add(sep);
 		reso.add(reso4);
@@ -511,25 +543,27 @@ public class FaturaP extends JFrame {
 		reso.add(reso2);
 		reso.add(reso1);
 		resoD.addActionListener(e -> {
-			if (width > 1800 && height > 1000) {
-				resG(resoD, title, caja, cambioC, cambioN, cambioN2, mainF, cambioN3);
-			} else if (width > 1500 && height > 700)
-				resM(resoD, title, caja, cambioC, cambioN, cambioN2, mainF, cambioN3);
+			if (width > 1800 && height > 1000)
+				resG(resoD, cambioN, cambioN2, mainF, cambioN3, clearB);
+			else if (width > 1500 && height > 700)
+				resM(resoD, cambioN, cambioN2, mainF, cambioN3, clearB);
 			else if (width > 1300 && height > 700)
-				resP(resoD, title, caja, cambioC, cambioN, cambioN2, mainF, cambioN3);
+				resP(resoD, cambioN, cambioN2, mainF, cambioN3, clearB);
 			else
-				resXP(resoD, title, caja, cambioC, cambioN, cambioN2, mainF, cambioN3);
+				resXP(resoD, cambioN, cambioN2, mainF, cambioN3, clearB);
 		});
-		reso1.addActionListener(e -> resG(resoD, title, caja, cambioC, cambioN, cambioN2, mainF, cambioN3));
-		reso2.addActionListener(e -> resM(resoD, title, caja, cambioC, cambioN, cambioN2, mainF, cambioN3));
-		reso3.addActionListener(e -> resP(resoD, title, caja, cambioC, cambioN, cambioN2, mainF, cambioN3));
-		reso4.addActionListener(e -> resXP(resoD, title, caja, cambioC, cambioN, cambioN2, mainF, cambioN3));
+		reso1.addActionListener(e -> resG(resoD, cambioN, cambioN2, mainF, cambioN3, clearB));
+		reso2.addActionListener(e -> resM(resoD, cambioN, cambioN2, mainF, cambioN3, clearB));
+		reso3.addActionListener(e -> resP(resoD, cambioN, cambioN2, mainF, cambioN3, clearB));
+		reso4.addActionListener(e -> resXP(resoD, cambioN, cambioN2, mainF, cambioN3, clearB));
 		file.add(calc);
 		file.add(clear);
+		file.add(option);
 		file.add(exit);
 		goTo.add(reales);
 		help.add(getHelp);
 		help.add(hideBtn);
+		help.add(creator);
 		help.add(about);
 		mb.add(file);
 		mb.add(goTo);
@@ -543,22 +577,22 @@ public class FaturaP extends JFrame {
 
 		// Resolution
 		if (conf[3] == null || conf[3].equals("0")) {
-			if (width > 1800 && height > 1000) {
-				resG(resoD, title, caja, cambioC, cambioN, cambioN2, mainF, cambioN3);
-			} else if (width > 1500 && height > 700)
-				resM(resoD, title, caja, cambioC, cambioN, cambioN2, mainF, cambioN3);
+			if (width > 1800 && height > 1000)
+				resG(resoD, cambioN, cambioN2, mainF, cambioN3, clearB);
+			else if (width > 1500 && height > 700)
+				resM(resoD, cambioN, cambioN2, mainF, cambioN3, clearB);
 			else if (width > 1300 && height > 700)
-				resP(resoD, title, caja, cambioC, cambioN, cambioN2, mainF, cambioN3);
+				resP(resoD, cambioN, cambioN2, mainF, cambioN3, clearB);
 			else
-				resXP(resoD, title, caja, cambioC, cambioN, cambioN2, mainF, cambioN3);
+				resXP(resoD, cambioN, cambioN2, mainF, cambioN3, clearB);
 		} else if (conf[3].equals("1"))
-			resXP(resoD, title, caja, cambioC, cambioN, cambioN2, mainF, cambioN3);
+			resXP(resoD, cambioN, cambioN2, mainF, cambioN3, clearB);
 		else if (conf[3].equals("2"))
-			resP(resoD, title, caja, cambioC, cambioN, cambioN2, mainF, cambioN3);
+			resP(resoD, cambioN, cambioN2, mainF, cambioN3, clearB);
 		else if (conf[3].equals("3"))
-			resM(resoD, title, caja, cambioC, cambioN, cambioN2, mainF, cambioN3);
+			resM(resoD, cambioN, cambioN2, mainF, cambioN3, clearB);
 		else
-			resG(resoD, title, caja, cambioC, cambioN, cambioN2, mainF, cambioN3);
+			resG(resoD, cambioN, cambioN2, mainF, cambioN3, clearB);
 
 		// Close popup
 		this.addWindowListener(new java.awt.event.WindowAdapter() {
@@ -575,14 +609,261 @@ public class FaturaP extends JFrame {
 
 	}
 
+	private void confFrame(String[] conf, JButton realesF, JButton clearEverthing, JMenuItem hideBtn, JMenuItem resoD,
+			JButton cambioN, JButton cambioN2, JButton cambioN3) {
+		JFrame temp = new JFrame();
+		temp.setTitle("CONFIGURACIÓN");
+		temp.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+		temp.setAlwaysOnTop(false);
+		temp.setSize(500, 500);
+		temp.setLocationRelativeTo(null);
+		temp.setResizable(false);
+		temp.setLayout(null);
+		temp.getContentPane().setBackground(First.lightC);
+		// Stuff
+		JLabel op1 = new JLabel("ICONO");
+		op1.setBounds(50, 20, 150, 80);
+		op1.setFont(First.myFont);
+		URL cedros1 = getClass().getResource("images/icon/icon.png");
+		URL cedros2 = getClass().getResource("images/icon/cedros.png");
+		URL narjes = getClass().getResource("images/icon/narjes.png");
+		ImageIcon iconImages[] = new ImageIcon[3];
+		iconImages[0] = new ImageIcon(getScaledImage(new ImageIcon(cedros1).getImage(), 50, 50));
+		iconImages[1] = new ImageIcon(getScaledImage(new ImageIcon(cedros2).getImage(), 50, 50));
+		iconImages[2] = new ImageIcon(getScaledImage(new ImageIcon(narjes).getImage(), 50, 50));
+		JComboBox<ImageIcon> op1C = new JComboBox<>(iconImages);
+		op1C.setBounds(320, 20, 80, 80);
+		if (conf[0] != null)
+			op1C.setSelectedIndex(Integer.valueOf(conf[0]));
+		op1C.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				FaturaP.this.setIconImage(iconImages[op1C.getSelectedIndex()].getImage());
+				op1C.setSelectedIndex(op1C.getSelectedIndex());
+			}
+		});
+		// OPTION 1 BUTTONS HIDE
+		JLabel op2 = new JLabel("BOTONES");
+		op2.setBounds(50, 120, 150, 50);
+		op2.setFont(First.myFont);
+		JToggleButton btnsHideShow = new JToggleButton();
+		if (conf[1] == null || conf[1].equals("false")) {
+			btnsHideShow.setText("SI");
+		} else {
+			btnsHideShow.setText("NO");
+			btnsHideShow.setSelected(true);
+		}
+		btnsHideShow.setBounds(320, 120, 80, 50);
+		btnsHideShow.setFont(First.myFont);
+		btnsHideShow.setBorder(First.border);
+		btnsHideShow.setBackground(First.greenC);
+		btnsHideShow.setForeground(First.lightC);
+		btnsHideShow.setFocusable(false);
+		btnsHideShow.addMouseListener(new MouseListener() {
+			@Override
+			public void mouseReleased(MouseEvent e) {
+			}
+
+			@Override
+			public void mousePressed(MouseEvent e) {
+			}
+
+			@Override
+			public void mouseExited(MouseEvent e) {
+				btnsHideShow.setBackground(First.greenC);
+			}
+
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				btnsHideShow.setBackground(First.greenD);
+			}
+
+			@Override
+			public void mouseClicked(MouseEvent e) {
+			}
+		});
+		btnsHideShow.setUI(new MetalToggleButtonUI() {
+			@Override
+			protected Color getSelectColor() {
+				return First.redC;
+			}
+		});
+		btnsHideShow.addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				if (e.getStateChange() == ItemEvent.SELECTED) {
+					btnsHideShow.setText("NO");
+					realesF.hide();
+					clearEverthing.hide();
+					hideBtn.setText("MONSTRAR LOS BOTONES");
+				} else {
+					realesF.show();
+					clearEverthing.show();
+					hideBtn.setText("ESCONDER LOS BOTONES");
+					btnsHideShow.setText("SI");
+				}
+			}
+		});
+		// OPTION 2 DISABLE KEYBOARD SHORTCUT
+		JLabel op3 = new JLabel("ATAJO DE TECLADO");
+		op3.setBounds(50, 190, 250, 50);
+		op3.setFont(First.myFont);
+		JToggleButton btnsHideShow2 = new JToggleButton();
+		if (conf[2] == null || conf[2].equals("false")) {
+			btnsHideShow2.setText("SI");
+		} else {
+			btnsHideShow2.setText("NO");
+			btnsHideShow2.setSelected(true);
+		}
+		btnsHideShow2.setBounds(320, 190, 80, 50);
+		btnsHideShow2.setFont(First.myFont);
+		btnsHideShow2.setBorder(First.border);
+		btnsHideShow2.setBackground(First.greenC);
+		btnsHideShow2.setForeground(First.lightC);
+		btnsHideShow2.setFocusable(false);
+		btnsHideShow2.addMouseListener(new MouseListener() {
+			@Override
+			public void mouseReleased(MouseEvent e) {
+			}
+
+			@Override
+			public void mousePressed(MouseEvent e) {
+			}
+
+			@Override
+			public void mouseExited(MouseEvent e) {
+				btnsHideShow2.setBackground(First.greenC);
+			}
+
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				btnsHideShow2.setBackground(First.greenD);
+			}
+
+			@Override
+			public void mouseClicked(MouseEvent e) {
+			}
+		});
+		btnsHideShow2.setUI(new MetalToggleButtonUI() {
+			@Override
+			protected Color getSelectColor() {
+				return First.redC;
+			}
+		});
+		btnsHideShow2.addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				if (e.getStateChange() == ItemEvent.SELECTED)
+					btnsHideShow2.setText("NO");
+				else
+					btnsHideShow2.setText("SI");
+			}
+		});
+
+		// OPTION 3 CHANGE RESOLUTION
+		JLabel op4 = new JLabel("RESOLUCIÓN");
+		op4.setBounds(50, 260, 250, 50);
+		op4.setFont(First.myFont);
+		String res[] = { "OPTIMAL", "X-P", "P", "M", "G" };
+		JComboBox<String> op2C = new JComboBox<>(res);
+		op2C.setBounds(280, 260, 140, 50);
+		op2C.setFont(First.myFont);
+		op2C.setBackground(First.blueC);
+		op2C.setForeground(First.darkC);
+		if (conf[3] != null)
+			op2C.setSelectedIndex(Integer.valueOf(conf[3]));
+		op2C.addActionListener(e -> {
+			op2C.setSelectedIndex(op2C.getSelectedIndex());
+			// Resolution
+			if (op2C.getSelectedIndex() == 0) {
+				if (width > 1800 && height > 1000)
+					resG(resoD, cambioN, cambioN2, realesF, cambioN3, clearEverthing);
+				else if (width > 1500 && height > 700)
+					resM(resoD, cambioN, cambioN2, realesF, cambioN3, clearEverthing);
+				else if (width > 1300 && height > 700)
+					resP(resoD, cambioN, cambioN2, realesF, cambioN3, clearEverthing);
+				else
+					resXP(resoD, cambioN, cambioN2, realesF, cambioN3, clearEverthing);
+			} else if (op2C.getSelectedIndex() == 1)
+				resXP(resoD, cambioN, cambioN2, realesF, cambioN3, clearEverthing);
+			else if (op2C.getSelectedIndex() == 2)
+				resP(resoD, cambioN, cambioN2, realesF, cambioN3, clearEverthing);
+			else if (op2C.getSelectedIndex() == 3)
+				resM(resoD, cambioN, cambioN2, realesF, cambioN3, clearEverthing);
+			else
+				resG(resoD, cambioN, cambioN2, realesF, cambioN3, clearEverthing);
+		});
+
+		// SAVE
+		JButton save = new JButton("Save");
+		save.setBounds(200, 400, 100, 50);
+		First.btnStyle(save);
+		save.setBackground(First.darkC);
+		save.setForeground(First.lightC);
+		save.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				try {
+					FileWriter savedF = new FileWriter("conf.txt");
+					savedF.write(op1C.getSelectedIndex() + System.lineSeparator());
+					savedF.write(btnsHideShow.isSelected() + System.lineSeparator());
+					savedF.write(btnsHideShow2.isSelected() + System.lineSeparator());
+					savedF.write(op2C.getSelectedIndex() + System.lineSeparator());
+					savedF.close();
+				} catch (Exception e2) {
+				}
+				temp.dispose();
+			}
+		});
+
+		// Escape to close
+		op1C.addKeyListener(new KeyAdapter() {
+			@SuppressWarnings("static-access")
+			public void keyPressed(KeyEvent ke) {
+				if (ke.getKeyCode() == ke.VK_ESCAPE)
+					temp.dispose();
+			}
+		});
+
+		// Finalize
+		temp.setIconImage(iconImages[0].getImage());
+		temp.add(op1);
+		temp.add(op1C);
+		temp.add(op2);
+		temp.add(op3);
+		temp.add(btnsHideShow);
+		temp.add(btnsHideShow2);
+		temp.add(op2C);
+		temp.add(op4);
+		temp.add(save);
+		temp.setVisible(true);
+	}
+
+	private void clearAll(JButton cambioN, JButton cambioN2, JButton cambioN3) {
+		for (int i = 0; i < 10; i++)
+			trocoCT[i].setText("0");
+		for (int i = 0; i < 9; i++)
+			for (int j = 0; j < 3; j++)
+				details[i][j].setText("");
+		for (int i = 0; i < 9; i++)
+			detailsR[i].setText("");
+		calTodo(cambioN, cambioN2, cambioN3);
+		cambioN.setText("<html><center>" + "MÉTODO" + "<br>" + "SMART" + "</center></html>");
+		cambioN2.setText("<html><center>" + "MÉTODO" + "<br>" + " POPULAR" + "</center></html>");
+		cambioN3.setText("<html><center>" + "MÉTODO" + "<br>" + " BÁSICO" + "</center></html>");
+		cambioN.setEnabled(false);
+		cambioN2.setEnabled(false);
+		cambioN3.setEnabled(false);
+	}
+
 	// Focus for the fatura
-	private void tableFocus(int i, int j, JFrame frame, JButton mainF, JMenuItem hideBtn) {
+	private void tableFocus(int i, int j, JFrame frame, JButton mainF, JButton clearB, JMenuItem hideBtn) {
 		details[i][j].addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
 				// Hide
 				if ((e.getKeyCode() == KeyEvent.VK_O) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0))
-					hideBtns(mainF, hideBtn);
+					hideBtns(mainF, clearB, hideBtn);
 				// GO TO Main
 				else if ((e.getKeyCode() == KeyEvent.VK_S) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
 					frame.dispose();
@@ -633,13 +914,13 @@ public class FaturaP extends JFrame {
 	}
 
 	// Focus for the cleinte
-	private void clienteFocus(int i, JFrame frame, JButton mainF, JMenuItem hideBtn) {
+	private void clienteFocus(int i, JFrame frame, JButton mainF, JButton clearB, JMenuItem hideBtn) {
 		trocoCT[i].addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
 				// Hide
 				if ((e.getKeyCode() == KeyEvent.VK_O) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0))
-					hideBtns(mainF, hideBtn);
+					hideBtns(mainF, clearB, hideBtn);
 				// GO TO Main
 				else if ((e.getKeyCode() == KeyEvent.VK_S) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
 					frame.dispose();
@@ -668,12 +949,14 @@ public class FaturaP extends JFrame {
 	}
 
 	// Hide the button
-	private void hideBtns(JButton mainF, JMenuItem hideBtn) {
+	private void hideBtns(JButton mainF, JButton clearB, JMenuItem hideBtn) {
 		if (mainF.isShowing()) {
 			mainF.hide();
+			clearB.hide();
 			hideBtn.setText("MONSTRAR EL BOTON");
 		} else {
 			mainF.show();
+			clearB.show();
 			hideBtn.setText("ESCONDER EL BOTON");
 		}
 	}
@@ -1665,8 +1948,8 @@ public class FaturaP extends JFrame {
 
 	}
 
-	private void resXP(JMenuItem resoD, JLabel[] title, JLabel caja, JLabel cambioC, JButton cambioN, JButton cambioN2,
-			JButton mainF, JButton cambioN3) {
+	private void resXP(JMenuItem resoD, JButton cambioN, JButton cambioN2, JButton mainF, JButton cambioN3,
+			JButton clearB) {
 		this.setSize(1000, 600);
 		if (width >= 1800)
 			if (this.getWidth() == 1820)
@@ -1963,11 +2246,13 @@ public class FaturaP extends JFrame {
 			}
 		mainF.setBounds(410, 320, 50, 50);
 		mainF.setIcon(new ImageIcon(getScaledImage(mainIcon.getImage(), 50, 50)));
+		clearB.setBounds(410, 230, 55, 55);
+		clearB.setIcon(new ImageIcon(getScaledImage(clearI.getImage(), 55, 55)));
 
 	}
 
-	private void resP(JMenuItem resoD, JLabel[] title, JLabel caja, JLabel cambioC, JButton cambioN, JButton cambioN2,
-			JButton mainF, JButton cambioN3) {
+	private void resP(JMenuItem resoD, JButton cambioN, JButton cambioN2, JButton mainF, JButton cambioN3,
+			JButton clearB) {
 		this.setSize(1300, 700);
 		if (width >= 1800)
 			if (this.getWidth() == 1820)
@@ -2264,10 +2549,12 @@ public class FaturaP extends JFrame {
 			}
 		mainF.setBounds(480, 380, 60, 60);
 		mainF.setIcon(new ImageIcon(getScaledImage(mainIcon.getImage(), 60, 60)));
+		clearB.setBounds(480, 280, 70, 70);
+		clearB.setIcon(new ImageIcon(getScaledImage(clearI.getImage(), 70, 70)));
 	}
 
-	private void resM(JMenuItem resoD, JLabel[] title, JLabel caja, JLabel cambioC, JButton cambioN, JButton cambioN2,
-			JButton mainF, JButton cambioN3) {
+	private void resM(JMenuItem resoD, JButton cambioN, JButton cambioN2, JButton mainF, JButton cambioN3,
+			JButton clearB) {
 		// Definitions
 		this.setSize(1500, 800);
 		if (width >= 1800)
@@ -2570,10 +2857,12 @@ public class FaturaP extends JFrame {
 			}
 		mainF.setBounds(550, 450, 70, 70);
 		mainF.setIcon(new ImageIcon(getScaledImage(mainIcon.getImage(), 70, 70)));
+		clearB.setBounds(550, 320, 70, 70);
+		clearB.setIcon(new ImageIcon(getScaledImage(clearI.getImage(), 70, 70)));
 	}
 
-	private void resG(JMenuItem resoD, JLabel[] title, JLabel caja, JLabel cambioC, JButton cambioN, JButton cambioN2,
-			JButton mainF, JButton cambioN3) {
+	private void resG(JMenuItem resoD, JButton cambioN, JButton cambioN2, JButton mainF, JButton cambioN3,
+			JButton clearB) {
 		// Definitions
 		this.setSize(1820, 980);
 		if (width >= 1800)
@@ -2875,6 +3164,8 @@ public class FaturaP extends JFrame {
 			}
 		mainF.setBounds(720, 520, 80, 80);
 		mainF.setIcon(new ImageIcon(getScaledImage(mainIcon.getImage(), 80, 80)));
+		clearB.setBounds(720, 350, 80, 80);
+		clearB.setIcon(new ImageIcon(getScaledImage(clearI.getImage(), 80, 80)));
 
 	}
 
