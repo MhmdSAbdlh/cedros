@@ -62,7 +62,7 @@ public class First extends JFrame {
 	static Border border = new LineBorder(Color.white, 2);
 	private URL enter = getClass().getResource("images/enter.png");
 	private ImageIcon enterI = new ImageIcon(enter);
-	private URL icon = getClass().getResource("images/icon/icon.png");
+	private URL icon = getClass().getResource("images/icon/cedros0.png");
 	private ImageIcon iconI = new ImageIcon(icon);
 	private URL setting = getClass().getResource("images/setting.png");
 	private ImageIcon settingI = new ImageIcon(setting);
@@ -104,9 +104,12 @@ public class First extends JFrame {
 		iconI = new ImageIcon(getScaledImage(iconI.getImage(), 50, 50));
 		if (conf[0] == null || conf[0].equals("0")) {
 			this.setTitle("CEDROS");
-			url = getClass().getResource("images/icon/icon.png");
+			url = getClass().getResource("images/icon/cedros0.png");
 		} else if (conf[0].equals("1")) {
-			url = getClass().getResource("images/icon/cedros.png");
+			url = getClass().getResource("images/icon/cedros1.png");
+			this.setTitle("CEDROS");
+		} else if (conf[0].equals("2")) {
+			url = getClass().getResource("images/icon/cedros2.png");
 			this.setTitle("CEDROS");
 		} else {
 			url = getClass().getResource("images/icon/narjes.png");
@@ -158,23 +161,19 @@ public class First extends JFrame {
 
 			@Override
 			public void keyTyped(KeyEvent e) {
-				// TODO Auto-generated method stub
-
 			}
 
 			@Override
 			public void keyReleased(KeyEvent e) {
-				// TODO Auto-generated method stub
-
 			}
 
 			@Override
 			public void keyPressed(KeyEvent e) {
 				if ((e.getKeyCode() == KeyEvent.VK_O) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0))
 					confFrame(conf, height, photoLabel);
-
 			}
 		});
+
 		// cierre de caja
 		JButton login = new JButton();
 		login.setIcon(new ImageIcon(getScaledImage(enterI.getImage(), 100, 100)));
@@ -267,16 +266,19 @@ public class First extends JFrame {
 		JLabel op1 = new JLabel("ICONO");
 		op1.setBounds(50, 20, 150, 80);
 		op1.setFont(myFont);
-		URL cedros1 = getClass().getResource("images/icon/icon.png");
-		URL cedros2 = getClass().getResource("images/icon/cedros.png");
+		URL cedros1 = getClass().getResource("images/icon/cedros0.png");
+		URL cedros2 = getClass().getResource("images/icon/cedros1.png");
+		URL cedros3 = getClass().getResource("images/icon/cedros2.png");
 		URL narjes = getClass().getResource("images/icon/narjes.png");
-		ImageIcon iconImages[] = new ImageIcon[3];
+		ImageIcon iconImages[] = new ImageIcon[4];
 		iconImages[0] = new ImageIcon(cedros1);
 		iconImages[1] = new ImageIcon(cedros2);
-		iconImages[2] = new ImageIcon(narjes);
+		iconImages[2] = new ImageIcon(cedros3);
+		iconImages[3] = new ImageIcon(narjes);
 		iconImages[0] = new ImageIcon(getScaledImage(iconImages[0].getImage(), 50, 50));
 		iconImages[1] = new ImageIcon(getScaledImage(iconImages[1].getImage(), 50, 50));
 		iconImages[2] = new ImageIcon(getScaledImage(iconImages[2].getImage(), 50, 50));
+		iconImages[3] = new ImageIcon(getScaledImage(iconImages[3].getImage(), 50, 50));
 		JComboBox<ImageIcon> op1C = new JComboBox<>(iconImages);
 		op1C.setBounds(320, 20, 80, 80);
 		if (conf[0] != null)
@@ -288,10 +290,16 @@ public class First extends JFrame {
 						getScaledImage(new ImageIcon(cedros1).getImage(), height / 3, height / 3));
 				iconImages[1] = new ImageIcon(
 						getScaledImage(new ImageIcon(cedros2).getImage(), height / 3, height / 3));
-				iconImages[2] = new ImageIcon(getScaledImage(new ImageIcon(narjes).getImage(), height / 3, height / 3));
+				iconImages[2] = new ImageIcon(
+						getScaledImage(new ImageIcon(cedros3).getImage(), 2 * height / 3, height / 3));
+				iconImages[3] = new ImageIcon(getScaledImage(new ImageIcon(narjes).getImage(), height / 3, height / 3));
 				photoLabel.setIcon(iconImages[op1C.getSelectedIndex()]);
-				First.this.setIconImage(iconImages[op1C.getSelectedIndex()].getImage());
 				if (op1C.getSelectedIndex() == 2)
+					photoLabel.setBounds(photoLabel.getX(), 50, 2 * height / 3, height / 3);
+				else
+					photoLabel.setBounds(photoLabel.getX(), 50, height / 3, height / 3);
+				First.this.setIconImage(iconImages[op1C.getSelectedIndex()].getImage());
+				if (op1C.getSelectedIndex() == 3)
 					First.this.setTitle("NARJES");
 				else
 					First.this.setTitle("CEDROS");

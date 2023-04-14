@@ -142,9 +142,11 @@ public class FaturaR extends JFrame {
 		}
 		// Icon
 		if (conf[0] == null || conf[0].equals("0")) {
-			url = getClass().getResource("images/icon/icon.png");
+			url = getClass().getResource("images/icon/cedros0.png");
 		} else if (conf[0].equals("1")) {
-			url = getClass().getResource("images/icon/cedros.png");
+			url = getClass().getResource("images/icon/cedros1.png");
+		} else if (conf[0].equals("2")) {
+			url = getClass().getResource("images/icon/cedros2.png");
 		} else {
 			url = getClass().getResource("images/icon/narjes.png");
 		}
@@ -620,13 +622,15 @@ public class FaturaR extends JFrame {
 		JLabel op1 = new JLabel("ICONO");
 		op1.setBounds(50, 20, 150, 80);
 		op1.setFont(First.myFont);
-		URL cedros1 = getClass().getResource("images/icon/icon.png");
-		URL cedros2 = getClass().getResource("images/icon/cedros.png");
+		URL cedros1 = getClass().getResource("images/icon/cedros0.png");
+		URL cedros2 = getClass().getResource("images/icon/cedros1.png");
+		URL cedros3 = getClass().getResource("images/icon/cedros2.png");
 		URL narjes = getClass().getResource("images/icon/narjes.png");
-		ImageIcon iconImages[] = new ImageIcon[3];
+		ImageIcon iconImages[] = new ImageIcon[4];
 		iconImages[0] = new ImageIcon(getScaledImage(new ImageIcon(cedros1).getImage(), 50, 50));
 		iconImages[1] = new ImageIcon(getScaledImage(new ImageIcon(cedros2).getImage(), 50, 50));
-		iconImages[2] = new ImageIcon(getScaledImage(new ImageIcon(narjes).getImage(), 50, 50));
+		iconImages[2] = new ImageIcon(getScaledImage(new ImageIcon(cedros3).getImage(), 50, 50));
+		iconImages[3] = new ImageIcon(getScaledImage(new ImageIcon(narjes).getImage(), 50, 50));
 		JComboBox<ImageIcon> op1C = new JComboBox<>(iconImages);
 		op1C.setBounds(320, 20, 80, 80);
 		if (conf[0] != null)
@@ -2653,7 +2657,7 @@ public class FaturaR extends JFrame {
 				}
 				troco3[i][j].setFont(First.myFont);
 			}
-		mainF.setBounds(1600, 540, 80, 80);
+		mainF.setBounds(1600, 650, 80, 80);
 		mainF.setIcon(new ImageIcon(getScaledImage(mainIcon.getImage(), 80, 80)));
 		clearB.setBounds(1600, 450, 80, 80);
 		clearB.setIcon(new ImageIcon(getScaledImage(clearI.getImage(), 80, 80)));
