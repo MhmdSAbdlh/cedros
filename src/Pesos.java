@@ -83,8 +83,10 @@ public class Pesos extends JFrame {
 	// Define Parameter
 	static JTextField details[][] = new JTextField[5][15];// Numbers of notes
 	static JTextField initialDay = new JTextField("0");// How much begin the day
-	static JTextField agregadoTable[] = new JTextField[8];// Added to cash detailed
-	static JTextField gastosTable[] = new JTextField[8];// Spend of the day detailed
+	static JTextField agregadoTable[] = new JTextField[16];// Added to cash detailed
+	static JTextField gastosTable[] = new JTextField[16];// Spend of the day detailed
+	static JTextField gTable[] = new JTextField[16];
+	static JTextField aTable[] = new JTextField[16];
 	static JTextField panelCnum[] = new JTextField[11];
 	static JLabel total[] = new JLabel[8];// Total of every column
 	static JLabel boletoN[] = new JLabel[6]; // B1,2,3,4,5
@@ -99,6 +101,18 @@ public class Pesos extends JFrame {
 	static int restN, totalCaja = 0, nbOf500 = 0;
 	int width, height;
 	String conf[] = new String[5];
+	FocusListener textFocus = new FocusListener() {
+
+		@Override
+		public void focusGained(FocusEvent e) {
+			((JTextField) e.getSource()).selectAll();
+		}
+
+		@Override
+		public void focusLost(FocusEvent e) {
+			sumF();
+		}
+	};
 
 	Pesos() {
 		// Buttons
@@ -108,6 +122,9 @@ public class Pesos extends JFrame {
 		JButton realesF = new JButton();
 		JButton newDay = new JButton("<html><center>Se Quedará<br>Para Mañana</center></html>");// REST
 		JMenuItem novo = new JMenuItem("NOVO DIA");
+		JMenuItem resoD = new JMenuItem("ÓPTIMO");
+		JButton aggPanel = new JButton("↑MÁS↓");
+		JButton gastosPanel = new JButton("↑MÁS↓");
 
 		// Frame
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -182,7 +199,8 @@ public class Pesos extends JFrame {
 				if (details[i][j].getText().equals(""))
 					temp += 0;
 				if (conf[2] == null || conf[2].equals("false"))
-					tableFocus(i, j, this, newDay, faturaBtn, realesF, clearEverthing, hideBtn);
+					tableFocus(i, j, this, newDay, faturaBtn, realesF, clearEverthing, hideBtn, resoD, gastosPanel,
+							aggPanel);
 				this.add(details[i][j]);
 			}
 			total[i] = new JLabel("");
@@ -244,7 +262,7 @@ public class Pesos extends JFrame {
 		initialDay.setForeground(Color.black);
 		initialDay.setCaretColor(First.darkC);
 		if (conf[2] == null || conf[2].equals("false"))
-			iniFocus(newDay, faturaBtn, realesF, clearEverthing, hideBtn);
+			iniFocus(newDay, faturaBtn, realesF, clearEverthing, hideBtn, resoD, gastosPanel, aggPanel);
 		this.add(initialDay);
 		for (int i = 5; i < 9; i++) {
 			summaryT[i] = new JLabel("0");
@@ -260,58 +278,139 @@ public class Pesos extends JFrame {
 		summaryT[7].setBackground(First.blueC);
 		summaryT[8].setBackground(new Color(80, 80, 80));
 
-		// Panel 3
+		// Panel 3 : gastos and agg
 		First.labelStyle(gastos);
-		gastos.setBackground(new Color(107, 35, 35));
+		Color redT = new Color(107, 35, 35);
+		gastos.setBackground(redT);
 		gastos.setForeground(Color.white);
 		this.add(gastos);
 		ArrayList<String> keywords = gastosYagregados();
-		for (int i = 0; i < 4; i++) {
+		for (int i = 0; i < 8; i++) {
 			gastosTable[i] = new JTextField();
+			gTable[i] = new JTextField();
 			// Autocomplete
 			AutoComplete autoComplete = new AutoComplete(gastosTable[i], keywords);
 			gastosTable[i].getDocument().addDocumentListener(autoComplete);
-			textFieldStyle(gastosTable[i]);
-			gastosTable[i].setBackground(First.redD);
-			gastosTable[i].setForeground(Color.white);
-			if (conf[2] == null || conf[2].equals("false"))
-				gasFocus(i, this, newDay, faturaBtn, realesF, clearEverthing, hideBtn);
-			this.add(gastosTable[i]);
+			if (i < 4) {
+				textFieldStyle(gastosTable[i]);
+				gastosTable[i].setBackground(First.redD);
+				gastosTable[i].setForeground(Color.white);
+				if (conf[2] == null || conf[2].equals("false"))
+					gasFocus(i, this, newDay, faturaBtn, realesF, clearEverthing, hideBtn, resoD, gastosPanel,
+							aggPanel);
+				this.add(gastosTable[i]);
+			}
 		}
-		for (int i = 4; i < 8; i++) {
+		for (int i = 8; i < 16; i++) {
 			gastosTable[i] = new JTextField();
-			textFieldStyle(gastosTable[i]);
-			gastosTable[i].setBackground(First.redC);
-			gastosTable[i].setForeground(Color.white);
-			if (conf[2] == null || conf[2].equals("false"))
-				gasFocus(i, this, newDay, faturaBtn, realesF, clearEverthing, hideBtn);
-			this.add(gastosTable[i]);
+			gTable[i] = new JTextField();
+			if (i < 12) {
+				textFieldStyle(gastosTable[i]);
+				gastosTable[i].setBackground(First.redC);
+				gastosTable[i].setForeground(Color.white);
+				if (conf[2] == null || conf[2].equals("false"))
+					gasFocus(i, this, newDay, faturaBtn, realesF, clearEverthing, hideBtn, resoD, gastosPanel,
+							aggPanel);
+				this.add(gastosTable[i]);
+			}
 		}
+		First.btnStyle(gastosPanel);
+		gastosPanel.setBackground(redT);
+		gastosPanel.setForeground(First.lightC);
+		gastosPanel.addActionListener(e -> {
+			gastosFrame(keywords, faturaBtn, realesF, newDay, clearEverthing, resoD, gastosPanel);
+		});
+		gastosPanel.addMouseListener(new MouseListener() {
+			@Override
+			public void mouseReleased(MouseEvent e) {
+			}
+
+			@Override
+			public void mousePressed(MouseEvent e) {
+			}
+
+			@Override
+			public void mouseClicked(MouseEvent e) {
+			}
+
+			@Override
+			public void mouseExited(MouseEvent e) {
+				gastosPanel.setBackground(redT);
+			}
+
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				gastosPanel.setBackground(First.redC);
+			}
+
+		});
+		this.add(gastosPanel);
+		// Agg
 		First.labelStyle(agregado);
-		agregado.setBackground(new Color(30, 84, 25));
+		Color greenT = new Color(30, 84, 25);
+		agregado.setBackground(greenT);
 		agregado.setForeground(Color.white);
 		this.add(agregado);
-		for (int i = 0; i < 4; i++) {
+		for (int i = 0; i < 8; i++) {
+			aTable[i] = new JTextField();
 			agregadoTable[i] = new JTextField();
 			// Autocomplete
 			AutoComplete autoComplete = new AutoComplete(agregadoTable[i], keywords);
 			agregadoTable[i].getDocument().addDocumentListener(autoComplete);
-			textFieldStyle(agregadoTable[i]);
-			agregadoTable[i].setBackground(First.greenD);
-			agregadoTable[i].setForeground(Color.white);
-			if (conf[2] == null || conf[2].equals("false"))
-				aggFocus(i, this, newDay, faturaBtn, realesF, clearEverthing, hideBtn);
-			this.add(agregadoTable[i]);
+			if (i < 4) {
+				textFieldStyle(agregadoTable[i]);
+				agregadoTable[i].setBackground(First.greenD);
+				agregadoTable[i].setForeground(Color.white);
+				if (conf[2] == null || conf[2].equals("false"))
+					aggFocus(i, this, newDay, faturaBtn, realesF, clearEverthing, hideBtn, resoD, gastosPanel,
+							aggPanel);
+				this.add(agregadoTable[i]);
+			}
 		}
-		for (int i = 4; i < 8; i++) {
+		for (int i = 8; i < 16; i++) {
+			aTable[i] = new JTextField();
 			agregadoTable[i] = new JTextField();
-			textFieldStyle(agregadoTable[i]);
-			agregadoTable[i].setBackground(First.greenC);
-			agregadoTable[i].setForeground(Color.white);
-			if (conf[2] == null || conf[2].equals("false"))
-				aggFocus(i, this, newDay, faturaBtn, realesF, clearEverthing, hideBtn);
-			this.add(agregadoTable[i]);
+			if (i < 12) {
+				textFieldStyle(agregadoTable[i]);
+				agregadoTable[i].setBackground(First.greenC);
+				agregadoTable[i].setForeground(Color.white);
+				if (conf[2] == null || conf[2].equals("false"))
+					aggFocus(i, this, newDay, faturaBtn, realesF, clearEverthing, hideBtn, resoD, gastosPanel,
+							aggPanel);
+				this.add(agregadoTable[i]);
+			}
 		}
+		First.btnStyle(aggPanel);
+		aggPanel.setBackground(greenT);
+		aggPanel.setForeground(First.lightC);
+		aggPanel.addActionListener(e -> {
+			aggFrame(keywords, faturaBtn, realesF, newDay, clearEverthing, resoD, gastosPanel);
+		});
+		aggPanel.addMouseListener(new MouseListener() {
+			@Override
+			public void mouseReleased(MouseEvent e) {
+			}
+
+			@Override
+			public void mousePressed(MouseEvent e) {
+			}
+
+			@Override
+			public void mouseClicked(MouseEvent e) {
+			}
+
+			@Override
+			public void mouseExited(MouseEvent e) {
+				aggPanel.setBackground(greenT);
+			}
+
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				aggPanel.setBackground(First.greenC);
+			}
+
+		});
+		this.add(aggPanel);
 
 		// Panel 4
 		for (int i = 0; i < 11; i++) {
@@ -327,7 +426,7 @@ public class Pesos extends JFrame {
 			panelCnum[i].setBackground(First.lightC);
 			panelCnum[i].setCaretColor(First.darkC);
 			if (conf[2] == null || conf[2].equals("false"))
-				cajaFocus(i, this, newDay, faturaBtn, realesF, clearEverthing, hideBtn);
+				cajaFocus(i, this, newDay, faturaBtn, realesF, clearEverthing, hideBtn, resoD, gastosPanel, aggPanel);
 			this.add(panelCnum[i]);
 		}
 		total[6] = new JLabel("TOTAL");// Total Label
@@ -424,7 +523,6 @@ public class Pesos extends JFrame {
 		JMenuItem creator = new JMenuItem("SOBRE EL CREADOR");
 		JMenuItem about = new JMenuItem("SOBRE EL APLICATIVO");
 		JMenu reso = new JMenu("RESOLUCIÓN");
-		JMenuItem resoD = new JMenuItem("ÓPTIMO");
 		JSeparator sep = new JSeparator();
 		JMenuItem reso1 = new JMenuItem("GRANDE");
 		JMenuItem reso2 = new JMenuItem("MEDIO");
@@ -434,7 +532,8 @@ public class Pesos extends JFrame {
 		calc.addActionListener(e -> sumF());
 		clear.addActionListener(e -> clearAll());
 		save.addActionListener(e -> saveProgress());
-		option.addActionListener(e -> confFrame(conf, faturaBtn, realesF, newDay, clearEverthing, hideBtn, resoD));
+		option.addActionListener(e -> confFrame(conf, faturaBtn, realesF, newDay, clearEverthing, hideBtn, resoD,
+				gastosPanel, aggPanel));
 		exit.addActionListener(e -> System.exit(0));
 		reales.addActionListener(e -> {
 			saveProgress();
@@ -449,23 +548,15 @@ public class Pesos extends JFrame {
 			new FaturaP();
 		});
 		if (conf[2] == null || conf[2].equals("false"))
-			if (!conf[0].equals("3"))
-				getHelp.addActionListener(e -> JOptionPane.showMessageDialog(null,
-						"• CTRL + S → ir la fatura.\n" + "• CTRL + R → ir al reales.\n" + "• CTRL + B → borrar todo.\n"
-								+ "• CTRL + N → prepárate para el día siguiente.\n"
-								+ "• FLECHAS → subir, abajo, derecha e izquierda.\n" + "• CTRL + D → ir al detalles.\n"
-								+ "• CTRL + I → ir al inicio.\n" + "• CTRL + G → ir al gastos.\n"
-								+ "• CTRL + A → ir al agregado.\n" + "• CTRL + T → ir a la caja.\n"
-								+ "• CTRL + E → ir al ultimo numero.\n" + "• CTRL + O → esconder los botones",
-						"ATAJOS DE TECLADO", 1));
-			else
-				getHelp.addActionListener(e -> JOptionPane.showMessageDialog(null,
-						"• CTRL + S → ir la fatura.\n" + "• CTRL + R → ir al reales.\n" + "• CTRL + B → borrar todo.\n"
-								+ "• FLECHAS → subir, abajo, derecha e izquierda.\n" + "• CTRL + D → ir al detalles.\n"
-								+ "• CTRL + I → ir al inicio.\n" + "• CTRL + G → ir al gastos.\n"
-								+ "• CTRL + A → ir al agregado.\n" + "• CTRL + T → ir a la caja.\n"
-								+ "• CTRL + E → ir al ultimo numero.\n" + "• CTRL + O → esconder los botones",
-						"ATAJOS DE TECLADO", 1));
+			getHelp.addActionListener(e -> JOptionPane.showMessageDialog(null,
+					"• CTRL + S → ir la fatura.\n" + "• CTRL + R → ir al reales.\n" + "• CTRL + B → borrar todo.\n"
+							+ "• CTRL + N → prepárate para el día siguiente.\n"
+							+ "• FLECHAS → subir, abajo, derecha e izquierda.\n" + "• CTRL + D → ir al detalles.\n"
+							+ "• CTRL + I → ir al inicio.\n" + "• CTRL + G → ir al gastos.\n"
+							+ "• CTRL + A → ir al agregado.\n" + "• CTRL + T → ir a la caja.\n"
+							+ "• CTRL + E → ir al ultimo numero.\n" + "• CTRL + O → esconder los botones.\n"
+							+ "• CTRL + C → abrir el configuración.",
+					"ATAJOS DE TECLADO", 1));
 		else
 			getHelp.hide();
 		hideBtn.addActionListener(e -> hideBtn(faturaBtn, realesF, newDay, clearEverthing, hideBtn));
@@ -485,19 +576,19 @@ public class Pesos extends JFrame {
 		reso.add(reso2);
 		reso.add(reso1);
 		resoD.addActionListener(e -> {
-			if (width > 1800 && height > 1000) {
-				resG(resoD, realesF, faturaBtn, newDay, clearEverthing);
-			} else if (width > 1500 && height > 700)
-				resM(resoD, realesF, faturaBtn, newDay, clearEverthing);
+			if (width > 1800 && height > 1000)
+				resG(resoD, realesF, faturaBtn, newDay, clearEverthing, gastosPanel, aggPanel);
+			else if (width > 1500 && height > 700)
+				resM(resoD, realesF, faturaBtn, newDay, clearEverthing, gastosPanel, aggPanel);
 			else if (width > 1300 && height > 700)
-				resP(resoD, realesF, faturaBtn, newDay, clearEverthing);
+				resP(resoD, realesF, faturaBtn, newDay, clearEverthing, gastosPanel, aggPanel);
 			else
-				resXP(resoD, realesF, faturaBtn, newDay, clearEverthing);
+				resXP(resoD, realesF, faturaBtn, newDay, clearEverthing, gastosPanel, aggPanel);
 		});
-		reso1.addActionListener(e -> resG(resoD, realesF, faturaBtn, newDay, clearEverthing));
-		reso2.addActionListener(e -> resM(resoD, realesF, faturaBtn, newDay, clearEverthing));
-		reso3.addActionListener(e -> resP(resoD, realesF, faturaBtn, newDay, clearEverthing));
-		reso4.addActionListener(e -> resXP(resoD, realesF, faturaBtn, newDay, clearEverthing));
+		reso1.addActionListener(e -> resG(resoD, realesF, faturaBtn, newDay, clearEverthing, gastosPanel, aggPanel));
+		reso2.addActionListener(e -> resM(resoD, realesF, faturaBtn, newDay, clearEverthing, gastosPanel, aggPanel));
+		reso3.addActionListener(e -> resP(resoD, realesF, faturaBtn, newDay, clearEverthing, gastosPanel, aggPanel));
+		reso4.addActionListener(e -> resXP(resoD, realesF, faturaBtn, newDay, clearEverthing, gastosPanel, aggPanel));
 		file.add(novo);
 		file.add(calc);
 		file.add(clear);
@@ -541,21 +632,21 @@ public class Pesos extends JFrame {
 		// Resolution
 		if (conf[3] == null || conf[3].equals("0")) {
 			if (width > 1800 && height > 1000)
-				resG(resoD, realesF, faturaBtn, newDay, clearEverthing);
+				resG(resoD, realesF, faturaBtn, newDay, clearEverthing, gastosPanel, aggPanel);
 			else if (width > 1500 && height > 700)
-				resM(resoD, realesF, faturaBtn, newDay, clearEverthing);
+				resM(resoD, realesF, faturaBtn, newDay, clearEverthing, gastosPanel, aggPanel);
 			else if (width > 1300 && height > 700)
-				resP(resoD, realesF, faturaBtn, newDay, clearEverthing);
+				resP(resoD, realesF, faturaBtn, newDay, clearEverthing, gastosPanel, aggPanel);
 			else
-				resXP(resoD, realesF, faturaBtn, newDay, clearEverthing);
+				resXP(resoD, realesF, faturaBtn, newDay, clearEverthing, gastosPanel, aggPanel);
 		} else if (conf[3].equals("1"))
-			resXP(resoD, realesF, faturaBtn, newDay, clearEverthing);
+			resXP(resoD, realesF, faturaBtn, newDay, clearEverthing, gastosPanel, aggPanel);
 		else if (conf[3].equals("2"))
-			resP(resoD, realesF, faturaBtn, newDay, clearEverthing);
+			resP(resoD, realesF, faturaBtn, newDay, clearEverthing, gastosPanel, aggPanel);
 		else if (conf[3].equals("3"))
-			resM(resoD, realesF, faturaBtn, newDay, clearEverthing);
+			resM(resoD, realesF, faturaBtn, newDay, clearEverthing, gastosPanel, aggPanel);
 		else
-			resG(resoD, realesF, faturaBtn, newDay, clearEverthing);
+			resG(resoD, realesF, faturaBtn, newDay, clearEverthing, gastosPanel, aggPanel);
 
 		// Close Popup
 		this.addWindowListener(new java.awt.event.WindowAdapter() {
@@ -588,8 +679,94 @@ public class Pesos extends JFrame {
 
 	}
 
+	private void gastosFrame(ArrayList<String> keywords, JButton notasF, JButton pesosF, JButton newDay,
+			JButton clearEverthing, JMenuItem resoD, JButton gastosPanel) {
+		JFrame gastosFrame = new JFrame();
+		gastosFrame.setTitle("GASTOS");
+		gastosFrame.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+		gastosFrame.setAlwaysOnTop(false);
+		gastosFrame.setSize(300, 403);
+		gastosFrame.setLocationRelativeTo(null);
+		gastosFrame.setResizable(false);
+		gastosFrame.setLayout(null);
+		gastosFrame.getContentPane().setBackground(First.redC);
+
+		for (int i = 0; i < 8; i++) {
+			// Autocomplete
+			AutoComplete autoComplete = new AutoComplete(gTable[i], keywords);
+			gTable[i].getDocument().addDocumentListener(autoComplete);
+			gTable[i].setBounds(2, 2 + 45 * i, 140, 45);
+			textFieldStyle(gTable[i]);
+			gTable[i].removeFocusListener(textFocus);
+			gTable[i].setBackground(First.redD);
+			gTable[i].setForeground(Color.white);
+			gastosFrame.add(gTable[i]);
+		}
+		for (int i = 8; i < 16; i++) {
+			gTable[i].setBounds(142, 2 + 45 * (i - 8), 140, 45);
+			textFieldStyle(gTable[i]);
+			gTable[i].removeFocusListener(textFocus);
+			gTable[i].setBackground(First.redC);
+			gTable[i].setForeground(Color.white);
+			gastosFrame.add(gTable[i]);
+		}
+		// Close popup
+		gastosFrame.addWindowListener(new java.awt.event.WindowAdapter() {
+			@Override
+			public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+				for (int i = 0; i < 16; i++)
+					gastosTable[i].setText(gTable[i].getText());
+				sumF();
+			}
+		});
+		gastosFrame.setVisible(true);
+	}
+
+	private void aggFrame(ArrayList<String> keywords, JButton notasF, JButton pesosF, JButton newDay,
+			JButton clearEverthing, JMenuItem resoD, JButton gastosPanel) {
+		JFrame aggFrame = new JFrame();
+		aggFrame.setTitle("AGREGADOS");
+		aggFrame.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+		aggFrame.setAlwaysOnTop(false);
+		aggFrame.setSize(300, 403);
+		aggFrame.setLocationRelativeTo(null);
+		aggFrame.setResizable(false);
+		aggFrame.setLayout(null);
+		aggFrame.getContentPane().setBackground(First.greenC);
+
+		for (int i = 0; i < 8; i++) {
+			// Autocomplete
+			AutoComplete autoComplete = new AutoComplete(aTable[i], keywords);
+			aTable[i].getDocument().addDocumentListener(autoComplete);
+			textFieldStyle(aTable[i]);
+			aTable[i].removeFocusListener(textFocus);
+			aTable[i].setBounds(2, 2 + 45 * i, 140, 45);
+			aTable[i].setBackground(First.greenD);
+			aTable[i].setForeground(Color.white);
+			aggFrame.add(aTable[i]);
+		}
+		for (int i = 8; i < 16; i++) {
+			textFieldStyle(aTable[i]);
+			aTable[i].removeFocusListener(textFocus);
+			aTable[i].setBounds(142, 2 + 45 * (i - 8), 140, 45);
+			aTable[i].setBackground(First.greenC);
+			aTable[i].setForeground(Color.white);
+			aggFrame.add(aTable[i]);
+		}
+		// Close popup
+		aggFrame.addWindowListener(new java.awt.event.WindowAdapter() {
+			@Override
+			public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+				for (int i = 0; i < 16; i++)
+					agregadoTable[i].setText(aTable[i].getText());
+				sumF();
+			}
+		});
+		aggFrame.setVisible(true);
+	}
+
 	private void confFrame(String[] conf, JButton notasF, JButton pesosF, JButton newDay, JButton clearEverthing,
-			JMenuItem hideBtn, JMenuItem resoD) {
+			JMenuItem hideBtn, JMenuItem resoD, JButton gastosPanel, JButton aggPanel) {
 		JFrame temp = new JFrame();
 		temp.setTitle("CONFIGURACIÓN");
 		temp.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
@@ -692,7 +869,7 @@ public class Pesos extends JFrame {
 			}
 		});
 		// OPTION 2 DISABLE KEYBOARD SHORTCUT
-		JLabel op3 = new JLabel("ATAJO DE TECLADO*");
+		JLabel op3 = new JLabel("ATAJO DE TECLADO");
 		op3.setBounds(50, 160, 250, 50);
 		op3.setFont(First.myFont);
 		JToggleButton btnsHideShow2 = new JToggleButton();
@@ -764,21 +941,21 @@ public class Pesos extends JFrame {
 			// Resolution
 			if (op2C.getSelectedIndex() == 0) {
 				if (width > 1800 && height > 1000)
-					resG(resoD, notasF, pesosF, newDay, clearEverthing);
+					resG(resoD, notasF, pesosF, newDay, clearEverthing, gastosPanel, aggPanel);
 				else if (width > 1500 && height > 700)
-					resM(resoD, notasF, pesosF, newDay, clearEverthing);
+					resM(resoD, notasF, pesosF, newDay, clearEverthing, gastosPanel, aggPanel);
 				else if (width > 1300 && height > 700)
-					resP(resoD, notasF, pesosF, newDay, clearEverthing);
+					resP(resoD, notasF, pesosF, newDay, clearEverthing, gastosPanel, aggPanel);
 				else
-					resXP(resoD, notasF, pesosF, newDay, clearEverthing);
+					resXP(resoD, notasF, pesosF, newDay, clearEverthing, gastosPanel, aggPanel);
 			} else if (op2C.getSelectedIndex() == 1)
-				resXP(resoD, notasF, pesosF, newDay, clearEverthing);
+				resXP(resoD, notasF, pesosF, newDay, clearEverthing, gastosPanel, aggPanel);
 			else if (op2C.getSelectedIndex() == 2)
-				resP(resoD, notasF, pesosF, newDay, clearEverthing);
+				resP(resoD, notasF, pesosF, newDay, clearEverthing, gastosPanel, aggPanel);
 			else if (op2C.getSelectedIndex() == 3)
-				resM(resoD, notasF, pesosF, newDay, clearEverthing);
+				resM(resoD, notasF, pesosF, newDay, clearEverthing, gastosPanel, aggPanel);
 			else
-				resG(resoD, notasF, pesosF, newDay, clearEverthing);
+				resG(resoD, notasF, pesosF, newDay, clearEverthing, gastosPanel, aggPanel);
 		});
 		// OPTION 5 AUTOSAVE
 		JLabel op5 = new JLabel("AUTOGUARDAR");
@@ -839,12 +1016,6 @@ public class Pesos extends JFrame {
 		});
 
 		// bottom line
-		JLabel tecladoText = new JLabel();
-		tecladoText.setText("*: NECESITA REINICIAR PARA VER EL CAMBIO.");
-		tecladoText.setForeground(First.redC);
-		tecladoText.setBounds(20, 360, 450, 50);
-		tecladoText.setFont(First.myFontXS);
-		tecladoText.setHorizontalAlignment(0);
 		JButton defSet = new JButton("POR DEFECTO");
 		defSet.setBounds(70, 400, 170, 50);
 		First.btnStyle(defSet);
@@ -885,13 +1056,13 @@ public class Pesos extends JFrame {
 				btnsHideShow2.setSelected(false);
 				op2C.setSelectedIndex(0);
 				if (width > 1800 && height > 1000)
-					resG(resoD, notasF, pesosF, newDay, clearEverthing);
+					resG(resoD, notasF, pesosF, newDay, clearEverthing, gastosPanel, aggPanel);
 				else if (width > 1500 && height > 700)
-					resM(resoD, notasF, pesosF, newDay, clearEverthing);
+					resM(resoD, notasF, pesosF, newDay, clearEverthing, gastosPanel, aggPanel);
 				else if (width > 1300 && height > 700)
-					resP(resoD, notasF, pesosF, newDay, clearEverthing);
+					resP(resoD, notasF, pesosF, newDay, clearEverthing, gastosPanel, aggPanel);
 				else
-					resXP(resoD, notasF, pesosF, newDay, clearEverthing);
+					resXP(resoD, notasF, pesosF, newDay, clearEverthing, gastosPanel, aggPanel);
 				btnsHideShow3.setText("SI");
 				btnsHideShow3.setSelected(false);
 			}
@@ -967,7 +1138,6 @@ public class Pesos extends JFrame {
 		temp.add(op5);
 		temp.add(btnsHideShow3);
 		temp.add(defSet);
-		temp.add(tecladoText);
 		temp.add(save);
 		temp.setVisible(true);
 	}
@@ -981,10 +1151,12 @@ public class Pesos extends JFrame {
 				for (int j = 0; j < 15; j++)
 					details[i][j].setText("");
 			initialDay.setText("");
-			for (int i = 0; i < 8; i++)
+			for (int i = 0; i < 16; i++) {
 				gastosTable[i].setText("");
-			for (int i = 0; i < 8; i++)
 				agregadoTable[i].setText("");
+				gTable[i].setText("");
+				aTable[i].setText("");
+			}
 			for (int i = 0; i < 11; i++)
 				panelCnum[i].setText("");
 			sumF();
@@ -999,11 +1171,13 @@ public class Pesos extends JFrame {
 			for (int i = 0; i < 5; i++)
 				for (int j = 0; j < 15; j++)
 					details[i][j].setText("");
-			initialDay.setText(totalCaja + "");
-			for (int i = 0; i < 8; i++)
+			initialDay.setText(restN + "");
+			for (int i = 0; i < 16; i++) {
 				gastosTable[i].setText("");
-			for (int i = 0; i < 8; i++)
 				agregadoTable[i].setText("");
+				gTable[i].setText("");
+				aTable[i].setText("");
+			}
 			if (!conf[0].equals("2")) {
 				for (int i = 0; i < 2; i++)
 					panelCnum[i].setText("");
@@ -1040,11 +1214,10 @@ public class Pesos extends JFrame {
 				for (int j = 0; j < 15; j++)
 					savedF.write(details[i][j].getText() + System.lineSeparator());
 			savedF.write(initialDay.getText() + System.lineSeparator());
-			for (int i = 0; i < 8; i++)
+			for (int i = 0; i < 16; i++)
 				savedF.write(gastosTable[i].getText() + System.lineSeparator());
-			for (int i = 0; i < 8; i++)
+			for (int i = 0; i < 16; i++)
 				savedF.write(agregadoTable[i].getText() + System.lineSeparator());
-
 			for (int i = 0; i < 11; i++)
 				savedF.write(panelCnum[i].getText() + System.lineSeparator());
 			savedF.close();
@@ -1057,7 +1230,7 @@ public class Pesos extends JFrame {
 		BufferedReader dataOpened = null;
 		String line = "";
 		int z = 0;
-		String numbers[] = new String[104];
+		String numbers[] = new String[120];
 		try {
 			dataOpened = new BufferedReader(new FileReader(new File("cedrosP.txt")));
 			while ((line = dataOpened.readLine()) != null) {
@@ -1072,11 +1245,13 @@ public class Pesos extends JFrame {
 				}
 			initialDay.setText(numbers[z]);
 			z++;
-			for (int i = 0; i < 8; i++) {
+			for (int i = 0; i < 16; i++) {
+				gTable[i].setText(numbers[z]);
 				gastosTable[i].setText(numbers[z]);
 				z++;
 			}
-			for (int i = 0; i < 8; i++) {
+			for (int i = 0; i < 16; i++) {
+				aTable[i].setText(numbers[z]);
 				agregadoTable[i].setText(numbers[z]);
 				z++;
 			}
@@ -1091,6 +1266,14 @@ public class Pesos extends JFrame {
 
 	// Calculate everything
 	private void sumF() {
+		for (int i = 0; i < 4; i++) {
+			gTable[i].setText(gastosTable[i].getText());
+			aTable[i].setText(agregadoTable[i].getText());
+		}
+		for (int i = 8; i < 12; i++) {
+			gTable[i].setText(gastosTable[i].getText());
+			aTable[i].setText(agregadoTable[i].getText());
+		}
 		if (conf[4] == null || conf[4].equals("false"))
 			saveProgress();
 		for (int i = 0; i < 11; i++)// Caja empty values 0
@@ -1098,16 +1281,18 @@ public class Pesos extends JFrame {
 				panelCnum[i].setText(0 + "");
 		if (!First.isNumeric(initialDay.getText()))// initial of the day 0
 			initialDay.setText(0 + "");
-		for (int i = 0; i < 4; i++) {// TitleCase gastos and agg
-			gastosTable[i].setText(First.capitalizeString(gastosTable[i].getText()));
-			agregadoTable[i].setText(First.capitalizeString(agregadoTable[i].getText()));
-		}
-		for (int i = 4; i < 8; i++)// spent 0
+		for (int i = 8; i < 16; i++)// spent 0
 			if (!First.isNumeric(gastosTable[i].getText()))
 				gastosTable[i].setText("");
-		for (int i = 4; i < 8; i++)// added 0
+		for (int i = 8; i < 16; i++)// added 0
 			if (!First.isNumeric(agregadoTable[i].getText()))
 				agregadoTable[i].setText("");
+		for (int i = 0; i < 8; i++) {// TitleCase gastos and agg
+			gastosTable[i].setText(First.capitalizeString(gastosTable[i].getText()));
+			gTable[i].setText(First.capitalizeString(gTable[i].getText()));
+			agregadoTable[i].setText(First.capitalizeString(agregadoTable[i].getText()));
+			aTable[i].setText(First.capitalizeString(aTable[i].getText()));
+		}
 		// Calculate the totals
 		totalVenta = 0;
 		for (int i = 0; i < 5; i++) {
@@ -1125,16 +1310,24 @@ public class Pesos extends JFrame {
 		}
 		total[5].setText("$" + totalVenta);
 		// Calculate total of spent
-		gastosT = ((gastosTable[4].getText().equals("") ? 0 : Integer.valueOf(gastosTable[4].getText()))
-				+ (gastosTable[5].getText().equals("") ? 0 : Integer.valueOf(gastosTable[5].getText()))
-				+ (gastosTable[6].getText().equals("") ? 0 : Integer.valueOf(gastosTable[6].getText()))
-				+ (gastosTable[7].getText().equals("") ? 0 : Integer.valueOf(gastosTable[7].getText())));
+		gastosT = ((gastosTable[8].getText().equals("") ? 0 : Integer.valueOf(gastosTable[8].getText()))
+				+ (gastosTable[9].getText().equals("") ? 0 : Integer.valueOf(gastosTable[9].getText()))
+				+ (gastosTable[10].getText().equals("") ? 0 : Integer.valueOf(gastosTable[10].getText()))
+				+ (gastosTable[11].getText().equals("") ? 0 : Integer.valueOf(gastosTable[11].getText()))
+				+ (gastosTable[12].getText().equals("") ? 0 : Integer.valueOf(gastosTable[12].getText()))
+				+ (gastosTable[13].getText().equals("") ? 0 : Integer.valueOf(gastosTable[13].getText()))
+				+ (gastosTable[14].getText().equals("") ? 0 : Integer.valueOf(gastosTable[14].getText()))
+				+ (gastosTable[15].getText().equals("") ? 0 : Integer.valueOf(gastosTable[15].getText())));
 		summaryT[5].setText("" + gastosT);
 		// Calculate total of added
-		agregadoT = ((agregadoTable[4].getText().equals("") ? 0 : Integer.valueOf(agregadoTable[4].getText()))
-				+ (agregadoTable[5].getText().equals("") ? 0 : Integer.valueOf(agregadoTable[5].getText()))
-				+ (agregadoTable[6].getText().equals("") ? 0 : Integer.valueOf(agregadoTable[6].getText()))
-				+ (agregadoTable[7].getText().equals("") ? 0 : Integer.valueOf(agregadoTable[7].getText())));
+		agregadoT = ((agregadoTable[8].getText().equals("") ? 0 : Integer.valueOf(agregadoTable[8].getText()))
+				+ (agregadoTable[9].getText().equals("") ? 0 : Integer.valueOf(agregadoTable[9].getText()))
+				+ (agregadoTable[10].getText().equals("") ? 0 : Integer.valueOf(agregadoTable[10].getText()))
+				+ (agregadoTable[11].getText().equals("") ? 0 : Integer.valueOf(agregadoTable[11].getText()))
+				+ (agregadoTable[12].getText().equals("") ? 0 : Integer.valueOf(agregadoTable[12].getText()))
+				+ (agregadoTable[13].getText().equals("") ? 0 : Integer.valueOf(agregadoTable[13].getText()))
+				+ (agregadoTable[14].getText().equals("") ? 0 : Integer.valueOf(agregadoTable[14].getText()))
+				+ (agregadoTable[15].getText().equals("") ? 0 : Integer.valueOf(agregadoTable[15].getText())));
 		summaryT[6].setText("" + agregadoT);
 		summaryT[7].setText("" + totalVenta);// Total of sells
 		// Calculate total
@@ -1185,7 +1378,7 @@ public class Pesos extends JFrame {
 
 	// Key listener for the table
 	private void tableFocus(int i, int j, JFrame frame, JButton newDay, JButton notasF, JButton pesosF,
-			JButton clearEverthing, JMenuItem hideBtn) {
+			JButton clearEverthing, JMenuItem hideBtn, JMenuItem resoD, JButton gastosPanel, JButton aggPanel) {
 		details[i][j].addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
@@ -1207,12 +1400,12 @@ public class Pesos extends JFrame {
 				} else// Clear
 				if ((e.getKeyCode() == KeyEvent.VK_B) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
 					clearAll();
-				}
-
-				else// new day
+				} // Conf
+				else if ((e.getKeyCode() == KeyEvent.VK_C) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+					confFrame(conf, notasF, pesosF, newDay, clearEverthing, hideBtn, resoD, gastosPanel, aggPanel);
+				} else// new day
 				if ((e.getKeyCode() == KeyEvent.VK_N) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
-					if (!conf[0].equals("3"))
-						newDay();
+					newDay();
 				} else// Direction
 				if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
 					if (i < 4) {
@@ -1305,7 +1498,8 @@ public class Pesos extends JFrame {
 	}
 
 	// Key listener for the initial
-	private void iniFocus(JButton newDay, JButton notasF, JButton pesosF, JButton clearEverthing, JMenuItem hideBtn) {
+	private void iniFocus(JButton newDay, JButton notasF, JButton pesosF, JButton clearEverthing, JMenuItem hideBtn,
+			JMenuItem resoD, JButton gastosPanel, JButton aggPanel) {
 		initialDay.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
@@ -1317,8 +1511,10 @@ public class Pesos extends JFrame {
 					clearAll();
 				} else// new day
 				if ((e.getKeyCode() == KeyEvent.VK_N) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
-					if (!conf[0].equals("3"))
-						newDay();
+					newDay();
+				} // Conf
+				else if ((e.getKeyCode() == KeyEvent.VK_C) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+					confFrame(conf, notasF, pesosF, newDay, clearEverthing, hideBtn, resoD, gastosPanel, aggPanel);
 				} else // GO TO GASTOS
 				if ((e.getKeyCode() == KeyEvent.VK_G) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
 					initialDay.setNextFocusableComponent(gastosTable[0]);
@@ -1342,7 +1538,7 @@ public class Pesos extends JFrame {
 
 	// Key listener for the ADDITION
 	private void aggFocus(int i, JFrame frame, JButton newDay, JButton notasF, JButton pesosF, JButton clearEverthing,
-			JMenuItem hideBtn) {
+			JMenuItem hideBtn, JMenuItem resoD, JButton gastosPanel, JButton aggPanel) {
 		agregadoTable[i].addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
@@ -1356,18 +1552,20 @@ public class Pesos extends JFrame {
 					FaturaP.total.setText("0");
 					frame.dispose();
 					new FaturaP();
-				} // GO TO Reales
-				else if ((e.getKeyCode() == KeyEvent.VK_R) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+				} else // GO TO REALES
+				if ((e.getKeyCode() == KeyEvent.VK_R) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
 					saveProgress();
 					frame.dispose();
 					new Reales();
+				} // Conf
+				else if ((e.getKeyCode() == KeyEvent.VK_C) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+					confFrame(conf, notasF, pesosF, newDay, clearEverthing, hideBtn, resoD, gastosPanel, aggPanel);
 				} else// Clear
 				if ((e.getKeyCode() == KeyEvent.VK_B) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
 					clearAll();
 				} else// new day
 				if ((e.getKeyCode() == KeyEvent.VK_N) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
-					if (!conf[0].equals("3"))
-						newDay();
+					newDay();
 				} else// GO TO INITIAL
 				if ((e.getKeyCode() == KeyEvent.VK_I) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
 					agregadoTable[i].setNextFocusableComponent(initialDay);
@@ -1386,23 +1584,51 @@ public class Pesos extends JFrame {
 					agregadoTable[i].nextFocus();
 				} else// Direction
 				if (e.getKeyCode() == KeyEvent.VK_UP) {
-					if (i > 0) {
+					if (i > 0 && i < 4 || i > 8 && i < 12) {
 						agregadoTable[i].setNextFocusableComponent(agregadoTable[i - 1]);
+						agregadoTable[i].nextFocus();
+					} else if (i == 0) {
+						agregadoTable[i].setNextFocusableComponent(agregadoTable[11]);
+						agregadoTable[i].nextFocus();
+					} else if (i == 8) {
+						agregadoTable[i].setNextFocusableComponent(agregadoTable[3]);
 						agregadoTable[i].nextFocus();
 					}
 				} else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
-					if (i < 7) {
+					if (i < 3 || i > 7 && i < 11) {
 						agregadoTable[i].setNextFocusableComponent(agregadoTable[i + 1]);
+						agregadoTable[i].nextFocus();
+					} else if (i == 3) {
+						agregadoTable[i].setNextFocusableComponent(agregadoTable[8]);
+						agregadoTable[i].nextFocus();
+					} else if (i == 11) {
+						agregadoTable[i].setNextFocusableComponent(agregadoTable[0]);
 						agregadoTable[i].nextFocus();
 					}
 				} else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-					if (i < 4) {
-						agregadoTable[i].setNextFocusableComponent(agregadoTable[i + 4]);
+					if (i != 11) {
+						if (i < 8) {
+							agregadoTable[i].setNextFocusableComponent(agregadoTable[i + 8]);
+							agregadoTable[i].nextFocus();
+						} else {
+							agregadoTable[i].setNextFocusableComponent(agregadoTable[i - 7]);
+							agregadoTable[i].nextFocus();
+						}
+					} else {
+						agregadoTable[i].setNextFocusableComponent(agregadoTable[0]);
 						agregadoTable[i].nextFocus();
 					}
 				} else if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-					if (i > 3) {
-						agregadoTable[i].setNextFocusableComponent(agregadoTable[i - 4]);
+					if (i != 0) {
+						if (i < 8) {
+							agregadoTable[i].setNextFocusableComponent(agregadoTable[i + 7]);
+							agregadoTable[i].nextFocus();
+						} else {
+							agregadoTable[i].setNextFocusableComponent(agregadoTable[i - 8]);
+							agregadoTable[i].nextFocus();
+						}
+					} else {
+						agregadoTable[i].setNextFocusableComponent(agregadoTable[11]);
 						agregadoTable[i].nextFocus();
 					}
 				} else// |Go to the last one
@@ -1418,14 +1644,13 @@ public class Pesos extends JFrame {
 					agregadoTable[i].setNextFocusableComponent(agregadoTable[k]);
 					agregadoTable[i].nextFocus();
 				}
-
 			}
 		});
 	}
 
 	// Key listener for the SPENT
 	private void gasFocus(int i, JFrame frame, JButton newDay, JButton notasF, JButton pesosF, JButton clearEverthing,
-			JMenuItem hideBtn) {
+			JMenuItem hideBtn, JMenuItem resoD, JButton gastosPanel, JButton aggPanel) {
 		gastosTable[i].addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
@@ -1439,19 +1664,21 @@ public class Pesos extends JFrame {
 					FaturaP.total.setText("0");
 					frame.dispose();
 					new FaturaP();
-				} // GO TO Reales
-				else if ((e.getKeyCode() == KeyEvent.VK_R) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+				} else // GO TO REALES
+				if ((e.getKeyCode() == KeyEvent.VK_R) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
 					saveProgress();
 					frame.dispose();
 					new Reales();
+				} // Conf
+				else if ((e.getKeyCode() == KeyEvent.VK_C) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+					confFrame(conf, notasF, pesosF, newDay, clearEverthing, hideBtn, resoD, gastosPanel, aggPanel);
 				} else// Clear
 				if ((e.getKeyCode() == KeyEvent.VK_B) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
 					clearAll();
 				} else
 				// new day
 				if ((e.getKeyCode() == KeyEvent.VK_N) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
-					if (!conf[0].equals("3"))
-						newDay();
+					newDay();
 				} else// GO TO INITIAL
 				if ((e.getKeyCode() == KeyEvent.VK_I) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
 					gastosTable[i].setNextFocusableComponent(initialDay);
@@ -1468,25 +1695,53 @@ public class Pesos extends JFrame {
 				if ((e.getKeyCode() == KeyEvent.VK_T) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
 					gastosTable[i].setNextFocusableComponent(panelCnum[0]);
 					gastosTable[i].nextFocus();
-				} else// direction
+				} else// Direction
 				if (e.getKeyCode() == KeyEvent.VK_UP) {
-					if (i > 0) {
+					if (i > 0 && i < 4 || i > 8 && i < 12) {
 						gastosTable[i].setNextFocusableComponent(gastosTable[i - 1]);
+						gastosTable[i].nextFocus();
+					} else if (i == 0) {
+						gastosTable[i].setNextFocusableComponent(gastosTable[11]);
+						gastosTable[i].nextFocus();
+					} else if (i == 8) {
+						gastosTable[i].setNextFocusableComponent(gastosTable[3]);
 						gastosTable[i].nextFocus();
 					}
 				} else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
-					if (i < 7) {
+					if (i < 3 || i > 7 && i < 11) {
 						gastosTable[i].setNextFocusableComponent(gastosTable[i + 1]);
+						gastosTable[i].nextFocus();
+					} else if (i == 3) {
+						gastosTable[i].setNextFocusableComponent(gastosTable[8]);
+						gastosTable[i].nextFocus();
+					} else if (i == 11) {
+						gastosTable[i].setNextFocusableComponent(gastosTable[0]);
 						gastosTable[i].nextFocus();
 					}
 				} else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-					if (i < 4) {
-						gastosTable[i].setNextFocusableComponent(gastosTable[i + 4]);
+					if (i != 11) {
+						if (i < 8) {
+							gastosTable[i].setNextFocusableComponent(gastosTable[i + 8]);
+							gastosTable[i].nextFocus();
+						} else {
+							gastosTable[i].setNextFocusableComponent(gastosTable[i - 7]);
+							gastosTable[i].nextFocus();
+						}
+					} else {
+						gastosTable[i].setNextFocusableComponent(gastosTable[0]);
 						gastosTable[i].nextFocus();
 					}
 				} else if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-					if (i > 3) {
-						gastosTable[i].setNextFocusableComponent(gastosTable[i - 4]);
+					if (i != 0) {
+						if (i < 8) {
+							gastosTable[i].setNextFocusableComponent(gastosTable[i + 7]);
+							gastosTable[i].nextFocus();
+						} else {
+							gastosTable[i].setNextFocusableComponent(gastosTable[i - 8]);
+							gastosTable[i].nextFocus();
+						}
+					} else {
+						gastosTable[i].setNextFocusableComponent(gastosTable[11]);
 						gastosTable[i].nextFocus();
 					}
 				} else// |Go to the last one
@@ -1502,14 +1757,13 @@ public class Pesos extends JFrame {
 					gastosTable[i].setNextFocusableComponent(gastosTable[k]);
 					gastosTable[i].nextFocus();
 				}
-
 			}
 		});
 	}
 
 	// Key listener for the CASH
 	private void cajaFocus(int i, JFrame frame, JButton newDay, JButton notasF, JButton pesosF, JButton clearEverthing,
-			JMenuItem hideBtn) {
+			JMenuItem hideBtn, JMenuItem resoD, JButton gastosPanel, JButton aggPanel) {
 		panelCnum[i].addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
@@ -1528,13 +1782,15 @@ public class Pesos extends JFrame {
 					saveProgress();
 					frame.dispose();
 					new Reales();
+				} // Conf
+				else if ((e.getKeyCode() == KeyEvent.VK_C) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+					confFrame(conf, notasF, pesosF, newDay, clearEverthing, hideBtn, resoD, gastosPanel, aggPanel);
 				} else // Clear
 				if ((e.getKeyCode() == KeyEvent.VK_B) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
 					clearAll();
 				} else// new day
 				if ((e.getKeyCode() == KeyEvent.VK_N) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
-					if (!conf[0].equals("3"))
-						newDay();
+					newDay();
 				} else // GO TO INITIAL
 				if ((e.getKeyCode() == KeyEvent.VK_I) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
 					panelCnum[i].setNextFocusableComponent(initialDay);
@@ -1580,21 +1836,11 @@ public class Pesos extends JFrame {
 		tf.setBorder(First.border);
 		tf.setHorizontalAlignment(0);
 		tf.setCaretColor(First.lightC);
-		tf.addFocusListener(new FocusListener() {
-			@Override
-			public void focusGained(FocusEvent e) {
-				((JTextField) e.getSource()).selectAll();
-			}
-
-			@Override
-			public void focusLost(FocusEvent e) {
-				sumF();
-			}
-		});
-
+		tf.addFocusListener(textFocus);
 	}
 
-	private void resXP(JMenuItem resoD, JButton pesosF, JButton notasF, JButton newDay, JButton clearEverthing) {
+	private void resXP(JMenuItem resoD, JButton pesosF, JButton notasF, JButton newDay, JButton clearEverthing,
+			JButton gastosPanel, JButton aggPanel) {
 		this.setSize(1000, 600);
 		if (width >= 1800)
 			if (this.getWidth() == 1820)
@@ -1645,9 +1891,13 @@ public class Pesos extends JFrame {
 			summaryT[i].setBounds(520, 50 + (i - 4) * 30, 70, 30);
 			summaryT[i].setFont(First.myFont);
 		}
+		gastosPanel.setBounds(620, 200, 150, 20);
+		gastosPanel.setFont(First.myFont);
 		gastos.setBounds(620, 50, 150, 30);
-		agregado.setBounds(800, 50, 150, 30);
 		gastos.setFont(First.myFont);
+		aggPanel.setBounds(800, 200, 150, 20);
+		aggPanel.setFont(First.myFont);
+		agregado.setBounds(800, 50, 150, 30);
 		agregado.setFont(First.myFont);
 		for (int i = 0; i < 4; i++) {
 			gastosTable[i].setBounds(620, 80 + 30 * i, 100, 30);
@@ -1655,11 +1905,11 @@ public class Pesos extends JFrame {
 			gastosTable[i].setFont(First.myFont);
 			agregadoTable[i].setFont(First.myFont);
 		}
-		for (int i = 4; i < 8; i++) {
-			gastosTable[i].setBounds(720, 80 + 30 * (i - 4), 50, 30);
-			agregadoTable[i].setBounds(900, 80 + 30 * (i - 4), 50, 30);
-			gastosTable[i].setFont(First.myFont);
-			agregadoTable[i].setFont(First.myFont);
+		for (int i = 8; i < 12; i++) {
+			gastosTable[i].setBounds(720, 80 + 30 * (i - 8), 50, 30);
+			gastosTable[i].setFont(First.myFontS);
+			agregadoTable[i].setBounds(900, 80 + 30 * (i - 8), 50, 30);
+			agregadoTable[i].setFont(First.myFontS);
 		}
 		for (int i = 0; i < 11; i++) {
 			switch (i) {
@@ -1734,7 +1984,8 @@ public class Pesos extends JFrame {
 		clearEverthing.setIcon(new ImageIcon(getScaledImage(clear.getImage(), 50, 50)));
 	}
 
-	private void resP(JMenuItem resoD, JButton pesosF, JButton notasF, JButton newDay, JButton clearEverthing) {
+	private void resP(JMenuItem resoD, JButton pesosF, JButton notasF, JButton newDay, JButton clearEverthing,
+			JButton gastosPanel, JButton aggPanel) {
 		this.setSize(1300, 700);
 		if (width >= 1800)
 			if (this.getWidth() == 1820)
@@ -1785,9 +2036,13 @@ public class Pesos extends JFrame {
 			summaryT[i].setBounds(670, 50 + (i - 4) * 40, 80, 40);
 			summaryT[i].setFont(First.myFont);
 		}
+		gastosPanel.setBounds(800, 250, 210, 30);
+		gastosPanel.setFont(First.myFont);
 		gastos.setBounds(800, 50, 210, 40);
-		agregado.setBounds(1050, 50, 210, 40);
 		gastos.setFont(First.myFont);
+		aggPanel.setBounds(1050, 250, 210, 30);
+		aggPanel.setFont(First.myFont);
+		agregado.setBounds(1050, 50, 210, 40);
 		agregado.setFont(First.myFont);
 		for (int i = 0; i < 4; i++) {
 			gastosTable[i].setBounds(800, 90 + 40 * i, 150, 40);
@@ -1795,11 +2050,11 @@ public class Pesos extends JFrame {
 			gastosTable[i].setFont(First.myFont);
 			agregadoTable[i].setFont(First.myFont);
 		}
-		for (int i = 4; i < 8; i++) {
-			gastosTable[i].setBounds(950, 90 + 40 * (i - 4), 60, 40);
-			agregadoTable[i].setBounds(1200, 90 + 40 * (i - 4), 60, 40);
-			gastosTable[i].setFont(First.myFont);
-			agregadoTable[i].setFont(First.myFont);
+		for (int i = 8; i < 12; i++) {
+			gastosTable[i].setBounds(950, 90 + 40 * (i - 8), 60, 40);
+			gastosTable[i].setFont(First.myFontS);
+			agregadoTable[i].setBounds(1200, 90 + 40 * (i - 8), 60, 40);
+			agregadoTable[i].setFont(First.myFontS);
 		}
 		for (int i = 0; i < 11; i++) {
 			if (i < 7) {
@@ -1875,7 +2130,8 @@ public class Pesos extends JFrame {
 		clearEverthing.setIcon(new ImageIcon(getScaledImage(clear.getImage(), 70, 70)));
 	}
 
-	private void resM(JMenuItem resoD, JButton pesosF, JButton notasF, JButton newDay, JButton clearEverthing) {
+	private void resM(JMenuItem resoD, JButton pesosF, JButton notasF, JButton newDay, JButton clearEverthing,
+			JButton gastosPanel, JButton aggPanel) {
 		this.setSize(1500, 800);
 		if (width >= 1800)
 			if (this.getWidth() == 1820)
@@ -1926,21 +2182,25 @@ public class Pesos extends JFrame {
 			summaryT[i].setBounds(710, 50 + (i - 4) * 50, 90, 50);
 			summaryT[i].setFont(First.myFont);
 		}
+		gastosPanel.setBounds(870, 300, 230, 35);
+		gastosPanel.setFont(First.myFont);
 		gastos.setBounds(870, 50, 230, 50);
-		agregado.setBounds(1170, 50, 230, 50);
 		gastos.setFont(First.myFont);
+		aggPanel.setBounds(1170, 300, 230, 35);
+		aggPanel.setFont(First.myFont);
+		agregado.setBounds(1170, 50, 230, 50);
 		agregado.setFont(First.myFont);
 		for (int i = 0; i < 4; i++) {
 			gastosTable[i].setBounds(870, 100 + 50 * i, 160, 50);
-			agregadoTable[i].setBounds(1170, 100 + 50 * i, 160, 50);
 			gastosTable[i].setFont(First.myFont);
+			agregadoTable[i].setBounds(1170, 100 + 50 * i, 160, 50);
 			agregadoTable[i].setFont(First.myFont);
 		}
-		for (int i = 4; i < 8; i++) {
-			gastosTable[i].setBounds(1030, 100 + 50 * (i - 4), 70, 50);
-			agregadoTable[i].setBounds(1330, 100 + 50 * (i - 4), 70, 50);
-			gastosTable[i].setFont(First.myFont);
-			agregadoTable[i].setFont(First.myFont);
+		for (int i = 8; i < 12; i++) {
+			gastosTable[i].setBounds(1030, 100 + 50 * (i - 8), 70, 50);
+			gastosTable[i].setFont(First.myFontS);
+			agregadoTable[i].setBounds(1330, 100 + 50 * (i - 8), 70, 50);
+			agregadoTable[i].setFont(First.myFontS);
 		}
 		for (int i = 0; i < 11; i++) {
 			if (i < 7) {
@@ -2015,7 +2275,8 @@ public class Pesos extends JFrame {
 		clearEverthing.setIcon(new ImageIcon(getScaledImage(clear.getImage(), 70, 70)));
 	}
 
-	private void resG(JMenuItem resoD, JButton pesosF, JButton notasF, JButton newDay, JButton clearEverthing) {
+	private void resG(JMenuItem resoD, JButton pesosF, JButton notasF, JButton newDay, JButton clearEverthing,
+			JButton gastosPanel, JButton aggPanel) {
 		this.setSize(1820, 980);
 		if (width >= 1800)
 			if (this.getWidth() == 1820)
@@ -2066,8 +2327,13 @@ public class Pesos extends JFrame {
 			summaryT[i].setBounds(860, 50 + (i - 4) * 60, 110, 60);
 			summaryT[i].setFont(First.myFont);
 		}
+		gastosPanel.setBounds(1100, 350, 270, 50);
+		gastosPanel.setFont(First.myFont);
 		gastos.setBounds(1100, 50, 270, 60);
 		gastos.setFont(First.myFont);
+		aggPanel.setBounds(1500, 350, 270, 50);
+		aggPanel.setFont(First.myFont);
+		agregado.setBounds(1500, 50, 270, 60);
 		agregado.setFont(First.myFont);
 		for (int i = 0; i < 4; i++) {
 			gastosTable[i].setBounds(1100, 110 + 60 * i, 180, 60);
@@ -2075,13 +2341,12 @@ public class Pesos extends JFrame {
 			gastosTable[i].setFont(First.myFontS);
 			agregadoTable[i].setFont(First.myFontS);
 		}
-		for (int i = 4; i < 8; i++) {
-			gastosTable[i].setBounds(1280, 110 + 60 * (i - 4), 90, 60);
-			agregadoTable[i].setBounds(1680, 110 + 60 * (i - 4), 90, 60);
+		for (int i = 8; i < 12; i++) {
+			gastosTable[i].setBounds(1280, 110 + 60 * (i - 8), 90, 60);
 			gastosTable[i].setFont(First.myFontS);
+			agregadoTable[i].setBounds(1680, 110 + 60 * (i - 8), 90, 60);
 			agregadoTable[i].setFont(First.myFontS);
 		}
-		agregado.setBounds(1500, 50, 270, 60);
 		for (int i = 0; i < 11; i++) {
 			if (i < 7) {
 				panelFoto[i].setBounds(800 + 80 * i, 450, 80, 60);

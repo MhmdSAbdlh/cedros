@@ -87,7 +87,7 @@ public class FaturaR extends JFrame {
 	static JLabel[][] troco = new JLabel[2][7];
 	static JLabel[][] troco2 = new JLabel[2][7];
 	static JLabel[][] troco3 = new JLabel[2][7];
-	static String numbers[] = new String[103];
+	static String numbers[] = new String[119];
 	static JLabel totalC = new JLabel("Total");
 	JLabel cambioC = new JLabel("Cliente");
 	JLabel title[] = new JLabel[4];
@@ -480,8 +480,8 @@ public class FaturaR extends JFrame {
 		this.add(calculate);
 
 		// Put the valores in the caja
-		cajaTroco[1][4].setText("" + (Integer.valueOf(numbers[97]) + Integer.valueOf(numbers[93]) * 5));
-		z = 95;
+		cajaTroco[1][4].setText("" + (Integer.valueOf(numbers[113]) + Integer.valueOf(numbers[109]) * 5));
+		z = 111;
 		for (int i = 0; i < 7; i++) {
 			if (i != 2)
 				cajaTroco[1][6 - i].setText(numbers[z]);
@@ -705,7 +705,7 @@ public class FaturaR extends JFrame {
 			}
 		});
 		// OPTION 2 DISABLE KEYBOARD SHORTCUT
-		JLabel op3 = new JLabel("ATAJO DE TECLADO*");
+		JLabel op3 = new JLabel("ATAJO DE TECLADO");
 		op3.setBounds(50, 160, 250, 50);
 		op3.setFont(First.myFont);
 		JToggleButton btnsHideShow2 = new JToggleButton();
@@ -852,12 +852,6 @@ public class FaturaR extends JFrame {
 		});
 
 		// bottom line
-		JLabel tecladoText = new JLabel();
-		tecladoText.setText("*: NECESITA REINICIAR PARA VER EL CAMBIO.");
-		tecladoText.setForeground(First.redC);
-		tecladoText.setBounds(20, 360, 450, 50);
-		tecladoText.setFont(First.myFontXS);
-		tecladoText.setHorizontalAlignment(0);
 		JButton defSet = new JButton("POR DEFECTO");
 		defSet.setBounds(70, 400, 170, 50);
 		First.btnStyle(defSet);
@@ -980,7 +974,6 @@ public class FaturaR extends JFrame {
 		temp.add(op5);
 		temp.add(btnsHideShow3);
 		temp.add(defSet);
-		temp.add(tecladoText);
 		temp.add(save);
 		temp.setVisible(true);
 	}
@@ -1732,12 +1725,12 @@ public class FaturaR extends JFrame {
 			} // Initial value
 			savedF.write(numbers[i] + System.lineSeparator());
 			i++;
-			z = i + 8;
+			z = i + 16;
 			while (i < z) {// gastos
 				savedF.write(numbers[i] + System.lineSeparator());
 				i++;
 			}
-			z = i + 8;
+			z = i + 16;
 			while (i < z) {// agregados
 				savedF.write(numbers[i] + System.lineSeparator());
 				i++;

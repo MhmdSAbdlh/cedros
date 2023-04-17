@@ -93,7 +93,7 @@ public class FaturaP extends JFrame {
 	static JLabel[][] troco = new JLabel[2][10];
 	static JLabel[][] troco2 = new JLabel[2][10];
 	static JLabel[][] troco3 = new JLabel[2][10];
-	static String numbers[] = new String[104];
+	static String numbers[] = new String[120];
 	static JLabel totalC = new JLabel("Total");
 	static int totalFatura = 0, totalCV = 0, trocoV = 0;
 	JLabel cambioC = new JLabel("Cliente");
@@ -486,7 +486,7 @@ public class FaturaP extends JFrame {
 		this.add(calculate);
 
 		// Put the valores in the caja
-		z = 93;
+		z = 109;
 		for (int i = 0; i < 10; i++) {
 			cajaTroco[1][9 - i].setText(numbers[z]);
 			z++;
@@ -709,7 +709,7 @@ public class FaturaP extends JFrame {
 			}
 		});
 		// OPTION 2 DISABLE KEYBOARD SHORTCUT
-		JLabel op3 = new JLabel("ATAJO DE TECLADO*");
+		JLabel op3 = new JLabel("ATAJO DE TECLADO");
 		op3.setBounds(50, 160, 250, 50);
 		op3.setFont(First.myFont);
 		JToggleButton btnsHideShow2 = new JToggleButton();
@@ -856,12 +856,6 @@ public class FaturaP extends JFrame {
 		});
 
 		// bottom line
-		JLabel tecladoText = new JLabel();
-		tecladoText.setText("*: NECESITA REINICIAR PARA VER EL CAMBIO.");
-		tecladoText.setForeground(First.redC);
-		tecladoText.setBounds(20, 360, 450, 50);
-		tecladoText.setFont(First.myFontXS);
-		tecladoText.setHorizontalAlignment(0);
 		JButton defSet = new JButton("POR DEFECTO");
 		defSet.setBounds(70, 400, 170, 50);
 		First.btnStyle(defSet);
@@ -984,7 +978,6 @@ public class FaturaP extends JFrame {
 		temp.add(op5);
 		temp.add(btnsHideShow3);
 		temp.add(defSet);
-		temp.add(tecladoText);
 		temp.add(save);
 		temp.setVisible(true);
 	}
@@ -2014,13 +2007,13 @@ public class FaturaP extends JFrame {
 			}
 			savedF.write(numbers[i] + System.lineSeparator());// Initial
 			i++;
-			z = i + 8;
-			while (i < z) {// Gatos
+			z = i + 16;
+			while (i < z) {// Gastos
 				savedF.write(numbers[i] + System.lineSeparator());
 				i++;
 			}
-			z = i + 8;
-			while (i < z) {// Agregado
+			z = i + 16;
+			while (i < z) {// Agregados
 				savedF.write(numbers[i] + System.lineSeparator());
 				i++;
 			}
