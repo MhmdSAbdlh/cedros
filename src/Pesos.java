@@ -1178,7 +1178,7 @@ public class Pesos extends JFrame {
 				gTable[i].setText("");
 				aTable[i].setText("");
 			}
-			if (!conf[0].equals("2")) {
+			if (!conf[0].equals("3")) {
 				for (int i = 0; i < 2; i++)
 					panelCnum[i].setText("");
 				panelCnum[2].setText("" + nbOf500);
@@ -1364,13 +1364,16 @@ public class Pesos extends JFrame {
 			}
 		}
 		// Calculate the restTmrw
-		restN = totalCaja - Integer.valueOf(panelCnum[0].getText()) * 2000
-				- Integer.valueOf(panelCnum[1].getText()) * 1000;
-		nbOf500 = Integer.valueOf(panelCnum[2].getText());
-		while (restN > 1000 && nbOf500 > 0) {
-			restN -= 500;
-			nbOf500--;
-		}
+		if (!conf[0].equals("3")) {
+			restN = totalCaja - Integer.valueOf(panelCnum[0].getText()) * 2000
+					- Integer.valueOf(panelCnum[1].getText()) * 1000;
+			nbOf500 = Integer.valueOf(panelCnum[2].getText());
+			while (restN > 1000 && nbOf500 > 0) {
+				restN -= 500;
+				nbOf500--;
+			}
+		} else
+			restN = totalCaja;
 		restTmrw.setText("$" + restN);
 		restTmrw.setForeground(Color.black);
 		restTmrw.setBackground(First.lightC);

@@ -1172,26 +1172,23 @@ public class FaturaP extends JFrame {
 					nbOf2 = Integer.valueOf(cajaTroco[1][1].getText()),
 					nbOf1 = Integer.valueOf(cajaTroco[1][0].getText());
 			// 1000
-			if (trocoRest > 1000)
-				if (((trocoRest / 100) & 1) == 1 && nbOf100 == 0 && nbOf200 * 200 >= (trocoRest - 500)
-						&& trocoRest < 1500) {
-					if (nbOf500 > 0) {
-						nbOf500--;
-						trocoRest -= 500;
-					}
-				} else {
-					if (nbOf1000 > 0) {
-						nbOf1000--;
-						trocoRest -= 1000;
-					}
-				}
+			if (((trocoRest / 100) & 1) == 1 && nbOf100 == 0 && nbOf200 * 200 >= (trocoRest - 500) && nbOf500 > 0
+					&& trocoRest > 1000 && trocoRest < 1500) {
+				nbOf500--;
+				trocoRest -= 500;
+			}
+			while (trocoRest >= 1000 && nbOf1000 > 0) {
+				nbOf1000--;
+				trocoRest -= 1000;
+			}
 			// 100,200,500
-			if (((trocoRest / 100) & 1) == 0 && nbOf100 == 0 && nbOf200 * 200 >= trocoRest)// we dont have 100
+			if (((trocoRest / 100) & 1) == 0 && nbOf100 == 0 && nbOf200 * 200 >= trocoRest && nbOf500 < 2) {
+				// we dont have 100
 				while (trocoRest >= 200 && nbOf200 > 0) {
 					nbOf200--;
 					trocoRest -= 200;
 				}
-			else {// normal
+			} else {// normal
 				while (trocoRest >= 500 && nbOf500 > 0) {
 					nbOf500--;
 					trocoRest -= 500;
@@ -1205,50 +1202,15 @@ public class FaturaP extends JFrame {
 					trocoRest -= 100;
 				}
 			}
-			// 100
-			if (trocoRest > 100)
-				if (((trocoRest / 10) & 1) == 1 && nbOf10 == 0 && nbOf20 * 20 >= (trocoRest - 50) && trocoRest < 150) {
-					nbOf50--;
-					trocoRest -= 50;
-				} else {
-					nbOf100--;
-					trocoRest -= 100;
-				}
-			// 100,200,500
-			if (((trocoRest / 100) & 1) == 0 && nbOf100 == 0)// we dont have 100
-				while (trocoRest >= 200 && nbOf200 > 0) {
-					nbOf200--;
-					trocoRest -= 200;
-				}
-			else {// normal
-				while (trocoRest >= 500 && nbOf500 > 0) {
-					nbOf500--;
-					trocoRest -= 500;
-				}
-				while (trocoRest >= 200 && nbOf200 > 0) {
-					nbOf200--;
-					trocoRest -= 200;
-				}
-				while (trocoRest >= 100 && nbOf100 > 0) {
-					nbOf100--;
-					trocoRest -= 100;
-				}
-			}
-			// 100
-			if (trocoRest > 100)
-				if (((trocoRest / 10) & 1) == 1 && nbOf10 == 0 && nbOf20 * 20 >= (trocoRest - 50) && trocoRest < 150) {
-					if (nbOf50 > 0) {
-						nbOf50--;
-						trocoRest -= 50;
-					}
-				} else {
-					if (nbOf100 > 0) {
-						nbOf100--;
-						trocoRest -= 100;
-					}
-				}
 			// 10,20,50
-			if (((trocoRest / 10) & 1) == 0 && nbOf10 == 0 && nbOf20 * 20 >= trocoRest)// we dont have 10
+			// Rest/10 is impair
+			if (trocoRest > 100 && trocoRest < 150 && ((trocoRest / 10) & 1) == 1 && nbOf10 == 0
+					&& nbOf20 * 20 >= (trocoRest - 50) && nbOf50 > 0) {
+				nbOf50--;
+				trocoRest -= 50;
+			}
+			// Rest/10 is pair
+			if (((trocoRest / 10) & 1) == 0 && nbOf10 == 0 && nbOf20 * 20 >= trocoRest && nbOf50 < 2)// we dont have 10
 				while (trocoRest >= 20 && nbOf20 > 0) {
 					nbOf20--;
 					trocoRest -= 20;
