@@ -36,8 +36,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
-import javax.swing.Popup;
-import javax.swing.PopupFactory;
 import javax.swing.plaf.metal.MetalToggleButtonUI;
 
 @SuppressWarnings("serial")
@@ -87,7 +85,7 @@ public class FaturaR extends JFrame {
 	static JLabel[][] troco = new JLabel[2][7];
 	static JLabel[][] troco2 = new JLabel[2][7];
 	static JLabel[][] troco3 = new JLabel[2][7];
-	static String numbers[] = new String[119];
+	static String numbers[] = new String[164];
 	static JLabel totalC = new JLabel("Total");
 	JLabel cambioC = new JLabel("Cliente");
 	JLabel title[] = new JLabel[4];
@@ -130,7 +128,7 @@ public class FaturaR extends JFrame {
 		BufferedReader dataOpened = null;
 		String line = "";
 		int tempC = 0;
-		String conf[] = new String[5];
+		String conf[] = new String[6];
 		try {
 			dataOpened = new BufferedReader(new FileReader(new File("conf.txt")));
 			while ((line = dataOpened.readLine()) != null) {
@@ -288,8 +286,6 @@ public class FaturaR extends JFrame {
 
 		// 1ST CAMBIO
 		m1 = new MouseListener() {
-			Popup p;
-
 			@Override
 			public void mouseReleased(MouseEvent e) {
 			}
@@ -301,15 +297,11 @@ public class FaturaR extends JFrame {
 			@Override
 			public void mouseExited(MouseEvent e) {
 				cambioN.setBackground(redD);
-				p.hide();
 			}
 
 			@Override
 			public void mouseEntered(MouseEvent e) {
 				cambioN.setBackground(redC);
-				p = PopupFactory.getSharedInstance().getPopup(cambioN, new JLabel("TOQUE AQUÍ PARA USARLO"),
-						cambioN.getHeight() + cambioN.getX(), cambioN.getWidth() + cambioN.getY());
-				p.show();
 			}
 
 			@Override
@@ -317,8 +309,6 @@ public class FaturaR extends JFrame {
 			}
 		};
 		m2 = new MouseListener() {
-			Popup p;
-
 			@Override
 			public void mouseReleased(MouseEvent e) {
 			}
@@ -330,15 +320,11 @@ public class FaturaR extends JFrame {
 			@Override
 			public void mouseExited(MouseEvent e) {
 				cambioN2.setBackground(violetD);
-				p.hide();
 			}
 
 			@Override
 			public void mouseEntered(MouseEvent e) {
 				cambioN2.setBackground(violetC);
-				p = PopupFactory.getSharedInstance().getPopup(cambioN2, new JLabel("TOQUE AQUÍ PARA USARLO"),
-						cambioN2.getHeight() + cambioN2.getX(), cambioN2.getWidth() + cambioN2.getY());
-				p.show();
 			}
 
 			@Override
@@ -346,7 +332,6 @@ public class FaturaR extends JFrame {
 			}
 		};
 		m3 = new MouseListener() {
-			Popup p;
 
 			@Override
 			public void mouseReleased(MouseEvent e) {
@@ -359,15 +344,11 @@ public class FaturaR extends JFrame {
 			@Override
 			public void mouseExited(MouseEvent e) {
 				cambioN3.setBackground(turD);
-				p.hide();
 			}
 
 			@Override
 			public void mouseEntered(MouseEvent e) {
 				cambioN3.setBackground(turC);
-				p = PopupFactory.getSharedInstance().getPopup(cambioN3, new JLabel("TOQUE AQUÍ PARA USARLO"),
-						cambioN3.getHeight() + cambioN3.getX(), cambioN3.getWidth() + cambioN3.getY());
-				p.show();
 			}
 
 			@Override
@@ -480,8 +461,8 @@ public class FaturaR extends JFrame {
 		this.add(calculate);
 
 		// Put the valores in the caja
-		cajaTroco[1][4].setText("" + (Integer.valueOf(numbers[113]) + Integer.valueOf(numbers[109]) * 5));
-		z = 111;
+		cajaTroco[1][4].setText("" + (Integer.valueOf(numbers[158]) + Integer.valueOf(numbers[154]) * 5));
+		z = 156;
 		for (int i = 0; i < 7; i++) {
 			if (i != 2)
 				cajaTroco[1][6 - i].setText(numbers[z]);
@@ -943,6 +924,7 @@ public class FaturaR extends JFrame {
 					savedF.write(btnsHideShow2.isSelected() + System.lineSeparator());
 					savedF.write(op2C.getSelectedIndex() + System.lineSeparator());
 					savedF.write(btnsHideShow3.isSelected() + System.lineSeparator());
+					savedF.write(conf[5] + System.lineSeparator());
 					savedF.close();
 				} catch (Exception e2) {
 				}
@@ -1295,23 +1277,29 @@ public class FaturaR extends JFrame {
 		if (cambioN.getText().equals("√")) {
 			cambioN.setEnabled(true);
 			cambioN.addMouseListener(m1);
+			cambioN.setBorder(First.workM);
 		} else {
 			cambioN.setEnabled(false);
 			cambioN.removeMouseListener(m1);
+			cambioN.setBorder(First.border);
 		}
 		if (cambioN2.getText().equals("√")) {
 			cambioN2.setEnabled(true);
 			cambioN2.addMouseListener(m2);
+			cambioN2.setBorder(First.workM);
 		} else {
 			cambioN2.setEnabled(false);
 			cambioN2.removeMouseListener(m2);
+			cambioN2.setBorder(First.border);
 		}
 		if (cambioN3.getText().equals("√")) {
 			cambioN3.setEnabled(true);
 			cambioN3.addMouseListener(m3);
+			cambioN3.setBorder(First.workM);
 		} else {
 			cambioN3.setEnabled(false);
 			cambioN3.removeMouseListener(m3);
+			cambioN3.setBorder(First.border);
 		}
 	}
 
@@ -1712,7 +1700,7 @@ public class FaturaR extends JFrame {
 		try {
 			FileWriter savedF = new FileWriter("cedros.txt");
 			int i = 0;
-			while (i < 75) {// Ventas + total
+			while (i < 120) {// Ventas + total
 				if ((numbers[i].isBlank() || Integer.valueOf(numbers[i]) == 0 || !First.isNumeric(numbers[i]))
 						&& Integer.valueOf(temp) != 0 && !totalC.getText().isBlank()) {
 					savedF.write(temp + System.lineSeparator());

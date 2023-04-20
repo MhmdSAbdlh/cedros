@@ -44,6 +44,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
+import javax.swing.border.LineBorder;
 import javax.swing.plaf.metal.MetalToggleButtonUI;
 
 @SuppressWarnings("serial")
@@ -81,14 +82,14 @@ public class Pesos extends JFrame {
 	private ImageIcon nextDI = new ImageIcon(nextD);
 
 	// Define Parameter
-	static JTextField details[][] = new JTextField[5][15];// Numbers of notes
+	static JTextField details[][] = new JTextField[6][20];// Numbers of notes
 	static JTextField initialDay = new JTextField("0");// How much begin the day
 	static JTextField agregadoTable[] = new JTextField[16];// Added to cash detailed
 	static JTextField gastosTable[] = new JTextField[16];// Spend of the day detailed
 	static JTextField gTable[] = new JTextField[16];
 	static JTextField aTable[] = new JTextField[16];
 	static JTextField panelCnum[] = new JTextField[11];
-	static JLabel total[] = new JLabel[8];// Total of every column
+	static JLabel total[] = new JLabel[9];// Total of every column
 	static JLabel boletoN[] = new JLabel[6]; // B1,2,3,4,5
 	static JLabel summaryT[] = new JLabel[9];// Summary table
 	static JLabel gastos = new JLabel("G A S T O S");// Spend of the day TITLE
@@ -100,7 +101,7 @@ public class Pesos extends JFrame {
 	static int gastosT = 0, agregadoT = 0;
 	static int restN, totalCaja = 0, nbOf500 = 0;
 	int width, height;
-	String conf[] = new String[5];
+	String conf[] = new String[6];
 	FocusListener textFocus = new FocusListener() {
 
 		@Override
@@ -188,12 +189,15 @@ public class Pesos extends JFrame {
 
 		// Panel 1
 		int temp;
-		for (int i = 0; i < 5; i++) {
+		for (int i = 0; i < 6; i++) {
 			temp = 0;
 			boletoN[i] = new JLabel("B" + (i + 1));
-			boletoN[i].setForeground(First.lightC);
+			boletoN[i].setForeground(First.darkC);
+			boletoN[i].setBorder(new LineBorder(First.grisD, 2));
+			boletoN[i].setHorizontalAlignment(0);
+			boletoN[i].setOpaque(true);
 			this.add(boletoN[i]);
-			for (int j = 0; j < 15; j++) {
+			for (int j = 0; j < 20; j++) {
 				details[i][j] = new JTextField("");
 				textFieldStyle(details[i][j]);
 				if (details[i][j].getText().equals(""))
@@ -205,22 +209,20 @@ public class Pesos extends JFrame {
 			}
 			total[i] = new JLabel("");
 			First.labelStyle(total[i]);
+			total[i].setBorder(new LineBorder(First.grisD, 2));
 			total[i].setText(temp + "");
 			this.add(total[i]);
 		}
-		boletoN[5] = new JLabel("______________________________________");
-		boletoN[5].setForeground(First.lightC);
-		this.add(boletoN[5]);
-		total[5] = new JLabel("0");
-		First.labelStyle(total[5]);
-		total[5].setBackground(Color.black);
-		total[5].setForeground(Color.white);
-		this.add(total[5]);
-		total[7] = new JLabel("Total");
-		First.labelStyle(total[7]);
-		total[7].setBackground(Color.white);
-		total[7].setForeground(Color.black);
-		this.add(total[7]);
+		total[6] = new JLabel("0");
+		First.labelStyle(total[6]);
+		total[6].setBackground(Color.black);
+		total[6].setForeground(Color.white);
+		this.add(total[6]);
+		total[8] = new JLabel("Total");
+		First.labelStyle(total[8]);
+		total[8].setBackground(Color.white);
+		total[8].setForeground(Color.black);
+		this.add(total[8]);
 
 		// Panel 2
 		for (int i = 0; i < 5; i++) {
@@ -429,11 +431,11 @@ public class Pesos extends JFrame {
 				cajaFocus(i, this, newDay, faturaBtn, realesF, clearEverthing, hideBtn, resoD, gastosPanel, aggPanel);
 			this.add(panelCnum[i]);
 		}
-		total[6] = new JLabel("TOTAL");// Total Label
-		First.labelStyle(total[6]);
-		total[6].setBackground(Color.black);
-		total[6].setForeground(Color.white);
-		this.add(total[6]);
+		total[7] = new JLabel("TOTAL");// Total Label
+		First.labelStyle(total[7]);
+		total[7].setBackground(Color.black);
+		total[7].setForeground(Color.white);
+		this.add(total[7]);
 
 		// Panel 5
 		diffResult[0] = new JLabel("Diferencia");// DIFFERENCE
@@ -1107,6 +1109,7 @@ public class Pesos extends JFrame {
 					savedF.write(btnsHideShow2.isSelected() + System.lineSeparator());
 					savedF.write(op2C.getSelectedIndex() + System.lineSeparator());
 					savedF.write(btnsHideShow3.isSelected() + System.lineSeparator());
+					savedF.write(conf[5] + System.lineSeparator());
 					savedF.close();
 				} catch (Exception e2) {
 				}
@@ -1147,8 +1150,8 @@ public class Pesos extends JFrame {
 		int op = JOptionPane.showConfirmDialog(null, "¿QUIERES BORRAR TODO?", "BORRAR TODO",
 				JOptionPane.OK_CANCEL_OPTION);
 		if (op == 0) {
-			for (int i = 0; i < 5; i++)
-				for (int j = 0; j < 15; j++)
+			for (int i = 0; i < 6; i++)
+				for (int j = 0; j < 20; j++)
 					details[i][j].setText("");
 			initialDay.setText("");
 			for (int i = 0; i < 16; i++) {
@@ -1168,8 +1171,8 @@ public class Pesos extends JFrame {
 		int op = JOptionPane.showConfirmDialog(null, "¿QUIERES EMPEZAR NUEVO DIA?", "NUEVO DIA",
 				JOptionPane.OK_CANCEL_OPTION);
 		if (op == 0) {
-			for (int i = 0; i < 5; i++)
-				for (int j = 0; j < 15; j++)
+			for (int i = 0; i < 6; i++)
+				for (int j = 0; j < 20; j++)
 					details[i][j].setText("");
 			initialDay.setText(restN + "");
 			for (int i = 0; i < 16; i++) {
@@ -1210,8 +1213,8 @@ public class Pesos extends JFrame {
 	private static void saveProgress() {
 		try {
 			FileWriter savedF = new FileWriter("cedrosP.txt");
-			for (int i = 0; i < 5; i++)
-				for (int j = 0; j < 15; j++)
+			for (int i = 0; i < 6; i++)
+				for (int j = 0; j < 20; j++)
 					savedF.write(details[i][j].getText() + System.lineSeparator());
 			savedF.write(initialDay.getText() + System.lineSeparator());
 			for (int i = 0; i < 16; i++)
@@ -1230,7 +1233,7 @@ public class Pesos extends JFrame {
 		BufferedReader dataOpened = null;
 		String line = "";
 		int z = 0;
-		String numbers[] = new String[120];
+		String numbers[] = new String[165];
 		try {
 			dataOpened = new BufferedReader(new FileReader(new File("cedrosP.txt")));
 			while ((line = dataOpened.readLine()) != null) {
@@ -1238,8 +1241,8 @@ public class Pesos extends JFrame {
 				z++;
 			}
 			z = 0;
-			for (int i = 0; i < 5; i++)
-				for (int k = 0; k < 15; k++) {
+			for (int i = 0; i < 6; i++)
+				for (int k = 0; k < 20; k++) {
 					details[i][k].setText(numbers[z]);
 					z++;
 				}
@@ -1295,20 +1298,19 @@ public class Pesos extends JFrame {
 		}
 		// Calculate the totals
 		totalVenta = 0;
-		for (int i = 0; i < 5; i++) {
+		for (int i = 0; i < 6; i++) {
 			totalCol = 0;
-			for (int j = 0; j < 15; j++) {
+			for (int j = 0; j < 20; j++) {
 				if (!First.isNumeric(details[i][j].getText())) {
 					details[i][j].setText("");
 					totalCol += 0;
-				} else {
+				} else
 					totalCol += Integer.valueOf(details[i][j].getText());
-				}
 			}
 			total[i].setText(totalCol + "");
 			totalVenta += Integer.valueOf(total[i].getText());
 		}
-		total[5].setText("$" + totalVenta);
+		total[6].setText("$" + totalVenta);
 		// Calculate total of spent
 		gastosT = ((gastosTable[8].getText().equals("") ? 0 : Integer.valueOf(gastosTable[8].getText()))
 				+ (gastosTable[9].getText().equals("") ? 0 : Integer.valueOf(gastosTable[9].getText()))
@@ -1346,7 +1348,7 @@ public class Pesos extends JFrame {
 				+ (panelCnum[8].getText().equals("") ? 0 : Integer.valueOf(panelCnum[8].getText()) * 5)
 				+ (panelCnum[9].getText().equals("") ? 0 : Integer.valueOf(panelCnum[9].getText()) * 2)
 				+ (panelCnum[10].getText().equals("") ? 0 : Integer.valueOf(panelCnum[10].getText()) * 1));
-		total[6].setText("$" + totalCaja);
+		total[7].setText("$" + totalCaja);
 		// Calculate the diferencia
 		if (totalCaja == totalO) {
 			diffResult[1].setText("<html><center>No Hay Diferencia</html>");
@@ -1411,11 +1413,11 @@ public class Pesos extends JFrame {
 					newDay();
 				} else// Direction
 				if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-					if (i < 4) {
+					if (i < 5) {
 						details[i][j].setNextFocusableComponent(details[i + 1][j]);
 						details[i][j].nextFocus();
 					} else {
-						if (j != 14) {
+						if (j != 19) {
 							details[i][j].setNextFocusableComponent(details[0][j + 1]);
 							details[i][j].nextFocus();
 						} else {
@@ -1429,10 +1431,10 @@ public class Pesos extends JFrame {
 						details[i][j].nextFocus();
 					} else {
 						if (j != 0) {
-							details[i][j].setNextFocusableComponent(details[4][j - 1]);
+							details[i][j].setNextFocusableComponent(details[5][j - 1]);
 							details[i][j].nextFocus();
 						} else {
-							details[i][j].setNextFocusableComponent(details[4][14]);
+							details[i][j].setNextFocusableComponent(details[5][19]);
 							details[i][j].nextFocus();
 						}
 					}
@@ -1442,19 +1444,19 @@ public class Pesos extends JFrame {
 						details[i][j].nextFocus();
 					} else {
 						if (i != 0) {
-							details[i][j].setNextFocusableComponent(details[i - 1][14]);
+							details[i][j].setNextFocusableComponent(details[i - 1][19]);
 							details[i][j].nextFocus();
 						} else {
-							details[i][j].setNextFocusableComponent(details[4][14]);
+							details[i][j].setNextFocusableComponent(details[5][19]);
 							details[i][j].nextFocus();
 						}
 					}
 				} else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
-					if (j < 14) {
+					if (j < 19) {
 						details[i][j].setNextFocusableComponent(details[i][j + 1]);
 						details[i][j].nextFocus();
 					} else {
-						if (i != 4) {
+						if (i != 5) {
 							details[i][j].setNextFocusableComponent(details[i + 1][0]);
 							details[i][j].nextFocus();
 						} else {
@@ -1867,29 +1869,26 @@ public class Pesos extends JFrame {
 				resoD.setEnabled(true);
 		First.myFont = new Font("Tahoma", Font.BOLD, 17);
 		First.myFontS = new Font("Tahoma", Font.BOLD, 12);
-		for (int i = 0; i < 5; i++) {
-			boletoN[i].setBounds(50 + i * 68, 5, 170, 40);
-			total[i].setBounds(30 + i * 70, 500, 50, 29);
+		for (int i = 0; i < 6; i++) {
+			boletoN[i].setBounds(30 + i * 55, 25, 55, 30);
 			boletoN[i].setFont(First.myFont);
+			total[i].setBounds(30 + i * 55, 500, 55, 24);
 			total[i].setFont(First.myFont);
-			for (int j = 0; j < 15; j++) {
+			for (int j = 0; j < 20; j++) {
 				details[i][j].setFont(First.myFontS);
-				details[i][j].setBounds(30 + i * 70, 50 + j * 29, 50, 22);
+				details[i][j].setBounds(30 + i * 55, 55 + j * 22, 55, 22);
 			}
 		}
-		boletoN[5].setText("_______________________________");
-		boletoN[5].setBounds(25, 472, 460, 20);
-		total[5].setBounds(390, 500, 58, 30);
-		total[7].setBounds(390, 470, 58, 30);
-		boletoN[5].setFont(First.myFont);
-		total[5].setFont(First.myFont);
+		total[6].setBounds(390, 500, 78, 30);
+		total[8].setBounds(390, 470, 78, 30);
+		initialDay.setBounds(520, 50, 70, 30);
+		total[6].setFont(First.myFont);
 		initialDay.setFont(First.myFont);
-		total[7].setFont(First.myFont);
+		total[8].setFont(First.myFont);
 		for (int i = 0; i < 5; i++) {
 			summaryT[i].setBounds(420, 50 + i * 30, 100, 30);
 			summaryT[i].setFont(First.myFont);
 		}
-		initialDay.setBounds(520, 50, 70, 30);
 		for (int i = 5; i < 9; i++) {
 			summaryT[i].setBounds(520, 50 + (i - 4) * 30, 70, 30);
 			summaryT[i].setFont(First.myFont);
@@ -1970,14 +1969,14 @@ public class Pesos extends JFrame {
 			newDay.setBounds(790, 430, 50, 50);
 		} else
 			newDay.setBounds(750, 420, 150, 45);
-		total[6].setBounds(430, 330, 510, 40);
+		total[7].setBounds(430, 330, 510, 40);
 		restTmrw.setBounds(750, 464, 150, 25);
 		pesosF.setBounds(675, 430, 50, 50);
 		diffResult[0].setBounds(500, 420, 150, 35);
 		diffResult[1].setBounds(500, 454, 150, 35);
 		notasF.setBounds(920, 430, 50, 50);
 		clearEverthing.setBounds(400, 400, 50, 50);
-		total[6].setFont(First.myFont);
+		total[7].setFont(First.myFont);
 		diffResult[0].setFont(First.myFontS);
 		diffResult[1].setFont(First.myFontS);
 		restTmrw.setFont(First.myFontS);
@@ -2012,29 +2011,26 @@ public class Pesos extends JFrame {
 				resoD.setEnabled(true);
 		First.myFont = new Font("Tahoma", Font.BOLD, 18);
 		First.myFontS = new Font("Tahoma", Font.BOLD, 15);
-		for (int i = 0; i < 5; i++) {
-			boletoN[i].setBounds(60 + i * 88, 5, 200, 50);
-			total[i].setBounds(30 + i * 90, 600, 70, 29);
+		for (int i = 0; i < 6; i++) {
+			boletoN[i].setBounds(30 + i * 70, 25, 70, 30);
 			boletoN[i].setFont(First.myFont);
+			total[i].setBounds(30 + i * 70, 570, 70, 29);
 			total[i].setFont(First.myFont);
-			for (int j = 0; j < 15; j++) {
-				details[i][j].setBounds(30 + i * 90, 55 + j * 35, 70, 25);
+			for (int j = 0; j < 20; j++) {
+				details[i][j].setBounds(30 + i * 70, 55 + j * 25, 70, 25);
 				details[i][j].setFont(First.myFontS);
 			}
 		}
-		boletoN[5].setText("________________________________________");
-		boletoN[5].setBounds(25, 550, 570, 50);
-		total[5].setBounds(500, 590, 88, 35);
-		total[7].setBounds(500, 560, 88, 30);
-		boletoN[5].setFont(First.myFont);
-		total[5].setFont(First.myFont);
+		total[6].setBounds(500, 590, 88, 35);
+		total[8].setBounds(500, 560, 88, 30);
+		initialDay.setBounds(670, 50, 80, 40);
+		total[6].setFont(First.myFont);
 		initialDay.setFont(First.myFont);
-		total[7].setFont(First.myFont);
+		total[8].setFont(First.myFont);
 		for (int i = 0; i < 5; i++) {
 			summaryT[i].setBounds(550, 50 + i * 40, 120, 40);
 			summaryT[i].setFont(First.myFont);
 		}
-		initialDay.setBounds(670, 50, 80, 40);
 		for (int i = 5; i < 9; i++) {
 			summaryT[i].setBounds(670, 50 + (i - 4) * 40, 80, 40);
 			summaryT[i].setFont(First.myFont);
@@ -2116,14 +2112,14 @@ public class Pesos extends JFrame {
 		} else {
 			newDay.setBounds(950, 480, 210, 55);
 		}
-		total[6].setBounds(580, 380, 600, 40);
+		total[7].setBounds(580, 380, 600, 40);
 		restTmrw.setBounds(950, 534, 210, 35);
 		pesosF.setBounds(855, 500, 60, 60);
 		diffResult[0].setBounds(620, 480, 200, 40);
 		diffResult[1].setBounds(620, 519, 200, 50);
 		notasF.setBounds(1180, 500, 60, 60);
 		clearEverthing.setBounds(520, 460, 70, 70);
-		total[6].setFont(First.myFont);
+		total[7].setFont(First.myFont);
 		diffResult[0].setFont(First.myFont);
 		diffResult[1].setFont(First.myFont);
 		restTmrw.setFont(First.myFont);
@@ -2158,29 +2154,26 @@ public class Pesos extends JFrame {
 				resoD.setEnabled(true);
 		First.myFont = new Font("Tahoma", Font.BOLD, 21);
 		First.myFontS = new Font("Tahoma", Font.BOLD, 17);
-		for (int i = 0; i < 5; i++) {
-			boletoN[i].setBounds(60 + i * 100, 5, 200, 50);
-			total[i].setBounds(25 + i * 100, 690, 90, 32);
+		for (int i = 0; i < 6; i++) {
+			boletoN[i].setBounds(30 + i * 80, 25, 80, 30);
 			boletoN[i].setFont(First.myFont);
+			total[i].setBounds(30 + i * 80, 670, 80, 32);
 			total[i].setFont(First.myFont);
-			for (int j = 0; j < 15; j++) {
-				details[i][j].setBounds(30 + i * 100, 55 + j * 40, 80, 30);
+			for (int j = 0; j < 20; j++) {
+				details[i][j].setBounds(30 + i * 80, 55 + j * 30, 80, 30);
 				details[i][j].setFont(First.myFontS);
 			}
 		}
-		boletoN[5].setText("______________________________________");
-		boletoN[5].setBounds(25, 632, 600, 50);
-		total[5].setBounds(540, 680, 98, 35);
-		total[7].setBounds(540, 650, 98, 30);
-		boletoN[5].setFont(First.myFont);
-		total[5].setFont(First.myFont);
+		total[6].setBounds(540, 680, 98, 35);
+		total[8].setBounds(540, 650, 98, 30);
+		initialDay.setBounds(710, 50, 90, 50);
+		total[6].setFont(First.myFont);
 		initialDay.setFont(First.myFont);
-		total[7].setFont(First.myFont);
+		total[8].setFont(First.myFont);
 		for (int i = 0; i < 5; i++) {
 			summaryT[i].setBounds(570, 50 + i * 50, 140, 50);
 			summaryT[i].setFont(First.myFont);
 		}
-		initialDay.setBounds(710, 50, 90, 50);
 		for (int i = 5; i < 9; i++) {
 			summaryT[i].setBounds(710, 50 + (i - 4) * 50, 90, 50);
 			summaryT[i].setFont(First.myFont);
@@ -2261,14 +2254,14 @@ public class Pesos extends JFrame {
 			newDay.setBounds(1130, 590, 70, 70);
 		} else
 			newDay.setBounds(1070, 570, 250, 65);
-		total[6].setBounds(640, 480, 710, 50);
+		total[7].setBounds(640, 480, 710, 50);
 		restTmrw.setBounds(1070, 634, 250, 45);
 		pesosF.setBounds(960, 590, 70, 70);
 		diffResult[0].setBounds(680, 570, 250, 55);
 		diffResult[1].setBounds(680, 624, 250, 55);
 		notasF.setBounds(1350, 580, 80, 80);
 		clearEverthing.setBounds(560, 540, 70, 70);
-		total[6].setFont(First.myFont);
+		total[7].setFont(First.myFont);
 		diffResult[0].setFont(First.myFont);
 		diffResult[1].setFont(First.myFont);
 		restTmrw.setFont(First.myFont);
@@ -2303,24 +2296,22 @@ public class Pesos extends JFrame {
 				resoD.setEnabled(true);
 		First.myFont = new Font("Tahoma", Font.BOLD, 24);
 		First.myFontS = new Font("Tahoma", Font.BOLD, 20);
-		for (int i = 0; i < 5; i++) {
-			boletoN[i].setBounds(60 + i * 120, 5, 200, 50);
-			total[i].setBounds(25 + i * 120, 850, 90, 32);
-			boletoN[i].setFont(First.myFont);
-			total[i].setFont(First.myFont);
-			for (int j = 0; j < 15; j++) {
-				details[i][j].setBounds(30 + i * 120, 65 + j * 50, 80, 35);
+		for (int i = 0; i < 6; i++) {
+			boletoN[i].setBounds(30 + i * 90, 30, 90, 40);
+			boletoN[i].setFont(First.myFontS);
+			total[i].setBounds(30 + i * 90, 800, 90, 40);
+			total[i].setFont(First.myFontS);
+			for (int j = 0; j < 20; j++) {
+				details[i][j].setBounds(30 + i * 90, 65 + j * 35, 90, 35);
 				details[i][j].setFont(First.myFontS);
 			}
 		}
-		boletoN[5].setText("______________________________________");
-		boletoN[5].setBounds(25, 790, 600, 50);
-		total[5].setBounds(625, 830, 98, 45);
-		total[7].setBounds(625, 790, 98, 40);
+		total[6].setBounds(625, 830, 98, 45);
+		total[8].setBounds(625, 790, 98, 40);
 		boletoN[5].setFont(First.myFont);
-		total[5].setFont(First.myFont);
+		total[6].setFont(First.myFont);
 		initialDay.setFont(First.myFont);
-		total[7].setFont(First.myFont);
+		total[8].setFont(First.myFont);
 		for (int i = 0; i < 5; i++) {
 			summaryT[i].setBounds(700, 50 + i * 60, 160, 60);
 			summaryT[i].setFont(First.myFont);
@@ -2406,14 +2397,14 @@ public class Pesos extends JFrame {
 			newDay.setBounds(1360, 730, 80, 80);
 		} else
 			newDay.setBounds(1270, 700, 300, 75);
-		total[6].setBounds(800, 570, 820, 60);
+		total[7].setBounds(800, 570, 820, 60);
 		restTmrw.setBounds(1270, 774, 300, 55);
 		pesosF.setBounds(1140, 730, 80, 80);
 		diffResult[0].setBounds(850, 700, 250, 65);
 		diffResult[1].setBounds(850, 764, 250, 65);
 		notasF.setBounds(1650, 700, 100, 100);
 		clearEverthing.setBounds(650, 650, 80, 80);
-		total[6].setFont(First.myFont);
+		total[7].setFont(First.myFont);
 		diffResult[0].setFont(First.myFont);
 		diffResult[1].setFont(First.myFont);
 		restTmrw.setFont(First.myFont);
@@ -2446,6 +2437,25 @@ public class Pesos extends JFrame {
 		keywords.add("farmacia");
 		keywords.add("mohamad");
 		keywords.add("cambio");
+		keywords.add("cuidachoche");
+		keywords.add("alquiler casa");
+		keywords.add("alquiler aprt");
+		keywords.add("colegio ahmad");
+		keywords.add("colegio jul");
+		keywords.add("bertren");
+		keywords.add("selem");
+		keywords.add("bps");
+		keywords.add("dgi");
+		keywords.add("separar");
+		keywords.add("claudia");
+		keywords.add("treicy");
+		keywords.add("gaby");
+		keywords.add("convenio");
+		keywords.add("estacionamento");
+		keywords.add("luz");
+		keywords.add("agua");
+		keywords.add("bolsas");
+		keywords.add("la familia");
 		return keywords;
 	}
 }

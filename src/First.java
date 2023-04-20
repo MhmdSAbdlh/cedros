@@ -61,6 +61,7 @@ public class First extends JFrame {
 	static Color darkC = new Color(40, 40, 43);
 	static Color lightC = new Color(236, 236, 236);
 	static Border border = new LineBorder(Color.white, 2);
+	static Border workM = new LineBorder(Color.yellow, 3);
 	private URL enter = getClass().getResource("images/enter.png");
 	private ImageIcon enterI = new ImageIcon(enter);
 	private URL icon = getClass().getResource("images/icon/cedros0.png");
@@ -77,7 +78,7 @@ public class First extends JFrame {
 		BufferedReader dataOpened = null;
 		String line = "";
 		int z = 0;
-		String conf[] = new String[5];
+		String conf[] = new String[6];
 		try {
 			dataOpened = new BufferedReader(new FileReader(new File("conf.txt")));
 			while ((line = dataOpened.readLine()) != null) {
@@ -187,7 +188,14 @@ public class First extends JFrame {
 					|| String.valueOf(passTF.getPassword()).equals("")) {
 				passTF.setText("");
 				this.dispose();
-				new Reales();
+				if (conf[5] == null || conf[5].equals("0"))
+					new Reales();
+				else if (conf[5].equals("1"))
+					new Pesos();
+				else if (conf[5].equals("2"))
+					new FaturaR();
+				else
+					new FaturaP();
 			} else {
 				JOptionPane.showMessageDialog(null,
 						"<html><div style=color:red>Contraseña Incorrecta.</div><div style=color:blue>Pista: Contraseña de la tienda!</div></html>",
@@ -264,6 +272,7 @@ public class First extends JFrame {
 		temp.setLayout(null);
 		temp.getContentPane().setBackground(lightC);
 		// Stuff
+		// Op1 icon
 		JLabel op1 = new JLabel("ICONO");
 		op1.setBounds(50, 20, 150, 50);
 		op1.setFont(myFont);
@@ -303,6 +312,7 @@ public class First extends JFrame {
 				op1C.setSelectedIndex(op1C.getSelectedIndex());
 			}
 		});
+
 		// OPTION 2 BUTTONS HIDE
 		JLabel op2 = new JLabel("BOTONES");
 		op2.setBounds(50, 90, 150, 50);
@@ -360,6 +370,7 @@ public class First extends JFrame {
 					btnsHideShow.setText("SI");
 			}
 		});
+
 		// OPTION 3 DISABLE KEYBOARD SHORTCUT
 		JLabel op3 = new JLabel("ATAJO DE TECLADO");
 		op3.setBounds(50, 160, 250, 50);
@@ -490,6 +501,25 @@ public class First extends JFrame {
 			}
 		});
 
+		// op6 default tab
+		JLabel op6 = new JLabel("ABIERTO A");
+		op6.setBounds(50, 350, 180, 40);
+		op6.setFont(myFont);
+		String opDT[] = { "Reales", "Pesos", "Fatura R", "Fatura P" };
+		JComboBox<String> op3C = new JComboBox<>(opDT);
+		op3C.setBounds(280, 350, 140, 40);
+		op3C.setBackground(lightC);
+		op3C.setForeground(blueD);
+		op3C.setFont(myFont);
+		if (conf[5] != null)
+			op3C.setSelectedIndex(Integer.valueOf(conf[5]));
+		op3C.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				op3C.setSelectedIndex(op3C.getSelectedIndex());
+			}
+		});
+
 		// Bottom line
 		JButton defSet = new JButton("POR DEFECTO");
 		defSet.setBounds(70, 400, 170, 50);
@@ -532,6 +562,7 @@ public class First extends JFrame {
 				op2C.setSelectedIndex(0);
 				btnsHideShow3.setText("SI");
 				btnsHideShow3.setSelected(false);
+				op3C.setSelectedIndex(0);
 			}
 		});
 
@@ -575,10 +606,14 @@ public class First extends JFrame {
 					savedF.write(btnsHideShow2.isSelected() + System.lineSeparator());
 					savedF.write(op2C.getSelectedIndex() + System.lineSeparator());
 					savedF.write(btnsHideShow3.isSelected() + System.lineSeparator());
+					savedF.write(op3C.getSelectedIndex() + System.lineSeparator());
 					savedF.close();
 				} catch (Exception e2) {
 				}
 				temp.dispose();
+
+				First.this.dispose();
+				new First();
 			}
 		});
 
@@ -611,6 +646,8 @@ public class First extends JFrame {
 		temp.add(op2C);
 		temp.add(op4);
 		temp.add(op5);
+		temp.add(op6);
+		temp.add(op3C);
 		temp.add(defSet);
 		temp.add(btnsHideShow3);
 		temp.add(save);
