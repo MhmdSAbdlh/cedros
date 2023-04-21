@@ -2297,18 +2297,17 @@ public class Pesos extends JFrame {
 		First.myFont = new Font("Tahoma", Font.BOLD, 24);
 		First.myFontS = new Font("Tahoma", Font.BOLD, 20);
 		for (int i = 0; i < 6; i++) {
-			boletoN[i].setBounds(30 + i * 90, 30, 90, 40);
-			boletoN[i].setFont(First.myFontS);
-			total[i].setBounds(30 + i * 90, 800, 90, 40);
-			total[i].setFont(First.myFontS);
+			boletoN[i].setBounds(30 + i * 90, 30, 90, 45);
+			boletoN[i].setFont(First.myFont);
+			total[i].setBounds(30 + i * 90, 850, 90, 45);
+			total[i].setFont(First.myFont);
 			for (int j = 0; j < 20; j++) {
-				details[i][j].setBounds(30 + i * 90, 65 + j * 35, 90, 35);
+				details[i][j].setBounds(30 + i * 90, 75 + j * 38, 90, 38);
 				details[i][j].setFont(First.myFontS);
 			}
 		}
-		total[6].setBounds(625, 830, 98, 45);
-		total[8].setBounds(625, 790, 98, 40);
-		boletoN[5].setFont(First.myFont);
+		total[6].setBounds(605, 835, 135, 40);
+		total[8].setBounds(605, 795, 135, 45);
 		total[6].setFont(First.myFont);
 		initialDay.setFont(First.myFont);
 		total[8].setFont(First.myFont);
