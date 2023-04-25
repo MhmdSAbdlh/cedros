@@ -23,6 +23,7 @@ import java.io.FileWriter;
 import java.net.URL;
 import java.util.ArrayList;
 
+import javax.swing.DefaultListCellRenderer;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -157,7 +158,7 @@ public class FaturaP extends JFrame {
 		this.setIconImage(new ImageIcon(url).getImage());
 
 		// hide btns
-		if (conf[1] == null || conf[1].equals("false")) {
+		if (conf[1] == null || !conf[1].equals("2")) {
 			mainF.show();
 			clearB.show();
 			hideBtn.setText("ESCONDER LOS BOTONES");
@@ -597,13 +598,16 @@ public class FaturaP extends JFrame {
 		temp.setTitle("CONFIGURACIÓN");
 		temp.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		temp.setAlwaysOnTop(false);
-		temp.setSize(500, 500);
+		temp.setSize(650, 550);
 		temp.setLocationRelativeTo(null);
 		temp.setResizable(false);
 		temp.setLayout(null);
-		temp.getContentPane().setBackground(First.lightC);
-		// Stuff
+		temp.getContentPane().setBackground(First.grisD);
+		//
+		DefaultListCellRenderer dlcr = new DefaultListCellRenderer();
+		dlcr.setHorizontalAlignment(DefaultListCellRenderer.CENTER);
 		JLabel op1 = new JLabel("ICONO");
+		// Op1 icon
 		op1.setBounds(50, 20, 150, 50);
 		op1.setFont(First.myFont);
 		URL cedros1 = getClass().getResource("images/icon/cedros0.png");
@@ -616,7 +620,8 @@ public class FaturaP extends JFrame {
 		iconImages[2] = new ImageIcon(getScaledImage(new ImageIcon(cedros3).getImage(), 50, 50));
 		iconImages[3] = new ImageIcon(getScaledImage(new ImageIcon(narjes).getImage(), 50, 50));
 		JComboBox<ImageIcon> op1C = new JComboBox<>(iconImages);
-		op1C.setBounds(320, 20, 70, 50);
+		op1C.setRenderer(dlcr);
+		op1C.setBounds(420, 20, 70, 50);
 		if (conf[0] != null)
 			op1C.setSelectedIndex(Integer.valueOf(conf[0]));
 		op1C.addActionListener(new ActionListener() {
@@ -626,71 +631,28 @@ public class FaturaP extends JFrame {
 				op1C.setSelectedIndex(op1C.getSelectedIndex());
 			}
 		});
-		// OPTION 1 BUTTONS HIDE
-		JLabel op2 = new JLabel("BOTONES");
-		op2.setBounds(50, 90, 150, 50);
+		// OPTION 2 BUTTONS HIDE
+		JLabel op2 = new JLabel("ESCONDER");
+		op2.setBounds(50, 90, 150, 40);
 		op2.setFont(First.myFont);
-		JToggleButton btnsHideShow = new JToggleButton();
-		if (conf[1] == null || conf[1].equals("false")) {
-			btnsHideShow.setText("SI");
-		} else {
-			btnsHideShow.setText("NO");
-			btnsHideShow.setSelected(true);
-		}
-		btnsHideShow.setBounds(320, 90, 80, 50);
+		String hOp[] = { "NADA", "LA FECHA", "LA FECHA Y LOS BOTONES" };
+		JComboBox<String> btnsHideShow = new JComboBox<String>(hOp);
+		btnsHideShow.setRenderer(dlcr);
+		if (conf[1] != null && First.isNumeric(conf[1]))
+			btnsHideShow.setSelectedIndex(Integer.valueOf(conf[1]));
+		btnsHideShow.setBounds(305, 90, 300, 40);
 		btnsHideShow.setFont(First.myFont);
-		btnsHideShow.setBorder(First.border);
-		btnsHideShow.setBackground(First.greenC);
-		btnsHideShow.setForeground(First.lightC);
-		btnsHideShow.setFocusable(false);
-		btnsHideShow.addMouseListener(new MouseListener() {
+		btnsHideShow.setBackground(First.lightC);
+		btnsHideShow.setForeground(First.blueD);
+		btnsHideShow.addActionListener(new ActionListener() {
 			@Override
-			public void mouseReleased(MouseEvent e) {
-			}
-
-			@Override
-			public void mousePressed(MouseEvent e) {
-			}
-
-			@Override
-			public void mouseExited(MouseEvent e) {
-				btnsHideShow.setBackground(First.greenC);
-			}
-
-			@Override
-			public void mouseEntered(MouseEvent e) {
-				btnsHideShow.setBackground(First.greenD);
-			}
-
-			@Override
-			public void mouseClicked(MouseEvent e) {
-			}
-		});
-		btnsHideShow.setUI(new MetalToggleButtonUI() {
-			@Override
-			protected Color getSelectColor() {
-				return First.redC;
-			}
-		});
-		btnsHideShow.addItemListener(new ItemListener() {
-			@Override
-			public void itemStateChanged(ItemEvent e) {
-				if (e.getStateChange() == ItemEvent.SELECTED) {
-					btnsHideShow.setText("NO");
-					realesF.hide();
-					clearEverthing.hide();
-					hideBtn.setText("MONSTRAR LOS BOTONES");
-				} else {
-					realesF.show();
-					clearEverthing.show();
-					hideBtn.setText("ESCONDER LOS BOTONES");
-					btnsHideShow.setText("SI");
-				}
+			public void actionPerformed(ActionEvent e) {
+				btnsHideShow.setSelectedIndex(btnsHideShow.getSelectedIndex());
 			}
 		});
 		// OPTION 2 DISABLE KEYBOARD SHORTCUT
 		JLabel op3 = new JLabel("ATAJO DE TECLADO");
-		op3.setBounds(50, 160, 250, 50);
+		op3.setBounds(50, 230, 250, 40);
 		op3.setFont(First.myFont);
 		JToggleButton btnsHideShow2 = new JToggleButton();
 		if (conf[2] == null || conf[2].equals("false")) {
@@ -699,7 +661,7 @@ public class FaturaP extends JFrame {
 			btnsHideShow2.setText("NO");
 			btnsHideShow2.setSelected(true);
 		}
-		btnsHideShow2.setBounds(320, 160, 80, 50);
+		btnsHideShow2.setBounds(405, 230, 100, 40);
 		btnsHideShow2.setFont(First.myFont);
 		btnsHideShow2.setBorder(First.border);
 		btnsHideShow2.setBackground(First.greenC);
@@ -746,14 +708,15 @@ public class FaturaP extends JFrame {
 
 		// OPTION 3 CHANGE RESOLUTION
 		JLabel op4 = new JLabel("RESOLUCIÓN");
-		op4.setBounds(50, 220, 250, 50);
+		op4.setBounds(50, 160, 250, 40);
 		op4.setFont(First.myFont);
 		String res[] = { "OPTIMAL", "X-P", "P", "M", "G" };
 		JComboBox<String> op2C = new JComboBox<>(res);
-		op2C.setBounds(280, 220, 140, 50);
+		op2C.setRenderer(dlcr);
+		op2C.setBounds(365, 160, 180, 40);
 		op2C.setFont(First.myFont);
-		op2C.setBackground(First.blueC);
-		op2C.setForeground(First.darkC);
+		op2C.setBackground(First.lightC);
+		op2C.setForeground(First.blueD);
 		if (conf[3] != null)
 			op2C.setSelectedIndex(Integer.valueOf(conf[3]));
 		op2C.addActionListener(e -> {
@@ -779,7 +742,7 @@ public class FaturaP extends JFrame {
 		});
 		// OPTION 5 AUTOSAVE
 		JLabel op5 = new JLabel("AUTOGUARDAR");
-		op5.setBounds(50, 290, 180, 50);
+		op5.setBounds(50, 300, 180, 40);
 		op5.setFont(First.myFont);
 		JToggleButton btnsHideShow3 = new JToggleButton();
 		if (conf[4] == null || conf[4].equals("false")) {
@@ -788,7 +751,7 @@ public class FaturaP extends JFrame {
 			btnsHideShow3.setText("NO");
 			btnsHideShow3.setSelected(true);
 		}
-		btnsHideShow3.setBounds(320, 290, 80, 50);
+		btnsHideShow3.setBounds(415, 300, 80, 40);
 		btnsHideShow3.setFont(First.myFont);
 		btnsHideShow3.setBorder(First.border);
 		btnsHideShow3.setBackground(First.greenC);
@@ -837,7 +800,7 @@ public class FaturaP extends JFrame {
 
 		// bottom line
 		JButton defSet = new JButton("POR DEFECTO");
-		defSet.setBounds(70, 400, 170, 50);
+		defSet.setBounds(120, 440, 170, 50);
 		First.btnStyle(defSet);
 		defSet.setBackground(First.redC);
 		defSet.setForeground(Color.white);
@@ -870,8 +833,7 @@ public class FaturaP extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				op1C.setSelectedIndex(0);
 				FaturaP.this.setIconImage(iconImages[0].getImage());
-				btnsHideShow.setText("SI");
-				btnsHideShow.setSelected(false);
+				btnsHideShow.setSelectedIndex(0);
 				btnsHideShow2.setText("SI");
 				btnsHideShow2.setSelected(false);
 				op2C.setSelectedIndex(0);
@@ -888,8 +850,8 @@ public class FaturaP extends JFrame {
 			}
 		});
 		// SAVE
-		JButton save = new JButton("SAVE");
-		save.setBounds(300, 400, 100, 50);
+		JButton save = new JButton("GUARDAR");
+		save.setBounds(400, 440, 120, 50);
 		First.btnStyle(save);
 		save.setBackground(First.blueC);
 		save.setForeground(First.lightC);
@@ -923,7 +885,7 @@ public class FaturaP extends JFrame {
 				try {
 					FileWriter savedF = new FileWriter("conf.txt");
 					savedF.write(op1C.getSelectedIndex() + System.lineSeparator());
-					savedF.write(btnsHideShow.isSelected() + System.lineSeparator());
+					savedF.write(btnsHideShow.getSelectedIndex() + System.lineSeparator());
 					savedF.write(btnsHideShow2.isSelected() + System.lineSeparator());
 					savedF.write(op2C.getSelectedIndex() + System.lineSeparator());
 					savedF.write(btnsHideShow3.isSelected() + System.lineSeparator());

@@ -25,6 +25,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.net.URL;
 
+import javax.swing.DefaultListCellRenderer;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -40,6 +41,7 @@ import javax.swing.JToggleButton;
 import javax.swing.UIDefaults;
 import javax.swing.UIManager;
 import javax.swing.border.Border;
+import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.plaf.ColorUIResource;
 import javax.swing.plaf.metal.MetalToggleButtonUI;
@@ -266,12 +268,14 @@ public class First extends JFrame {
 		temp.setTitle("CONFIGURACIÓN");
 		temp.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		temp.setAlwaysOnTop(false);
-		temp.setSize(500, 500);
+		temp.setSize(650, 550);
 		temp.setLocationRelativeTo(null);
 		temp.setResizable(false);
 		temp.setLayout(null);
-		temp.getContentPane().setBackground(lightC);
-		// Stuff
+		temp.getContentPane().setBackground(grisD);
+		//
+		DefaultListCellRenderer dlcr = new DefaultListCellRenderer();
+		dlcr.setHorizontalAlignment(DefaultListCellRenderer.CENTER);
 		// Op1 icon
 		JLabel op1 = new JLabel("ICONO");
 		op1.setBounds(50, 20, 150, 50);
@@ -286,8 +290,11 @@ public class First extends JFrame {
 		iconImages[2] = new ImageIcon(getScaledImage(new ImageIcon(cedros3).getImage(), 50, 50));
 		iconImages[3] = new ImageIcon(getScaledImage(new ImageIcon(narjes).getImage(), 50, 50));
 		JComboBox<ImageIcon> op1C = new JComboBox<>(iconImages);
-		op1C.setBounds(320, 20, 70, 50);
-		if (conf[0] != null)
+		op1C.setRenderer(dlcr);
+		op1C.setBorder(new EmptyBorder(0, 0, 0, 0));
+		op1C.setBounds(420, 20, 70, 50);
+		op1C.setBackground(lightC);
+		if (conf[0] != null && isNumeric(conf[0]))
 			op1C.setSelectedIndex(Integer.valueOf(conf[0]));
 		op1C.addActionListener(new ActionListener() {
 			@Override
@@ -312,77 +319,72 @@ public class First extends JFrame {
 				op1C.setSelectedIndex(op1C.getSelectedIndex());
 			}
 		});
-
 		// OPTION 2 BUTTONS HIDE
-		JLabel op2 = new JLabel("BOTONES");
-		op2.setBounds(50, 90, 150, 50);
+		JLabel op2 = new JLabel("ESCONDER");
+		op2.setBounds(50, 90, 150, 40);
 		op2.setFont(myFont);
-		JToggleButton btnsHideShow = new JToggleButton();
-		if (conf[1] == null || conf[1].equals("false")) {
-			btnsHideShow.setText("SI");
-		} else {
-			btnsHideShow.setText("NO");
-			btnsHideShow.setSelected(true);
-		}
-		btnsHideShow.setBounds(320, 90, 80, 50);
+		String hOp[] = { "NADA", "LA FECHA", "LA FECHA Y LOS BOTONES" };
+		JComboBox<String> btnsHideShow = new JComboBox<String>(hOp);
+		btnsHideShow.setRenderer(dlcr);
+		if (conf[1] != null && isNumeric(conf[1]))
+			btnsHideShow.setSelectedIndex(Integer.valueOf(conf[1]));
+		btnsHideShow.setBounds(305, 90, 300, 40);
 		btnsHideShow.setFont(myFont);
-		btnsHideShow.setBorder(border);
-		btnsHideShow.setBackground(greenC);
-		btnsHideShow.setForeground(lightC);
-		btnsHideShow.setFocusable(false);
-		btnsHideShow.addMouseListener(new MouseListener() {
-
+		btnsHideShow.setBackground(lightC);
+		btnsHideShow.setForeground(blueD);
+		btnsHideShow.addActionListener(new ActionListener() {
 			@Override
-			public void mouseReleased(MouseEvent e) {
-			}
-
-			@Override
-			public void mousePressed(MouseEvent e) {
-			}
-
-			@Override
-			public void mouseExited(MouseEvent e) {
-				btnsHideShow.setBackground(greenC);
-			}
-
-			@Override
-			public void mouseEntered(MouseEvent e) {
-				btnsHideShow.setBackground(greenD);
-			}
-
-			@Override
-			public void mouseClicked(MouseEvent e) {
-			}
-		});
-		btnsHideShow.setUI(new MetalToggleButtonUI() {
-			@Override
-			protected Color getSelectColor() {
-				return redC;
-			}
-		});
-		btnsHideShow.addItemListener(new ItemListener() {
-
-			@Override
-			public void itemStateChanged(ItemEvent e) {
-				if (e.getStateChange() == ItemEvent.SELECTED)
-					btnsHideShow.setText("NO");
-				else
-					btnsHideShow.setText("SI");
+			public void actionPerformed(ActionEvent e) {
+				op1C.setSelectedIndex(op1C.getSelectedIndex());
 			}
 		});
 
-		// OPTION 3 DISABLE KEYBOARD SHORTCUT
+		// OPTION 3 CHANGE RESOLUTION
+		JLabel op4 = new JLabel("RESOLUCIÓN");
+		op4.setBounds(50, 160, 250, 40);
+		op4.setFont(myFont);
+		String res[] = { "OPTIMAL", "X-P", "P", "M", "G" };
+		JComboBox<String> op2C = new JComboBox<>(res);
+		op2C.setRenderer(dlcr);
+		op2C.setBounds(365, 160, 180, 40);
+		op2C.setFont(myFont);
+		op2C.setBackground(lightC);
+		op2C.setForeground(blueD);
+		if (conf[3] != null && isNumeric(conf[3]))
+			op2C.setSelectedIndex(Integer.valueOf(conf[3]));
+		op2C.addActionListener(e -> op2C.setSelectedIndex(op2C.getSelectedIndex()));
+
+		// op4 default tab
+		JLabel op6 = new JLabel("PRIMER CUADRO");
+		op6.setBounds(50, 230, 280, 40);
+		op6.setFont(myFont);
+		String opDT[] = { "REALES", "PESOS", "FATURA R", "FATURA P" };
+		JComboBox<String> op3C = new JComboBox<>(opDT);
+		op3C.setRenderer(dlcr);
+		op3C.setBounds(365, 230, 180, 40);
+		op3C.setBackground(lightC);
+		op3C.setForeground(blueD);
+		op3C.setFont(myFont);
+		if (conf[5] != null && isNumeric(conf[5]))
+			op3C.setSelectedIndex(Integer.valueOf(conf[5]));
+		op3C.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				op3C.setSelectedIndex(op3C.getSelectedIndex());
+			}
+		});
+		// OPTION 5 DISABLE KEYBOARD SHORTCUT
 		JLabel op3 = new JLabel("ATAJO DE TECLADO");
-		op3.setBounds(50, 160, 250, 50);
+		op3.setBounds(50, 300, 250, 40);
 		op3.setFont(myFont);
 		JToggleButton btnsHideShow2 = new JToggleButton();
-		if (conf[2] == null || conf[2].equals("false")) {
+		if (conf[2] == null || !conf[2].equals("true")) {
 			btnsHideShow2.setText("SI");
 		} else {
 			btnsHideShow2.setText("NO");
 			btnsHideShow2.setSelected(true);
 		}
-		btnsHideShow2.setBounds(320, 160, 80, 50);
+		btnsHideShow2.setBounds(415, 300, 80, 40);
 		btnsHideShow2.setFont(myFont);
 		btnsHideShow2.setBorder(border);
 		btnsHideShow2.setBackground(greenC);
@@ -429,32 +431,18 @@ public class First extends JFrame {
 			}
 		});
 
-		// OPTION 4 CHANGE RESOLUTION
-		JLabel op4 = new JLabel("RESOLUCIÓN");
-		op4.setBounds(50, 220, 250, 50);
-		op4.setFont(myFont);
-		String res[] = { "OPTIMAL", "X-P", "P", "M", "G" };
-		JComboBox<String> op2C = new JComboBox<>(res);
-		op2C.setBounds(280, 220, 140, 50);
-		op2C.setFont(myFont);
-		op2C.setBackground(blueC);
-		op2C.setForeground(darkC);
-		if (conf[3] != null)
-			op2C.setSelectedIndex(Integer.valueOf(conf[3]));
-		op2C.addActionListener(e -> op2C.setSelectedIndex(op2C.getSelectedIndex()));
-
-		// OPTION 5 AUTOSAVE
+		// OPTION 6 AUTOSAVE
 		JLabel op5 = new JLabel("AUTOGUARDAR");
-		op5.setBounds(50, 290, 180, 50);
+		op5.setBounds(50, 370, 180, 40);
 		op5.setFont(myFont);
 		JToggleButton btnsHideShow3 = new JToggleButton();
-		if (conf[4] == null || conf[4].equals("false")) {
+		if (conf[4] == null || !conf[4].equals("true")) {
 			btnsHideShow3.setText("SI");
 		} else {
 			btnsHideShow3.setText("NO");
 			btnsHideShow3.setSelected(true);
 		}
-		btnsHideShow3.setBounds(320, 290, 80, 50);
+		btnsHideShow3.setBounds(415, 370, 80, 40);
 		btnsHideShow3.setFont(myFont);
 		btnsHideShow3.setBorder(border);
 		btnsHideShow3.setBackground(greenC);
@@ -501,28 +489,9 @@ public class First extends JFrame {
 			}
 		});
 
-		// op6 default tab
-		JLabel op6 = new JLabel("ABIERTO A");
-		op6.setBounds(50, 350, 180, 40);
-		op6.setFont(myFont);
-		String opDT[] = { "Reales", "Pesos", "Fatura R", "Fatura P" };
-		JComboBox<String> op3C = new JComboBox<>(opDT);
-		op3C.setBounds(280, 350, 140, 40);
-		op3C.setBackground(lightC);
-		op3C.setForeground(blueD);
-		op3C.setFont(myFont);
-		if (conf[5] != null)
-			op3C.setSelectedIndex(Integer.valueOf(conf[5]));
-		op3C.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				op3C.setSelectedIndex(op3C.getSelectedIndex());
-			}
-		});
-
 		// Bottom line
 		JButton defSet = new JButton("POR DEFECTO");
-		defSet.setBounds(70, 400, 170, 50);
+		defSet.setBounds(120, 440, 170, 50);
 		First.btnStyle(defSet);
 		defSet.setBackground(redC);
 		defSet.setForeground(Color.white);
@@ -555,8 +524,7 @@ public class First extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				op1C.setSelectedIndex(0);
 				First.this.setIconImage(iconImages[0].getImage());
-				btnsHideShow.setText("SI");
-				btnsHideShow.setSelected(false);
+				btnsHideShow.setSelectedIndex(0);
 				btnsHideShow2.setText("SI");
 				btnsHideShow2.setSelected(false);
 				op2C.setSelectedIndex(0);
@@ -567,8 +535,8 @@ public class First extends JFrame {
 		});
 
 		// SAVE
-		JButton save = new JButton("SAVE");
-		save.setBounds(300, 400, 100, 50);
+		JButton save = new JButton("GUARDAR");
+		save.setBounds(400, 440, 120, 50);
 		btnStyle(save);
 		save.setBackground(blueC);
 		save.setForeground(lightC);
@@ -602,7 +570,7 @@ public class First extends JFrame {
 				try {
 					FileWriter savedF = new FileWriter("conf.txt");
 					savedF.write(op1C.getSelectedIndex() + System.lineSeparator());
-					savedF.write(btnsHideShow.isSelected() + System.lineSeparator());
+					savedF.write(btnsHideShow.getSelectedIndex() + System.lineSeparator());
 					savedF.write(btnsHideShow2.isSelected() + System.lineSeparator());
 					savedF.write(op2C.getSelectedIndex() + System.lineSeparator());
 					savedF.write(btnsHideShow3.isSelected() + System.lineSeparator());
