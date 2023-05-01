@@ -329,7 +329,7 @@ public class First extends JFrame {
 		if (conf[1] != null && isNumeric(conf[1]))
 			btnsHideShow.setSelectedIndex(Integer.valueOf(conf[1]));
 		btnsHideShow.setBounds(305, 90, 300, 40);
-		btnsHideShow.setFont(myFont);
+		btnsHideShow.setFont(First.myFontS);
 		btnsHideShow.setBackground(lightC);
 		btnsHideShow.setForeground(blueD);
 		btnsHideShow.addActionListener(new ActionListener() {
@@ -347,7 +347,7 @@ public class First extends JFrame {
 		JComboBox<String> op2C = new JComboBox<>(res);
 		op2C.setRenderer(dlcr);
 		op2C.setBounds(365, 160, 180, 40);
-		op2C.setFont(myFont);
+		op2C.setFont(First.myFontS);
 		op2C.setBackground(lightC);
 		op2C.setForeground(blueD);
 		if (conf[3] != null && isNumeric(conf[3]))
@@ -364,7 +364,7 @@ public class First extends JFrame {
 		op3C.setBounds(365, 230, 180, 40);
 		op3C.setBackground(lightC);
 		op3C.setForeground(blueD);
-		op3C.setFont(myFont);
+		op3C.setFont(myFontS);
 		if (conf[5] != null && isNumeric(conf[5]))
 			op3C.setSelectedIndex(Integer.valueOf(conf[5]));
 		op3C.addActionListener(new ActionListener() {
@@ -433,7 +433,7 @@ public class First extends JFrame {
 
 		// OPTION 6 AUTOSAVE
 		JLabel op5 = new JLabel("AUTOGUARDAR");
-		op5.setBounds(50, 370, 180, 40);
+		op5.setBounds(50, 370, 200, 40);
 		op5.setFont(myFont);
 		JToggleButton btnsHideShow3 = new JToggleButton();
 		if (conf[4] == null || !conf[4].equals("true")) {
@@ -491,7 +491,7 @@ public class First extends JFrame {
 
 		// Bottom line
 		JButton defSet = new JButton("POR DEFECTO");
-		defSet.setBounds(120, 440, 170, 50);
+		defSet.setBounds(120, 440, 200, 50);
 		First.btnStyle(defSet);
 		defSet.setBackground(redC);
 		defSet.setForeground(Color.white);
@@ -536,7 +536,7 @@ public class First extends JFrame {
 
 		// SAVE
 		JButton save = new JButton("GUARDAR");
-		save.setBounds(400, 440, 120, 50);
+		save.setBounds(400, 440, 150, 50);
 		btnStyle(save);
 		save.setBackground(blueC);
 		save.setForeground(lightC);

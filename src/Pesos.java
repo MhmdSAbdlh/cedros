@@ -24,11 +24,14 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -38,6 +41,7 @@ import javax.swing.DefaultListCellRenderer;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -46,9 +50,14 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
+import javax.swing.JTextPane;
 import javax.swing.JToggleButton;
+import javax.swing.Timer;
 import javax.swing.border.LineBorder;
 import javax.swing.plaf.metal.MetalToggleButtonUI;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyledDocument;
 
 @SuppressWarnings("serial")
 public class Pesos extends JFrame {
@@ -83,6 +92,10 @@ public class Pesos extends JFrame {
 	private ImageIcon notasI = new ImageIcon(notas);
 	private URL nextD = getClass().getResource("images/nextd.png");
 	private ImageIcon nextDI = new ImageIcon(nextD);
+	private URL symPhoto = getClass().getResource("images/sum.png");
+	private ImageIcon sumI = new ImageIcon(symPhoto);
+	private URL expP = getClass().getResource("images/save.png");
+	private ImageIcon expI = new ImageIcon(expP);
 
 	// Define Parameter
 	static JTextField details[][] = new JTextField[6][20];// Numbers of notes
@@ -98,14 +111,23 @@ public class Pesos extends JFrame {
 	static JLabel gastos = new JLabel("G A S T O S");// Spend of the day TITLE
 	static JLabel agregado = new JLabel("A G R E G A D O");// Added to cash title
 	JLabel panelFoto[] = new JLabel[11];// Photo row
-	JLabel date = new JLabel();// date of the day
 	static JLabel[] diffResult = new JLabel[2];// calculate the difference
 	static JLabel restTmrw = new JLabel();// rest for tomorrow
 	static int totalCol = 0, totalVenta = 0, totalO = 0;
 	static int gastosT = 0, agregadoT = 0;
 	static int restN, totalCaja = 0, nbOf500 = 0;
 	int width, height;
+	static int colorX = 0, stringLetters;
+	boolean status = false;
+	Timer timer;
 	String conf[] = new String[6];
+
+	JLabel date = new JLabel();// date of the day
+	String monthS = new SimpleDateFormat("MMMM").format(Calendar.getInstance().getTime()).toUpperCase();
+	String dayN = new SimpleDateFormat("dd").format(Calendar.getInstance().getTime());
+	String dayS = new SimpleDateFormat("EEEE").format(Calendar.getInstance().getTime()).toUpperCase();
+	String yearS = new SimpleDateFormat("YYYY").format(Calendar.getInstance().getTime());
+
 	FocusListener textFocus = new FocusListener() {
 
 		@Override
@@ -244,10 +266,6 @@ public class Pesos extends JFrame {
 		this.add(total[8]);
 
 		// Panel 2
-		String monthS = new SimpleDateFormat("MMMM").format(Calendar.getInstance().getTime()).toUpperCase();
-		String dayN = new SimpleDateFormat("dd").format(Calendar.getInstance().getTime());
-		String dayS = new SimpleDateFormat("EEEE").format(Calendar.getInstance().getTime()).toUpperCase();
-		String yearS = new SimpleDateFormat("YYYY").format(Calendar.getInstance().getTime());
 		date.setText(" " + dayS + ", " + dayN + "  " + monthS + "  " + yearS);
 		date.setForeground(First.lightC);
 		date.setFont(First.myFont);
@@ -539,26 +557,13 @@ public class Pesos extends JFrame {
 
 		// MenuBar
 		JMenuBar mb = new JMenuBar();
+		// FILE
 		JMenu file = new JMenu("ARCHIVO");
-		JMenu goTo = new JMenu("IR A");
-		JMenu help = new JMenu("AYUDA");
-		JMenuItem clear = new JMenuItem("BORRAR TODO");
 		JMenuItem calc = new JMenuItem("ASUMAR");
+		JMenuItem clear = new JMenuItem("BORRAR TODO");
 		JMenuItem save = new JMenuItem("SALVAR");
 		JMenuItem option = new JMenuItem("CONFIGURACIÓN");
 		JMenuItem exit = new JMenuItem("SALIR");
-		JMenuItem reales = new JMenuItem("REALES");
-		JMenuItem fatura = new JMenuItem("FATURA");
-		JMenuItem firstFrame = new JMenuItem("PRIMER CUADRO");
-		JMenuItem getHelp = new JMenuItem("ATAJOS DE TECLADO");
-		JMenuItem creator = new JMenuItem("SOBRE EL CREADOR");
-		JMenuItem about = new JMenuItem("SOBRE EL APLICATIVO");
-		JMenu reso = new JMenu("RESOLUCIÓN");
-		JSeparator sep = new JSeparator();
-		JMenuItem reso1 = new JMenuItem("GRANDE");
-		JMenuItem reso2 = new JMenuItem("MEDIO");
-		JMenuItem reso3 = new JMenuItem("PEQUENA");
-		JMenuItem reso4 = new JMenuItem("X-PEQUENA");
 		novo.addActionListener(e -> newDay());
 		calc.addActionListener(e -> sumF());
 		clear.addActionListener(e -> clearAll());
@@ -566,6 +571,24 @@ public class Pesos extends JFrame {
 		option.addActionListener(e -> confFrame(conf, faturaBtn, realesF, newDay, clearEverthing, hideBtn, resoD,
 				gastosPanel, aggPanel));
 		exit.addActionListener(e -> System.exit(0));
+		file.add(novo);
+		file.add(calc);
+		file.add(clear);
+		file.add(save);
+		file.add(option);
+		file.add(exit);
+		// SUMMARY
+		JMenu summary = new JMenu("SUMARIO");
+		JMenuItem sumV = new JMenuItem("VISTA PREVIA DEL RESUMEN");
+		JMenuItem exMenu = new JMenuItem("GUARDAR RESUMEN");
+		sumV.addActionListener(e -> summaryFrame());
+		exMenu.addActionListener(e -> exBtn());
+		summary.add(sumV);
+		summary.add(exMenu);
+		JMenu goTo = new JMenu("IR A");
+		JMenuItem reales = new JMenuItem("REALES");
+		JMenuItem fatura = new JMenuItem("FATURA");
+		JMenuItem firstFrame = new JMenuItem("PRIMER CUADRO");
 		reales.addActionListener(e -> {
 			saveProgress();
 			new Reales();
@@ -582,6 +605,30 @@ public class Pesos extends JFrame {
 			this.dispose();
 			new First();
 		});
+		goTo.add(firstFrame);
+		goTo.add(reales);
+		goTo.add(fatura);
+		JMenu reso = new JMenu("RESOLUCIÓN");
+		JSeparator sep = new JSeparator();
+		JMenuItem reso1 = new JMenuItem("GRANDE");
+		JMenuItem reso2 = new JMenuItem("MEDIO");
+		JMenuItem reso3 = new JMenuItem("PEQUENA");
+		JMenuItem reso4 = new JMenuItem("X-PEQUENA");
+		resoD.addActionListener(e -> resFun(clearEverthing, faturaBtn, realesF, newDay, resoD, aggPanel, gastosPanel));
+		reso1.addActionListener(e -> resG(resoD, realesF, faturaBtn, newDay, clearEverthing, gastosPanel, aggPanel));
+		reso2.addActionListener(e -> resM(resoD, realesF, faturaBtn, newDay, clearEverthing, gastosPanel, aggPanel));
+		reso3.addActionListener(e -> resP(resoD, realesF, faturaBtn, newDay, clearEverthing, gastosPanel, aggPanel));
+		reso4.addActionListener(e -> resXP(resoD, realesF, faturaBtn, newDay, clearEverthing, gastosPanel, aggPanel));
+		reso.add(resoD);
+		reso.add(sep);
+		reso.add(reso4);
+		reso.add(reso3);
+		reso.add(reso2);
+		reso.add(reso1);
+		JMenu help = new JMenu("AYUDA");
+		JMenuItem getHelp = new JMenuItem("ATAJOS DE TECLADO");
+		JMenuItem creator = new JMenuItem("SOBRE EL CREADOR");
+		JMenuItem about = new JMenuItem("SOBRE EL APLICATIVO");
 		if (conf[2] == null || conf[2].equals("false"))
 			getHelp.addActionListener(e -> JOptionPane.showMessageDialog(null,
 					"• CTRL + S → ir la fatura.\n" + "• CTRL + R → ir al reales.\n" + "• CTRL + B → borrar todo.\n"
@@ -604,40 +651,12 @@ public class Pesos extends JFrame {
 						+ "SABE CÓMO QUEDARÁ PARA EL PRÓXIMO DÍA.\r\n" + "3 MÉTODOS PARA DAR EL CAMBIO.\r\n"
 						+ "CAMBIARÁ TODO SEGÚN EL ICONO SELECCIONADO.\r\n" + "\r\n" + "MOHAMAD ABDALLAH ABBASS ©",
 				"CEDROS/NARJES", 1));
-		reso.add(resoD);
-		reso.add(sep);
-		reso.add(reso4);
-		reso.add(reso3);
-		reso.add(reso2);
-		reso.add(reso1);
-		resoD.addActionListener(e -> {
-			if (width > 1800 && height > 1000)
-				resG(resoD, realesF, faturaBtn, newDay, clearEverthing, gastosPanel, aggPanel);
-			else if (width > 1500 && height > 700)
-				resM(resoD, realesF, faturaBtn, newDay, clearEverthing, gastosPanel, aggPanel);
-			else if (width > 1300 && height > 700)
-				resP(resoD, realesF, faturaBtn, newDay, clearEverthing, gastosPanel, aggPanel);
-			else
-				resXP(resoD, realesF, faturaBtn, newDay, clearEverthing, gastosPanel, aggPanel);
-		});
-		reso1.addActionListener(e -> resG(resoD, realesF, faturaBtn, newDay, clearEverthing, gastosPanel, aggPanel));
-		reso2.addActionListener(e -> resM(resoD, realesF, faturaBtn, newDay, clearEverthing, gastosPanel, aggPanel));
-		reso3.addActionListener(e -> resP(resoD, realesF, faturaBtn, newDay, clearEverthing, gastosPanel, aggPanel));
-		reso4.addActionListener(e -> resXP(resoD, realesF, faturaBtn, newDay, clearEverthing, gastosPanel, aggPanel));
-		file.add(novo);
-		file.add(calc);
-		file.add(clear);
-		file.add(save);
-		file.add(option);
-		file.add(exit);
-		goTo.add(firstFrame);
-		goTo.add(reales);
-		goTo.add(fatura);
 		help.add(getHelp);
 		help.add(hideBtn);
 		help.add(creator);
 		help.add(about);
 		mb.add(file);
+		mb.add(summary);
 		mb.add(goTo);
 		mb.add(reso);
 		mb.add(help);
@@ -667,14 +686,7 @@ public class Pesos extends JFrame {
 
 		// Resolution
 		if (conf[3] == null || conf[3].equals("0")) {
-			if (width > 1800 && height > 1000)
-				resG(resoD, realesF, faturaBtn, newDay, clearEverthing, gastosPanel, aggPanel);
-			else if (width > 1500 && height > 700)
-				resM(resoD, realesF, faturaBtn, newDay, clearEverthing, gastosPanel, aggPanel);
-			else if (width > 1300 && height > 700)
-				resP(resoD, realesF, faturaBtn, newDay, clearEverthing, gastosPanel, aggPanel);
-			else
-				resXP(resoD, realesF, faturaBtn, newDay, clearEverthing, gastosPanel, aggPanel);
+			resFun(clearEverthing, faturaBtn, realesF, newDay, resoD, aggPanel, gastosPanel);
 		} else if (conf[3].equals("1"))
 			resXP(resoD, realesF, faturaBtn, newDay, clearEverthing, gastosPanel, aggPanel);
 		else if (conf[3].equals("2"))
@@ -697,22 +709,397 @@ public class Pesos extends JFrame {
 				else if (selectedOption == 1) {
 					// Do Nothing
 				} else if (selectedOption == 2) {
-					for (int i = 0; i < 5; i++)
-						for (int j = 0; j < 15; j++)
+					exBtn();
+					for (int i = 0; i < 6; i++)
+						for (int j = 0; j < 20; j++)
 							details[i][j].setText("");
 					initialDay.setText(restN + "");
-					for (int i = 0; i < 8; i++)
+					for (int i = 0; i < 16; i++) {
 						gastosTable[i].setText("");
-					for (int i = 0; i < 8; i++)
 						agregadoTable[i].setText("");
-					for (int i = 0; i < 2; i++)
-						panelCnum[i].setText("");
+						gTable[i].setText("");
+						aTable[i].setText("");
+					}
+					if (!conf[0].equals("3")) {
+						for (int i = 0; i < 2; i++)
+							panelCnum[i].setText("");
+						panelCnum[2].setText("" + nbOf500);
+					}
 					sumF();
 					System.exit(0);
 				}
 			}
 		});
 
+	}
+
+	private void resFun(JButton clearEverthing, JButton faturaBtn, JButton realesF, JButton newDay, JMenuItem resoD,
+			JButton aggPanel, JButton gastosPanel) {
+		if (width > 1800 && height > 1000)
+			resG(resoD, realesF, faturaBtn, newDay, clearEverthing, gastosPanel, aggPanel);
+		else if (width > 1500 && height > 700)
+			resM(resoD, realesF, faturaBtn, newDay, clearEverthing, gastosPanel, aggPanel);
+		else if (width > 1300 && height > 700)
+			resP(resoD, realesF, faturaBtn, newDay, clearEverthing, gastosPanel, aggPanel);
+		else
+			resXP(resoD, realesF, faturaBtn, newDay, clearEverthing, gastosPanel, aggPanel);
+	}
+
+	private String titleName() {
+		if (conf[0] == null || !conf[0].equals("3"))
+			return "CEDROS";
+		else
+			return "NARJES";
+	}
+
+	private void summaryFrame() {
+		JFrame sum = new JFrame();
+		sum.setTitle("SUMARIO");
+		sum.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+		sum.setAlwaysOnTop(false);
+		sum.setSize(650, 550);
+		sum.setLocationRelativeTo(null);
+		sum.setResizable(false);
+		sum.setLayout(null);
+		sum.getContentPane().setBackground(First.lightC);
+
+		// Background
+		JLabel bg = new JLabel(sumI);
+		bg.setBounds(0, 0, 650, 550);
+		sum.add(bg);
+		// export btn
+		JButton expBtn = new JButton();
+		expBtn.setIcon(expI);
+		expBtn.setContentAreaFilled(false);
+		expBtn.setBorderPainted(false);
+		expBtn.setBounds(300, 350, 50, 50);
+		expBtn.setVisible(false);
+		expBtn.addActionListener(e -> exBtn());
+		sum.add(expBtn);
+		// LABEL
+		JTextPane sumItem = new JTextPane();
+		sumItem.setText("USTED VENDIÓ $" + totalVenta + "\n\nDIVIDIENDO EN " + nbVentas() + " VENTAS\n\n"
+				+ "CON UN PROMEDIO DE $" + (nbVentas() == 0 ? 0 : totalVenta / nbVentas()) + " POR CADA VENTA");
+		StyledDocument doc = sumItem.getStyledDocument();
+		SimpleAttributeSet center = new SimpleAttributeSet();
+		StyleConstants.setAlignment(center, StyleConstants.ALIGN_CENTER);
+		doc.setParagraphAttributes(0, doc.getLength(), center, false);
+		sumItem.setBounds(0, 200, 650, 550);
+		sumItem.setFont(First.myFont);
+		sumItem.setEditable(false);
+		sumItem.setOpaque(false);
+		sumItem.setForeground(new Color(0, 0, 0, colorX));
+		// Timer
+		timer = new Timer(2, new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				sumItem.setForeground(new Color(0, 0, 0, colorX));
+				if (colorX < 254 && !status)// Details fade in
+					colorX++;
+				else {
+					status = true;
+					if (colorX > 0)// Details fade out
+						colorX -= 2;
+					else {
+						timer.stop();// Stop detail
+						// gastos start
+						sumItem.setBounds(0, 140, 650, 550);
+						if (gastosT == 0)
+							sumItem.setText("NO TIENES GASTOS!");
+						else
+							sumItem.setText("TIENES EN TOTAL $" + gastosT + " COMO GASTOS\n\n" + "DIVIDIDO POR "
+									+ nbGastos() + " COSAS\n\n" + "CON UN PROMEDIO DE $"
+									+ (nbGastos() == 0 ? 0 : gastosT / nbGastos()) + "\n\n" + "DETALLADO COMO:\n"
+									+ gastosDetalles());
+						if (sumItem.getText().length() < 30)
+							stringLetters = 1;
+						else
+							stringLetters = 10;
+						// Timer for gastos
+						timer = new Timer(stringLetters, new ActionListener() {
+
+							@Override
+							public void actionPerformed(ActionEvent e) {
+								sumItem.setForeground(new Color(0, 0, 0, colorX));
+								if (colorX < 254 && status)// gastos fade in
+									colorX++;
+								else {// else 2
+									status = false;
+									if (colorX > 0)// gastos fade out
+										colorX -= 2;
+									else {// else 1
+										timer.stop();// stop gastos
+										// agregados
+										if (agregadoT == 0)
+											sumItem.setText("NO TIENES AGREGADOS!");
+										else
+											sumItem.setText("TIENES EN TOTAL $" + agregadoT + " COMO AGREGADOS\n\n"
+													+ "DIVIDIDO POR " + nbAgregados() + " COSAS\n\n"
+													+ "CON UN PROMEDIO DE $"
+													+ (nbAgregados() == 0 ? 0 : agregadoT / nbAgregados()) + "\n\n"
+													+ "DETALLADO COMO:\n" + agregadoDetalles());
+										if (sumItem.getText().length() < 30)
+											stringLetters = 1;
+										else
+											stringLetters = 10;
+										// Timer for agregados
+										timer = new Timer(stringLetters, new ActionListener() {
+
+											@Override
+											public void actionPerformed(ActionEvent e) {
+												sumItem.setForeground(new Color(0, 0, 0, colorX));
+												if (colorX < 254 && !status)// agg fade in
+													colorX++;
+												else {
+													status = true;
+													if (colorX > 0)// agg fade out
+														colorX -= 2;
+													else {
+														timer.stop();// stop agregados
+														// SUMMARY
+														sumItem.setBounds(0, 100, 650, 550);
+														sumItem.setText("PARA RESUMIR\n\n" + "EMPEZAMOS EL DÍA CON $"
+																+ initialDay.getText() + "\n\nY VENDIMOS $" + totalVenta
+																+ "\n\nY GASTO $" + gastosT + "\n\nY AGREGÓ $"
+																+ agregadoT + "\n\nQUE TERMINARÁ CON $" + totalO
+																+ " EN TOTAL");
+														// Timer for summ
+														timer = new Timer(10, new ActionListener() {
+
+															@Override
+															public void actionPerformed(ActionEvent e) {
+																sumItem.setForeground(new Color(0, 0, 0, colorX));
+																if (colorX < 254 && status)// summ fade in
+																	colorX++;
+																else {
+																	status = false;
+																	if (colorX > 0)// agg fade out
+																		colorX -= 2;
+																	else {
+																		timer.stop();// stop summ
+																		// diferrence
+																		sumItem.setBounds(0, 200, 650, 550);
+																		if (totalO == totalCaja)
+																			sumItem.setText("LA CAJA DIO BIEN\n\n"
+																					+ "NO HAY DIFERENCIA\n\n" + ":)");
+																		else
+																			sumItem.setText("LA CAJA NO DIO BIEN\n\n"
+																					+ "PARECE QUE "
+																					+ diffResult[1].getText()
+																							.toUpperCase()
+																					+ "\n\nREVISA LOS BOLETOS Y LA CAJA");
+																		// Timer for diferrence
+																		timer = new Timer(10, new ActionListener() {
+
+																			@Override
+																			public void actionPerformed(ActionEvent e) {
+																				sumItem.setForeground(
+																						new Color(0, 0, 0, colorX));
+																				// diferrence fade in
+																				if (colorX < 254 && !status)
+																					colorX += 2;
+																				else {
+																					status = true;
+																					if (colorX > 0)// diff fade out
+																						colorX -= 2;
+																					else {
+																						timer.stop();// stop diferrence
+																						// remain for tmrw
+																						sumItem.setBounds(0, 200, 650,
+																								550);
+																						sumItem.setText(
+																								"QUEDARÁ PARA MAÑANA APROXIMADAMENTE\n\n"
+																										+ "$" + restN);
+																						// Timer for remain
+																						timer = new Timer(10,
+																								new ActionListener() {
+
+																									@Override
+																									public void actionPerformed(
+																											ActionEvent e) {
+																										sumItem.setForeground(
+																												new Color(
+																														0,
+																														0,
+																														0,
+																														colorX));
+																										// remain fadeIN
+																										if (colorX < 254
+																												&& status)
+																											colorX += 2;
+																										else {
+																											status = false;
+																											if (colorX > 0)// RFO
+																												colorX -= 2;
+																											else {
+																												timer.stop();
+																												sumItem.setText(
+																														"TOQUE EL BOTÓN PARA EXPORTAR EL RESULTADO");
+																												// bFI
+																												colorX = 255;
+																												sumItem.setForeground(
+																														new Color(
+																																0,
+																																0,
+																																0,
+																																colorX));
+																												// export
+																												expBtn.setVisible(
+																														true);
+																											}
+																										}
+																									}
+																								});
+																						timer.start();
+																					}
+																				}
+																			}
+																		});
+																		timer.start();
+																	}
+																}
+															}
+														});
+														timer.start();
+													} // else 1
+												} // else 2
+											}
+										});
+										timer.start();
+									} // else 1
+								} // else 2
+							}
+						});
+						timer.start();
+					}
+				}
+			}
+		});
+		timer.start();
+
+		// If close stop the timer
+		sum.addWindowListener(new WindowAdapter() {
+			public void windowClosing(WindowEvent we) {
+				try {
+					timer.stop();
+					Runtime.getRuntime().exec("taskkill /f /im java.exe");
+
+				} catch (IOException e4) {
+				}
+			}
+		});
+
+		sum.add(sumItem);
+		sum.setVisible(true);
+	}
+
+	private void exBtn() {
+		try {
+			String currentpath = System.getProperty("user.dir");
+			File tempFile1 = new File(currentpath + "\\" + yearS);
+			File tempFile2 = new File(tempFile1 + "\\" + monthS);
+			File newFile = new File(tempFile2, titleName() + " " + dayS + " " + dayN + "-" + "pesos.txt");
+			FileWriter savedF = new FileWriter(newFile);
+			savedF.write(titleName() + ": SUMARIO POR EL DIA " + dayS + " " + dayN + "-" + monthS + "-" + yearS
+					+ System.lineSeparator() + System.lineSeparator());
+			savedF.write("VENTAS: USTED VENDIÓ $" + totalVenta + ", DIVIDIENDO EN " + nbVentas() + " VENTAS, "
+					+ "CON UN PROMEDIO DE $" + (nbVentas() == 0 ? 0 : totalVenta / nbVentas()) + " POR CADA VENTA."
+					+ System.lineSeparator());
+			if (gastosT == 0)// GASTOS SAVE
+				savedF.write(System.lineSeparator() + "GASTOS: NO TIENES GASTOS!" + System.lineSeparator());
+			else
+				savedF.write(System.lineSeparator() + "GASTOS: TIENES EN TOTAL $" + gastosT + " COMO GASTOS, "
+						+ "DIVIDIDO POR " + nbGastos() + " COSAS, " + "CON UN PROMEDIO DE $"
+						+ (nbGastos() == 0 ? 0 : gastosT / nbGastos()) + "." + System.lineSeparator()
+						+ "DETALLADO COMO: " + System.lineSeparator() + gastosDetalles() + System.lineSeparator());
+			if (agregadoT == 0)// AGG SAVE
+				savedF.write(System.lineSeparator() + "AGREGADOS: NO TIENES AGREGADOS!" + System.lineSeparator());
+			else
+				savedF.write(System.lineSeparator() + "AGREGADOS: TIENES EN TOTAL $" + agregadoT + " COMO AGREGADOS, "
+						+ "DIVIDIDO POR " + nbAgregados() + " COSAS, " + "CON UN PROMEDIO DE $"
+						+ (nbAgregados() == 0 ? 0 : agregadoT / nbAgregados()) + "." + System.lineSeparator()
+						+ "DETALLADO COMO: " + System.lineSeparator() + agregadoDetalles() + System.lineSeparator());
+			savedF.write(System.lineSeparator() + "PARA RESUMIR: " + "EMPEZAMOS EL DÍA CON $" + initialDay.getText()
+					+ ", VENDIMOS $" + totalVenta + ", GASTO $" + gastosT + ", AGREGÓ $" + agregadoT
+					+ " QUE TERMINARÁ CON $" + totalO + " EN TOTAL." + System.lineSeparator());
+			if (totalO == totalCaja)
+				savedF.write(System.lineSeparator() + "LA CAJA DIO BIEN, " + "NO HAY DIFERENCIA" + ":)"
+						+ System.lineSeparator());
+			else
+				savedF.write(System.lineSeparator() + "LA CAJA NO DIO BIEN, " + "PARECE QUE "
+						+ diffResult[1].getText().toUpperCase() + "." + System.lineSeparator());
+			savedF.write(System.lineSeparator() + "QUEDARÁ PARA MAÑANA APROXIMADAMENTE " + "$" + restN + "."
+					+ System.lineSeparator());
+			savedF.write(System.lineSeparator() + "GRACIAS Y HASTA MAÑANA :) ");
+			savedF.close();
+
+			JOptionPane opt = new JOptionPane("SALVADO CON ÉXITO, GRACIAS", JOptionPane.INFORMATION_MESSAGE);
+			final JDialog dlg = opt.createDialog("success");
+			new Thread(new Runnable() {
+				public void run() {
+					try {
+						Thread.sleep(2000);
+						dlg.dispose();
+
+					} catch (Throwable th) {
+					}
+				}
+			}).start();
+			dlg.setVisible(true);
+
+		} catch (Exception e2) {
+			System.out.println("ERROR " + e2);
+		}
+	}
+
+	private String agregadoDetalles() {
+		String aggString = "";
+		int num = 1;
+		for (int i = 8; i < 16; i++)
+			if (First.isNumeric(agregadoTable[i].getText())) {
+				aggString += num + "-$" + agregadoTable[i].getText() + " -> "
+						+ (agregadoTable[i - 8].getText().isBlank() ? "XXX" : agregadoTable[i - 8].getText()) + "\n";
+				num++;
+			}
+		return aggString;
+	}
+
+	private int nbAgregados() {
+		int agregado = 0;
+		for (int i = 8; i < 16; i++)
+			if (First.isNumeric(agregadoTable[i].getText()))
+				agregado++;
+		return agregado;
+	}
+
+	private String gastosDetalles() {
+		String gasString = "";
+		int num = 1;
+		for (int i = 8; i < 16; i++)
+			if (First.isNumeric(gastosTable[i].getText())) {
+				gasString += num + "-$" + gastosTable[i].getText() + " -> "
+						+ (gastosTable[i - 8].getText().isBlank() ? "XXX" : gastosTable[i - 8].getText()) + "\n";
+				num++;
+			}
+		return gasString;
+	}
+
+	private int nbGastos() {
+		int gastos = 0;
+		for (int i = 8; i < 16; i++)
+			if (First.isNumeric(gastosTable[i].getText()))
+				gastos++;
+		return gastos;
+	}
+
+	private int nbVentas() {
+		int ventas = 0;
+		for (int i = 0; i < 6; i++)
+			for (int j = 0; j < 20; j++)
+				if (First.isNumeric(details[i][j].getText()))
+					ventas++;
+		return ventas;
 	}
 
 	private void gastosFrame(ArrayList<String> keywords, JButton notasF, JButton pesosF, JButton newDay,
@@ -850,7 +1237,7 @@ public class Pesos extends JFrame {
 		if (conf[1] != null && First.isNumeric(conf[1]))
 			btnsHideShow.setSelectedIndex(Integer.valueOf(conf[1]));
 		btnsHideShow.setBounds(305, 90, 300, 40);
-		btnsHideShow.setFont(First.myFont);
+		btnsHideShow.setFont(First.myFontS);
 		btnsHideShow.setBackground(First.lightC);
 		btnsHideShow.setForeground(First.blueD);
 		btnsHideShow.addActionListener(new ActionListener() {
@@ -923,7 +1310,7 @@ public class Pesos extends JFrame {
 		JComboBox<String> op2C = new JComboBox<>(res);
 		op2C.setRenderer(dlcr);
 		op2C.setBounds(365, 160, 180, 40);
-		op2C.setFont(First.myFont);
+		op2C.setFont(First.myFontS);
 		op2C.setBackground(First.lightC);
 		op2C.setForeground(First.blueD);
 		if (conf[3] != null)
@@ -932,14 +1319,7 @@ public class Pesos extends JFrame {
 			op2C.setSelectedIndex(op2C.getSelectedIndex());
 			// Resolution
 			if (op2C.getSelectedIndex() == 0) {
-				if (width > 1800 && height > 1000)
-					resG(resoD, notasF, pesosF, newDay, clearEverthing, gastosPanel, aggPanel);
-				else if (width > 1500 && height > 700)
-					resM(resoD, notasF, pesosF, newDay, clearEverthing, gastosPanel, aggPanel);
-				else if (width > 1300 && height > 700)
-					resP(resoD, notasF, pesosF, newDay, clearEverthing, gastosPanel, aggPanel);
-				else
-					resXP(resoD, notasF, pesosF, newDay, clearEverthing, gastosPanel, aggPanel);
+				resFun(clearEverthing, pesosF, notasF, newDay, resoD, aggPanel, gastosPanel);
 			} else if (op2C.getSelectedIndex() == 1)
 				resXP(resoD, notasF, pesosF, newDay, clearEverthing, gastosPanel, aggPanel);
 			else if (op2C.getSelectedIndex() == 2)
@@ -951,7 +1331,7 @@ public class Pesos extends JFrame {
 		});
 		// OPTION 5 AUTOSAVE
 		JLabel op5 = new JLabel("AUTOGUARDAR");
-		op5.setBounds(50, 300, 180, 40);
+		op5.setBounds(50, 300, 200, 40);
 		op5.setFont(First.myFont);
 		JToggleButton btnsHideShow3 = new JToggleButton();
 		if (conf[4] == null || conf[4].equals("false")) {
@@ -1009,7 +1389,7 @@ public class Pesos extends JFrame {
 
 		// bottom line
 		JButton defSet = new JButton("POR DEFECTO");
-		defSet.setBounds(120, 440, 170, 50);
+		defSet.setBounds(120, 440, 200, 50);
 		First.btnStyle(defSet);
 		defSet.setBackground(First.redC);
 		defSet.setForeground(Color.white);
@@ -1046,21 +1426,14 @@ public class Pesos extends JFrame {
 				btnsHideShow2.setText("SI");
 				btnsHideShow2.setSelected(false);
 				op2C.setSelectedIndex(0);
-				if (width > 1800 && height > 1000)
-					resG(resoD, notasF, pesosF, newDay, clearEverthing, gastosPanel, aggPanel);
-				else if (width > 1500 && height > 700)
-					resM(resoD, notasF, pesosF, newDay, clearEverthing, gastosPanel, aggPanel);
-				else if (width > 1300 && height > 700)
-					resP(resoD, notasF, pesosF, newDay, clearEverthing, gastosPanel, aggPanel);
-				else
-					resXP(resoD, notasF, pesosF, newDay, clearEverthing, gastosPanel, aggPanel);
+				resFun(clearEverthing, pesosF, notasF, newDay, resoD, aggPanel, gastosPanel);
 				btnsHideShow3.setText("SI");
 				btnsHideShow3.setSelected(false);
 			}
 		});
 		// SAVE
 		JButton save = new JButton("GUARDAR");
-		save.setBounds(400, 440, 120, 50);
+		save.setBounds(400, 440, 150, 50);
 		First.btnStyle(save);
 		save.setBackground(First.blueC);
 		save.setForeground(First.lightC);
@@ -1160,6 +1533,7 @@ public class Pesos extends JFrame {
 		int op = JOptionPane.showConfirmDialog(null, "¿QUIERES EMPEZAR NUEVO DIA?", "NUEVO DIA",
 				JOptionPane.OK_CANCEL_OPTION);
 		if (op == 0) {
+			exBtn();
 			for (int i = 0; i < 6; i++)
 				for (int j = 0; j < 20; j++)
 					details[i][j].setText("");
@@ -2294,15 +2668,15 @@ public class Pesos extends JFrame {
 		for (int i = 0; i < 6; i++) {
 			boletoN[i].setBounds(30 + i * 90, 30, 90, 40);
 			boletoN[i].setFont(First.myFontS);
-			total[i].setBounds(30 + i * 90, 820, 90, 40);
+			total[i].setBounds(30 + i * 90, 860, 90, 40);
 			total[i].setFont(First.myFontS);
 			for (int j = 0; j < 20; j++) {
-				details[i][j].setBounds(30 + i * 90, 65 + j * 40, 90, 40);
+				details[i][j].setBounds(30 + i * 90, 65 + j * 39, 90, 39);
 				details[i][j].setFont(First.myFontS);
 			}
 		}
-		total[6].setBounds(625, 830, 98, 45);
-		total[8].setBounds(625, 790, 98, 40);
+		total[6].setBounds(610, 845, 125, 45);
+		total[8].setBounds(610, 805, 125, 40);
 		boletoN[5].setFont(First.myFont);
 		total[6].setFont(First.myFont);
 		initialDay.setFont(First.myFont);
@@ -2400,7 +2774,7 @@ public class Pesos extends JFrame {
 		diffResult[0].setBounds(850, 700, 250, 65);
 		diffResult[1].setBounds(850, 764, 250, 65);
 		notasF.setBounds(1650, 700, 100, 100);
-		clearEverthing.setBounds(650, 650, 80, 80);
+		clearEverthing.setBounds(640, 690, 80, 80);
 		total[7].setFont(First.myFont);
 		diffResult[0].setFont(First.myFont);
 		diffResult[1].setFont(First.myFont);
@@ -2459,6 +2833,10 @@ public class Pesos extends JFrame {
 		keywords.add("ute narjes");
 		keywords.add("antel narjes");
 		keywords.add("antel cedros");
+		keywords.add("contador");
+		keywords.add("contadora");
+		keywords.add("oscar");
+		keywords.add("pan arabe");
 		return keywords;
 	}
 }

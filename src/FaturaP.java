@@ -641,7 +641,7 @@ public class FaturaP extends JFrame {
 		if (conf[1] != null && First.isNumeric(conf[1]))
 			btnsHideShow.setSelectedIndex(Integer.valueOf(conf[1]));
 		btnsHideShow.setBounds(305, 90, 300, 40);
-		btnsHideShow.setFont(First.myFont);
+		btnsHideShow.setFont(First.myFontS);
 		btnsHideShow.setBackground(First.lightC);
 		btnsHideShow.setForeground(First.blueD);
 		btnsHideShow.addActionListener(new ActionListener() {
@@ -714,7 +714,7 @@ public class FaturaP extends JFrame {
 		JComboBox<String> op2C = new JComboBox<>(res);
 		op2C.setRenderer(dlcr);
 		op2C.setBounds(365, 160, 180, 40);
-		op2C.setFont(First.myFont);
+		op2C.setFont(First.myFontS);
 		op2C.setBackground(First.lightC);
 		op2C.setForeground(First.blueD);
 		if (conf[3] != null)
@@ -742,7 +742,7 @@ public class FaturaP extends JFrame {
 		});
 		// OPTION 5 AUTOSAVE
 		JLabel op5 = new JLabel("AUTOGUARDAR");
-		op5.setBounds(50, 300, 180, 40);
+		op5.setBounds(50, 300, 200, 40);
 		op5.setFont(First.myFont);
 		JToggleButton btnsHideShow3 = new JToggleButton();
 		if (conf[4] == null || conf[4].equals("false")) {
@@ -800,7 +800,7 @@ public class FaturaP extends JFrame {
 
 		// bottom line
 		JButton defSet = new JButton("POR DEFECTO");
-		defSet.setBounds(120, 440, 170, 50);
+		defSet.setBounds(120, 440, 200, 50);
 		First.btnStyle(defSet);
 		defSet.setBackground(First.redC);
 		defSet.setForeground(Color.white);
@@ -851,7 +851,7 @@ public class FaturaP extends JFrame {
 		});
 		// SAVE
 		JButton save = new JButton("GUARDAR");
-		save.setBounds(400, 440, 120, 50);
+		save.setBounds(400, 440, 150, 50);
 		First.btnStyle(save);
 		save.setBackground(First.blueC);
 		save.setForeground(First.lightC);
