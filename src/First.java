@@ -80,7 +80,7 @@ public class First extends JFrame {
 		BufferedReader dataOpened = null;
 		String line = "";
 		int z = 0;
-		String conf[] = new String[6];
+		String conf[] = new String[7];
 		try {
 			dataOpened = new BufferedReader(new FileReader(new File("conf.txt")));
 			while ((line = dataOpened.readLine()) != null) {
@@ -190,7 +190,7 @@ public class First extends JFrame {
 					|| String.valueOf(passTF.getPassword()).equals("")) {
 				passTF.setText("");
 				this.dispose();
-				if (conf[5] == null || conf[5].equals("0"))
+				if (conf[5] == null || conf[5].equals("null") || conf[5].equals("0"))
 					new Reales();
 				else if (conf[5].equals("1"))
 					new Pesos();
@@ -575,6 +575,7 @@ public class First extends JFrame {
 					savedF.write(op2C.getSelectedIndex() + System.lineSeparator());
 					savedF.write(btnsHideShow3.isSelected() + System.lineSeparator());
 					savedF.write(op3C.getSelectedIndex() + System.lineSeparator());
+					savedF.write(conf[6] + System.lineSeparator());
 					savedF.close();
 				} catch (Exception e2) {
 				}

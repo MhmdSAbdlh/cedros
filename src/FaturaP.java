@@ -135,7 +135,7 @@ public class FaturaP extends JFrame {
 		BufferedReader dataOpened = null;
 		String line = "";
 		int tempC = 0;
-		String conf[] = new String[6];
+		String conf[] = new String[7];
 		try {
 			dataOpened = new BufferedReader(new FileReader(new File("conf.txt")));
 			while ((line = dataOpened.readLine()) != null) {
@@ -890,6 +890,7 @@ public class FaturaP extends JFrame {
 					savedF.write(op2C.getSelectedIndex() + System.lineSeparator());
 					savedF.write(btnsHideShow3.isSelected() + System.lineSeparator());
 					savedF.write(conf[5] + System.lineSeparator());
+					savedF.write(conf[6] + System.lineSeparator());
 					savedF.close();
 				} catch (Exception e2) {
 				}

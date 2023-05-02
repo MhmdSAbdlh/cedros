@@ -86,7 +86,7 @@ public class FaturaR extends JFrame {
 	static JLabel[][] troco = new JLabel[2][7];
 	static JLabel[][] troco2 = new JLabel[2][7];
 	static JLabel[][] troco3 = new JLabel[2][7];
-	static String numbers[] = new String[164];
+	static String numbers[] = new String[165];
 	static JLabel totalC = new JLabel("Total");
 	JLabel cambioC = new JLabel("Cliente");
 	JLabel title[] = new JLabel[4];
@@ -129,7 +129,7 @@ public class FaturaR extends JFrame {
 		BufferedReader dataOpened = null;
 		String line = "";
 		int tempC = 0;
-		String conf[] = new String[6];
+		String conf[] = new String[7];
 		try {
 			dataOpened = new BufferedReader(new FileReader(new File("conf.txt")));
 			while ((line = dataOpened.readLine()) != null) {
@@ -887,6 +887,7 @@ public class FaturaR extends JFrame {
 					savedF.write(op2C.getSelectedIndex() + System.lineSeparator());
 					savedF.write(btnsHideShow3.isSelected() + System.lineSeparator());
 					savedF.write(conf[5] + System.lineSeparator());
+					savedF.write(conf[6] + System.lineSeparator());
 					savedF.close();
 				} catch (Exception e2) {
 				}
@@ -1699,6 +1700,7 @@ public class FaturaR extends JFrame {
 				savedF.write(cajaTroco[1][z - i - 1].getText() + System.lineSeparator());
 				i++;
 			}
+			savedF.write(numbers[i]);// pix save
 			savedF.close();
 		} catch (Exception e) {
 		}

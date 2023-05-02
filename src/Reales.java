@@ -49,6 +49,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JSeparator;
+import javax.swing.JSlider;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
 import javax.swing.JToggleButton;
@@ -93,12 +94,14 @@ public class Reales extends JFrame {
 	private ImageIcon sumI = new ImageIcon(symPhoto);
 	private URL expP = getClass().getResource("images/save.png");
 	private ImageIcon expI = new ImageIcon(expP);
+	private URL pixP = getClass().getResource("images/pix.png");
+	private ImageIcon pixI = new ImageIcon(pixP);
 
 	// Define Parameter
 	static JTextField initialDay = new JTextField("0");// How much begin the day
 	static JTextField agregadoTable[] = new JTextField[16];// Added to cash detailed
 	static JTextField gastosTable[] = new JTextField[16];// Spend of the day detailed
-	static JTextField panelCnum[] = new JTextField[10];
+	static JTextField panelCnum[] = new JTextField[11];
 	static JTextField details[][] = new JTextField[6][20];// Numbers of notes
 	static JTextField gTable[] = new JTextField[16];
 	static JTextField aTable[] = new JTextField[16];
@@ -108,17 +111,18 @@ public class Reales extends JFrame {
 	static JLabel summaryT[] = new JLabel[9];// Summary table
 	static JLabel gastos = new JLabel("G A S T O S");// Spend of the day TITLE
 	static JLabel agregado = new JLabel("A G R E G A D O");// Added to cash title
-	static JLabel panelFoto[] = new JLabel[10];// Photo row
+	static JLabel panelFoto[] = new JLabel[11];// Photo row
 	static JLabel[] diffResult = new JLabel[2];// calculate the difference
 	static JLabel restTmrw = new JLabel();// rest for tomorrow
+	JLabel plusSymbol = new JLabel("+");
 	static int totalCol = 0, totalVenta = 0, totalO = 0;
 	static int gastosT = 0, agregadoT = 0;
 	static int restN, totalCaja = 0, nbOf20 = 0;
 	int width, height;
-	static int colorX = 0, stringLetters;
+	static int colorX = 0, order = 0, speedValue, wordsN, wordL, effChooser;
 	boolean status = false;
 	Timer timer;
-	String conf[] = new String[6];
+	String conf[] = new String[7];
 	JLabel date = new JLabel();// date of the day
 	String monthS = new SimpleDateFormat("MMMM").format(Calendar.getInstance().getTime()).toUpperCase();
 	String dayN = new SimpleDateFormat("dd").format(Calendar.getInstance().getTime());
@@ -445,12 +449,12 @@ public class Reales extends JFrame {
 		this.add(aggPanel);
 
 		// Panel 4 Caja detailed
-		for (int i = 0; i < 10; i++) {
+		for (int i = 0; i < 11; i++) {
 			panelFoto[i] = new JLabel();
 			First.labelStyle(panelFoto[i]);
 			this.add(panelFoto[i]);
 		}
-		for (int i = 0; i < 10; i++) {
+		for (int i = 0; i < 11; i++) {
 			panelCnum[i] = new JTextField("0");
 			textFieldStyle(panelCnum[i]);
 			panelCnum[i].setCaretColor(First.darkC);
@@ -460,6 +464,12 @@ public class Reales extends JFrame {
 				cajaFocus(i, this, newDay, notasF, pesosF, clearEverthing, hideBtn, resoD, gastosPanel, aggPanel);
 			this.add(panelCnum[i]);
 		}
+		plusSymbol.setForeground(First.lightC);
+		panelFoto[10].setBackground(Color.white);
+		panelCnum[10].setBackground(Color.black);
+		panelCnum[10].setForeground(First.lightC);
+		panelCnum[10].setCaretColor(First.lightC);
+		this.add(plusSymbol);
 		total[7] = new JLabel("TOTAL");// Total Label
 		First.labelStyle(total[7]);
 		total[7].setBackground(Color.black);
@@ -578,11 +588,22 @@ public class Reales extends JFrame {
 		// SUMMARY
 		JMenu summary = new JMenu("SUMARIO");
 		JMenuItem sumV = new JMenuItem("VISTA PREVIA DEL RESUMEN");
-		sumV.addActionListener(e -> summaryFrame());
+		JMenu effectChooser = new JMenu("ELIGE TU EFECTO");
+		JMenuItem sumV1 = new JMenuItem("FUNDIDO ENTRADA/FUERA");
+		JMenuItem sumV2 = new JMenuItem("APARECE PALABRA POR PALABRA");
+		JMenuItem sumV3 = new JMenuItem("APARECE LETRA POR LETRA");
 		JMenuItem exMenu = new JMenuItem("GUARDAR RESUMEN");
+		sumV.addActionListener(e -> summaryFrame());
+		sumV1.addActionListener(e -> effChooser = 0);
+		sumV2.addActionListener(e -> effChooser = 1);
+		sumV3.addActionListener(e -> effChooser = 2);
 		exMenu.addActionListener(e -> exBtn());
+		effectChooser.add(sumV1);
+		effectChooser.add(sumV2);
+		effectChooser.add(sumV3);
 		summary.add(sumV);
 		summary.add(exMenu);
+		summary.add(effectChooser);
 		// GO TO
 		JMenu goTo = new JMenu("IR A");
 		JMenuItem pesos = new JMenuItem("PESOS");
@@ -741,6 +762,7 @@ public class Reales extends JFrame {
 		});
 	}
 
+	// Know the app title
 	private String titleName() {
 		if (conf[0] == null || !conf[0].equals("3"))
 			return "CEDROS";
@@ -748,6 +770,7 @@ public class Reales extends JFrame {
 			return "NARJES";
 	}
 
+	// Frame summary of the day
 	private void summaryFrame() {
 		JFrame sum = new JFrame();
 		sum.setTitle("SUMARIO");
@@ -758,7 +781,6 @@ public class Reales extends JFrame {
 		sum.setResizable(false);
 		sum.setLayout(null);
 		sum.getContentPane().setBackground(First.lightC);
-
 		// Background
 		JLabel bg = new JLabel(sumI);
 		bg.setBounds(0, 0, 650, 550);
@@ -768,14 +790,12 @@ public class Reales extends JFrame {
 		expBtn.setIcon(expI);
 		expBtn.setContentAreaFilled(false);
 		expBtn.setBorderPainted(false);
-		expBtn.setBounds(300, 350, 50, 50);
+		expBtn.setBounds(300, 300, 50, 50);
 		expBtn.setVisible(false);
 		expBtn.addActionListener(e -> exBtn());
 		sum.add(expBtn);
 		// LABEL
 		JTextPane sumItem = new JTextPane();
-		sumItem.setText("USTED VENDIÓ R$" + totalVenta + "\n\nDIVIDIENDO EN " + nbVentas() + " VENTAS\n\n"
-				+ "CON UN PROMEDIO DE R$" + (nbVentas() == 0 ? 0 : totalVenta / nbVentas()) + " POR CADA VENTA");
 		StyledDocument doc = sumItem.getStyledDocument();
 		SimpleAttributeSet center = new SimpleAttributeSet();
 		StyleConstants.setAlignment(center, StyleConstants.ALIGN_CENTER);
@@ -784,200 +804,499 @@ public class Reales extends JFrame {
 		sumItem.setFont(First.myFont);
 		sumItem.setEditable(false);
 		sumItem.setOpaque(false);
-		sumItem.setForeground(new Color(0, 0, 0, colorX));
-		// Timer
-		timer = new Timer(2, new ActionListener() {
+		// TIMER
+		order = 0;
+		wordsN = 0;
+		wordL = 0;
+		colorX = 0;
+		status = true;
+		ActionListener fadeTimer = new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				sumItem.setForeground(new Color(0, 0, 0, colorX));
-				if (colorX < 254 && !status)// Details fade in
-					colorX++;
-				else {
-					status = true;
-					if (colorX > 0)// Details fade out
-						colorX -= 2;
-					else {
-						timer.stop();// Stop detail
-						// gastos start
-						sumItem.setBounds(0, 140, 650, 550);
-						if (gastosT == 0)
-							sumItem.setText("NO TIENES GASTOS!");
-						else
-							sumItem.setText("TIENES EN TOTAL R$" + gastosT + " COMO GASTOS\n\n" + "DIVIDIDO POR "
-									+ nbGastos() + " COSAS\n\n" + "CON UN PROMEDIO DE R$"
-									+ (nbGastos() == 0 ? 0 : gastosT / nbGastos()) + "\n\n" + "DETALLADO COMO:\n"
-									+ gastosDetalles());
-						if (sumItem.getText().length() < 30)
-							stringLetters = 1;
-						else
-							stringLetters = 10;
-						// Timer for gastos
-						timer = new Timer(stringLetters, new ActionListener() {
-
-							@Override
-							public void actionPerformed(ActionEvent e) {
-								sumItem.setForeground(new Color(0, 0, 0, colorX));
-								if (colorX < 254 && status)// gastos fade in
-									colorX++;
-								else {// else 2
-									status = false;
-									if (colorX > 0)// gastos fade out
-										colorX -= 2;
-									else {// else 1
-										timer.stop();// stop gastos
-										// agregados
-										if (agregadoT == 0)
-											sumItem.setText("NO TIENES AGREGADOS!");
-										else
-											sumItem.setText("TIENES EN TOTAL R$" + agregadoT + " COMO AGREGADOS\n\n"
-													+ "DIVIDIDO POR " + nbAgregados() + " COSAS\n\n"
-													+ "CON UN PROMEDIO DE R$"
-													+ (nbAgregados() == 0 ? 0 : agregadoT / nbAgregados()) + "\n\n"
-													+ "DETALLADO COMO:\n" + agregadoDetalles());
-										if (sumItem.getText().length() < 30)
-											stringLetters = 1;
-										else
-											stringLetters = 10;
-										// Timer for agregados
-										timer = new Timer(stringLetters, new ActionListener() {
-
-											@Override
-											public void actionPerformed(ActionEvent e) {
-												sumItem.setForeground(new Color(0, 0, 0, colorX));
-												if (colorX < 254 && !status)// agg fade in
-													colorX++;
-												else {
-													status = true;
-													if (colorX > 0)// agg fade out
-														colorX -= 2;
-													else {
-														timer.stop();// stop agregados
-														// SUMMARY
-														sumItem.setBounds(0, 100, 650, 550);
-														sumItem.setText("PARA RESUMIR\n\n" + "EMPEZAMOS EL DÍA CON R$"
-																+ initialDay.getText() + "\n\nY VENDIMOS R$"
-																+ totalVenta + "\n\nY GASTO R$" + gastosT
-																+ "\n\nY AGREGÓ R$" + agregadoT
-																+ "\n\nQUE TERMINARÁ CON R$" + totalO + " EN TOTAL");
-														// Timer for summ
-														timer = new Timer(10, new ActionListener() {
-
-															@Override
-															public void actionPerformed(ActionEvent e) {
-																sumItem.setForeground(new Color(0, 0, 0, colorX));
-																if (colorX < 254 && status)// summ fade in
-																	colorX++;
-																else {
-																	status = false;
-																	if (colorX > 0)// agg fade out
-																		colorX -= 2;
-																	else {
-																		timer.stop();// stop summ
-																		// diferrence
-																		sumItem.setBounds(0, 200, 650, 550);
-																		if (totalO == totalCaja)
-																			sumItem.setText("LA CAJA DIO BIEN\n\n"
-																					+ "NO HAY DIFERENCIA\n\n" + ":)");
-																		else
-																			sumItem.setText("LA CAJA NO DIO BIEN\n\n"
-																					+ "PARECE QUE "
-																					+ diffResult[1].getText()
-																							.toUpperCase()
-																					+ "\n\nREVISA LOS BOLETOS Y LA CAJA");
-																		// Timer for diferrence
-																		timer = new Timer(10, new ActionListener() {
-
-																			@Override
-																			public void actionPerformed(ActionEvent e) {
-																				sumItem.setForeground(
-																						new Color(0, 0, 0, colorX));
-																				// diferrence fade in
-																				if (colorX < 254 && !status)
-																					colorX += 2;
-																				else {
-																					status = true;
-																					if (colorX > 0)// diff fade out
-																						colorX -= 2;
-																					else {
-																						timer.stop();// stop diferrence
-																						// remain for tmrw
-																						sumItem.setBounds(0, 200, 650,
-																								550);
-																						sumItem.setText(
-																								"QUEDARÁ PARA MAÑANA APROXIMADAMENTE\n\n"
-																										+ "R$" + restN);
-																						// Timer for remain
-																						timer = new Timer(10,
-																								new ActionListener() {
-
-																									@Override
-																									public void actionPerformed(
-																											ActionEvent e) {
-																										sumItem.setForeground(
-																												new Color(
-																														0,
-																														0,
-																														0,
-																														colorX));
-																										// remain fadeIN
-																										if (colorX < 254
-																												&& status)
-																											colorX += 2;
-																										else {
-																											status = false;
-																											if (colorX > 0)// RFO
-																												colorX -= 2;
-																											else {
-																												timer.stop();
-																												sumItem.setText(
-																														"TOQUE EL BOTÓN PARA EXPORTAR EL RESULTADO");
-																												// bFI
-																												colorX = 255;
-																												sumItem.setForeground(
-																														new Color(
-																																0,
-																																0,
-																																0,
-																																colorX));
-																												// export
-																												expBtn.setVisible(
-																														true);
-																											}
-																										}
-																									}
-																								});
-																						timer.start();
-																					}
-																				}
-																			}
-																		});
-																		timer.start();
-																	}
-																}
-															}
-														});
-														timer.start();
-													} // else 1
-												} // else 2
-											}
-										});
-										timer.start();
-									} // else 1
-								} // else 2
-							}
-						});
-						timer.start();
+				switch (order) {
+				case 0: {// details start
+					if (totalVenta == 0) {
+						sumItem.setText("USTED NO VENDIÓ NADA");
+						sumItem.setBounds(0, 240, 650, 550);
+					} else {
+						sumItem.setText("USTED VENDIÓ R$" + totalVenta + "\n\nDIVIDIENDO EN " + nbVentas()
+								+ " VENTA(S)\n\n" + "CON UN PROMEDIO DE R$"
+								+ (nbVentas() == 0 ? 0 : totalVenta / nbVentas()) + " POR VENTA");
+						sumItem.setBounds(0, 200, 650, 550);
 					}
+					if (colorX < 254 && status)// Details fade in
+						colorX++;
+					else {
+						status = false;
+						if (colorX > 0)// Details fade out
+							colorX -= 2;
+						else
+							order++;
+					}
+					break;
+				}
+				case 1: {// gastos start
+					if (gastosT == 0) {
+						sumItem.setBounds(0, 240, 650, 550);
+						sumItem.setText("NO TIENES GASTOS!");
+					} else {
+						sumItem.setText("TIENES EN TOTAL R$" + gastosT + " COMO GASTOS\n\n" + "DIVIDIDO POR "
+								+ nbGastos() + " COSA(S)\n\n" + "CON UN PROMEDIO DE R$"
+								+ (nbGastos() == 0 ? 0 : gastosT / nbGastos()) + "\n\n" + "DETALLADO COMO:\n"
+								+ gastosDetalles());
+						sumItem.setBounds(0, 140, 650, 550);
+					}
+					if (colorX < 254 && !status)// gastos fade in
+						colorX++;
+					else {
+						status = true;
+						if (colorX > 0)// gastos fade out
+							colorX -= 2;
+						else
+							order++;
+					}
+					break;
+				}
+				case 2: {// agg start
+					if (agregadoT == 0) {
+						sumItem.setText("NO TIENES AGREGADOS!");
+						sumItem.setBounds(0, 240, 650, 550);
+					} else {
+						sumItem.setText("TIENES EN TOTAL R$" + agregadoT + " COMO AGREGADOS\n\n" + "DIVIDIDO POR "
+								+ nbAgregados() + " COSA(S)\n\n" + "CON UN PROMEDIO DE R$"
+								+ (nbAgregados() == 0 ? 0 : agregadoT / nbAgregados()) + "\n\n" + "DETALLADO COMO:\n"
+								+ agregadoDetalles());
+						sumItem.setBounds(0, 140, 650, 550);
+					}
+					if (colorX < 254 && status)// agg fade in
+						colorX++;
+					else {
+						status = false;
+						if (colorX > 0)// agg fade out
+							colorX -= 2;
+						else
+							order++;
+					}
+					break;
+				}
+				case 3: {// SUMMARY start
+					sumItem.setBounds(0, 100, 650, 550);
+					sumItem.setText("PARA RESUMIR\n\n" + "EMPEZAMOS EL DÍA CON R$" + initialDay.getText()
+							+ "\n\nY VENDIMOS R$" + totalVenta + "\n\nY GASTO R$" + gastosT + "\n\nY AGREGÓ R$"
+							+ agregadoT + "\n\nQUE TERMINARÁ CON R$" + totalO + " EN TOTAL");
+					if (colorX < 254 && !status)// summ fade in
+						colorX++;
+					else {
+						status = true;
+						if (colorX > 0)// agg fade out
+							colorX -= 2;
+						else
+							order++;
+					}
+					break;
+				}
+				case 4: {// diferrence
+					sumItem.setBounds(0, 200, 650, 550);
+					if (totalO == totalCaja)
+						sumItem.setText("LA CAJA DIO BIEN\n\n" + "NO HAY DIFERENCIA\n\n" + ":)");
+					else
+						sumItem.setText("LA CAJA NO DIO BIEN\n\n" + "PARECE QUE "
+								+ diffResult[1].getText().toUpperCase() + "\n\nREVISA LOS BOLETOS Y LA CAJA");
+					// diferrence fade in
+					if (colorX < 254 && status)
+						colorX += 2;
+					else {
+						status = false;
+						if (colorX > 0)// diferrence fade out
+							colorX -= 2;
+						else
+							order++;
+					}
+					break;
+				}
+				case 5: {// remain for tmrw
+					sumItem.setBounds(0, 200, 650, 550);
+					sumItem.setText("QUEDARÁ PARA MAÑANA APROXIMADAMENTE\n\nR$" + restN);
+					if (colorX < 254 && !status)// remain fade in
+						colorX += 2;
+					else {
+						status = true;
+						if (colorX > 0)// remain fade out
+							colorX -= 2;
+						else
+							order++;
+					}
+					break;
+				}
+				case 6: {// export button
+					sumItem.setBounds(0, 200, 650, 550);
+					sumItem.setText("TOQUE EL BOTÓN PARA EXPORTAR EL RESULTADO");
+					if (colorX < 254)// export label fade in
+						colorX += 2;
+					else {
+						expBtn.setVisible(true);
+						timer.stop();
+					}
+					break;
+				}
+				default:
+					break;
 				}
 			}
-		});
+		};
+		ActionListener wordByWord = new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+
+				switch (order) {
+				case 0: {// details start
+					String[] wordT = { "USTED", " NO", " VENDIÓ", " NADA" };
+					if (totalVenta == 0) {
+						if (wordL < wordT.length) {
+							sumItem.setText(sumItem.getText().concat(wordT[wordL++]));
+							sumItem.setBounds(0, 240, 650, 550);
+						} else {
+							order++;
+							wordL = 0;
+							sumItem.setText("");
+						}
+					} else {
+						String[] wordT2 = { "USTED ", "VENDIÓ", " R$" + totalVenta, "\n\nDIVIDIENDO", " EN ",
+								nbVentas() + " VENTA(S)\n\n", "CON", " UN", " PROMEDIO", " DE",
+								" R$" + (nbVentas() == 0 ? 0 : totalVenta / nbVentas()), " POR", " VENTA", "", "" };
+						sumItem.setBounds(0, 200, 650, 550);
+						if (wordL < wordT2.length) {
+							sumItem.setText(sumItem.getText().concat(wordT2[wordL++]));
+						} else {
+							order++;
+							wordL = 0;
+							sumItem.setText("");
+						}
+					}
+					break;
+				}
+				case 1: {// gastos start
+					String[] wordT = { "USTED", " NO", " TIENE", " GASTOS!" };
+					if (gastosT == 0) {
+						if (wordL < wordT.length) {
+							sumItem.setText(sumItem.getText().concat(wordT[wordL++]));
+							sumItem.setBounds(0, 240, 650, 550);
+						} else {
+							order++;
+							wordL = 0;
+							sumItem.setText("");
+						}
+					} else {
+						String[] wordT2 = { "TIENES ", "EN", " TOTAL", " R$" + gastosT, " COMO", " GASTOS\n",
+								"\nDIVIDIENDO", " EN ", nbGastos() + " COSA(S)\n\n", "CON", " UN", " PROMEDIO", " DE",
+								" R$" + (nbGastos() == 0 ? 0 : gastosT / nbGastos()), "\n\n", " DETALLADO", " COMO:\n",
+								gastosDetalles(), "", "" };
+						sumItem.setBounds(0, 140, 650, 550);
+						if (wordL < wordT2.length) {
+							sumItem.setText(sumItem.getText().concat(wordT2[wordL++]));
+						} else {
+							order++;
+							wordL = 0;
+							sumItem.setText("");
+						}
+					}
+					break;
+				}
+				case 2: {// agg start
+					String[] wordT = { "USTED", " NO", " TIENE", " AGREGADOS!" };
+					if (agregadoT == 0) {
+						if (wordL < wordT.length) {
+							sumItem.setText(sumItem.getText().concat(wordT[wordL++]));
+							sumItem.setBounds(0, 240, 650, 550);
+						} else {
+							order++;
+							wordL = 0;
+							sumItem.setText("");
+						}
+					} else {
+						String[] wordT2 = { "TIENES", " EN", " TOTAL", " R$" + agregadoT, " COMO", " AGREGADOS\n\n",
+								"DIVIDIDO", " POR " + nbAgregados(), " COSA(S)\n\n", "CON", " UN", " PROMEDIO", " DE",
+								" R$" + (nbAgregados() == 0 ? 0 : agregadoT / nbAgregados()) + "\n\n", "DETALLADO",
+								" COMO:\n", agregadoDetalles(), "\n", "\n" };
+						sumItem.setBounds(0, 140, 650, 550);
+						if (wordL < wordT2.length) {
+							sumItem.setText(sumItem.getText().concat(wordT2[wordL++]));
+						} else {
+							order++;
+							wordL = 0;
+							sumItem.setText("");
+						}
+					}
+					break;
+				}
+				case 3: {// SUMMARY start
+					sumItem.setBounds(0, 100, 650, 550);
+					String[] wordT = { "PARA ", "RESUMIR\n\n", " EMPEZAMOS", " EL DÍA", " CON",
+							" R$" + initialDay.getText(), "\n\nY VENDIMOS", " R$" + totalVenta, "\n\nY GASTO",
+							" R$" + gastosT, "\n\nY AGREGÓ", " R$" + agregadoT, "\n\nQUE", " TERMINARÁ", " CON",
+							" R$" + totalO, " EN TOTAL", "", "" };
+					if (wordL < wordT.length) {
+						sumItem.setText(sumItem.getText().concat(wordT[wordL++]));
+					} else {
+						order++;
+						wordL = 0;
+						sumItem.setText("");
+					}
+					break;
+				}
+				case 4: {// diferrence start
+					String[] wordT = { "LA", " CAJA", " DIO", " BIEN\n\n", "NO", " HAY", " DIFERENCIA\n\n", ":)" };
+					if (totalO == totalCaja) {
+						if (wordL < wordT.length) {
+							sumItem.setText(sumItem.getText().concat(wordT[wordL++]));
+							sumItem.setBounds(0, 200, 650, 550);
+						} else {
+							order++;
+							wordL = 0;
+							sumItem.setText("");
+						}
+					} else {
+						String[] wordT2 = { "LA", " CAJA", " NO", " DIO", " BIEN\n\n", "PARECE",
+								" QUE " + diffResult[1].getText().toUpperCase(), "\n\nREVISA", " LOS", " BOLETOS",
+								" Y LA", " CAJA", "", "" };
+						sumItem.setBounds(0, 140, 650, 550);
+						if (wordL < wordT2.length) {
+							sumItem.setText(sumItem.getText().concat(wordT2[wordL++]));
+						} else {
+							order++;
+							wordL = 0;
+							sumItem.setText("");
+						}
+					}
+					break;
+				}
+				case 5: {// remain for tmrw
+					String[] wordT = { "QUEDARÁ", " PARA", " MAÑANA", " APROXIMADAMENTE\n\n", "R$" + restN, "", "" };
+					if (wordL < wordT.length) {
+						sumItem.setText(sumItem.getText().concat(wordT[wordL++]));
+						sumItem.setBounds(0, 200, 650, 550);
+					} else {
+						order++;
+						wordL = 0;
+						sumItem.setText("");
+					}
+					break;
+				}
+				case 6: {// export button
+					String[] wordT = { "TOQUE", " EL", " BOTÓN", " PARA", " EXPORTAR", " EL", " RESULTADO" };
+					if (wordL < wordT.length) {
+						sumItem.setText(sumItem.getText().concat(wordT[wordL++]));
+						sumItem.setBounds(0, 200, 650, 550);
+					} else {
+						order++;
+						expBtn.setVisible(true);
+						timer.stop();
+					}
+					break;
+				}
+				default:
+					timer.stop();
+					break;
+				}
+			}
+		};
+		ActionListener letterByLetter = new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+
+				switch (order) {
+				case 0: {// details start
+					char[] wordT = "USTED NO VENDIÓ NADA\n\n\n\n".toCharArray();
+					if (totalVenta == 0) {
+						if (wordL < wordT.length) {
+							sumItem.setText(sumItem.getText() + wordT[wordL++]);
+							sumItem.setBounds(0, 240, 650, 550);
+						} else {
+							order++;
+							wordL = 0;
+							sumItem.setText("");
+						}
+					} else {
+						char[] wordT2 = ("USTED VENDIÓ R$" + totalVenta + "\n\nDIVIDIENDO EN " + nbVentas()
+								+ " VENTA(S)\n\n" + "CON UN PROMEDIO DE R$"
+								+ (nbVentas() == 0 ? 0 : totalVenta / nbVentas()) + " POR VENTA" + "\n\n\n\n")
+								.toCharArray();
+						sumItem.setBounds(0, 200, 650, 550);
+						if (wordL < wordT2.length) {
+							sumItem.setText(sumItem.getText() + wordT2[wordL++]);
+						} else {
+							order++;
+							wordL = 0;
+							sumItem.setText("");
+						}
+					}
+					break;
+				}
+				case 1: {// gastos start
+					char[] wordT = "USTED NO TIENE GASTOS!\n\n\n\n".toCharArray();
+					if (gastosT == 0) {
+						if (wordL < wordT.length) {
+							sumItem.setText(sumItem.getText() + wordT[wordL++]);
+							sumItem.setBounds(0, 240, 650, 550);
+						} else {
+							order++;
+							wordL = 0;
+							sumItem.setText("");
+						}
+					} else {
+						char[] wordT2 = ("TIENES EN TOTAL R$" + gastosT + " COMO GASTOS\n\n" + "DIVIDIDO POR "
+								+ nbGastos() + " COSA(S)\n\n" + "CON UN PROMEDIO DE R$"
+								+ (nbGastos() == 0 ? 0 : gastosT / nbGastos()) + "\n\n" + "DETALLADO COMO:\n"
+								+ gastosDetalles() + "\n\n\n\n").toCharArray();
+						sumItem.setBounds(0, 140, 650, 550);
+						if (wordL < wordT2.length) {
+							sumItem.setText(sumItem.getText() + (wordT2[wordL++]));
+						} else {
+							order++;
+							wordL = 0;
+							sumItem.setText("");
+						}
+					}
+					break;
+				}
+				case 2: {// agg start
+					char[] wordT = "NO TIENES AGREGADOS!\n\n\n\n".toCharArray();
+					if (agregadoT == 0) {
+						if (wordL < wordT.length) {
+							sumItem.setText(sumItem.getText() + (wordT[wordL++]));
+							sumItem.setBounds(0, 240, 650, 550);
+						} else {
+							order++;
+							wordL = 0;
+							sumItem.setText("");
+						}
+					} else {
+						char[] wordT2 = ("TIENES EN TOTAL R$" + agregadoT + " COMO AGREGADOS\n\n" + "DIVIDIDO POR "
+								+ nbAgregados() + " COSA(S)\n\n" + "CON UN PROMEDIO DE R$"
+								+ (nbAgregados() == 0 ? 0 : agregadoT / nbAgregados()) + "\n\n" + "DETALLADO COMO:\n"
+								+ agregadoDetalles() + "\n\n\n\n").toCharArray();
+						sumItem.setBounds(0, 140, 650, 550);
+						if (wordL < wordT2.length) {
+							sumItem.setText(sumItem.getText() + (wordT2[wordL++]));
+						} else {
+							order++;
+							wordL = 0;
+							sumItem.setText("");
+						}
+					}
+					break;
+				}
+				case 3: {// SUMMARY start
+					sumItem.setBounds(0, 100, 650, 550);
+					char[] wordT = ("PARA RESUMIR\n\n" + "EMPEZAMOS EL DÍA CON R$" + initialDay.getText()
+							+ "\n\nY VENDIMOS R$" + totalVenta + "\n\nY GASTO R$" + gastosT + "\n\nY AGREGÓ R$"
+							+ agregadoT + "\n\nQUE TERMINARÁ CON R$" + totalO + " EN TOTAL" + "\n\n\n\n").toCharArray();
+					if (wordL < wordT.length) {
+						sumItem.setText(sumItem.getText() + (wordT[wordL++]));
+					} else {
+						order++;
+						wordL = 0;
+						sumItem.setText("");
+					}
+					break;
+				}
+				case 4: {// diferrence start
+					if (totalO == totalCaja) {
+						char[] wordT = "LA CAJA DIO BIEN\n\n NO HAY DIFERENCIA\n\n:)".toCharArray();
+						if (wordL < wordT.length) {
+							sumItem.setText(sumItem.getText() + (wordT[wordL++]));
+							sumItem.setBounds(0, 200, 650, 550);
+						} else {
+							order++;
+							wordL = 0;
+							sumItem.setText("");
+						}
+					} else {
+						char[] wordT2 = ("LA CAJA NO DIO BIEN\n\n" + "PARECE QUE "
+								+ diffResult[1].getText().toUpperCase() + "\n\nREVISA LOS BOLETOS Y LA CAJA"
+								+ "\n\n\n\n").toCharArray();
+						sumItem.setBounds(0, 140, 650, 550);
+						if (wordL < wordT2.length) {
+							sumItem.setText(sumItem.getText() + (wordT2[wordL++]));
+						} else {
+							order++;
+							wordL = 0;
+							sumItem.setText("");
+						}
+					}
+					break;
+				}
+				case 5: {// remain for tmrw
+					char[] wordT = ("QUEDARÁ PARA MAÑANA APROXIMADAMENTE\n\nR$" + restN + "\n\n\n\n").toCharArray();
+					if (wordL < wordT.length) {
+						sumItem.setText(sumItem.getText() + (wordT[wordL++]));
+						sumItem.setBounds(0, 200, 650, 550);
+					} else {
+						order++;
+						wordL = 0;
+						sumItem.setText("");
+					}
+					break;
+				}
+				case 6: {// export button
+					char[] wordT = "TOQUE EL BOTÓN PARA EXPORTAR EL RESULTADO\n\n\n\n".toCharArray();
+					if (wordL < wordT.length) {
+						sumItem.setText(sumItem.getText() + (wordT[wordL++]));
+						sumItem.setBounds(0, 200, 650, 550);
+					} else {
+						order++;
+						wordL = 0;
+						expBtn.setVisible(true);
+						timer.stop();
+					}
+					break;
+				}
+				default:
+					timer.stop();
+					break;
+				}
+			}
+		};
+
+		if (effChooser == 0) {
+			// Speed
+			if (conf[6] == null || conf[6].equals("1"))
+				speedValue = 15;
+			else if (conf[6].equals("0"))
+				speedValue = 20;
+			else
+				speedValue = 1;
+			timer = new Timer(speedValue, fadeTimer);
+		} else if (effChooser == 1) {
+			// Speed
+			if (conf[6] == null || conf[6].equals("1"))
+				speedValue = 400;
+			else if (conf[6].equals("0"))
+				speedValue = 500;
+			else
+				speedValue = 300;
+			timer = new Timer(speedValue, wordByWord);
+		} else {
+			// Speed
+			if (conf[6] == null || conf[6].equals("1"))
+				speedValue = 150;
+			else if (conf[6].equals("0"))
+				speedValue = 300;
+			else
+				speedValue = 50;
+			timer = new Timer(speedValue, letterByLetter);
+		}
 		timer.start();
 
 		// If close stop the timer
 		sum.addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent we) {
 				try {
+					colorX = 0;
 					timer.stop();
 					Runtime.getRuntime().exec("taskkill /f /im java.exe");
 
@@ -990,6 +1309,7 @@ public class Reales extends JFrame {
 		sum.setVisible(true);
 	}
 
+	// Save the summary of the day
 	private void exBtn() {
 		try {
 			String currentpath = System.getProperty("user.dir");
@@ -997,39 +1317,46 @@ public class Reales extends JFrame {
 			tempFile1.mkdir();
 			File tempFile2 = new File(tempFile1 + "\\" + monthS);
 			tempFile2.mkdir();
-			File newFile = new File(tempFile2, titleName() + " "+ dayS + " " + dayN + "-" + "reales.txt");
+			File newFile = new File(tempFile2, titleName() + " " + dayS + " " + dayN + "-" + "reales.txt");
 			FileWriter savedF = new FileWriter(newFile);
-			savedF.write(titleName() + ": SUMARIO POR EL DIA " + dayS + " " + dayN + "-" + monthS + "-" + yearS
+			savedF.write(titleName() + " - SUMARIO POR EL DIA " + dayS + " " + dayN + "-" + monthS + "-" + yearS
 					+ System.lineSeparator() + System.lineSeparator());
-			savedF.write("VENTAS: USTED VENDIÓ R$" + totalVenta + ", DIVIDIENDO EN " + nbVentas() + " VENTAS, "
-					+ "CON UN PROMEDIO DE R$" + (nbVentas() == 0 ? 0 : totalVenta / nbVentas()) + " POR CADA VENTA."
-					+ System.lineSeparator());
+			if (totalVenta == 0)
+				savedF.write("*VENTAS:\nUSTED NO VENDIÓ NADA." + System.lineSeparator());
+			else
+				savedF.write("*VENTAS:\nUSTED VENDIÓ R$" + totalVenta + ", DIVIDIENDO EN " + nbVentas() + " VENTA(S), "
+						+ "CON UN PROMEDIO DE R$" + (nbVentas() == 0 ? 0 : totalVenta / nbVentas()) + " POR VENTA."
+						+ System.lineSeparator());
 			if (gastosT == 0)// GASTOS SAVE
-				savedF.write(System.lineSeparator() + "GASTOS: NO TIENES GASTOS!" + System.lineSeparator());
+				savedF.write(System.lineSeparator() + "*GASTOS:\nNO TIENES GASTOS!" + System.lineSeparator());
 			else
-				savedF.write(System.lineSeparator() + "GASTOS: TIENES EN TOTAL R$" + gastosT + " COMO GASTOS, "
-						+ "DIVIDIDO POR " + nbGastos() + " COSAS, " + "CON UN PROMEDIO DE R$"
+				savedF.write(System.lineSeparator() + "*GASTOS:\nTIENES EN TOTAL R$" + gastosT + " COMO GASTOS, "
+						+ "DIVIDIDO POR " + nbGastos() + " COSA(S), " + "CON UN PROMEDIO DE R$"
 						+ (nbGastos() == 0 ? 0 : gastosT / nbGastos()) + "." + System.lineSeparator()
-						+ "DETALLADO COMO: " + System.lineSeparator() + gastosDetalles() + System.lineSeparator());
-			if (agregadoT == 0)// AGG SAVE
-				savedF.write(System.lineSeparator() + "AGREGADOS: NO TIENES AGREGADOS!" + System.lineSeparator());
-			else
-				savedF.write(System.lineSeparator() + "AGREGADOS: TIENES EN TOTAL R$" + agregadoT + " COMO AGREGADOS, "
-						+ "DIVIDIDO POR " + nbAgregados() + " COSAS, " + "CON UN PROMEDIO DE R$"
+						+ "DETALLADO COMO: " + System.lineSeparator() + gastosDetalles());
+			if (agregadoT != 0) {// AGG SAVE if not 0
+				savedF.write(System.lineSeparator() + "*AGREGADOS:\nTIENES EN TOTAL R$" + agregadoT
+						+ " COMO AGREGADOS, " + "DIVIDIDO POR " + nbAgregados() + " COSA(S), " + "CON UN PROMEDIO DE R$"
 						+ (nbAgregados() == 0 ? 0 : agregadoT / nbAgregados()) + "." + System.lineSeparator()
-						+ "DETALLADO COMO: " + System.lineSeparator() + agregadoDetalles() + System.lineSeparator());
-			savedF.write(System.lineSeparator() + "PARA RESUMIR: " + "EMPEZAMOS EL DÍA CON R$" + initialDay.getText()
-					+ ", VENDIMOS R$" + totalVenta + ", GASTO R$" + gastosT + ", AGREGÓ R$" + agregadoT
-					+ " QUE TERMINARÁ CON R$" + totalO + " EN TOTAL." + System.lineSeparator());
+						+ "DETALLADO COMO: " + System.lineSeparator() + agregadoDetalles());
+				savedF.write(System.lineSeparator() + "*PARA RESUMIR:\n" + "EMPEZAMOS EL DÍA CON R$"
+						+ initialDay.getText() + "\nVENDIMOS R$" + totalVenta + "\nGASTO R$" + gastosT + "\nAGREGÓ R$"
+						+ agregadoT + "\nQUE TERMINARÁ CON R$" + totalO + " EN TOTAL." + "\nCON UN R$"
+						+ panelCnum[10].getText() + " COMO PIX" + System.lineSeparator());
+			} else
+				savedF.write(System.lineSeparator() + "*PARA RESUMIR:\n" + "EMPEZAMOS EL DÍA CON R$"
+						+ initialDay.getText() + "\nVENDIMOS R$" + totalVenta + "\nGASTO R$" + gastosT
+						+ "\nQUE TERMINARÁ CON R$" + totalO + " EN TOTAL" + "\nCON UN R$" + panelCnum[10].getText()
+						+ " COMO PIX." + System.lineSeparator());
 			if (totalO == totalCaja)
-				savedF.write(System.lineSeparator() + "LA CAJA DIO BIEN, " + "NO HAY DIFERENCIA" + ":)"
+				savedF.write(System.lineSeparator() + "*LA CAJA DIO BIEN, " + "NO HAY DIFERENCIA" + ":)"
 						+ System.lineSeparator());
 			else
-				savedF.write(System.lineSeparator() + "LA CAJA NO DIO BIEN, " + "PARECE QUE "
+				savedF.write(System.lineSeparator() + "*LA CAJA NO DIO BIEN, " + "PARECE QUE "
 						+ diffResult[1].getText().toUpperCase() + "." + System.lineSeparator());
-			savedF.write(System.lineSeparator() + "QUEDARÁ PARA MAÑANA APROXIMADAMENTE " + "R$" + restN + "."
+			savedF.write(System.lineSeparator() + "*QUEDARÁ PARA MAÑANA APROXIMADAMENTE " + "R$" + restN + "."
 					+ System.lineSeparator());
-			savedF.write(System.lineSeparator() + "GRACIAS Y HASTA MAÑANA :) ");
+			savedF.write(System.lineSeparator() + "*GRACIAS Y HASTA MAÑANA :) ");
 			savedF.close();
 
 			JOptionPane opt = new JOptionPane("SALVADO CON ÉXITO, GRACIAS", JOptionPane.INFORMATION_MESSAGE);
@@ -1051,18 +1378,21 @@ public class Reales extends JFrame {
 		}
 	}
 
+	// Detailling the agregados
 	private String agregadoDetalles() {
 		String aggString = "";
 		int num = 1;
 		for (int i = 8; i < 16; i++)
 			if (First.isNumeric(agregadoTable[i].getText())) {
-				aggString += num + "-R$" + agregadoTable[i].getText() + " -> "
-						+ (agregadoTable[i - 8].getText().isBlank() ? "XXX" : agregadoTable[i - 8].getText()) + "\n";
+				aggString += num + "- "
+						+ (agregadoTable[i - 8].getText().isBlank() ? "XXX" : agregadoTable[i - 8].getText()) + " -> R$"
+						+ agregadoTable[i].getText() + "\n";
 				num++;
 			}
 		return aggString;
 	}
 
+	// Calculate the nbrs of agregados
 	private int nbAgregados() {
 		int agregado = 0;
 		for (int i = 8; i < 16; i++)
@@ -1071,18 +1401,21 @@ public class Reales extends JFrame {
 		return agregado;
 	}
 
+	// Detailling the gastos
 	private String gastosDetalles() {
 		String gasString = "";
 		int num = 1;
 		for (int i = 8; i < 16; i++)
 			if (First.isNumeric(gastosTable[i].getText())) {
-				gasString += num + "-R$" + gastosTable[i].getText() + " -> "
-						+ (gastosTable[i - 8].getText().isBlank() ? "XXX" : gastosTable[i - 8].getText()) + "\n";
+				gasString += num + "- "
+						+ (gastosTable[i - 8].getText().isBlank() ? "XXX" : gastosTable[i - 8].getText()) + " -> R$"
+						+ gastosTable[i].getText() + "\n";
 				num++;
 			}
 		return gasString;
 	}
 
+	// Calculate the nbrs of gastos
 	private int nbGastos() {
 		int gastos = 0;
 		for (int i = 8; i < 16; i++)
@@ -1091,6 +1424,7 @@ public class Reales extends JFrame {
 		return gastos;
 	}
 
+	// Calculate the nbrs of ventas
 	private int nbVentas() {
 		int ventas = 0;
 		for (int i = 0; i < 6; i++)
@@ -1100,6 +1434,7 @@ public class Reales extends JFrame {
 		return ventas;
 	}
 
+	// Optimal resolution
 	private void opResolution(JButton clearEverthing, JButton pesosF, JButton notasF, JButton newDay, JMenuItem resoD,
 			JButton aggPanel, JButton gastosPanel) {
 		if (width > 1800 && height > 1000)
@@ -1112,6 +1447,7 @@ public class Reales extends JFrame {
 			resXP(resoD, notasF, pesosF, newDay, clearEverthing, gastosPanel, aggPanel);
 	}
 
+	// Gastos frame if there is more than 4
 	private void gastosFrame(ArrayList<String> keywords, JButton notasF, JButton pesosF, JButton newDay,
 			JButton clearEverthing, JMenuItem resoD, JButton gastosPanel) {
 		JFrame gastosFrame = new JFrame();
@@ -1155,6 +1491,7 @@ public class Reales extends JFrame {
 		gastosFrame.setVisible(true);
 	}
 
+	// Agregados frame if there is more than 4
 	private void aggFrame(ArrayList<String> keywords, JButton notasF, JButton pesosF, JButton newDay,
 			JButton clearEverthing, JMenuItem resoD, JButton gastosPanel) {
 		JFrame aggFrame = new JFrame();
@@ -1198,6 +1535,7 @@ public class Reales extends JFrame {
 		aggFrame.setVisible(true);
 	}
 
+	// Configuration tab
 	private void confFrame(String[] conf, JButton notasF, JButton pesosF, JButton newDay, JButton clearEverthing,
 			JMenuItem hideBtn, JMenuItem resoD, JButton gastosPanel, JButton aggPanel) {
 		JFrame temp = new JFrame();
@@ -1395,6 +1733,37 @@ public class Reales extends JFrame {
 					btnsHideShow3.setText("SI");
 			}
 		});
+		// OP6 slider speed summary
+		JLabel op6 = new JLabel("VELOCIDAD DE ANIMACIÓN");
+		op6.setFont(First.myFont);
+		op6.setBounds(50, 370, 300, 40);
+		JLabel speedValue = new JLabel("MEDIANO");
+		speedValue.setBounds(415, 390, 80, 40);
+		speedValue.setFont(First.myFontXS);
+		JSlider speedSumm = new JSlider();
+		speedSumm.setBackground(First.grisD);
+		speedSumm.setBounds(415, 360, 80, 40);
+		speedSumm.setMaximum(2);
+		speedSumm.setMinimum(0);
+		speedSumm.setMajorTickSpacing(1);
+		if (conf[6] == null || conf[6].equals("1")) {
+			speedValue.setText("MEDIANO");
+			speedSumm.setValue(1);
+		} else if (conf[6].equals("0")) {
+			speedSumm.setValue(0);
+			speedValue.setText("LENTO");
+		} else {
+			speedSumm.setValue(2);
+			speedValue.setText("RÁPIDO");
+		}
+		speedSumm.addChangeListener(e -> {
+			if (speedSumm.getValue() == 0)
+				speedValue.setText("LENTO");
+			else if (speedSumm.getValue() == 1)
+				speedValue.setText("MEDIANO");
+			else
+				speedValue.setText("RÁPIDO");
+		});
 
 		// Bottom line
 		JButton defSet = new JButton("POR DEFECTO");
@@ -1481,6 +1850,7 @@ public class Reales extends JFrame {
 					savedF.write(op2C.getSelectedIndex() + System.lineSeparator());
 					savedF.write(btnsHideShow3.isSelected() + System.lineSeparator());
 					savedF.write(conf[5] + System.lineSeparator());
+					savedF.write(speedSumm.getValue() + System.lineSeparator());
 					savedF.close();
 				} catch (Exception e2) {
 				}
@@ -1511,11 +1881,15 @@ public class Reales extends JFrame {
 		temp.add(op4);
 		temp.add(op5);
 		temp.add(btnsHideShow3);
+		temp.add(op6);
+		temp.add(speedSumm);
+		temp.add(speedValue);
 		temp.add(defSet);
 		temp.add(save);
 		temp.setVisible(true);
 	}
 
+	// Hide/show the buttons
 	private void hideBtn(JButton notasF, JButton pesosF, JButton newDay, JButton clearEverthing, JMenuItem hideBtn) {
 		if (pesosF.isShowing()) {
 			pesosF.hide();
@@ -1586,7 +1960,7 @@ public class Reales extends JFrame {
 				savedF.write(gastosTable[i].getText() + System.lineSeparator());
 			for (int i = 0; i < 16; i++)
 				savedF.write(agregadoTable[i].getText() + System.lineSeparator());
-			for (int i = 0; i < 10; i++)
+			for (int i = 0; i < 11; i++)
 				savedF.write(panelCnum[i].getText() + System.lineSeparator());
 			savedF.close();
 		} catch (Exception e) {
@@ -1598,7 +1972,7 @@ public class Reales extends JFrame {
 		BufferedReader dataOpened = null;
 		String line = "";
 		int z = 0;
-		String numbers[] = new String[164];
+		String numbers[] = new String[165];
 		try {
 			dataOpened = new BufferedReader(new FileReader(new File("cedros.txt")));
 			while ((line = dataOpened.readLine()) != null) {
@@ -1623,7 +1997,7 @@ public class Reales extends JFrame {
 				agregadoTable[i].setText(numbers[z]);
 				z++;
 			}
-			for (int i = 0; i < 10; i++) {
+			for (int i = 0; i < 11; i++) {
 				panelCnum[i].setText(numbers[z]);
 				z++;
 			}
@@ -1693,7 +2067,7 @@ public class Reales extends JFrame {
 		}
 		if (conf[4] == null || conf[4].equals("false"))
 			saveProgress();
-		for (int i = 0; i < 10; i++)// Caja empty values 0
+		for (int i = 0; i < 11; i++)// Caja empty values 0
 			if (!First.isNumeric(panelCnum[i].getText()))
 				panelCnum[i].setText(0 + "");
 		if (!First.isNumeric(initialDay.getText()))// initial of the day 0
@@ -2330,6 +2704,7 @@ public class Reales extends JFrame {
 		tf.addFocusListener(textFocus);
 	}
 
+	// Resolution X-small
 	private void resXP(JMenuItem resoD, JButton notasF, JButton pesosF, JButton newDay, JButton clearEverthing,
 			JButton gastosPanel, JButton aggPanel) {
 		this.setSize(1000, 600);
@@ -2401,8 +2776,8 @@ public class Reales extends JFrame {
 			agregadoTable[i].setFont(First.myFontS);
 		}
 		for (int i = 0; i < 10; i++) {
-			panelFoto[i].setBounds(430 + 50 * i, 260, 50, 40);
-			panelCnum[i].setBounds(430 + 50 * i, 300, 50, 40);
+			panelFoto[i].setBounds(400 + 50 * i, 260, 50, 40);
+			panelCnum[i].setBounds(400 + 50 * i, 300, 50, 40);
 			panelCnum[i].setFont(First.myFont);
 			switch (i) {
 			case 0:
@@ -2439,9 +2814,15 @@ public class Reales extends JFrame {
 				break;
 			}
 		}
-		aggBtn[0].setBounds(430, 240, 50, 20);
-		aggBtn[1].setBounds(480, 240, 50, 20);
-		total[7].setBounds(430, 340, 500, 40);
+		plusSymbol.setBounds(900, 275, 50, 50);
+		plusSymbol.setFont(First.myFont);
+		panelFoto[10].setIcon(new ImageIcon(getScaledImage(pixI.getImage(), 45, 35)));
+		panelFoto[10].setBounds(915, 260, 50, 40);
+		panelCnum[10].setBounds(915, 300, 50, 40);
+		panelCnum[10].setFont(First.myFont);
+		aggBtn[0].setBounds(400, 240, 50, 20);
+		aggBtn[1].setBounds(450, 240, 50, 20);
+		total[7].setBounds(400, 340, 500, 40);
 		diffResult[0].setBounds(500, 430, 150, 35);
 		diffResult[1].setBounds(500, 464, 150, 35);
 		newDay.setBounds(750, 430, 150, 45);
@@ -2461,6 +2842,7 @@ public class Reales extends JFrame {
 		clearEverthing.setIcon(new ImageIcon(getScaledImage(clear.getImage(), 50, 50)));
 	}
 
+	// Resolution small
 	private void resP(JMenuItem resoD, JButton notasF, JButton pesosF, JButton newDay, JButton clearEverthing,
 			JButton gastosPanel, JButton aggPanel) {
 		this.setSize(1300, 700);
@@ -2570,6 +2952,12 @@ public class Reales extends JFrame {
 				break;
 			}
 		}
+		plusSymbol.setBounds(1182, 335, 50, 50);
+		plusSymbol.setFont(First.myFont);
+		panelFoto[10].setIcon(new ImageIcon(getScaledImage(pixI.getImage(), 55, 35)));
+		panelFoto[10].setBounds(1200, 320, 60, 40);
+		panelCnum[10].setBounds(1200, 360, 60, 40);
+		panelCnum[10].setFont(First.myFont);
 		aggBtn[0].setBounds(580, 300, 60, 20);
 		aggBtn[1].setBounds(640, 300, 60, 20);
 		total[7].setBounds(580, 400, 600, 40);
@@ -2592,6 +2980,7 @@ public class Reales extends JFrame {
 		clearEverthing.setIcon(new ImageIcon(getScaledImage(clear.getImage(), 60, 60)));
 	}
 
+	// Resolution meduim
 	private void resM(JMenuItem resoD, JButton notasF, JButton pesosF, JButton newDay, JButton clearEverthing,
 			JButton gastosPanel, JButton aggPanel) {
 		this.setSize(1500, 800);
@@ -2662,6 +3051,7 @@ public class Reales extends JFrame {
 			agregadoTable[i].setBounds(1330, 100 + 50 * (i - 8), 70, 50);
 			agregadoTable[i].setFont(First.myFontS);
 		}
+		// Caja
 		for (int i = 0; i < 10; i++) {
 			panelFoto[i].setBounds(640 + 70 * i, 380, 70, 50);
 			panelCnum[i].setBounds(640 + 70 * i, 430, 70, 50);
@@ -2701,6 +3091,12 @@ public class Reales extends JFrame {
 				break;
 			}
 		}
+		plusSymbol.setBounds(1341, 405, 50, 50);
+		plusSymbol.setFont(First.myFont);
+		panelFoto[10].setIcon(new ImageIcon(getScaledImage(pixI.getImage(), 65, 45)));
+		panelFoto[10].setBounds(1360, 380, 70, 50);
+		panelCnum[10].setBounds(1360, 430, 70, 50);
+		panelCnum[10].setFont(First.myFont);
 		aggBtn[0].setBounds(640, 351, 70, 30);
 		aggBtn[1].setBounds(710, 351, 70, 30);
 		total[7].setBounds(640, 480, 700, 50);
@@ -2723,6 +3119,7 @@ public class Reales extends JFrame {
 		clearEverthing.setIcon(new ImageIcon(getScaledImage(clear.getImage(), 70, 70)));
 	}
 
+	// Resolution large
 	private void resG(JMenuItem resoD, JButton notasF, JButton pesosF, JButton newDay, JButton clearEverthing,
 			JButton gastosPanel, JButton aggPanel) {
 		this.setSize(1820, 980);
@@ -2833,6 +3230,12 @@ public class Reales extends JFrame {
 				break;
 			}
 		}
+		plusSymbol.setBounds(1602, 480, 80, 80);
+		plusSymbol.setFont(First.myFont);
+		panelFoto[10].setIcon(new ImageIcon(getScaledImage(pixI.getImage(), 75, 55)));
+		panelFoto[10].setBounds(1620, 470, 80, 60);
+		panelCnum[10].setBounds(1620, 530, 80, 60);
+		panelCnum[10].setFont(First.myFont);
 		total[7].setBounds(800, 590, 800, 60);
 		aggBtn[0].setBounds(800, 432, 80, 40);
 		aggBtn[1].setBounds(880, 432, 80, 40);
@@ -2881,6 +3284,7 @@ public class Reales extends JFrame {
 		}
 	}
 
+	// Resize the image w/o cropping
 	private Image getScaledImage(Image srcImg, int w, int h) {
 		BufferedImage resizedImg = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g2 = resizedImg.createGraphics();
@@ -2892,6 +3296,7 @@ public class Reales extends JFrame {
 		return resizedImg;
 	}
 
+	// Auto-complete words for gastos and agregados
 	private ArrayList<String> gastosYagregados() {
 		ArrayList<String> keywords = new ArrayList<String>(61);
 		keywords.add("narjes");
