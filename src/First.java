@@ -24,6 +24,11 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.net.URL;
+import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.ImageIcon;
@@ -71,11 +76,26 @@ public class First extends JFrame {
 	private URL setting = getClass().getResource("images/setting.png");
 	private ImageIcon settingI = new ImageIcon(setting);
 
+	static Runnable itsAlmostTime() {
+		final Runnable timeOut = new Runnable() {
+			public void run() {
+				JOptionPane.showMessageDialog(null, "<html><div font-weight: bold>YA ES CASI LA HORA DE CERRAR!<br><br>"
+						+ "HAZ LA CAJA!<br></div></html>", "ATENCIÓN", JOptionPane.WARNING_MESSAGE);
+			}
+		};
+		return timeOut;
+	}
+
 	public static void main(String[] args) {
 		new First();
 	}
 
 	First() {
+		// Notification when its time to end the day
+		long delay = ChronoUnit.MILLIS.between(LocalTime.now(), LocalTime.of(17, 30, 00));
+		ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+		scheduler.schedule(itsAlmostTime(), delay, TimeUnit.MILLISECONDS);
+
 		// Open Conf
 		BufferedReader dataOpened = null;
 		String line = "";

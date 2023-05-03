@@ -21,7 +21,12 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.net.URL;
+import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.ImageIcon;
@@ -95,6 +100,11 @@ public class FaturaR extends JFrame {
 	private MouseListener m1, m2, m3;
 
 	FaturaR() {
+		// Notification when its time to end the day
+		long delay = ChronoUnit.MILLIS.between(LocalTime.now(), LocalTime.of(17, 30, 00));
+		ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+		scheduler.schedule(First.itsAlmostTime(), delay, TimeUnit.MILLISECONDS);
+
 		// Btns
 		JButton cambioN = new JButton("<html><center>" + "MÉTODO" + "<br>" + "SMART" + "</font></center></html>");
 		JButton cambioN2 = new JButton("<html><center>" + "MÉTODO" + "<br>" + "POPULAR" + "</font></center></html>");

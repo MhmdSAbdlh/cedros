@@ -34,8 +34,13 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
+import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.ImageIcon;
@@ -143,6 +148,11 @@ public class Pesos extends JFrame {
 	};
 
 	Pesos() {
+		// Notification when its time to end the day
+		long delay = ChronoUnit.MILLIS.between(LocalTime.now(), LocalTime.of(17, 30, 00));
+		ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+		scheduler.schedule(First.itsAlmostTime(), delay, TimeUnit.MILLISECONDS);
+
 		// Buttons
 		JMenuItem hideBtn = new JMenuItem("ESCONDER LOS BOTONES");
 		JButton clearEverthing = new JButton();
@@ -824,10 +834,14 @@ public class Pesos extends JFrame {
 						sumItem.setText("USTED NO VENDIÓ NADA");
 						sumItem.setBounds(0, 240, 650, 550);
 					} else {
-						sumItem.setText("USTED VENDIÓ $" + totalVenta + "\n\nDIVIDIENDO EN " + nbVentas()
-								+ " VENTA(S)\n\n" + "CON UN PROMEDIO DE $"
-								+ (nbVentas() == 0 ? 0 : totalVenta / nbVentas()) + " POR VENTA");
-						sumItem.setBounds(0, 200, 650, 550);
+						if (nbVentas() == 1) {
+							sumItem.setText("USTED VENDIÓ UNA VENTA SOLO QUE VALE $" + totalVenta);
+							sumItem.setBounds(0, 240, 650, 550);
+						} else {
+							sumItem.setText("USTED VENDIÓ $" + totalVenta + "\n\nDIVIDIENDO EN " + nbVentas()
+									+ " VENTAS\n\n" + "CON UN PROMEDIO DE $" + totalVenta / nbVentas() + " POR VENTA");
+							sumItem.setBounds(0, 200, 650, 550);
+						}
 					}
 					if (colorX < 254 && status)// Details fade in
 						colorX++;
@@ -845,11 +859,16 @@ public class Pesos extends JFrame {
 						sumItem.setBounds(0, 240, 650, 550);
 						sumItem.setText("NO TIENES GASTOS!");
 					} else {
-						sumItem.setText("TIENES EN TOTAL $" + gastosT + " COMO GASTOS\n\n" + "DIVIDIDO POR "
-								+ nbGastos() + " COSA(S)\n\n" + "CON UN PROMEDIO DE $"
-								+ (nbGastos() == 0 ? 0 : gastosT / nbGastos()) + "\n\n" + "DETALLADO COMO:\n"
-								+ gastosDetalles());
-						sumItem.setBounds(0, 140, 650, 550);
+						if (nbGastos() == 1) {
+							sumItem.setText("TIENES EN TOTAL UN GASTO QUE VALE $" + gastosT + "\n\n"
+									+ "DETALLADO COMO:\n" + gastosDetalles());
+							sumItem.setBounds(0, 220, 650, 550);
+						} else {
+							sumItem.setText("TIENES EN TOTAL $" + gastosT + " COMO GASTOS\n\n" + "DIVIDIDO POR "
+									+ nbGastos() + " COSAS\n\n" + "CON UN PROMEDIO DE $" + gastosT / nbGastos() + "\n\n"
+									+ "DETALLADO COMO:\n" + gastosDetalles());
+							sumItem.setBounds(0, 140, 650, 550);
+						}
 					}
 					if (colorX < 254 && !status)// gastos fade in
 						colorX++;
@@ -867,11 +886,16 @@ public class Pesos extends JFrame {
 						sumItem.setText("NO TIENES AGREGADOS!");
 						sumItem.setBounds(0, 240, 650, 550);
 					} else {
-						sumItem.setText("TIENES EN TOTAL $" + agregadoT + " COMO AGREGADOS\n\n" + "DIVIDIDO POR "
-								+ nbAgregados() + " COSA(S)\n\n" + "CON UN PROMEDIO DE $"
-								+ (nbAgregados() == 0 ? 0 : agregadoT / nbAgregados()) + "\n\n" + "DETALLADO COMO:\n"
-								+ agregadoDetalles());
-						sumItem.setBounds(0, 140, 650, 550);
+						if (nbAgregados() == 1) {
+							sumItem.setText("TIENES EN TOTAL UN AGREGADO QUE VALE $" + agregadoT + "\n\n"
+									+ "DETALLADO COMO:\n" + agregadoDetalles());
+							sumItem.setBounds(0, 220, 650, 550);
+						} else {
+							sumItem.setText("TIENES EN TOTAL $" + agregadoT + " COMO AGREGADOS\n\n" + "DIVIDIDO POR "
+									+ nbAgregados() + " COSAS\n\n" + "CON UN PROMEDIO DE $" + agregadoT / nbAgregados()
+									+ "\n\n" + "DETALLADO COMO:\n" + agregadoDetalles());
+							sumItem.setBounds(0, 140, 650, 550);
+						}
 					}
 					if (colorX < 254 && status)// agg fade in
 						colorX++;
@@ -886,9 +910,14 @@ public class Pesos extends JFrame {
 				}
 				case 3: {// SUMMARY start
 					sumItem.setBounds(0, 100, 650, 550);
-					sumItem.setText("PARA RESUMIR\n\n" + "EMPEZAMOS EL DÍA CON $" + initialDay.getText()
-							+ "\n\nY VENDIMOS $" + totalVenta + "\n\nY GASTO $" + gastosT + "\n\nY AGREGÓ $" + agregadoT
-							+ "\n\nQUE TERMINARÁ CON $" + totalO + " EN TOTAL");
+					if (agregadoT == 0)
+						sumItem.setText("PARA RESUMIR\n\n" + "EMPEZAMOS EL DÍA CON $" + initialDay.getText()
+								+ "\n\nY VENDIMOS $" + totalVenta + "\n\nY GASTO $" + gastosT
+								+ "\n\nQUE TERMINARÁ CON $" + totalO + " EN TOTAL");
+					else
+						sumItem.setText("PARA RESUMIR\n\n" + "EMPEZAMOS EL DÍA CON $" + initialDay.getText()
+								+ "\n\nY VENDIMOS $" + totalVenta + "\n\nY GASTO $" + gastosT + "\n\nY AGREGÓ $"
+								+ agregadoT + "\n\nQUE TERMINARÁ CON $" + totalO + " EN TOTAL");
 					if (colorX < 254 && !status)// summ fade in
 						colorX++;
 					else {
@@ -920,7 +949,7 @@ public class Pesos extends JFrame {
 					break;
 				}
 				case 5: {// remain for tmrw
-					sumItem.setBounds(0, 200, 650, 550);
+					sumItem.setBounds(0, 220, 650, 550);
 					sumItem.setText("QUEDARÁ PARA MAÑANA APROXIMADAMENTE\n\n$" + restN);
 					if (colorX < 254 && !status)// remain fade in
 						colorX += 2;
@@ -956,24 +985,35 @@ public class Pesos extends JFrame {
 
 				switch (order) {
 				case 0: {// details start
-					String[] wordT = { "USTED", " NO", " VENDIÓ", " NADA" };
 					if (totalVenta == 0) {
-						if (wordL < wordT.length) {
+						String[] wordT = { "USTED", " NO", " VENDIÓ", " NADA" };
+						sumItem.setBounds(0, 240, 650, 550);
+						if (wordL < wordT.length)
 							sumItem.setText(sumItem.getText().concat(wordT[wordL++]));
-							sumItem.setBounds(0, 240, 650, 550);
-						} else {
+						else {
+							order++;
+							wordL = 0;
+							sumItem.setText("");
+						}
+					} else if (nbVentas() == 1) {
+						String[] wordT = { "USTED ", "VENDIÓ", " UNA", " VENTA", " QUE", " VALE", " $" + totalVenta, "",
+								"" };
+						sumItem.setBounds(0, 220, 650, 550);
+						if (wordL < wordT.length)
+							sumItem.setText(sumItem.getText().concat(wordT[wordL++]));
+						else {
 							order++;
 							wordL = 0;
 							sumItem.setText("");
 						}
 					} else {
-						String[] wordT2 = { "USTED ", "VENDIÓ", " $" + totalVenta, "\n\nDIVIDIENDO", " EN ",
-								nbVentas() + " VENTA(S)\n\n", "CON", " UN", " PROMEDIO", " DE",
-								" $" + (nbVentas() == 0 ? 0 : totalVenta / nbVentas()), " POR", " VENTA", "", "" };
+						String[] wordT = { "USTED ", "VENDIÓ", " $" + totalVenta, "\n\nDIVIDIENDO", " EN ",
+								nbVentas() + " VENTAS\n\n", "CON", " UN", " PROMEDIO", " DE",
+								" $" + totalVenta / nbVentas(), " POR", " VENTA", "", "" };
 						sumItem.setBounds(0, 200, 650, 550);
-						if (wordL < wordT2.length) {
-							sumItem.setText(sumItem.getText().concat(wordT2[wordL++]));
-						} else {
+						if (wordL < wordT.length)
+							sumItem.setText(sumItem.getText().concat(wordT[wordL++]));
+						else {
 							order++;
 							wordL = 0;
 							sumItem.setText("");
@@ -982,25 +1022,36 @@ public class Pesos extends JFrame {
 					break;
 				}
 				case 1: {// gastos start
-					String[] wordT = { "USTED", " NO", " TIENE", " GASTOS!" };
 					if (gastosT == 0) {
-						if (wordL < wordT.length) {
+						String[] wordT = { "USTED", " NO", " TIENE", " GASTOS!" };
+						sumItem.setBounds(0, 240, 650, 550);
+						if (wordL < wordT.length)
 							sumItem.setText(sumItem.getText().concat(wordT[wordL++]));
-							sumItem.setBounds(0, 240, 650, 550);
-						} else {
+						else {
+							order++;
+							wordL = 0;
+							sumItem.setText("");
+						}
+					} else if (nbGastos() == 1) {
+						String[] wordT = { "TIENES ", "EN", " TOTAL", " UN", " GASTO", " QUE", " VALE", " $" + gastosT,
+								"\n\nDETALLADO", " COMO:\n", gastosDetalles(), "", "" };
+						sumItem.setBounds(0, 220, 650, 550);
+						if (wordL < wordT.length)
+							sumItem.setText(sumItem.getText().concat(wordT[wordL++]));
+						else {
 							order++;
 							wordL = 0;
 							sumItem.setText("");
 						}
 					} else {
-						String[] wordT2 = { "TIENES ", "EN", " TOTAL", " $" + gastosT, " COMO", " GASTOS\n",
-								"\nDIVIDIENDO", " EN ", nbGastos() + " COSA(S)\n\n", "CON", " UN", " PROMEDIO", " DE",
-								" $" + (nbGastos() == 0 ? 0 : gastosT / nbGastos()), "\n\n", " DETALLADO", " COMO:\n",
-								gastosDetalles(), "", "" };
+						String[] wordT = { "TIENES ", "EN", " TOTAL", " $" + gastosT, " COMO", " GASTOS\n",
+								"\nDIVIDIENDO", " EN ", nbGastos() + " COSAS\n\n", "CON", " UN", " PROMEDIO", " DE",
+								" $" + gastosT / nbGastos(), "\n\n", " DETALLADO", " COMO:\n", gastosDetalles(), "",
+								"" };
 						sumItem.setBounds(0, 140, 650, 550);
-						if (wordL < wordT2.length) {
-							sumItem.setText(sumItem.getText().concat(wordT2[wordL++]));
-						} else {
+						if (wordL < wordT.length)
+							sumItem.setText(sumItem.getText().concat(wordT[wordL++]));
+						else {
 							order++;
 							wordL = 0;
 							sumItem.setText("");
@@ -1009,25 +1060,36 @@ public class Pesos extends JFrame {
 					break;
 				}
 				case 2: {// agg start
-					String[] wordT = { "USTED", " NO", " TIENE", " AGREGADOS!" };
 					if (agregadoT == 0) {
-						if (wordL < wordT.length) {
+						String[] wordT = { "USTED", " NO", " TIENE", " AGREGADOS!" };
+						sumItem.setBounds(0, 240, 650, 550);
+						if (wordL < wordT.length)
 							sumItem.setText(sumItem.getText().concat(wordT[wordL++]));
-							sumItem.setBounds(0, 240, 650, 550);
-						} else {
+						else {
+							order++;
+							wordL = 0;
+							sumItem.setText("");
+						}
+					} else if (nbAgregados() == 1) {
+						String[] wordT = { "TIENES ", "EN", " TOTAL", " UN", " AGREGADO", " QUE", " VALE",
+								" $" + agregadoT, "\n\nDETALLADO", " COMO:\n", agregadoDetalles(), "", "" };
+						sumItem.setBounds(0, 220, 650, 550);
+						if (wordL < wordT.length)
+							sumItem.setText(sumItem.getText().concat(wordT[wordL++]));
+						else {
 							order++;
 							wordL = 0;
 							sumItem.setText("");
 						}
 					} else {
-						String[] wordT2 = { "TIENES", " EN", " TOTAL", " $" + agregadoT, " COMO", " AGREGADOS\n\n",
-								"DIVIDIDO", " POR " + nbAgregados(), " COSA(S)\n\n", "CON", " UN", " PROMEDIO", " DE",
-								" $" + (nbAgregados() == 0 ? 0 : agregadoT / nbAgregados()) + "\n\n", "DETALLADO",
-								" COMO:\n", agregadoDetalles(), "\n", "\n" };
+						String[] wordT = { "TIENES", " EN", " TOTAL", " $" + agregadoT, " COMO", " AGREGADOS\n\n",
+								"DIVIDIDO", " POR " + nbAgregados(), " COSAS\n\n", "CON", " UN", " PROMEDIO", " DE",
+								" $" + agregadoT / nbAgregados() + "\n\n", "DETALLADO", " COMO:\n", agregadoDetalles(),
+								"\n", "\n" };
 						sumItem.setBounds(0, 140, 650, 550);
-						if (wordL < wordT2.length) {
-							sumItem.setText(sumItem.getText().concat(wordT2[wordL++]));
-						} else {
+						if (wordL < wordT.length)
+							sumItem.setText(sumItem.getText().concat(wordT[wordL++]));
+						else {
 							order++;
 							wordL = 0;
 							sumItem.setText("");
@@ -1036,39 +1098,53 @@ public class Pesos extends JFrame {
 					break;
 				}
 				case 3: {// SUMMARY start
-					sumItem.setBounds(0, 100, 650, 550);
-					String[] wordT = { "PARA ", "RESUMIR\n\n", " EMPEZAMOS", " EL DÍA", " CON",
-							" $" + initialDay.getText(), "\n\nY VENDIMOS", " $" + totalVenta, "\n\nY GASTO",
-							" $" + gastosT, "\n\nY AGREGÓ", " $" + agregadoT, "\n\nQUE", " TERMINARÁ", " CON",
-							" $" + totalO, " EN TOTAL", "", "" };
-					if (wordL < wordT.length) {
-						sumItem.setText(sumItem.getText().concat(wordT[wordL++]));
-					} else {
-						order++;
-						wordL = 0;
-						sumItem.setText("");
-					}
-					break;
-				}
-				case 4: {// diferrence start
-					String[] wordT = { "LA", " CAJA", " DIO", " BIEN\n\n", "NO", " HAY", " DIFERENCIA\n\n", ":)" };
-					if (totalCaja == totalO) {
-						if (wordL < wordT.length) {
+					if (agregadoT == 0) {
+						sumItem.setBounds(0, 100, 650, 550);
+						String[] wordT = { "PARA ", "RESUMIR\n\n", " EMPEZAMOS", " EL DÍA", " CON",
+								" $" + initialDay.getText(), "\n\nY VENDIMOS", " $" + totalVenta, "\n\nY GASTO",
+								" $" + gastosT, "\n\nQUE", " TERMINARÁ", " CON", " $" + totalO, " EN TOTAL", "", "" };
+						if (wordL < wordT.length)
 							sumItem.setText(sumItem.getText().concat(wordT[wordL++]));
-							sumItem.setBounds(0, 200, 650, 550);
-						} else {
+						else {
 							order++;
 							wordL = 0;
 							sumItem.setText("");
 						}
 					} else {
-						String[] wordT2 = { "LA", " CAJA", " NO", " DIO", " BIEN\n\n", "PARECE",
+						sumItem.setBounds(0, 150, 650, 550);
+						String[] wordT = { "PARA ", "RESUMIR\n\n", " EMPEZAMOS", " EL DÍA", " CON",
+								" $" + initialDay.getText(), "\n\nY VENDIMOS", " $" + totalVenta, "\n\nY GASTO",
+								" $" + gastosT, "\n\nY AGREGÓ", " $" + agregadoT, "\n\nQUE", " TERMINARÁ", " CON",
+								" $" + totalO, " EN TOTAL", "", "" };
+						if (wordL < wordT.length)
+							sumItem.setText(sumItem.getText().concat(wordT[wordL++]));
+						else {
+							order++;
+							wordL = 0;
+							sumItem.setText("");
+						}
+					}
+					break;
+				}
+				case 4: {// diferrence start
+					if (totalO == totalCaja) {
+						String[] wordT = { "LA", " CAJA", " DIO", " BIEN\n\n", "NO", " HAY", " DIFERENCIA\n\n", ":)" };
+						sumItem.setBounds(0, 220, 650, 550);
+						if (wordL < wordT.length)
+							sumItem.setText(sumItem.getText().concat(wordT[wordL++]));
+						else {
+							order++;
+							wordL = 0;
+							sumItem.setText("");
+						}
+					} else {
+						String[] wordT = { "LA", " CAJA", " NO", " DIO", " BIEN\n\n", "PARECE",
 								" QUE " + diffResult[1].getText().toUpperCase(), "\n\nREVISA", " LOS", " BOLETOS",
 								" Y LA", " CAJA", "", "" };
-						sumItem.setBounds(0, 140, 650, 550);
-						if (wordL < wordT2.length) {
-							sumItem.setText(sumItem.getText().concat(wordT2[wordL++]));
-						} else {
+						sumItem.setBounds(0, 200, 650, 550);
+						if (wordL < wordT.length)
+							sumItem.setText(sumItem.getText().concat(wordT[wordL++]));
+						else {
 							order++;
 							wordL = 0;
 							sumItem.setText("");
@@ -1078,10 +1154,10 @@ public class Pesos extends JFrame {
 				}
 				case 5: {// remain for tmrw
 					String[] wordT = { "QUEDARÁ", " PARA", " MAÑANA", " APROXIMADAMENTE\n\n", "$" + restN, "", "" };
-					if (wordL < wordT.length) {
+					sumItem.setBounds(0, 220, 650, 550);
+					if (wordL < wordT.length)
 						sumItem.setText(sumItem.getText().concat(wordT[wordL++]));
-						sumItem.setBounds(0, 200, 650, 550);
-					} else {
+					else {
 						order++;
 						wordL = 0;
 						sumItem.setText("");
@@ -1090,10 +1166,10 @@ public class Pesos extends JFrame {
 				}
 				case 6: {// export button
 					String[] wordT = { "TOQUE", " EL", " BOTÓN", " PARA", " EXPORTAR", " EL", " RESULTADO" };
-					if (wordL < wordT.length) {
+					sumItem.setBounds(0, 200, 650, 550);
+					if (wordL < wordT.length)
 						sumItem.setText(sumItem.getText().concat(wordT[wordL++]));
-						sumItem.setBounds(0, 200, 650, 550);
-					} else {
+					else {
 						order++;
 						expBtn.setVisible(true);
 						timer.stop();
@@ -1113,25 +1189,35 @@ public class Pesos extends JFrame {
 
 				switch (order) {
 				case 0: {// details start
-					char[] wordT = "USTED NO VENDIÓ NADA\n\n\n\n".toCharArray();
 					if (totalVenta == 0) {
-						if (wordL < wordT.length) {
+						char[] wordT = "USTED NO VENDIÓ NADA\n\n\n\n".toCharArray();
+						sumItem.setBounds(0, 240, 650, 550);
+						if (wordL < wordT.length)
 							sumItem.setText(sumItem.getText() + wordT[wordL++]);
-							sumItem.setBounds(0, 240, 650, 550);
-						} else {
+						else {
+							order++;
+							wordL = 0;
+							sumItem.setText("");
+						}
+					} else if (nbVentas() == 1) {
+						char[] wordT = ("USTED VENDIÓ UNA VENTA SOLO QUE VALE $" + totalVenta + "\n\n\n\n")
+								.toCharArray();
+						sumItem.setBounds(0, 240, 650, 550);
+						if (wordL < wordT.length)
+							sumItem.setText(sumItem.getText() + wordT[wordL++]);
+						else {
 							order++;
 							wordL = 0;
 							sumItem.setText("");
 						}
 					} else {
-						char[] wordT2 = ("USTED VENDIÓ $" + totalVenta + "\n\nDIVIDIENDO EN " + nbVentas()
-								+ " VENTA(S)\n\n" + "CON UN PROMEDIO DE $"
-								+ (nbVentas() == 0 ? 0 : totalVenta / nbVentas()) + " POR VENTA" + "\n\n\n\n")
-								.toCharArray();
+						char[] wordT = ("USTED VENDIÓ $" + totalVenta + "\n\nDIVIDIENDO EN " + nbVentas()
+								+ " VENTAS\n\n" + "CON UN PROMEDIO DE $" + totalVenta / nbVentas() + " POR VENTA"
+								+ "\n\n\n\n").toCharArray();
 						sumItem.setBounds(0, 200, 650, 550);
-						if (wordL < wordT2.length) {
-							sumItem.setText(sumItem.getText() + wordT2[wordL++]);
-						} else {
+						if (wordL < wordT.length)
+							sumItem.setText(sumItem.getText() + wordT[wordL++]);
+						else {
 							order++;
 							wordL = 0;
 							sumItem.setText("");
@@ -1140,25 +1226,35 @@ public class Pesos extends JFrame {
 					break;
 				}
 				case 1: {// gastos start
-					char[] wordT = "USTED NO TIENE GASTOS!\n\n\n\n".toCharArray();
 					if (gastosT == 0) {
-						if (wordL < wordT.length) {
+						char[] wordT = "USTED NO TIENE GASTOS!\n\n\n\n".toCharArray();
+						sumItem.setBounds(0, 240, 650, 550);
+						if (wordL < wordT.length)
 							sumItem.setText(sumItem.getText() + wordT[wordL++]);
-							sumItem.setBounds(0, 240, 650, 550);
-						} else {
+						else {
+							order++;
+							wordL = 0;
+							sumItem.setText("");
+						}
+					} else if (nbGastos() == 1) {
+						char[] wordT = ("TIENES EN TOTAL UN GASTO QUE VALE $" + gastosT + "\n\n" + "DETALLADO COMO:\n"
+								+ gastosDetalles() + "\n\n\n\n").toCharArray();
+						sumItem.setBounds(0, 200, 650, 550);
+						if (wordL < wordT.length)
+							sumItem.setText(sumItem.getText() + (wordT[wordL++]));
+						else {
 							order++;
 							wordL = 0;
 							sumItem.setText("");
 						}
 					} else {
-						char[] wordT2 = ("TIENES EN TOTAL $" + gastosT + " COMO GASTOS\n\n" + "DIVIDIDO POR "
-								+ nbGastos() + " COSA(S)\n\n" + "CON UN PROMEDIO DE $"
-								+ (nbGastos() == 0 ? 0 : gastosT / nbGastos()) + "\n\n" + "DETALLADO COMO:\n"
-								+ gastosDetalles() + "\n\n\n\n").toCharArray();
+						char[] wordT = ("TIENES EN TOTAL $" + gastosT + " COMO GASTOS\n\n" + "DIVIDIDO POR "
+								+ nbGastos() + " COSAS\n\n" + "CON UN PROMEDIO DE $" + gastosT / nbGastos() + "\n\n"
+								+ "DETALLADO COMO:\n" + gastosDetalles() + "\n\n\n\n").toCharArray();
 						sumItem.setBounds(0, 140, 650, 550);
-						if (wordL < wordT2.length) {
-							sumItem.setText(sumItem.getText() + (wordT2[wordL++]));
-						} else {
+						if (wordL < wordT.length)
+							sumItem.setText(sumItem.getText() + (wordT[wordL++]));
+						else {
 							order++;
 							wordL = 0;
 							sumItem.setText("");
@@ -1167,25 +1263,35 @@ public class Pesos extends JFrame {
 					break;
 				}
 				case 2: {// agg start
-					char[] wordT = "NO TIENES AGREGADOS!\n\n\n\n".toCharArray();
 					if (agregadoT == 0) {
-						if (wordL < wordT.length) {
+						char[] wordT = "NO TIENES AGREGADOS!\n\n\n\n".toCharArray();
+						sumItem.setBounds(0, 240, 650, 550);
+						if (wordL < wordT.length)
 							sumItem.setText(sumItem.getText() + (wordT[wordL++]));
-							sumItem.setBounds(0, 240, 650, 550);
-						} else {
+						else {
+							order++;
+							wordL = 0;
+							sumItem.setText("");
+						}
+					} else if (nbAgregados() == 1) {
+						char[] wordT = ("TIENES EN TOTAL UN AGREGADO QUE VALE $" + agregadoT + "\n\n"
+								+ "DETALLADO COMO:\n" + agregadoDetalles() + "\n\n\n\n").toCharArray();
+						sumItem.setBounds(0, 200, 650, 550);
+						if (wordL < wordT.length)
+							sumItem.setText(sumItem.getText() + (wordT[wordL++]));
+						else {
 							order++;
 							wordL = 0;
 							sumItem.setText("");
 						}
 					} else {
-						char[] wordT2 = ("TIENES EN TOTAL $" + agregadoT + " COMO AGREGADOS\n\n" + "DIVIDIDO POR "
-								+ nbAgregados() + " COSA(S)\n\n" + "CON UN PROMEDIO DE $"
-								+ (nbAgregados() == 0 ? 0 : agregadoT / nbAgregados()) + "\n\n" + "DETALLADO COMO:\n"
-								+ agregadoDetalles() + "\n\n\n\n").toCharArray();
+						char[] wordT = ("TIENES EN TOTAL $" + agregadoT + " COMO AGREGADOS\n\n" + "DIVIDIDO POR "
+								+ nbAgregados() + " COSAS\n\n" + "CON UN PROMEDIO DE $" + agregadoT / nbAgregados()
+								+ "\n\n" + "DETALLADO COMO:\n" + agregadoDetalles() + "\n\n\n\n").toCharArray();
 						sumItem.setBounds(0, 140, 650, 550);
-						if (wordL < wordT2.length) {
-							sumItem.setText(sumItem.getText() + (wordT2[wordL++]));
-						} else {
+						if (wordL < wordT.length)
+							sumItem.setText(sumItem.getText() + (wordT[wordL++]));
+						else {
 							order++;
 							wordL = 0;
 							sumItem.setText("");
@@ -1194,38 +1300,53 @@ public class Pesos extends JFrame {
 					break;
 				}
 				case 3: {// SUMMARY start
-					sumItem.setBounds(0, 100, 650, 550);
-					char[] wordT = ("PARA RESUMIR\n\n" + "EMPEZAMOS EL DÍA CON $" + initialDay.getText()
-							+ "\n\nY VENDIMOS $" + totalVenta + "\n\nY GASTO $" + gastosT + "\n\nY AGREGÓ $" + agregadoT
-							+ "\n\nQUE TERMINARÁ CON $" + totalO + " EN TOTAL" + "\n\n\n\n").toCharArray();
-					if (wordL < wordT.length) {
-						sumItem.setText(sumItem.getText() + (wordT[wordL++]));
+					if (agregadoT == 0) {
+						sumItem.setBounds(0, 150, 650, 550);
+						char[] wordT = ("PARA RESUMIR\n\n" + "EMPEZAMOS EL DÍA CON $" + initialDay.getText()
+								+ "\n\nY VENDIMOS $" + totalVenta + "\n\nY GASTO $" + gastosT
+								+ "\n\nQUE TERMINARÁ CON $" + totalO + " EN TOTAL" + "\n\n\n\n").toCharArray();
+						if (wordL < wordT.length)
+							sumItem.setText(sumItem.getText() + (wordT[wordL++]));
+						else {
+							order++;
+							wordL = 0;
+							sumItem.setText("");
+						}
 					} else {
-						order++;
-						wordL = 0;
-						sumItem.setText("");
+						sumItem.setBounds(0, 100, 650, 550);
+						char[] wordT = ("PARA RESUMIR\n\n" + "EMPEZAMOS EL DÍA CON $" + initialDay.getText()
+								+ "\n\nY VENDIMOS $" + totalVenta + "\n\nY GASTO $" + gastosT + "\n\nY AGREGÓ $"
+								+ agregadoT + "\n\nQUE TERMINARÁ CON $" + totalO + " EN TOTAL" + "\n\n\n\n")
+								.toCharArray();
+						if (wordL < wordT.length)
+							sumItem.setText(sumItem.getText() + (wordT[wordL++]));
+						else {
+							order++;
+							wordL = 0;
+							sumItem.setText("");
+						}
 					}
 					break;
 				}
 				case 4: {// diferrence start
 					if (totalO == totalCaja) {
 						char[] wordT = "LA CAJA DIO BIEN\n\n NO HAY DIFERENCIA\n\n:)".toCharArray();
-						if (wordL < wordT.length) {
+						sumItem.setBounds(0, 200, 650, 550);
+						if (wordL < wordT.length)
 							sumItem.setText(sumItem.getText() + (wordT[wordL++]));
-							sumItem.setBounds(0, 200, 650, 550);
-						} else {
+						else {
 							order++;
 							wordL = 0;
 							sumItem.setText("");
 						}
 					} else {
-						char[] wordT2 = ("LA CAJA NO DIO BIEN\n\n" + "PARECE QUE "
+						char[] wordT = ("LA CAJA NO DIO BIEN\n\n" + "PARECE QUE "
 								+ diffResult[1].getText().toUpperCase() + "\n\nREVISA LOS BOLETOS Y LA CAJA"
 								+ "\n\n\n\n").toCharArray();
-						sumItem.setBounds(0, 140, 650, 550);
-						if (wordL < wordT2.length) {
-							sumItem.setText(sumItem.getText() + (wordT2[wordL++]));
-						} else {
+						sumItem.setBounds(0, 200, 650, 550);
+						if (wordL < wordT.length)
+							sumItem.setText(sumItem.getText() + (wordT[wordL++]));
+						else {
 							order++;
 							wordL = 0;
 							sumItem.setText("");
@@ -1235,10 +1356,10 @@ public class Pesos extends JFrame {
 				}
 				case 5: {// remain for tmrw
 					char[] wordT = ("QUEDARÁ PARA MAÑANA APROXIMADAMENTE\n\n$" + restN + "\n\n\n\n").toCharArray();
-					if (wordL < wordT.length) {
+					sumItem.setBounds(0, 220, 650, 550);
+					if (wordL < wordT.length)
 						sumItem.setText(sumItem.getText() + (wordT[wordL++]));
-						sumItem.setBounds(0, 200, 650, 550);
-					} else {
+					else {
 						order++;
 						wordL = 0;
 						sumItem.setText("");
@@ -1247,10 +1368,10 @@ public class Pesos extends JFrame {
 				}
 				case 6: {// export button
 					char[] wordT = "TOQUE EL BOTÓN PARA EXPORTAR EL RESULTADO\n\n\n\n".toCharArray();
-					if (wordL < wordT.length) {
+					sumItem.setBounds(0, 200, 650, 550);
+					if (wordL < wordT.length)
 						sumItem.setText(sumItem.getText() + (wordT[wordL++]));
-						sumItem.setBounds(0, 200, 650, 550);
-					} else {
+					else {
 						order++;
 						wordL = 0;
 						expBtn.setVisible(true);
@@ -1322,22 +1443,31 @@ public class Pesos extends JFrame {
 					+ System.lineSeparator() + System.lineSeparator());
 			if (totalVenta == 0)
 				savedF.write("*VENTAS:\nUSTED NO VENDIÓ NADA." + System.lineSeparator());
+			else if (nbVentas() == 1)
+				savedF.write("*VENTAS:\nUSTED VENDIÓ UNA VENTA SOLO QUE VALE $" + totalVenta + System.lineSeparator());
 			else
-				savedF.write("*VENTAS:\nUSTED VENDIÓ $" + totalVenta + ", DIVIDIENDO EN " + nbVentas() + " VENTA(S), "
-						+ "CON UN PROMEDIO DE $" + (nbVentas() == 0 ? 0 : totalVenta / nbVentas()) + " POR VENTA."
-						+ System.lineSeparator());
+				savedF.write("*VENTAS:\nUSTED VENDIÓ $" + totalVenta + ", DIVIDIENDO EN " + nbVentas() + " VENTAS, "
+						+ "CON UN PROMEDIO DE $" + totalVenta / nbVentas() + " POR VENTA." + System.lineSeparator());
 			if (gastosT == 0)// GASTOS SAVE
 				savedF.write(System.lineSeparator() + "*GASTOS:\nNO TIENES GASTOS!" + System.lineSeparator());
+			else if (nbGastos() == 1)
+				savedF.write(System.lineSeparator() + "*GASTOS:\nTIENES EN TOTAL UN GASTO QUE VALE $" + gastosT + "."
+						+ System.lineSeparator() + "DETALLADO COMO: " + System.lineSeparator() + gastosDetalles());
 			else
 				savedF.write(System.lineSeparator() + "*GASTOS:\nTIENES EN TOTAL $" + gastosT + " COMO GASTOS, "
-						+ "DIVIDIDO POR " + nbGastos() + " COSA(S), " + "CON UN PROMEDIO DE $"
-						+ (nbGastos() == 0 ? 0 : gastosT / nbGastos()) + "." + System.lineSeparator()
-						+ "DETALLADO COMO: " + System.lineSeparator() + gastosDetalles());
+						+ "DIVIDIDO POR " + nbGastos() + " COSAS, " + "CON UN PROMEDIO DE $" + gastosT / nbGastos()
+						+ "." + System.lineSeparator() + "DETALLADO COMO: " + System.lineSeparator()
+						+ gastosDetalles());
 			if (agregadoT != 0) {// AGG SAVE if not 0
-				savedF.write(System.lineSeparator() + "*AGREGADOS:\nTIENES EN TOTAL $" + agregadoT + " COMO AGREGADOS, "
-						+ "DIVIDIDO POR " + nbAgregados() + " COSA(S), " + "CON UN PROMEDIO DE $"
-						+ (nbAgregados() == 0 ? 0 : agregadoT / nbAgregados()) + "." + System.lineSeparator()
-						+ "DETALLADO COMO: " + System.lineSeparator() + agregadoDetalles());
+				if (nbAgregados() == 1)
+					savedF.write(System.lineSeparator() + "*AGREGADOS:\nTIENES EN TOTAL UN AGREGADO QUE VALE $"
+							+ agregadoT + "." + System.lineSeparator() + "DETALLADO COMO: " + System.lineSeparator()
+							+ agregadoDetalles());
+				else
+					savedF.write(System.lineSeparator() + "*AGREGADOS:\nTIENES EN TOTAL $" + agregadoT
+							+ " COMO AGREGADOS, " + "DIVIDIDO POR " + nbAgregados() + " COSAS, "
+							+ "CON UN PROMEDIO DE $" + agregadoT / nbAgregados() + "." + System.lineSeparator()
+							+ "DETALLADO COMO: " + System.lineSeparator() + agregadoDetalles());
 				savedF.write(System.lineSeparator() + "*PARA RESUMIR:\n" + "EMPEZAMOS EL DÍA CON $"
 						+ initialDay.getText() + "\nVENDIMOS $" + totalVenta + "\nGASTO $" + gastosT + "\nAGREGÓ $"
 						+ agregadoT + "\nQUE TERMINARÁ CON $" + totalO + " EN TOTAL." + System.lineSeparator());
@@ -1712,7 +1842,7 @@ public class Pesos extends JFrame {
 		// OP6 slider speed summary
 		JLabel op6 = new JLabel("VELOCIDAD DE ANIMACIÓN");
 		op6.setFont(First.myFont);
-		op6.setBounds(50, 370, 300, 40);
+		op6.setBounds(50, 370, 340, 40);
 		JLabel speedValue = new JLabel("MEDIANO");
 		speedValue.setBounds(415, 390, 80, 40);
 		speedValue.setFont(First.myFontXS);
@@ -2000,15 +2130,20 @@ public class Pesos extends JFrame {
 		if (conf[4] == null || conf[4].equals("false"))
 			saveProgress();
 		for (int i = 0; i < 11; i++)// Caja empty values 0
-			if (!First.isNumeric(panelCnum[i].getText()))
+			if (!First.isNumeric(panelCnum[i].getText())
+					|| (First.isNumeric(panelCnum[i].getText()) && Integer.valueOf(panelCnum[i].getText()) < 0))
 				panelCnum[i].setText(0 + "");
-		if (!First.isNumeric(initialDay.getText()))// initial of the day 0
+		if (!First.isNumeric(initialDay.getText())
+				|| (First.isNumeric(initialDay.getText()) && Integer.valueOf(initialDay.getText()) < 0))// initial of //
+																										// // the day 0
 			initialDay.setText(0 + "");
 		for (int i = 8; i < 16; i++)// spent 0
-			if (!First.isNumeric(gastosTable[i].getText()))
+			if (!First.isNumeric(gastosTable[i].getText())
+					|| (First.isNumeric(gastosTable[i].getText()) && Integer.valueOf(gastosTable[i].getText()) < 0))
 				gastosTable[i].setText("");
 		for (int i = 8; i < 16; i++)// added 0
-			if (!First.isNumeric(agregadoTable[i].getText()))
+			if (!First.isNumeric(agregadoTable[i].getText())
+					|| (First.isNumeric(agregadoTable[i].getText()) && Integer.valueOf(agregadoTable[i].getText()) < 0))
 				agregadoTable[i].setText("");
 		for (int i = 0; i < 8; i++) {// TitleCase gastos and agg
 			gastosTable[i].setText(First.capitalizeString(gastosTable[i].getText()));
@@ -2021,7 +2156,8 @@ public class Pesos extends JFrame {
 		for (int i = 0; i < 6; i++) {
 			totalCol = 0;
 			for (int j = 0; j < 20; j++) {
-				if (!First.isNumeric(details[i][j].getText())) {
+				if (!First.isNumeric(details[i][j].getText())
+						|| (First.isNumeric(details[i][j].getText()) && Integer.valueOf(details[i][j].getText()) < 0)) {
 					details[i][j].setText("");
 					totalCol += 0;
 				} else
