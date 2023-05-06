@@ -38,10 +38,12 @@ import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Locale;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import javax.imageio.ImageIO;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -54,7 +56,6 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JSeparator;
-import javax.swing.JSlider;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
 import javax.swing.JToggleButton;
@@ -120,19 +121,17 @@ public class Reales extends JFrame {
 	static JLabel[] diffResult = new JLabel[2];// calculate the difference
 	static JLabel restTmrw = new JLabel();// rest for tomorrow
 	JLabel plusSymbol = new JLabel("+");
+	// Define values
 	static int totalCol = 0, totalVenta = 0, totalO = 0;
 	static int gastosT = 0, agregadoT = 0;
 	static int restN, totalCaja = 0, nbOf20 = 0;
-	int width, height;
+	int width, height, language;
 	static int colorX = 0, order = 0, speedValue, wordsN, wordL, effChooser;
 	boolean status = false;
 	Timer timer;
-	String conf[] = new String[7];
+	String conf[] = new String[8];
 	JLabel date = new JLabel();// date of the day
-	String monthS = new SimpleDateFormat("MMMM").format(Calendar.getInstance().getTime()).toUpperCase();
-	String dayN = new SimpleDateFormat("dd").format(Calendar.getInstance().getTime());
-	String dayS = new SimpleDateFormat("EEEE").format(Calendar.getInstance().getTime()).toUpperCase();
-	String yearS = new SimpleDateFormat("YYYY").format(Calendar.getInstance().getTime());
+	String monthS, dayN, dayS, yearS;
 
 	FocusListener textFocus = new FocusListener() {
 
@@ -150,11 +149,16 @@ public class Reales extends JFrame {
 	Reales() {
 		// Notification when its time to end the day
 		long delay = ChronoUnit.MILLIS.between(LocalTime.now(), LocalTime.of(17, 30, 00));
+		if (delay < -60000)
+			delay = -delay;
 		ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 		scheduler.schedule(First.itsAlmostTime(), delay, TimeUnit.MILLISECONDS);
 
 		// Buttons
-		JMenuItem hideBtn = new JMenuItem("ESCONDER LOS BOTONES");
+		JMenuItem hideBtn = new JMenuItem("LOS BOTONES");
+		JMenuItem noHide = new JMenuItem("NADA");
+		JMenuItem hideDate = new JMenuItem("LA FECHA");
+		JMenuItem hideAll = new JMenuItem("TODO");
 		JButton clearEverthing = new JButton();
 		JButton pesosF = new JButton();
 		JButton notasF = new JButton();// FATURA BUTTON
@@ -209,24 +213,58 @@ public class Reales extends JFrame {
 		}
 		this.setIconImage(new ImageIcon(url).getImage());
 		// BUTTONS
-		if (conf[1] == null || conf[1].equals("0")) {
+		if (conf[1] == null || conf[1].equals("0")) {// show all
+			noHide.setEnabled(false);
+			hideDate.setEnabled(true);
+			hideBtn.setEnabled(true);
+			hideAll.setEnabled(true);
 			pesosF.show();
 			clearEverthing.show();
 			notasF.show();
 			date.show();
-			hideBtn.setText("ESCONDER LOS BOTONES");
-		} else if (conf[1].equals("1")) {
+		} else if (conf[1].equals("1")) {// hide date
+			noHide.setEnabled(true);
+			hideDate.setEnabled(false);
+			hideBtn.setEnabled(true);
+			hideAll.setEnabled(true);
 			pesosF.show();
 			clearEverthing.show();
 			notasF.show();
 			date.hide();
-			hideBtn.setText("ESCONDER LOS BOTONES");
-		} else {
-			pesosF.hide();
-			clearEverthing.hide();
-			notasF.hide();
+		} else if (conf[1].equals("2")) {// hide btn
+			noHide.setEnabled(true);
+			hideDate.setEnabled(true);
+			hideBtn.setEnabled(false);
+			hideAll.setEnabled(true);
+			hideBtn(notasF, pesosF, newDay, clearEverthing, hideBtn);
+			date.show();
+		} else {// hide all
+			noHide.setEnabled(true);
+			hideDate.setEnabled(true);
+			hideBtn.setEnabled(true);
+			hideAll.setEnabled(false);
+			hideBtn(notasF, pesosF, newDay, clearEverthing, hideBtn);
 			date.hide();
-			hideBtn.setText("MONSTRAR LOS BOTONES");
+		}
+		// LANGUAGE
+		if (conf[7] == null || conf[7].equals("0"))
+			language = 0;
+		else
+			language = 1;
+		if (language == 0) {
+			monthS = new SimpleDateFormat("MMMM", new Locale("es")).format(Calendar.getInstance().getTime())
+					.toUpperCase();
+			dayN = new SimpleDateFormat("dd", new Locale("es")).format(Calendar.getInstance().getTime());
+			dayS = new SimpleDateFormat("EEEE", new Locale("es")).format(Calendar.getInstance().getTime())
+					.toUpperCase();
+			yearS = new SimpleDateFormat("YYYY", new Locale("es")).format(Calendar.getInstance().getTime());
+		} else {
+			monthS = new SimpleDateFormat("MMMM", new Locale("pt")).format(Calendar.getInstance().getTime())
+					.toUpperCase();
+			dayN = new SimpleDateFormat("dd", new Locale("pt")).format(Calendar.getInstance().getTime());
+			dayS = new SimpleDateFormat("EEEE", new Locale("pt")).format(Calendar.getInstance().getTime())
+					.toUpperCase();
+			yearS = new SimpleDateFormat("YYYY", new Locale("pt")).format(Calendar.getInstance().getTime());
 		}
 
 		// Panel 1
@@ -268,7 +306,7 @@ public class Reales extends JFrame {
 		this.add(total[8]);
 
 		// Panel 2
-		date.setText(" " + dayS + ", " + dayN + "  " + monthS + "  " + yearS);
+		date.setText(" " + dayS + ", " + dayN + "-" + monthS + "-" + yearS);
 		date.setForeground(First.lightC);
 		date.setFont(First.myFont);
 		this.add(date);
@@ -580,12 +618,14 @@ public class Reales extends JFrame {
 		JMenuItem clear = new JMenuItem("BORRAR TODO");
 		JMenuItem calc = new JMenuItem("ASUMAR");
 		JMenuItem save = new JMenuItem("SALVAR");
+		JMenuItem screenShot = new JMenuItem("CAPTURA DE PANTALLA");
 		JMenuItem option = new JMenuItem("CONFIGURACIÓN");
 		JMenuItem exit = new JMenuItem("SALIR");
 		novo.addActionListener(e -> newDay());
 		calc.addActionListener(e -> sumF());
 		clear.addActionListener(e -> clearAll());
 		save.addActionListener(e -> saveProgress());
+		screenShot.addActionListener(e -> screenShooter());
 		option.addActionListener(
 				e -> confFrame(conf, notasF, pesosF, newDay, clearEverthing, hideBtn, resoD, gastosPanel, aggPanel));
 		exit.addActionListener(e -> System.exit(0));
@@ -593,6 +633,7 @@ public class Reales extends JFrame {
 		file.add(calc);
 		file.add(clear);
 		file.add(save);
+		file.add(screenShot);
 		file.add(option);
 		file.add(exit);
 		// SUMMARY
@@ -603,17 +644,113 @@ public class Reales extends JFrame {
 		JMenuItem sumV2 = new JMenuItem("APARECE PALABRA POR PALABRA");
 		JMenuItem sumV3 = new JMenuItem("APARECE LETRA POR LETRA");
 		JMenuItem exMenu = new JMenuItem("GUARDAR RESUMEN");
+		JMenu speedChooser = new JMenu("VELOCIDAD DE ANIMACIÓN");
+		JMenuItem speed1 = new JMenuItem("LENTO");
+		JMenuItem speed2 = new JMenuItem("MEDIANO");
+		JMenuItem speed3 = new JMenuItem("RÁPIDO");
 		sumV.addActionListener(e -> summaryFrame());
-		sumV1.addActionListener(e -> effChooser = 0);
-		sumV2.addActionListener(e -> effChooser = 1);
-		sumV3.addActionListener(e -> effChooser = 2);
+		sumV1.setEnabled(false);
+		sumV2.setEnabled(true);
+		sumV3.setEnabled(true);
+		sumV1.addActionListener(e -> {
+			effChooser = 0;
+			sumV1.setEnabled(false);
+			sumV2.setEnabled(true);
+			sumV3.setEnabled(true);
+		});
+		sumV2.addActionListener(e -> {
+			effChooser = 1;
+			sumV1.setEnabled(true);
+			sumV2.setEnabled(false);
+			sumV3.setEnabled(true);
+		});
+		sumV3.addActionListener(e -> {
+			effChooser = 2;
+			sumV1.setEnabled(true);
+			sumV2.setEnabled(true);
+			sumV3.setEnabled(false);
+		});
+		if (conf[6] == null || conf[6].equals("1")) {
+			speed1.setEnabled(true);
+			speed2.setEnabled(false);
+			speed3.setEnabled(true);
+		} else if (conf[6].equals("0")) {
+			speed1.setEnabled(false);
+			speed2.setEnabled(true);
+			speed3.setEnabled(true);
+		} else {
+			speed1.setEnabled(true);
+			speed2.setEnabled(true);
+			speed3.setEnabled(false);
+		}
+		speed1.addActionListener(e -> {
+			conf[6] = "0";
+			try {
+				FileWriter savedF = new FileWriter("conf.txt");
+				savedF.write(conf[0] + System.lineSeparator());
+				savedF.write(conf[1] + System.lineSeparator());
+				savedF.write(conf[2] + System.lineSeparator());
+				savedF.write(conf[3] + System.lineSeparator());
+				savedF.write(conf[4] + System.lineSeparator());
+				savedF.write(conf[5] + System.lineSeparator());
+				savedF.write(0 + System.lineSeparator());// speed
+				savedF.write(conf[7] + System.lineSeparator());// lan
+				savedF.close();
+			} catch (Exception e2) {
+			}
+			speed1.setEnabled(false);
+			speed2.setEnabled(true);
+			speed3.setEnabled(true);
+		});
+		speed2.addActionListener(e -> {
+			conf[6] = "1";
+			try {
+				FileWriter savedF = new FileWriter("conf.txt");
+				savedF.write(conf[0] + System.lineSeparator());
+				savedF.write(conf[1] + System.lineSeparator());
+				savedF.write(conf[2] + System.lineSeparator());
+				savedF.write(conf[3] + System.lineSeparator());
+				savedF.write(conf[4] + System.lineSeparator());
+				savedF.write(conf[5] + System.lineSeparator());
+				savedF.write(1 + System.lineSeparator());
+				savedF.write(conf[7] + System.lineSeparator());// lan
+				savedF.close();
+			} catch (Exception e2) {
+			}
+			speed1.setEnabled(true);
+			speed2.setEnabled(false);
+			speed3.setEnabled(true);
+		});
+		speed3.addActionListener(e -> {
+			conf[6] = "2";
+			try {
+				FileWriter savedF = new FileWriter("conf.txt");
+				savedF.write(conf[0] + System.lineSeparator());
+				savedF.write(conf[1] + System.lineSeparator());
+				savedF.write(conf[2] + System.lineSeparator());
+				savedF.write(conf[3] + System.lineSeparator());
+				savedF.write(conf[4] + System.lineSeparator());
+				savedF.write(conf[5] + System.lineSeparator());
+				savedF.write(2 + System.lineSeparator());
+				savedF.write(conf[7] + System.lineSeparator());// lan
+				savedF.close();
+			} catch (Exception e2) {
+			}
+			speed1.setEnabled(true);
+			speed2.setEnabled(true);
+			speed3.setEnabled(false);
+		});
 		exMenu.addActionListener(e -> exBtn());
+		speedChooser.add(speed1);
+		speedChooser.add(speed2);
+		speedChooser.add(speed3);
 		effectChooser.add(sumV1);
 		effectChooser.add(sumV2);
 		effectChooser.add(sumV3);
 		summary.add(sumV);
-		summary.add(exMenu);
 		summary.add(effectChooser);
+		summary.add(speedChooser);
+		summary.add(exMenu);
 		// GO TO
 		JMenu goTo = new JMenu("IR A");
 		JMenuItem pesos = new JMenuItem("PESOS");
@@ -651,41 +788,198 @@ public class Reales extends JFrame {
 		reso.add(reso3);
 		reso.add(reso2);
 		reso.add(reso1);
-		resoD.addActionListener(
-				e -> opResolution(clearEverthing, pesosF, notasF, newDay, resoD, aggPanel, gastosPanel));
-		reso1.addActionListener(e -> resG(resoD, notasF, pesosF, newDay, clearEverthing, gastosPanel, aggPanel));
-		reso2.addActionListener(e -> resM(resoD, notasF, pesosF, newDay, clearEverthing, gastosPanel, aggPanel));
-		reso3.addActionListener(e -> resP(resoD, notasF, pesosF, newDay, clearEverthing, gastosPanel, aggPanel));
-		reso4.addActionListener(e -> resXP(resoD, notasF, pesosF, newDay, clearEverthing, gastosPanel, aggPanel));
+		resoD.addActionListener(e -> {
+			opResolution(clearEverthing, pesosF, notasF, newDay, resoD, aggPanel, gastosPanel);
+			try {
+				FileWriter savedF = new FileWriter("conf.txt");
+				savedF.write(conf[0] + System.lineSeparator());
+				savedF.write(conf[1] + System.lineSeparator());
+				savedF.write(conf[2] + System.lineSeparator());
+				savedF.write(0 + System.lineSeparator());
+				savedF.write(conf[4] + System.lineSeparator());
+				savedF.write(conf[5] + System.lineSeparator());
+				savedF.write(conf[6] + System.lineSeparator());
+				savedF.write(conf[7] + System.lineSeparator());// lan
+				savedF.close();
+			} catch (Exception e2) {
+			}
+		});
+		reso1.addActionListener(e -> {
+			resG(resoD, notasF, pesosF, newDay, clearEverthing, gastosPanel, aggPanel);
+			try {
+				FileWriter savedF = new FileWriter("conf.txt");
+				savedF.write(conf[0] + System.lineSeparator());
+				savedF.write(conf[1] + System.lineSeparator());
+				savedF.write(conf[2] + System.lineSeparator());
+				savedF.write(4 + System.lineSeparator());
+				savedF.write(conf[4] + System.lineSeparator());
+				savedF.write(conf[5] + System.lineSeparator());
+				savedF.write(conf[6] + System.lineSeparator());
+				savedF.write(conf[7] + System.lineSeparator());// lan
+				savedF.close();
+			} catch (Exception e2) {
+			}
+		});
+		reso2.addActionListener(e -> {
+			resM(resoD, notasF, pesosF, newDay, clearEverthing, gastosPanel, aggPanel);
+			try {
+				FileWriter savedF = new FileWriter("conf.txt");
+				savedF.write(conf[0] + System.lineSeparator());
+				savedF.write(conf[1] + System.lineSeparator());
+				savedF.write(conf[2] + System.lineSeparator());
+				savedF.write(3 + System.lineSeparator());
+				savedF.write(conf[4] + System.lineSeparator());
+				savedF.write(conf[5] + System.lineSeparator());
+				savedF.write(conf[6] + System.lineSeparator());
+				savedF.write(conf[7] + System.lineSeparator());// lan
+				savedF.close();
+			} catch (Exception e2) {
+			}
+		});
+		reso3.addActionListener(e -> {
+			resP(resoD, notasF, pesosF, newDay, clearEverthing, gastosPanel, aggPanel);
+			try {
+				FileWriter savedF = new FileWriter("conf.txt");
+				savedF.write(conf[0] + System.lineSeparator());
+				savedF.write(conf[1] + System.lineSeparator());
+				savedF.write(conf[2] + System.lineSeparator());
+				savedF.write(2 + System.lineSeparator());
+				savedF.write(conf[4] + System.lineSeparator());
+				savedF.write(conf[5] + System.lineSeparator());
+				savedF.write(conf[6] + System.lineSeparator());
+				savedF.write(conf[7] + System.lineSeparator());// lan
+				savedF.close();
+			} catch (Exception e2) {
+			}
+		});
+		reso4.addActionListener(e -> {
+			resXP(resoD, notasF, pesosF, newDay, clearEverthing, gastosPanel, aggPanel);
+			try {
+				FileWriter savedF = new FileWriter("conf.txt");
+				savedF.write(conf[0] + System.lineSeparator());
+				savedF.write(conf[1] + System.lineSeparator());
+				savedF.write(conf[2] + System.lineSeparator());
+				savedF.write(1 + System.lineSeparator());
+				savedF.write(conf[4] + System.lineSeparator());
+				savedF.write(conf[5] + System.lineSeparator());
+				savedF.write(conf[6] + System.lineSeparator());
+				savedF.write(conf[7] + System.lineSeparator());// lan
+				savedF.close();
+			} catch (Exception e2) {
+			}
+		});
 		// HELP
 		JMenu help = new JMenu("AYUDA");
-		JMenuItem getHelp = new JMenuItem("ATAJOS DE TECLADO");
+		JMenu hideMenu = new JMenu("ESCONDER");
+		JMenuItem keyShortcut = new JMenuItem(idiomaString(language)[1]);
 		JMenuItem creator = new JMenuItem("SOBRE EL CREADOR");
 		JMenuItem about = new JMenuItem("SOBRE EL APLICATIVO");
+		noHide.addActionListener(e -> {
+			conf[1] = "0";
+			noHide.setEnabled(false);
+			hideDate.setEnabled(true);
+			hideBtn.setEnabled(true);
+			hideAll.setEnabled(true);
+			try {
+				FileWriter savedF = new FileWriter("conf.txt");
+				savedF.write(conf[0] + System.lineSeparator());
+				savedF.write(0 + System.lineSeparator());
+				savedF.write(conf[2] + System.lineSeparator());
+				savedF.write(conf[3] + System.lineSeparator());
+				savedF.write(conf[4] + System.lineSeparator());
+				savedF.write(conf[5] + System.lineSeparator());
+				savedF.write(conf[6] + System.lineSeparator());
+				savedF.write(conf[7] + System.lineSeparator());// lan
+				savedF.close();
+			} catch (Exception e2) {
+			}
+			pesosF.show();
+			clearEverthing.show();
+			notasF.show();
+			date.show();
+		});
+		hideDate.addActionListener(e -> {
+			conf[1] = "1";
+			noHide.setEnabled(true);
+			hideDate.setEnabled(false);
+			hideBtn.setEnabled(true);
+			hideAll.setEnabled(true);
+			try {
+				FileWriter savedF = new FileWriter("conf.txt");
+				savedF.write(conf[0] + System.lineSeparator());
+				savedF.write(1 + System.lineSeparator());
+				savedF.write(conf[2] + System.lineSeparator());
+				savedF.write(conf[3] + System.lineSeparator());
+				savedF.write(conf[4] + System.lineSeparator());
+				savedF.write(conf[5] + System.lineSeparator());
+				savedF.write(conf[6] + System.lineSeparator());
+				savedF.write(conf[7] + System.lineSeparator());// lan
+				savedF.close();
+			} catch (Exception e2) {
+			}
+			date.hide();
+			pesosF.show();
+			clearEverthing.show();
+			notasF.show();
+		});
+		hideBtn.addActionListener(e -> {
+			conf[1] = "2";
+			noHide.setEnabled(true);
+			hideDate.setEnabled(true);
+			hideBtn.setEnabled(false);
+			hideAll.setEnabled(true);
+			try {
+				FileWriter savedF = new FileWriter("conf.txt");
+				savedF.write(conf[0] + System.lineSeparator());
+				savedF.write(2 + System.lineSeparator());
+				savedF.write(conf[2] + System.lineSeparator());
+				savedF.write(conf[3] + System.lineSeparator());
+				savedF.write(conf[4] + System.lineSeparator());
+				savedF.write(conf[5] + System.lineSeparator());
+				savedF.write(conf[6] + System.lineSeparator());
+				savedF.write(conf[7] + System.lineSeparator());// lan
+				savedF.close();
+			} catch (Exception e2) {
+			}
+			hideBtn(notasF, pesosF, newDay, clearEverthing, hideBtn);
+			date.show();
+		});
+		hideAll.addActionListener(e -> {
+			conf[1] = "3";
+			noHide.setEnabled(true);
+			hideDate.setEnabled(true);
+			hideBtn.setEnabled(true);
+			hideAll.setEnabled(false);
+			try {
+				FileWriter savedF = new FileWriter("conf.txt");
+				savedF.write(conf[0] + System.lineSeparator());
+				savedF.write(3 + System.lineSeparator());
+				savedF.write(conf[2] + System.lineSeparator());
+				savedF.write(conf[3] + System.lineSeparator());
+				savedF.write(conf[4] + System.lineSeparator());
+				savedF.write(conf[5] + System.lineSeparator());
+				savedF.write(conf[6] + System.lineSeparator());
+				savedF.write(conf[7] + System.lineSeparator());// lan
+				savedF.close();
+			} catch (Exception e2) {
+			}
+			hideBtn(notasF, pesosF, newDay, clearEverthing, hideBtn);
+			date.hide();
+		});
 		if (conf[2] == null || conf[2].equals("false"))
-			getHelp.addActionListener(e -> JOptionPane.showMessageDialog(null,
-					"• CTRL + S → ir la fatura.\n" + "• CTRL + P → ir al pesos.\n" + "• CTRL + B → borrar todo.\n"
-							+ "• CTRL + N → prepárate para el día siguiente.\n"
-							+ "• FLECHAS → subir, abajo, derecha e izquierda.\n" + "• CTRL + D → ir al detalles.\n"
-							+ "• CTRL + I → ir al inicio.\n" + "• CTRL + G → ir al gastos.\n"
-							+ "• CTRL + A → ir al agregado.\n" + "• CTRL + T → ir a la caja.\n"
-							+ "• CTRL + E → ir al ultimo numero.\n" + "• CTRL + M → mas un 100 o de 1000 si posible.\n"
-							+ "• CTRL + O → esconder los botones.\n" + "• CTRL + C → abrir el configuración.",
-					"ATAJOS DE TECLADO", 1));
+			keyShortcut.addActionListener(
+					e -> JOptionPane.showMessageDialog(null, idiomaString(language)[0], idiomaString(language)[1], 1));
 		else
-			getHelp.hide();
-		hideBtn.addActionListener(e -> hideBtn(notasF, pesosF, newDay, clearEverthing, hideBtn));
-		creator.addActionListener(
-				e -> JOptionPane.showMessageDialog(null, "Crédito y Diseñado por MhmdSAbdlh ©", "SOBRE MI", 1));
-		about.addActionListener(e -> JOptionPane.showMessageDialog(null,
-				"ESTA APLICACIÓN ESTÁ DISEÑADA PARA CEDROS Y NARJES FREE SHOP.\r\n"
-						+ "TIENE MARCO PARA CERRAR LA CAJA TANTO EN REALES COMO PESOS.\r\n"
-						+ "TIENE UN MARCO PARA CALCULAR EL TROCO DE UNA VENTA TANTO EN REALES COMO PESOS.\r\n"
-						+ "SABE CÓMO QUEDARÁ PARA EL PRÓXIMO DÍA.\r\n" + "3 MÉTODOS PARA DAR EL CAMBIO.\r\n"
-						+ "CAMBIARÁ TODO SEGÚN EL ICONO SELECCIONADO.\r\n" + "\r\n" + "MOHAMAD ABDALLAH ABBASS ©",
-				"CEDROS/NARJES", 1));
-		help.add(getHelp);
-		help.add(hideBtn);
+			keyShortcut.hide();
+		creator.addActionListener(e -> JOptionPane.showMessageDialog(null, idiomaString(language)[2], "SOBRE MI", 1));
+		about.addActionListener(
+				e -> JOptionPane.showMessageDialog(null, idiomaString(language)[3], "CEDROS/NARJES", 1));
+		hideMenu.add(noHide);
+		hideMenu.add(hideDate);
+		hideMenu.add(hideBtn);
+		hideMenu.add(hideAll);
+		help.add(hideMenu);
+		help.add(keyShortcut);
 		help.add(creator);
 		help.add(about);
 		// ADD TO MENUBAR
@@ -738,14 +1032,21 @@ public class Reales extends JFrame {
 		else if (aggBtn[1].isShowing())
 			addSetHun();
 
+		// LANGUAGE
+		idiomaTexts(language, hideBtn, noHide, hideDate, hideAll, notasF, newDay, resoD, aggPanel, gastosPanel, file,
+				novo, clear, calc, save, option, exit, summary, sumV, effectChooser, sumV1, sumV2, sumV3, exMenu,
+				speedChooser, speed1, speed2, speed3, goTo, pesos, fatura, firstFrame, reso, reso1, reso2, reso3, reso4,
+				help, hideMenu, keyShortcut, creator, about);
+
 		// Close popup
 		this.addWindowListener(new java.awt.event.WindowAdapter() {
 			@Override
 			public void windowClosing(java.awt.event.WindowEvent windowEvent) {
-				Object[] options = { "Si", "No", "Si /Nuevo Dia" };
-				int selectedOption = JOptionPane.showOptionDialog(null, "¿Seguro que quieres salir?", "SALIR",
-						JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
-
+				Object[] options = { idiomaString(language)[11], idiomaString(language)[12],
+						idiomaString(language)[15] };
+				int selectedOption = JOptionPane.showOptionDialog(null, idiomaString(language)[13],
+						idiomaString(language)[14], JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null,
+						options, options[0]);
 				if (selectedOption == JOptionPane.YES_OPTION)
 					System.exit(0);
 				else if (selectedOption == 1) {
@@ -772,6 +1073,21 @@ public class Reales extends JFrame {
 		});
 	}
 
+	private void screenShooter() {
+		BufferedImage img = new BufferedImage(this.getWidth(), this.getHeight(), BufferedImage.TYPE_INT_RGB);
+		this.paint(img.getGraphics());
+		String currentpath = System.getProperty("user.dir");
+		File tempFile1 = new File(currentpath + "\\" + yearS);
+		tempFile1.mkdir();
+		File tempFile2 = new File(tempFile1 + "\\" + monthS);
+		tempFile2.mkdir();
+		File newFile = new File(tempFile2, "r " + dayN + "-" + monthS + "-" + yearS + ".png");
+		try {
+			ImageIO.write(img, "png", newFile);
+		} catch (IOException e1) {
+		}
+	}
+
 	// Know the app title
 	private String titleName() {
 		if (conf[0] == null || !conf[0].equals("3"))
@@ -783,7 +1099,10 @@ public class Reales extends JFrame {
 	// Frame summary of the day
 	private void summaryFrame() {
 		JFrame sum = new JFrame();
-		sum.setTitle("SUMARIO");
+		if (language == 0)
+			sum.setTitle("SUMARIO");
+		else
+			sum.setTitle("SUMÁRIO");
 		sum.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		sum.setAlwaysOnTop(false);
 		sum.setSize(650, 550);
@@ -820,6 +1139,71 @@ public class Reales extends JFrame {
 		wordL = 0;
 		colorX = 0;
 		status = true;
+		String[] espSumm = { "USTED NO VENDIÓ NADA", // 0
+				"USTED VENDIÓ UNA VENTA SOLO QUE VALE R$" + totalVenta, // 1
+				"USTED VENDIÓ R$" + totalVenta + "\n\nDIVIDIENDO EN " + nbVentas() + " VENTAS\n\n"
+						+ "CON UN PROMEDIO DE R$" + (nbVentas() == 0 ? 0 : totalVenta / nbVentas()) + " POR VENTA", // 2
+				"NO TIENES GASTOS!", // 3
+				"TIENES EN TOTAL UN GASTO QUE VALE R$" + gastosT + "\n\n" + "DETALLADO COMO:\n" + gastosDetalles(), // 4
+				"TIENES EN TOTAL R$" + gastosT + " COMO GASTOS\n\n" + "DIVIDIDO POR " + nbGastos() + " COSAS\n\n"
+						+ "CON UN PROMEDIO DE R$" + (nbGastos() == 0 ? 0 : gastosT / nbGastos()) + "\n\n"
+						+ "DETALLADO COMO:\n" + gastosDetalles(), // 5
+				"NO TIENES AGREGADOS!", // 6
+				"TIENES EN TOTAL UN AGREGADO QUE VALE R$" + agregadoT + "\n\n" + "DETALLADO COMO:\n"
+						+ agregadoDetalles(), // 7
+				"TIENES EN TOTAL $" + agregadoT + " COMO AGREGADOS\n\n" + "DIVIDIDO POR " + nbAgregados() + " COSAS\n\n"
+						+ "CON UN PROMEDIO DE $" + (nbAgregados() == 0 ? 0 : agregadoT / nbAgregados()) + "\n\n"
+						+ "DETALLADO COMO:\n" + agregadoDetalles(), // 8
+				"PARA RESUMIR\n\n" + "EMPEZAMOS EL DÍA CON R$" + initialDay.getText() + "\n\nY VENDIMOS R$" + totalVenta
+						+ "\n\nY GASTO R$" + gastosT + "\n\nQUE TERMINARÁ CON R$" + totalO + " EN TOTAL"
+						+ "\n\nCON UN R$" + panelCnum[10].getText() + " COMO PIX", // 9
+				"PARA RESUMIR\n\n" + "EMPEZAMOS EL DÍA CON R$" + initialDay.getText() + "\n\nY VENDIMOS R$" + totalVenta
+						+ "\n\nY GASTO R$" + gastosT + "\n\nQUE TERMINARÁ CON R$" + totalO + " EN TOTAL", // 10
+				"PARA RESUMIR\n\n" + "EMPEZAMOS EL DÍA CON R$" + initialDay.getText() + "\n\nY VENDIMOS R$" + totalVenta
+						+ "\n\nY GASTO R$" + gastosT + "\n\nY AGREGÓ R$" + agregadoT + "\n\nQUE TERMINARÁ CON R$"
+						+ totalO + " EN TOTAL" + "\n\nCON UN R$" + panelCnum[10].getText() + " COMO PIX", // 11
+				"PARA RESUMIR\n\n" + "EMPEZAMOS EL DÍA CON R$" + initialDay.getText() + "\n\nY VENDIMOS R$" + totalVenta
+						+ "\n\nY GASTO R$" + gastosT + "\n\nY AGREGÓ R$" + agregadoT + "\n\nQUE TERMINARÁ CON R$"
+						+ totalO + " EN TOTAL", // 12
+				"LA CAJA DIO BIEN\n\n" + "NO HAY DIFERENCIA\n\n" + ":)", // 13
+				"LA CAJA NO DIO BIEN\n\n" + "PARECE QUE " + diffResult[1].getText().toUpperCase()
+						+ "\n\nREVISA LOS BOLETOS Y LA CAJA", // 14
+				"QUEDARÁ PARA MAÑANA APROXIMADAMENTE\n\nR$" + restN, // 15
+				"TOQUE EL BOTÓN PARA EXPORTAR EL RESULTADO"// 16
+		};
+		String[] porSumm = { "VOCÊ NÃO VENDEU NADA", // 0
+				"VOCÊ VENDEU UMA VENDA SÓ QUE VALE R$" + totalVenta, // 1
+				"VOCÊ VENDEU R$" + totalVenta + "\n\nDIVIDINDO EM " + nbVentas() + " VENDAS\n\n" + "COM MÉDIA DE R$"
+						+ (nbVentas() == 0 ? 0 : totalVenta / nbVentas()) + " À VENDA", // 2
+				"VOCÊ NÃO TEM GASTOS!", // 3
+				"VOCÊ TEM NO TOTAL UM GASTO NO VALOR DE R$" + gastosT + "\n\n" + "DETALHADO COMO:\n" + gastosDetalles(), // 4
+				"VOCÊ TEM NO TOTAL R$" + gastosT + " COMO GASTOS\n\n" + "DIVIDIDO POR " + nbGastos() + " COISAS\n\n"
+						+ "COM MÉDIA DE R$" + (nbGastos() == 0 ? 0 : gastosT / nbGastos()) + "\n\n"
+						+ "DETALHADO COMO:\n" + gastosDetalles(), // 5
+				"VOCÊ NÃO TEM AGREGADOS!", // 6
+				"VOCÊ TEM NO TOTAL UM AGREGADO NO VALOR DE R$" + agregadoT + "\n\n" + "DETALHADO COMO:\n"
+						+ agregadoDetalles(), // 7
+				"VOCÊ TEM NO TOTAL R$" + agregadoT + " COMO AGREGADOS\n\n" + "DIVIDIDO POR " + nbAgregados()
+						+ " COISAS\n\n" + "COM MÉDIA DE R$" + (nbAgregados() == 0 ? 0 : agregadoT / nbAgregados())
+						+ "\n\n" + "DETALHADO COMO:\n" + agregadoDetalles(), // 8
+				"PARA RESUMIR\n\n" + "COMEÇAMOS O DIA COM R$" + initialDay.getText() + "\n\nE VENDEMOS R$" + totalVenta
+						+ "\n\nE GASTO R$" + gastosT + "\n\nQUE VAI ACABAR EM R$" + totalO + " EM TOTAL"
+						+ "\n\nCOM UM R$" + panelCnum[10].getText() + " COMO PIX", // 9
+				"PARA RESUMIR\n\n" + "COMEÇAMOS O DIA COM R$" + initialDay.getText() + "\n\nE VENDEMOS R$" + totalVenta
+						+ "\n\nE GASTO R$" + gastosT + "\n\nQUE VAI ACABAR EM R$" + totalO + " EM TOTAL", // 10
+				"PARA RESUMIR\n\n" + "COMEÇAMOS O DIA COM R$" + initialDay.getText() + "\n\nE VENDEMOS R$" + totalVenta
+						+ "\n\nE GASTO R$" + gastosT + "\n\nE ADICIONO R$" + agregadoT + "\n\nQUE VAI ACABAR EM R$"
+						+ totalO + " EM TOTAL" + "\n\nCOM UM R$" + panelCnum[10].getText() + " COMO PIX", // 11
+				"PARA RESUMIR\n\n" + "COMEÇAMOS O DIA COM R$" + initialDay.getText() + "\n\nY VENDEMOS R$" + totalVenta
+						+ "\n\nE GASTO R$" + gastosT + "\n\nE ADICIONO R$" + agregadoT + "\n\nQUE VAI ACABAR EM R$"
+						+ totalO + " EM TOTAL", // 12
+				"A CAIXA DEU BEM\n\n" + "NÃO HÁ DIFERENÇA\n\n" + ":)", // 13
+				"A CAIXA NÃO DEU BEM\n\n" + "PARECE QUE " + diffResult[1].getText().toUpperCase()
+						+ "\n\nCONFIRA OS INGRESSOS E A CAIXA", // 14
+				"FICARÁ PARA AMANHÃ APROXIMADAMENTE\n\nR$" + restN, // 15
+				"TOQUE NO BOTÃO PARA EXPORTAR O RESULTADO"// 16
+		};
+
 		ActionListener fadeTimer = new ActionListener() {
 
 			@Override
@@ -828,15 +1212,14 @@ public class Reales extends JFrame {
 				switch (order) {
 				case 0: {// details start
 					if (totalVenta == 0) {
-						sumItem.setText("USTED NO VENDIÓ NADA");
+						sumItem.setText(language == 0 ? espSumm[0] : porSumm[0]);
 						sumItem.setBounds(0, 240, 650, 550);
 					} else {
 						if (nbVentas() == 1) {
-							sumItem.setText("USTED VENDIÓ UNA VENTA SOLO QUE VALE R$" + totalVenta);
+							sumItem.setText(language == 0 ? espSumm[1] : porSumm[1]);
 							sumItem.setBounds(0, 240, 650, 550);
 						} else {
-							sumItem.setText("USTED VENDIÓ R$" + totalVenta + "\n\nDIVIDIENDO EN " + nbVentas()
-									+ " VENTAS\n\n" + "CON UN PROMEDIO DE R$" + totalVenta / nbVentas() + " POR VENTA");
+							sumItem.setText(language == 0 ? espSumm[2] : porSumm[2]);
 							sumItem.setBounds(0, 200, 650, 550);
 						}
 					}
@@ -854,16 +1237,13 @@ public class Reales extends JFrame {
 				case 1: {// gastos start
 					if (gastosT == 0) {
 						sumItem.setBounds(0, 240, 650, 550);
-						sumItem.setText("NO TIENES GASTOS!");
+						sumItem.setText(language == 0 ? espSumm[3] : porSumm[3]);
 					} else {
 						if (nbGastos() == 1) {
-							sumItem.setText("TIENES EN TOTAL UN GASTO QUE VALE R$" + gastosT + "\n\n"
-									+ "DETALLADO COMO:\n" + gastosDetalles());
+							sumItem.setText(language == 0 ? espSumm[4] : porSumm[4]);
 							sumItem.setBounds(0, 220, 650, 550);
 						} else {
-							sumItem.setText("TIENES EN TOTAL R$" + gastosT + " COMO GASTOS\n\n" + "DIVIDIDO POR "
-									+ nbGastos() + " COSAS\n\n" + "CON UN PROMEDIO DE R$" + gastosT / nbGastos()
-									+ "\n\n" + "DETALLADO COMO:\n" + gastosDetalles());
+							sumItem.setText(language == 0 ? espSumm[5] : porSumm[5]);
 							sumItem.setBounds(0, 140, 650, 550);
 						}
 					}
@@ -880,17 +1260,14 @@ public class Reales extends JFrame {
 				}
 				case 2: {// agg start
 					if (agregadoT == 0) {
-						sumItem.setText("NO TIENES AGREGADOS!");
+						sumItem.setText(language == 0 ? espSumm[6] : porSumm[6]);
 						sumItem.setBounds(0, 240, 650, 550);
 					} else {
 						if (nbAgregados() == 1) {
-							sumItem.setText("TIENES EN TOTAL UN AGREGADO QUE VALE R$" + agregadoT + "\n\n"
-									+ "DETALLADO COMO:\n" + agregadoDetalles());
+							sumItem.setText(language == 0 ? espSumm[7] : porSumm[7]);
 							sumItem.setBounds(0, 220, 650, 550);
 						} else {
-							sumItem.setText("TIENES EN TOTAL R$" + agregadoT + " COMO AGREGADOS\n\n" + "DIVIDIDO POR "
-									+ nbAgregados() + " COSAS\n\n" + "CON UN PROMEDIO DE R$" + agregadoT / nbAgregados()
-									+ "\n\n" + "DETALLADO COMO:\n" + agregadoDetalles());
+							sumItem.setText(language == 0 ? espSumm[8] : porSumm[8]);
 							sumItem.setBounds(0, 140, 650, 550);
 						}
 					}
@@ -909,23 +1286,13 @@ public class Reales extends JFrame {
 					sumItem.setBounds(0, 100, 650, 550);
 					if (agregadoT == 0)
 						if (Integer.valueOf(panelCnum[10].getText()) > 0)
-							sumItem.setText("PARA RESUMIR\n\n" + "EMPEZAMOS EL DÍA CON R$" + initialDay.getText()
-									+ "\n\nY VENDIMOS R$" + totalVenta + "\n\nY GASTO R$" + gastosT
-									+ "\n\nQUE TERMINARÁ CON R$" + totalO + " EN TOTAL" + "\n\nCON UN R$"
-									+ panelCnum[10].getText() + " COMO PIX");
+							sumItem.setText(language == 0 ? espSumm[9] : porSumm[9]);
 						else
-							sumItem.setText("PARA RESUMIR\n\n" + "EMPEZAMOS EL DÍA CON R$" + initialDay.getText()
-									+ "\n\nY VENDIMOS R$" + totalVenta + "\n\nY GASTO R$" + gastosT
-									+ "\n\nQUE TERMINARÁ CON R$" + totalO + " EN TOTAL");
+							sumItem.setText(language == 0 ? espSumm[10] : porSumm[10]);
 					else if (Integer.valueOf(panelCnum[10].getText()) > 0)
-						sumItem.setText("PARA RESUMIR\n\n" + "EMPEZAMOS EL DÍA CON R$" + initialDay.getText()
-								+ "\n\nY VENDIMOS R$" + totalVenta + "\n\nY GASTO R$" + gastosT + "\n\nY AGREGÓ R$"
-								+ agregadoT + "\n\nQUE TERMINARÁ CON R$" + totalO + " EN TOTAL" + "\n\nCON UN R$"
-								+ panelCnum[10].getText() + " COMO PIX");
+						sumItem.setText(language == 0 ? espSumm[11] : porSumm[11]);
 					else
-						sumItem.setText("PARA RESUMIR\n\n" + "EMPEZAMOS EL DÍA CON R$" + initialDay.getText()
-								+ "\n\nY VENDIMOS R$" + totalVenta + "\n\nY GASTO R$" + gastosT + "\n\nY AGREGÓ R$"
-								+ agregadoT + "\n\nQUE TERMINARÁ CON R$" + totalO + " EN TOTAL");
+						sumItem.setText(language == 0 ? espSumm[12] : porSumm[12]);
 					if (colorX < 254 && !status)// summ fade in
 						colorX++;
 					else {
@@ -940,10 +1307,9 @@ public class Reales extends JFrame {
 				case 4: {// diferrence
 					sumItem.setBounds(0, 200, 650, 550);
 					if (totalO == totalCaja)
-						sumItem.setText("LA CAJA DIO BIEN\n\n" + "NO HAY DIFERENCIA\n\n" + ":)");
+						sumItem.setText(language == 0 ? espSumm[13] : porSumm[13]);
 					else
-						sumItem.setText("LA CAJA NO DIO BIEN\n\n" + "PARECE QUE "
-								+ diffResult[1].getText().toUpperCase() + "\n\nREVISA LOS BOLETOS Y LA CAJA");
+						sumItem.setText(language == 0 ? espSumm[14] : porSumm[14]);
 					// diferrence fade in
 					if (colorX < 254 && status)
 						colorX += 2;
@@ -958,7 +1324,8 @@ public class Reales extends JFrame {
 				}
 				case 5: {// remain for tmrw
 					sumItem.setBounds(0, 220, 650, 550);
-					sumItem.setText("QUEDARÁ PARA MAÑANA APROXIMADAMENTE\n\nR$" + restN);
+					if (language == 0)
+						sumItem.setText(language == 0 ? espSumm[15] : porSumm[15]);
 					if (colorX < 254 && !status)// remain fade in
 						colorX += 2;
 					else {
@@ -972,7 +1339,8 @@ public class Reales extends JFrame {
 				}
 				case 6: {// export button
 					sumItem.setBounds(0, 200, 650, 550);
-					sumItem.setText("TOQUE EL BOTÓN PARA EXPORTAR EL RESULTADO");
+					if (language == 0)
+						sumItem.setText(language == 0 ? espSumm[16] : porSumm[16]);
 					if (colorX < 254)// export label fade in
 						colorX += 2;
 					else {
@@ -993,114 +1361,139 @@ public class Reales extends JFrame {
 
 				switch (order) {
 				case 0: {// details start
-					if (totalVenta == 0) {
-						String[] wordT = { "USTED", " NO", " VENDIÓ", " NADA" };
+					if (totalVenta == 0) {// if ventas = 0
+						String[] wordT = (language == 0 ? espSumm[0].split(" ") : porSumm[0].split(" "));
 						sumItem.setBounds(0, 240, 650, 550);
 						if (wordL < wordT.length)
-							sumItem.setText(sumItem.getText().concat(wordT[wordL++]));
+							sumItem.setText(sumItem.getText().concat(wordT[wordL++] + " "));
 						else {
-							order++;
-							wordL = 0;
-							sumItem.setText("");
+							if (wordL < wordT.length + 3) {
+								wordL++;
+							} else {
+								order++;
+								wordL = 0;
+								sumItem.setText("");
+							}
 						}
-					} else if (nbVentas() == 1) {
-						String[] wordT = { "USTED ", "VENDIÓ", " UNA", " VENTA", " QUE", " VALE", " R$" + totalVenta,
-								"", "" };
+					} else if (nbVentas() == 1) {// if = 1
+						String[] wordT = language == 0 ? espSumm[1].split(" ") : porSumm[1].split(" ");
 						sumItem.setBounds(0, 220, 650, 550);
 						if (wordL < wordT.length)
-							sumItem.setText(sumItem.getText().concat(wordT[wordL++]));
+							sumItem.setText(sumItem.getText().concat(wordT[wordL++] + " "));
 						else {
-							order++;
-							wordL = 0;
-							sumItem.setText("");
+							if (wordL < wordT.length + 3) {
+								wordL++;
+							} else {
+								order++;
+								wordL = 0;
+								sumItem.setText("");
+							}
 						}
-					} else {
-						String[] wordT = { "USTED ", "VENDIÓ", " R$" + totalVenta, "\n\nDIVIDIENDO", " EN ",
-								nbVentas() + " VENTAS\n\n", "CON", " UN", " PROMEDIO", " DE",
-								" R$" + totalVenta / nbVentas(), " POR", " VENTA", "", "" };
+					} else {// if >1
+						String[] wordT = language == 0 ? espSumm[2].split(" ") : porSumm[2].split(" ");
 						sumItem.setBounds(0, 200, 650, 550);
 						if (wordL < wordT.length)
-							sumItem.setText(sumItem.getText().concat(wordT[wordL++]));
+							sumItem.setText(sumItem.getText().concat(wordT[wordL++] + " "));
 						else {
-							order++;
-							wordL = 0;
-							sumItem.setText("");
+							if (wordL < wordT.length + 3) {
+								wordL++;
+							} else {
+								order++;
+								wordL = 0;
+								sumItem.setText("");
+							}
 						}
 					}
 					break;
 				}
 				case 1: {// gastos start
 					if (gastosT == 0) {
-						String[] wordT = { "USTED", " NO", " TIENE", " GASTOS!" };
+						String[] wordT = language == 0 ? espSumm[3].split(" ") : porSumm[3].split(" ");
 						sumItem.setBounds(0, 240, 650, 550);
 						if (wordL < wordT.length)
-							sumItem.setText(sumItem.getText().concat(wordT[wordL++]));
+							sumItem.setText(sumItem.getText().concat(wordT[wordL++] + " "));
 						else {
-							order++;
-							wordL = 0;
-							sumItem.setText("");
+							if (wordL < wordT.length + 3) {
+								wordL++;
+							} else {
+								order++;
+								wordL = 0;
+								sumItem.setText("");
+							}
 						}
 					} else if (nbGastos() == 1) {
-						String[] wordT = { "TIENES ", "EN", " TOTAL", " UN", " GASTO", " QUE", " VALE", " R$" + gastosT,
-								"\n\nDETALLADO", " COMO:\n", gastosDetalles(), "", "" };
-						sumItem.setBounds(0, 220, 650, 550);
+						String[] wordT = language == 0 ? espSumm[4].split(" ") : porSumm[4].split(" ");
+						sumItem.setBounds(0, 240, 650, 550);
 						if (wordL < wordT.length)
-							sumItem.setText(sumItem.getText().concat(wordT[wordL++]));
+							sumItem.setText(sumItem.getText().concat(wordT[wordL++] + " "));
 						else {
-							order++;
-							wordL = 0;
-							sumItem.setText("");
+							if (wordL < wordT.length + 3) {
+								wordL++;
+							} else {
+								order++;
+								wordL = 0;
+								sumItem.setText("");
+							}
 						}
 					} else {
-						String[] wordT = { "TIENES ", "EN", " TOTAL", " R$" + gastosT, " COMO", " GASTOS\n",
-								"\nDIVIDIENDO", " EN ", nbGastos() + " COSAS\n\n", "CON", " UN", " PROMEDIO", " DE",
-								" R$" + gastosT / nbGastos(), "\n\n", " DETALLADO", " COMO:\n", gastosDetalles(), "",
-								"" };
+						String[] wordT = language == 0 ? espSumm[5].split(" ") : porSumm[5].split(" ");
 						sumItem.setBounds(0, 140, 650, 550);
 						if (wordL < wordT.length)
-							sumItem.setText(sumItem.getText().concat(wordT[wordL++]));
+							sumItem.setText(sumItem.getText().concat(wordT[wordL++] + " "));
 						else {
-							order++;
-							wordL = 0;
-							sumItem.setText("");
+							if (wordL < wordT.length + 3) {
+								wordL++;
+							} else {
+								order++;
+								wordL = 0;
+								sumItem.setText("");
+							}
 						}
 					}
 					break;
 				}
 				case 2: {// agg start
 					if (agregadoT == 0) {
-						String[] wordT = { "USTED", " NO", " TIENE", " AGREGADOS!" };
+						String[] wordT = language == 0 ? espSumm[6].split(" ") : porSumm[6].split(" ");
 						sumItem.setBounds(0, 240, 650, 550);
 						if (wordL < wordT.length)
-							sumItem.setText(sumItem.getText().concat(wordT[wordL++]));
+							sumItem.setText(sumItem.getText().concat(wordT[wordL++] + " "));
 						else {
-							order++;
-							wordL = 0;
-							sumItem.setText("");
+							if (wordL < wordT.length + 3) {
+								wordL++;
+							} else {
+								order++;
+								wordL = 0;
+								sumItem.setText("");
+							}
 						}
 					} else if (nbAgregados() == 1) {
-						String[] wordT = { "TIENES ", "EN", " TOTAL", " UN", " AGREGADO", " QUE", " VALE",
-								" R$" + agregadoT, "\n\nDETALLADO", " COMO:\n", agregadoDetalles(), "", "" };
+						String[] wordT = language == 0 ? espSumm[7].split(" ") : porSumm[7].split(" ");
 						sumItem.setBounds(0, 220, 650, 550);
 						if (wordL < wordT.length)
-							sumItem.setText(sumItem.getText().concat(wordT[wordL++]));
+							sumItem.setText(sumItem.getText().concat(wordT[wordL++] + " "));
 						else {
-							order++;
-							wordL = 0;
-							sumItem.setText("");
+							if (wordL < wordT.length + 3) {
+								wordL++;
+							} else {
+								order++;
+								wordL = 0;
+								sumItem.setText("");
+							}
 						}
 					} else {
-						String[] wordT = { "TIENES", " EN", " TOTAL", " R$" + agregadoT, " COMO", " AGREGADOS\n\n",
-								"DIVIDIDO", " POR " + nbAgregados(), " COSAS\n\n", "CON", " UN", " PROMEDIO", " DE",
-								" R$" + agregadoT / nbAgregados() + "\n\n", "DETALLADO", " COMO:\n", agregadoDetalles(),
-								"\n", "\n" };
+						String[] wordT = language == 0 ? espSumm[8].split(" ") : porSumm[8].split(" ");
 						sumItem.setBounds(0, 140, 650, 550);
 						if (wordL < wordT.length)
-							sumItem.setText(sumItem.getText().concat(wordT[wordL++]));
+							sumItem.setText(sumItem.getText().concat(wordT[wordL++] + " "));
 						else {
-							order++;
-							wordL = 0;
-							sumItem.setText("");
+							if (wordL < wordT.length + 3) {
+								wordL++;
+							} else {
+								order++;
+								wordL = 0;
+								sumItem.setText("");
+							}
 						}
 					}
 					break;
@@ -1109,104 +1502,116 @@ public class Reales extends JFrame {
 					if (agregadoT == 0)
 						if (Integer.valueOf(panelCnum[10].getText()) > 0) {
 							sumItem.setBounds(0, 120, 650, 550);
-							String[] wordT = { "PARA ", "RESUMIR\n\n", " EMPEZAMOS", " EL DÍA", " CON",
-									" R$" + initialDay.getText(), "\n\nY VENDIMOS", " R$" + totalVenta, "\n\nY GASTO",
-									" R$" + gastosT, "\n\nQUE", " TERMINARÁ", " CON", " R$" + totalO, " EN TOTAL",
-									"\n\nCON", " UN", " R$" + panelCnum[10].getText(), " COMO", " PIX", "", "" };
+							String[] wordT = language == 0 ? espSumm[9].split(" ") : porSumm[9].split(" ");
 							if (wordL < wordT.length)
-								sumItem.setText(sumItem.getText().concat(wordT[wordL++]));
+								sumItem.setText(sumItem.getText().concat(wordT[wordL++] + " "));
 							else {
-								order++;
-								wordL = 0;
-								sumItem.setText("");
+								if (wordL < wordT.length + 3) {
+									wordL++;
+								} else {
+									order++;
+									wordL = 0;
+									sumItem.setText("");
+								}
 							}
 						} else {
 							sumItem.setBounds(0, 140, 650, 550);
-							String[] wordT = { "PARA ", "RESUMIR\n\n", " EMPEZAMOS", " EL DÍA", " CON",
-									" R$" + initialDay.getText(), "\n\nY VENDIMOS", " R$" + totalVenta, "\n\nY GASTO",
-									" R$" + gastosT, "\n\nQUE", " TERMINARÁ", " CON", " R$" + totalO, " EN TOTAL", "",
-									"" };
+							String[] wordT = language == 0 ? espSumm[10].split(" ") : porSumm[10].split(" ");
 							if (wordL < wordT.length)
-								sumItem.setText(sumItem.getText().concat(wordT[wordL++]));
+								sumItem.setText(sumItem.getText().concat(wordT[wordL++] + " "));
 							else {
-								order++;
-								wordL = 0;
-								sumItem.setText("");
+								if (wordL < wordT.length + 3) {
+									wordL++;
+								} else {
+									order++;
+									wordL = 0;
+									sumItem.setText("");
+								}
 							}
 						}
 					else if (Integer.valueOf(panelCnum[10].getText()) > 0) {
 						sumItem.setBounds(0, 100, 650, 550);
-						String[] wordT = { "PARA ", "RESUMIR\n\n", " EMPEZAMOS", " EL DÍA", " CON",
-								" R$" + initialDay.getText(), "\n\nY VENDIMOS", " R$" + totalVenta, "\n\nY GASTO",
-								" R$" + gastosT, "\n\nY AGREGÓ", " R$" + agregadoT, "\n\nQUE", " TERMINARÁ", " CON",
-								" R$" + totalO, " EN TOTAL", "\n\nCON", " UN", " R$" + panelCnum[10].getText(), " COMO",
-								" PIX", "", "" };
+						String[] wordT = language == 0 ? espSumm[11].split(" ") : porSumm[11].split(" ");
 						if (wordL < wordT.length)
-							sumItem.setText(sumItem.getText().concat(wordT[wordL++]));
+							sumItem.setText(sumItem.getText().concat(wordT[wordL++] + " "));
 						else {
-							order++;
-							wordL = 0;
-							sumItem.setText("");
+							if (wordL < wordT.length + 3) {
+								wordL++;
+							} else {
+								order++;
+								wordL = 0;
+								sumItem.setText("");
+							}
 						}
 					} else {
 						sumItem.setBounds(0, 120, 650, 550);
-						String[] wordT = { "PARA ", "RESUMIR\n\n", " EMPEZAMOS", " EL DÍA", " CON",
-								" R$" + initialDay.getText(), "\n\nY VENDIMOS", " R$" + totalVenta, "\n\nY GASTO",
-								" R$" + gastosT, "\n\nY AGREGÓ", " R$" + agregadoT, "\n\nQUE", " TERMINARÁ", " CON",
-								" R$" + totalO, " EN TOTAL", "", "" };
+						String[] wordT = language == 0 ? espSumm[12].split(" ") : porSumm[12].split(" ");
 						if (wordL < wordT.length)
-							sumItem.setText(sumItem.getText().concat(wordT[wordL++]));
+							sumItem.setText(sumItem.getText().concat(wordT[wordL++] + " "));
 						else {
-							order++;
-							wordL = 0;
-							sumItem.setText("");
+							if (wordL < wordT.length + 3) {
+								wordL++;
+							} else {
+								order++;
+								wordL = 0;
+								sumItem.setText("");
+							}
 						}
 					}
 					break;
 				}
 				case 4: {// diferrence start
 					if (totalO == totalCaja) {
-						String[] wordT = { "LA", " CAJA", " DIO", " BIEN\n\n", "NO", " HAY", " DIFERENCIA\n\n", ":)" };
+						String[] wordT = language == 0 ? espSumm[13].split(" ") : porSumm[13].split(" ");
 						sumItem.setBounds(0, 220, 650, 550);
 						if (wordL < wordT.length)
-							sumItem.setText(sumItem.getText().concat(wordT[wordL++]));
+							sumItem.setText(sumItem.getText().concat(wordT[wordL++] + " "));
 						else {
-							order++;
-							wordL = 0;
-							sumItem.setText("");
+							if (wordL < wordT.length + 3) {
+								wordL++;
+							} else {
+								order++;
+								wordL = 0;
+								sumItem.setText("");
+							}
 						}
 					} else {
-						String[] wordT = { "LA", " CAJA", " NO", " DIO", " BIEN\n\n", "PARECE",
-								" QUE " + diffResult[1].getText().toUpperCase(), "\n\nREVISA", " LOS", " BOLETOS",
-								" Y LA", " CAJA", "", "" };
+						String[] wordT = language == 0 ? espSumm[14].split(" ") : porSumm[14].split(" ");
 						sumItem.setBounds(0, 200, 650, 550);
 						if (wordL < wordT.length)
-							sumItem.setText(sumItem.getText().concat(wordT[wordL++]));
+							sumItem.setText(sumItem.getText().concat(wordT[wordL++] + " "));
 						else {
-							order++;
-							wordL = 0;
-							sumItem.setText("");
+							if (wordL < wordT.length + 3) {
+								wordL++;
+							} else {
+								order++;
+								wordL = 0;
+								sumItem.setText("");
+							}
 						}
 					}
 					break;
 				}
 				case 5: {// remain for tmrw
-					String[] wordT = { "QUEDARÁ", " PARA", " MAÑANA", " APROXIMADAMENTE\n\n", "R$" + restN, "", "" };
+					String[] wordT = language == 0 ? espSumm[15].split(" ") : porSumm[15].split(" ");
 					sumItem.setBounds(0, 220, 650, 550);
 					if (wordL < wordT.length)
-						sumItem.setText(sumItem.getText().concat(wordT[wordL++]));
+						sumItem.setText(sumItem.getText().concat(wordT[wordL++] + " "));
 					else {
-						order++;
-						wordL = 0;
-						sumItem.setText("");
+						if (wordL < wordT.length + 3) {
+							wordL++;
+						} else {
+							order++;
+							wordL = 0;
+							sumItem.setText("");
+						}
 					}
 					break;
 				}
 				case 6: {// export button
-					String[] wordT = { "TOQUE", " EL", " BOTÓN", " PARA", " EXPORTAR", " EL", " RESULTADO" };
-					sumItem.setBounds(0, 200, 650, 550);
+					String[] wordT = language == 0 ? espSumm[16].split(" ") : porSumm[16].split(" ");
 					if (wordL < wordT.length)
-						sumItem.setText(sumItem.getText().concat(wordT[wordL++]));
+						sumItem.setText(sumItem.getText().concat(wordT[wordL++] + " "));
 					else {
 						order++;
 						expBtn.setVisible(true);
@@ -1228,111 +1633,138 @@ public class Reales extends JFrame {
 				switch (order) {
 				case 0: {// details start
 					if (totalVenta == 0) {
-						char[] wordT = "USTED NO VENDIÓ NADA\n\n\n\n".toCharArray();
+						char[] wordT = language == 0 ? espSumm[0].toCharArray() : porSumm[0].toCharArray();
 						sumItem.setBounds(0, 240, 650, 550);
 						if (wordL < wordT.length)
 							sumItem.setText(sumItem.getText() + wordT[wordL++]);
 						else {
-							order++;
-							wordL = 0;
-							sumItem.setText("");
+							if (wordL < wordT.length + 3) {
+								wordL++;
+							} else {
+								order++;
+								wordL = 0;
+								sumItem.setText("");
+							}
 						}
 					} else if (nbVentas() == 1) {
-						char[] wordT = ("USTED VENDIÓ UNA VENTA SOLO QUE VALE R$" + totalVenta + "\n\n\n\n")
-								.toCharArray();
+						char[] wordT = language == 0 ? espSumm[1].toCharArray() : porSumm[1].toCharArray();
 						sumItem.setBounds(0, 240, 650, 550);
 						if (wordL < wordT.length)
 							sumItem.setText(sumItem.getText() + wordT[wordL++]);
 						else {
-							order++;
-							wordL = 0;
-							sumItem.setText("");
+							if (wordL < wordT.length + 3) {
+								wordL++;
+							} else {
+								order++;
+								wordL = 0;
+								sumItem.setText("");
+							}
 						}
 					} else {
-						char[] wordT = ("USTED VENDIÓ R$" + totalVenta + "\n\nDIVIDIENDO EN " + nbVentas()
-								+ " VENTAS\n\n" + "CON UN PROMEDIO DE R$" + totalVenta / nbVentas() + " POR VENTA"
-								+ "\n\n\n\n").toCharArray();
+						char[] wordT = language == 0 ? espSumm[2].toCharArray() : porSumm[2].toCharArray();
 						sumItem.setBounds(0, 200, 650, 550);
 						if (wordL < wordT.length)
 							sumItem.setText(sumItem.getText() + wordT[wordL++]);
 						else {
-							order++;
-							wordL = 0;
-							sumItem.setText("");
+							if (wordL < wordT.length + 3) {
+								wordL++;
+							} else {
+								order++;
+								wordL = 0;
+								sumItem.setText("");
+							}
 						}
 					}
 					break;
 				}
 				case 1: {// gastos start
 					if (gastosT == 0) {
-						char[] wordT = "USTED NO TIENE GASTOS!\n\n\n\n".toCharArray();
+						char[] wordT = language == 0 ? espSumm[3].toCharArray() : porSumm[3].toCharArray();
 						sumItem.setBounds(0, 240, 650, 550);
 						if (wordL < wordT.length)
 							sumItem.setText(sumItem.getText() + wordT[wordL++]);
 						else {
-							order++;
-							wordL = 0;
-							sumItem.setText("");
+							if (wordL < wordT.length + 3) {
+								wordL++;
+							} else {
+								order++;
+								wordL = 0;
+								sumItem.setText("");
+							}
 						}
 					} else if (nbGastos() == 1) {
-						char[] wordT = ("TIENES EN TOTAL UN GASTO QUE VALE R$" + gastosT + "\n\n" + "DETALLADO COMO:\n"
-								+ gastosDetalles() + "\n\n\n\n").toCharArray();
+						char[] wordT = language == 0 ? espSumm[4].toCharArray() : porSumm[4].toCharArray();
 						sumItem.setBounds(0, 200, 650, 550);
 						if (wordL < wordT.length)
 							sumItem.setText(sumItem.getText() + (wordT[wordL++]));
 						else {
-							order++;
-							wordL = 0;
-							sumItem.setText("");
+							if (wordL < wordT.length + 3) {
+								wordL++;
+							} else {
+								order++;
+								wordL = 0;
+								sumItem.setText("");
+							}
 						}
 					} else {
-						char[] wordT = ("TIENES EN TOTAL R$" + gastosT + " COMO GASTOS\n\n" + "DIVIDIDO POR "
-								+ nbGastos() + " COSAS\n\n" + "CON UN PROMEDIO DE R$" + gastosT / nbGastos() + "\n\n"
-								+ "DETALLADO COMO:\n" + gastosDetalles() + "\n\n\n\n").toCharArray();
+						char[] wordT = language == 0 ? espSumm[5].toCharArray() : porSumm[5].toCharArray();
 						sumItem.setBounds(0, 140, 650, 550);
 						if (wordL < wordT.length)
 							sumItem.setText(sumItem.getText() + (wordT[wordL++]));
 						else {
-							order++;
-							wordL = 0;
-							sumItem.setText("");
+							if (wordL < wordT.length + 3) {
+								wordL++;
+							} else {
+								order++;
+								wordL = 0;
+								sumItem.setText("");
+							}
 						}
 					}
 					break;
 				}
 				case 2: {// agg start
 					if (agregadoT == 0) {
-						char[] wordT = "NO TIENES AGREGADOS!\n\n\n\n".toCharArray();
+						char[] wordT = language == 0 ? espSumm[6].toCharArray() : porSumm[6].toCharArray();
 						sumItem.setBounds(0, 240, 650, 550);
 						if (wordL < wordT.length)
 							sumItem.setText(sumItem.getText() + (wordT[wordL++]));
 						else {
-							order++;
-							wordL = 0;
-							sumItem.setText("");
+							if (wordL < wordT.length + 3) {
+								wordL++;
+							} else {
+								order++;
+								wordL = 0;
+								sumItem.setText("");
+							}
 						}
 					} else if (nbAgregados() == 1) {
-						char[] wordT = ("TIENES EN TOTAL UN AGREGADO QUE VALE R$" + agregadoT + "\n\n"
-								+ "DETALLADO COMO:\n" + agregadoDetalles() + "\n\n\n\n").toCharArray();
+						char[] wordT = language == 0 ? espSumm[7].toCharArray() : porSumm[7].toCharArray();
 						sumItem.setBounds(0, 200, 650, 550);
 						if (wordL < wordT.length)
 							sumItem.setText(sumItem.getText() + (wordT[wordL++]));
 						else {
-							order++;
-							wordL = 0;
-							sumItem.setText("");
+							if (wordL < wordT.length + 3) {
+								wordL++;
+							} else {
+								order++;
+								wordL = 0;
+								sumItem.setText("");
+							}
 						}
 					} else {
-						char[] wordT = ("TIENES EN TOTAL R$" + agregadoT + " COMO AGREGADOS\n\n" + "DIVIDIDO POR "
-								+ nbAgregados() + " COSAS\n\n" + "CON UN PROMEDIO DE R$" + agregadoT / nbAgregados()
-								+ "\n\n" + "DETALLADO COMO:\n" + agregadoDetalles() + "\n\n\n\n").toCharArray();
+						char[] wordT = language == 0 ? espSumm[8].toCharArray() : porSumm[8].toCharArray();
 						sumItem.setBounds(0, 140, 650, 550);
 						if (wordL < wordT.length)
 							sumItem.setText(sumItem.getText() + (wordT[wordL++]));
 						else {
-							order++;
-							wordL = 0;
-							sumItem.setText("");
+							if (wordL < wordT.length + 3) {
+								wordL++;
+							} else {
+								order++;
+								wordL = 0;
+								sumItem.setText("");
+							}
 						}
 					}
 					break;
@@ -1341,99 +1773,115 @@ public class Reales extends JFrame {
 					if (agregadoT == 0)
 						if (Integer.valueOf(panelCnum[10].getText()) > 0) {
 							sumItem.setBounds(0, 120, 650, 550);
-							char[] wordT = ("PARA RESUMIR\n\n" + "EMPEZAMOS EL DÍA CON R$" + initialDay.getText()
-									+ "\n\nY VENDIMOS R$" + totalVenta + "\n\nY GASTO R$" + gastosT
-									+ "\n\nQUE TERMINARÁ CON R$" + totalO + " EN TOTAL" + "\n\nCON UN R$"
-									+ panelCnum[10].getText() + " COMO PIX" + "\n\n\n\n").toCharArray();
+							char[] wordT = language == 0 ? espSumm[9].toCharArray() : porSumm[9].toCharArray();
 							if (wordL < wordT.length)
 								sumItem.setText(sumItem.getText() + (wordT[wordL++]));
 							else {
-								order++;
-								wordL = 0;
-								sumItem.setText("");
+								if (wordL < wordT.length + 3) {
+									wordL++;
+								} else {
+									order++;
+									wordL = 0;
+									sumItem.setText("");
+								}
 							}
 						} else {
 							sumItem.setBounds(0, 140, 650, 550);
-							char[] wordT = ("PARA RESUMIR\n\n" + "EMPEZAMOS EL DÍA CON R$" + initialDay.getText()
-									+ "\n\nY VENDIMOS R$" + totalVenta + "\n\nY GASTO R$" + gastosT
-									+ "\n\nQUE TERMINARÁ CON R$" + totalO + " EN TOTAL" + "\n\n\n\n").toCharArray();
+							char[] wordT = language == 0 ? espSumm[10].toCharArray() : porSumm[10].toCharArray();
 							if (wordL < wordT.length)
 								sumItem.setText(sumItem.getText() + (wordT[wordL++]));
 							else {
-								order++;
-								wordL = 0;
-								sumItem.setText("");
+								if (wordL < wordT.length + 3) {
+									wordL++;
+								} else {
+									order++;
+									wordL = 0;
+									sumItem.setText("");
+								}
+								;
 							}
 						}
 					else if (Integer.valueOf(panelCnum[10].getText()) > 0) {
 						sumItem.setBounds(0, 100, 650, 550);
-						char[] wordT = ("PARA RESUMIR\n\n" + "EMPEZAMOS EL DÍA CON R$" + initialDay.getText()
-								+ "\n\nY VENDIMOS R$" + totalVenta + "\n\nY GASTO R$" + gastosT + "\n\nY AGREGÓ R$"
-								+ agregadoT + "\n\nQUE TERMINARÁ CON R$" + totalO + " EN TOTAL" + "\n\nCON UN R$"
-								+ panelCnum[10].getText() + " COMO PIX" + "\n\n\n\n").toCharArray();
+						char[] wordT = language == 0 ? espSumm[11].toCharArray() : porSumm[11].toCharArray();
 						if (wordL < wordT.length) {
 							sumItem.setText(sumItem.getText() + (wordT[wordL++]));
 						} else {
-							order++;
-							wordL = 0;
-							sumItem.setText("");
+							if (wordL < wordT.length + 3) {
+								wordL++;
+							} else {
+								order++;
+								wordL = 0;
+								sumItem.setText("");
+							}
 						}
 					} else {
 						sumItem.setBounds(0, 120, 650, 550);
-						char[] wordT = ("PARA RESUMIR\n\n" + "EMPEZAMOS EL DÍA CON R$" + initialDay.getText()
-								+ "\n\nY VENDIMOS R$" + totalVenta + "\n\nY GASTO R$" + gastosT + "\n\nY AGREGÓ R$"
-								+ agregadoT + "\n\nQUE TERMINARÁ CON R$" + totalO + " EN TOTAL" + "\n\n\n\n")
-								.toCharArray();
+						char[] wordT = language == 0 ? espSumm[12].toCharArray() : porSumm[12].toCharArray();
 						if (wordL < wordT.length) {
 							sumItem.setText(sumItem.getText() + (wordT[wordL++]));
 						} else {
-							order++;
-							wordL = 0;
-							sumItem.setText("");
+							if (wordL < wordT.length + 3) {
+								wordL++;
+							} else {
+								order++;
+								wordL = 0;
+								sumItem.setText("");
+							}
 						}
 					}
 					break;
 				}
 				case 4: {// diferrence start
 					if (totalO == totalCaja) {
-						char[] wordT = "LA CAJA DIO BIEN\n\n NO HAY DIFERENCIA\n\n:)".toCharArray();
+						char[] wordT = language == 0 ? espSumm[13].toCharArray() : porSumm[13].toCharArray();
 						sumItem.setBounds(0, 200, 650, 550);
 						if (wordL < wordT.length)
 							sumItem.setText(sumItem.getText() + (wordT[wordL++]));
 						else {
-							order++;
-							wordL = 0;
-							sumItem.setText("");
+							if (wordL < wordT.length + 3) {
+								wordL++;
+							} else {
+								order++;
+								wordL = 0;
+								sumItem.setText("");
+							}
 						}
 					} else {
-						char[] wordT = ("LA CAJA NO DIO BIEN\n\n" + "PARECE QUE "
-								+ diffResult[1].getText().toUpperCase() + "\n\nREVISA LOS BOLETOS Y LA CAJA"
-								+ "\n\n\n\n").toCharArray();
+						char[] wordT = language == 0 ? espSumm[14].toCharArray() : porSumm[14].toCharArray();
 						sumItem.setBounds(0, 200, 650, 550);
 						if (wordL < wordT.length)
 							sumItem.setText(sumItem.getText() + (wordT[wordL++]));
 						else {
-							order++;
-							wordL = 0;
-							sumItem.setText("");
+							if (wordL < wordT.length + 3) {
+								wordL++;
+							} else {
+								order++;
+								wordL = 0;
+								sumItem.setText("");
+							}
 						}
 					}
 					break;
 				}
 				case 5: {// remain for tmrw
-					char[] wordT = ("QUEDARÁ PARA MAÑANA APROXIMADAMENTE\n\nR$" + restN + "\n\n\n\n").toCharArray();
+					char[] wordT = language == 0 ? espSumm[15].toCharArray() : porSumm[15].toCharArray();
 					sumItem.setBounds(0, 220, 650, 550);
 					if (wordL < wordT.length)
 						sumItem.setText(sumItem.getText() + (wordT[wordL++]));
 					else {
-						order++;
-						wordL = 0;
-						sumItem.setText("");
+						if (wordL < wordT.length + 3) {
+							wordL++;
+						} else {
+							order++;
+							wordL = 0;
+							sumItem.setText("");
+						}
 					}
 					break;
 				}
 				case 6: {// export button
-					char[] wordT = "TOQUE EL BOTÓN PARA EXPORTAR EL RESULTADO\n\n\n\n".toCharArray();
+					char[] wordT = language == 0 ? espSumm[16].toCharArray() : porSumm[16].toCharArray();
 					sumItem.setBounds(0, 200, 650, 550);
 					if (wordL < wordT.length)
 						sumItem.setText(sumItem.getText() + (wordT[wordL++]));
@@ -1496,6 +1944,7 @@ public class Reales extends JFrame {
 		});
 
 		sum.add(sumItem);
+		sum.setIconImage(notasI.getImage());
 		sum.setVisible(true);
 	}
 
@@ -1509,56 +1958,119 @@ public class Reales extends JFrame {
 			tempFile2.mkdir();
 			File newFile = new File(tempFile2, titleName() + " " + dayS + " " + dayN + "-" + "reales.txt");
 			FileWriter savedF = new FileWriter(newFile);
-			savedF.write(titleName() + " - SUMARIO POR EL DIA " + dayS + " " + dayN + "-" + monthS + "-" + yearS
-					+ System.lineSeparator() + System.lineSeparator());
+			String[] espSumm = { "*VENTAS:\nUSTED NO VENDIÓ NADA" + System.lineSeparator(), // 0
+					"*VENTAS:\nUSTED VENDIÓ UNA VENTA SOLO QUE VALE R$" + totalVenta + System.lineSeparator(), // 1
+					"*VENTAS:\nUSTED VENDIÓ R$" + totalVenta + ", DIVIDIENDO EN " + nbVentas() + " VENTAS, "
+							+ "CON UN PROMEDIO DE R$" + (nbVentas() == 0 ? 0 : totalVenta / nbVentas()) + " POR VENTA"
+							+ System.lineSeparator(), // 2
+					System.lineSeparator() + "*GASTOS:\nNO TIENES GASTOS!" + System.lineSeparator(), // 3
+					System.lineSeparator() + "*GASTOS:\nTIENES EN TOTAL UN GASTO QUE VALE R$" + gastosT + "\n"
+							+ "DETALLADO COMO:\n" + gastosDetalles(), // 4
+					System.lineSeparator() + "*GASTOS:\nTIENES EN TOTAL R$" + gastosT + " COMO GASTOS, "
+							+ "DIVIDIDO POR " + nbGastos() + " COSAS, " + "CON UN PROMEDIO DE R$"
+							+ (nbGastos() == 0 ? 0 : gastosT / nbGastos()) + "\n" + "DETALLADO COMO:\n"
+							+ gastosDetalles(), // 5
+					System.lineSeparator() + "*AGREGADOS:\nTIENES EN TOTAL UN AGREGADO QUE VALE R$" + agregadoT + "\n"
+							+ "DETALLADO COMO:\n" + agregadoDetalles(), // 7
+					System.lineSeparator() + "*AGREGADOS:\nTIENES EN TOTAL $" + agregadoT + " COMO AGREGADOS, "
+							+ "DIVIDIDO POR " + nbAgregados() + " COSAS, " + "CON UN PROMEDIO DE $"
+							+ (nbAgregados() == 0 ? 0 : agregadoT / nbAgregados()) + "\n" + "DETALLADO COMO:\n"
+							+ agregadoDetalles(), // 8
+					System.lineSeparator() + "*PARA RESUMIR:\n" + "EMPEZAMOS EL DÍA CON R$" + initialDay.getText()
+							+ "\nVENDIMOS R$" + totalVenta + "\nGASTO R$" + gastosT + "\nQUE TERMINARÁ CON R$" + totalO
+							+ " EN TOTAL" + "\nCON UN R$" + panelCnum[10].getText() + " COMO PIX"
+							+ System.lineSeparator(), // 9
+					System.lineSeparator() + "*PARA RESUMIR:\n" + "EMPEZAMOS EL DÍA CON R$" + initialDay.getText()
+							+ "\nVENDIMOS R$" + totalVenta + "\nGASTO R$" + gastosT + "\nQUE TERMINARÁ CON R$" + totalO
+							+ " EN TOTAL" + System.lineSeparator(), // 10
+					System.lineSeparator() + "*PARA RESUMIR:\n" + "EMPEZAMOS EL DÍA CON R$" + initialDay.getText()
+							+ "\nVENDIMOS R$" + totalVenta + "\nGASTO R$" + gastosT + "\nAGREGÓ R$" + agregadoT
+							+ "\nQUE TERMINARÁ CON R$" + totalO + " EN TOTAL" + "\nCON UN R$" + panelCnum[10].getText()
+							+ " COMO PIX" + System.lineSeparator(), // 11
+					System.lineSeparator() + "*PARA RESUMIR:\n" + "EMPEZAMOS EL DÍA CON R$" + initialDay.getText()
+							+ "\nVENDIMOS R$" + totalVenta + "\nGASTO R$" + gastosT + "\nAGREGÓ R$" + agregadoT
+							+ "\nQUE TERMINARÁ CON R$" + totalO + " EN TOTAL" + System.lineSeparator(), // 12
+					System.lineSeparator() + "*LA CAJA DIO BIEN, NO HAY DIFERENCIA" + System.lineSeparator(), // 13
+					System.lineSeparator() + "*LA CAJA NO DIO BIEN, PARECE QUE " + diffResult[1].getText().toUpperCase()
+							+ System.lineSeparator(), // 14
+					System.lineSeparator() + "*QUEDARÁ PARA MAÑANA APROXIMADAMENTE R$" + restN + System.lineSeparator(), // 15
+					System.lineSeparator() + "*GRACIAS Y HASTA MAÑANA :) "// 16
+			};
+			String[] porSumm = { "*VENDAS:\nVOCÊ NÃO VENDEU NADA" + System.lineSeparator(), // 0
+					"*VENDAS:\nVOCÊ VENDEU UMA VENDA SÓ QUE VALE R$" + totalVenta + System.lineSeparator(), // 1
+					"*VENDAS:\nVOCÊ VENDEU R$" + totalVenta + ", DIVIDINDO EM " + nbVentas() + " VENDAS, "
+							+ "COM MÉDIA DE R$" + (nbVentas() == 0 ? 0 : totalVenta / nbVentas()) + " À VENDA"
+							+ System.lineSeparator(), // 2
+					System.lineSeparator() + "*GASTOS:\nVOCÊ NÃO TEM GASTOS!" + System.lineSeparator(), // 3
+					System.lineSeparator() + "*GASTOS:\nVOCÊ TEM NO TOTAL UM GASTO NO VALOR DE R$" + gastosT + "\n"
+							+ "DETALHADO COMO:\n" + gastosDetalles(), // 4
+					System.lineSeparator() + "*GASTOS:\nVOCÊ TEM NO TOTAL R$" + gastosT + " COMO GASTOS, "
+							+ "DIVIDIDO POR " + nbGastos() + " COISAS, " + "COM MÉDIA DE R$"
+							+ (nbGastos() == 0 ? 0 : gastosT / nbGastos()) + "\n" + "DETALHADO COMO:\n"
+							+ gastosDetalles(), // 5
+					System.lineSeparator() + "*AGREGADOS:\nVOCÊ TEM NO TOTAL UM AGREGADO NO VALOR DE R$" + agregadoT
+							+ "\n" + "DETALHADO COMO:\n" + agregadoDetalles(), // 6
+					System.lineSeparator() + "*AGREGADOS:\nVOCÊ TEM NO TOTAL R$" + agregadoT + " COMO AGREGADOS, "
+							+ "DIVIDIDO POR " + nbAgregados() + " COISAS, " + "COM MÉDIA DE R$"
+							+ (nbAgregados() == 0 ? 0 : agregadoT / nbAgregados()) + "\n" + "DETALHADO COMO:\n"
+							+ agregadoDetalles() + System.lineSeparator(), // 7
+					System.lineSeparator() + "*PARA RESUMIR:\n" + "COMEÇAMOS O DIA COM R$" + initialDay.getText()
+							+ "\nVENDEMOS R$" + totalVenta + "\nGASTO R$" + gastosT + "\nQUE VAI ACABAR EM R$" + totalO
+							+ " EM TOTAL" + "\nCOM UM R$" + panelCnum[10].getText() + " COMO PIX"
+							+ System.lineSeparator(), // 8
+					System.lineSeparator() + "*PARA RESUMIR:\n" + "COMEÇAMOS O DIA COM R$" + initialDay.getText()
+							+ "\nVENDEMOS R$" + totalVenta + "\nGASTO R$" + gastosT + "\nQUE VAI ACABAR EM R$" + totalO
+							+ " EM TOTAL" + System.lineSeparator(), // 9
+					System.lineSeparator() + "*PARA RESUMIR:\n" + "COMEÇAMOS O DIA COM R$" + initialDay.getText()
+							+ "\nVENDEMOS R$" + totalVenta + "\nGASTO R$" + gastosT + "\nADICIONO R$" + agregadoT
+							+ "\nQUE VAI ACABAR EM R$" + totalO + " EM TOTAL" + "\nCOM UM R$" + panelCnum[10].getText()
+							+ " COMO PIX" + System.lineSeparator(), // 10
+					System.lineSeparator() + "*PARA RESUMIR:\n" + "COMEÇAMOS O DIA COM R$" + initialDay.getText()
+							+ "\nVENDEMOS R$" + totalVenta + "\nGASTO R$" + gastosT + "\nADICIONO R$" + agregadoT
+							+ "\nQUE VAI ACABAR EM R$" + totalO + " EM TOTAL" + System.lineSeparator(), // 11
+					System.lineSeparator() + "*A CAIXA DEU BEM, " + "NÃO HÁ DIFERENÇA" + System.lineSeparator(), // 12
+					System.lineSeparator() + "*A CAIXA NÃO DEU BEM, " + "PARECE QUE "
+							+ diffResult[1].getText().toUpperCase() + System.lineSeparator(), // 13
+					System.lineSeparator() + "*FICARÁ PARA AMANHÃ APROXIMADAMENTE R$" + restN + System.lineSeparator(), // 14
+					System.lineSeparator() + "*OBRIGADO E ATÉ AMANHÃ :)"// 15
+			};
+			savedF.write(titleName() + (language == 0 ? " - SUMARIO POR EL DIA " : " - SUMÁRIO DO DIA ") + dayS + " "
+					+ dayN + "-" + monthS + "-" + yearS + System.lineSeparator() + System.lineSeparator());
 			if (totalVenta == 0)
-				savedF.write("*VENTAS:\nUSTED NO VENDIÓ NADA." + System.lineSeparator());
+				savedF.write(language == 0 ? espSumm[0] : porSumm[0]);
 			else if (nbVentas() == 1)
-				savedF.write("*VENTAS:\nUSTED VENDIÓ UNA VENTA SOLO QUE VALE R$" + totalVenta + System.lineSeparator());
+				savedF.write(language == 0 ? espSumm[1] : porSumm[1]);
 			else
-				savedF.write("*VENTAS:\nUSTED VENDIÓ R$" + totalVenta + ", DIVIDIENDO EN " + nbVentas() + " VENTAS, "
-						+ "CON UN PROMEDIO DE R$" + totalVenta / nbVentas() + " POR VENTA." + System.lineSeparator());
+				savedF.write(language == 0 ? espSumm[2] : porSumm[2]);
 			if (gastosT == 0)// GASTOS SAVE
-				savedF.write(System.lineSeparator() + "*GASTOS:\nNO TIENES GASTOS!" + System.lineSeparator());
+				savedF.write(language == 0 ? espSumm[3] : porSumm[3]);
 			else if (nbGastos() == 1)
-				savedF.write(System.lineSeparator() + "*GASTOS:\nTIENES EN TOTAL UN GASTO QUE VALE R$" + gastosT + "."
-						+ System.lineSeparator() + "DETALLADO COMO: " + System.lineSeparator() + gastosDetalles());
+				savedF.write(language == 0 ? espSumm[4] : porSumm[4]);
 			else
-				savedF.write(System.lineSeparator() + "*GASTOS:\nTIENES EN TOTAL R$" + gastosT + " COMO GASTOS, "
-						+ "DIVIDIDO POR " + nbGastos() + " COSAS, " + "CON UN PROMEDIO DE R$" + gastosT / nbGastos()
-						+ "." + System.lineSeparator() + "DETALLADO COMO: " + System.lineSeparator()
-						+ gastosDetalles());
-			if (agregadoT != 0) {// AGG SAVE if not 0
+				savedF.write(language == 0 ? espSumm[5] : porSumm[5]);
+			if (nbAgregados() != 0) { // AGG SAVE if 1
 				if (nbAgregados() == 1)
-					savedF.write(System.lineSeparator() + "*AGREGADOS:\nTIENES EN TOTAL UN AGREGADO QUE VALE R$"
-							+ agregadoT + "." + System.lineSeparator() + "DETALLADO COMO: " + System.lineSeparator()
-							+ agregadoDetalles());
+					savedF.write(language == 0 ? espSumm[6] : porSumm[6]);
 				else
-					savedF.write(System.lineSeparator() + "*AGREGADOS:\nTIENES EN TOTAL R$" + agregadoT
-							+ " COMO AGREGADOS, " + "DIVIDIDO POR " + nbAgregados() + " COSAS, "
-							+ "CON UN PROMEDIO DE R$" + agregadoT / nbAgregados() + "." + System.lineSeparator()
-							+ "DETALLADO COMO: " + System.lineSeparator() + agregadoDetalles());
-				savedF.write(System.lineSeparator() + "*PARA RESUMIR:\n" + "EMPEZAMOS EL DÍA CON R$"
-						+ initialDay.getText() + "\nVENDIMOS R$" + totalVenta + "\nGASTO R$" + gastosT + "\nAGREGÓ R$"
-						+ agregadoT + "\nQUE TERMINARÁ CON R$" + totalO + " EN TOTAL." + "\nCON UN R$"
-						+ panelCnum[10].getText() + " COMO PIX" + System.lineSeparator());
-			} else
-				savedF.write(System.lineSeparator() + "*PARA RESUMIR:\n" + "EMPEZAMOS EL DÍA CON R$"
-						+ initialDay.getText() + "\nVENDIMOS R$" + totalVenta + "\nGASTO R$" + gastosT
-						+ "\nQUE TERMINARÁ CON R$" + totalO + " EN TOTAL" + "\nCON UN R$" + panelCnum[10].getText()
-						+ " COMO PIX." + System.lineSeparator());
-			if (totalO == totalCaja)
-				savedF.write(System.lineSeparator() + "*LA CAJA DIO BIEN, " + "NO HAY DIFERENCIA" + ":)"
-						+ System.lineSeparator());
+					savedF.write(language == 0 ? espSumm[7] : porSumm[7]);
+				if (Integer.valueOf(panelCnum[10].getText()) > 0)
+					savedF.write(language == 0 ? espSumm[10] : porSumm[10]);
+				else
+					savedF.write(language == 0 ? espSumm[11] : porSumm[11]);
+			} else if (Integer.valueOf(panelCnum[10].getText()) > 0)
+				savedF.write(language == 0 ? espSumm[8] : porSumm[8]);
 			else
-				savedF.write(System.lineSeparator() + "*LA CAJA NO DIO BIEN, " + "PARECE QUE "
-						+ diffResult[1].getText().toUpperCase() + "." + System.lineSeparator());
-			savedF.write(System.lineSeparator() + "*QUEDARÁ PARA MAÑANA APROXIMADAMENTE " + "R$" + restN + "."
-					+ System.lineSeparator());
-			savedF.write(System.lineSeparator() + "*GRACIAS Y HASTA MAÑANA :) ");
+				savedF.write(language == 0 ? espSumm[9] : porSumm[9]);
+			if (totalO == totalCaja)
+				savedF.write(language == 0 ? espSumm[12] : porSumm[12]);
+			else
+				savedF.write(language == 0 ? espSumm[13] : porSumm[13]);
+			savedF.write(language == 0 ? espSumm[14] : porSumm[15]);
 			savedF.close();
 
-			JOptionPane opt = new JOptionPane("SALVADO CON ÉXITO, GRACIAS", JOptionPane.INFORMATION_MESSAGE);
+			JOptionPane opt = new JOptionPane(
+					language == 0 ? "SALVADO CON ÉXITO, GRACIAS" : "SALVO COM SUCESSO, OBRIGADO",
+					JOptionPane.INFORMATION_MESSAGE);
 			final JDialog dlg = opt.createDialog("success");
 			new Thread(new Runnable() {
 				public void run() {
@@ -1575,6 +2087,7 @@ public class Reales extends JFrame {
 		} catch (Exception e2) {
 			System.out.println("ERROR " + e2);
 		}
+		 screenShooter();
 	}
 
 	// Detailling the agregados
@@ -1738,7 +2251,7 @@ public class Reales extends JFrame {
 	private void confFrame(String[] conf, JButton notasF, JButton pesosF, JButton newDay, JButton clearEverthing,
 			JMenuItem hideBtn, JMenuItem resoD, JButton gastosPanel, JButton aggPanel) {
 		JFrame temp = new JFrame();
-		temp.setTitle("CONFIGURACIÓN");
+		temp.setTitle(idiomaString(language)[4]);
 		temp.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		temp.setAlwaysOnTop(false);
 		temp.setSize(650, 550);
@@ -1750,7 +2263,7 @@ public class Reales extends JFrame {
 		DefaultListCellRenderer dlcr = new DefaultListCellRenderer();
 		dlcr.setHorizontalAlignment(DefaultListCellRenderer.CENTER);
 		// Op1 icon
-		JLabel op1 = new JLabel("ICONO");
+		JLabel op1 = new JLabel(idiomaString(language)[5]);
 		op1.setBounds(50, 20, 150, 50);
 		op1.setFont(First.myFont);
 		URL cedros1 = getClass().getResource("images/icon/cedros0.png");
@@ -1766,7 +2279,8 @@ public class Reales extends JFrame {
 		op1C.setRenderer(dlcr);
 		op1C.setBounds(420, 20, 70, 50);
 		if (conf[0] != null)
-			op1C.setSelectedIndex(Integer.valueOf(conf[0]));
+			if (!conf[0].equalsIgnoreCase("null"))
+				op1C.setSelectedIndex(Integer.valueOf(conf[0]));
 		op1C.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -1774,37 +2288,39 @@ public class Reales extends JFrame {
 				op1C.setSelectedIndex(op1C.getSelectedIndex());
 			}
 		});
-		// OPTION 2 BUTTONS HIDE
-		JLabel op2 = new JLabel("ESCONDER");
-		op2.setBounds(50, 90, 150, 40);
+
+		// op3 language
+		JLabel op2 = new JLabel(idiomaString(language)[6]);
+		op2.setBounds(50, 90, 200, 40);
 		op2.setFont(First.myFont);
-		String hOp[] = { "NADA", "LA FECHA", "LA FECHA Y LOS BOTONES" };
-		JComboBox<String> btnsHideShow = new JComboBox<String>(hOp);
-		btnsHideShow.setRenderer(dlcr);
-		if (conf[1] != null && First.isNumeric(conf[1]))
-			btnsHideShow.setSelectedIndex(Integer.valueOf(conf[1]));
-		btnsHideShow.setBounds(305, 90, 300, 40);
-		btnsHideShow.setFont(First.myFont);
-		btnsHideShow.setBackground(First.lightC);
-		btnsHideShow.setForeground(First.blueD);
-		btnsHideShow.addActionListener(new ActionListener() {
+		String lan[] = { "ESPAÑOL", "PORTUGUÊS", "ENGLISH" };
+		JComboBox<String> lang = new JComboBox<>(lan);
+		lang.setRenderer(dlcr);
+		lang.setBounds(355, 90, 200, 40);
+		lang.setBackground(First.lightC);
+		lang.setForeground(First.blueD);
+		lang.setFont(First.myFontS);
+		if (conf[7] != null && First.isNumeric(conf[7]))
+			lang.setSelectedIndex(Integer.valueOf(conf[7]));
+		lang.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				btnsHideShow.setSelectedIndex(btnsHideShow.getSelectedIndex());
+				lang.setSelectedIndex(lang.getSelectedIndex());
 			}
 		});
+
 		// OPTION 2 DISABLE KEYBOARD SHORTCUT
-		JLabel op3 = new JLabel("ATAJO DE TECLADO");
-		op3.setBounds(50, 230, 250, 40);
+		JLabel op3 = new JLabel(idiomaString(language)[1]);
+		op3.setBounds(50, 160, 250, 40);
 		op3.setFont(First.myFont);
 		JToggleButton btnsHideShow2 = new JToggleButton();
 		if (conf[2] == null || conf[2].equals("false")) {
-			btnsHideShow2.setText("SI");
+			btnsHideShow2.setText(idiomaString(language)[11]);
 		} else {
-			btnsHideShow2.setText("NO");
+			btnsHideShow2.setText(idiomaString(language)[12]);
 			btnsHideShow2.setSelected(true);
 		}
-		btnsHideShow2.setBounds(415, 230, 80, 40);
+		btnsHideShow2.setBounds(415, 160, 80, 40);
 		btnsHideShow2.setFont(First.myFont);
 		btnsHideShow2.setBorder(First.border);
 		btnsHideShow2.setBackground(First.greenC);
@@ -1843,51 +2359,24 @@ public class Reales extends JFrame {
 			@Override
 			public void itemStateChanged(ItemEvent e) {
 				if (e.getStateChange() == ItemEvent.SELECTED)
-					btnsHideShow2.setText("NO");
+					btnsHideShow2.setText(idiomaString(language)[12]);
 				else
-					btnsHideShow2.setText("SI");
+					btnsHideShow2.setText(idiomaString(language)[11]);
 			}
 		});
 
-		// OPTION 3 CHANGE RESOLUTION
-		JLabel op4 = new JLabel("RESOLUCIÓN");
-		op4.setBounds(50, 160, 250, 40);
-		op4.setFont(First.myFont);
-		String res[] = { "OPTIMAL", "X-P", "P", "M", "G" };
-		JComboBox<String> op2C = new JComboBox<>(res);
-		op2C.setRenderer(dlcr);
-		op2C.setBounds(365, 160, 180, 40);
-		op2C.setFont(First.myFont);
-		op2C.setBackground(First.lightC);
-		op2C.setForeground(First.blueD);
-		if (conf[3] != null)
-			op2C.setSelectedIndex(Integer.valueOf(conf[3]));
-		op2C.addActionListener(e -> {
-			op2C.setSelectedIndex(op2C.getSelectedIndex());
-			// Resolution
-			if (op2C.getSelectedIndex() == 0) {
-				opResolution(clearEverthing, pesosF, notasF, newDay, resoD, aggPanel, gastosPanel);
-			} else if (op2C.getSelectedIndex() == 1)
-				resXP(resoD, notasF, pesosF, newDay, clearEverthing, gastosPanel, aggPanel);
-			else if (op2C.getSelectedIndex() == 2)
-				resP(resoD, notasF, pesosF, newDay, clearEverthing, gastosPanel, aggPanel);
-			else if (op2C.getSelectedIndex() == 3)
-				resM(resoD, notasF, pesosF, newDay, clearEverthing, gastosPanel, aggPanel);
-			else
-				resG(resoD, notasF, pesosF, newDay, clearEverthing, gastosPanel, aggPanel);
-		});
 		// OPTION 5 AUTOSAVE
-		JLabel op5 = new JLabel("AUTOGUARDAR");
-		op5.setBounds(50, 300, 200, 40);
+		JLabel op5 = new JLabel(idiomaString(language)[8]);
+		op5.setBounds(50, 230, 200, 40);
 		op5.setFont(First.myFont);
 		JToggleButton btnsHideShow3 = new JToggleButton();
 		if (conf[4] == null || conf[4].equals("false")) {
-			btnsHideShow3.setText("SI");
+			btnsHideShow3.setText(idiomaString(language)[11]);
 		} else {
-			btnsHideShow3.setText("NO");
+			btnsHideShow3.setText(idiomaString(language)[12]);
 			btnsHideShow3.setSelected(true);
 		}
-		btnsHideShow3.setBounds(415, 300, 80, 40);
+		btnsHideShow3.setBounds(415, 230, 80, 40);
 		btnsHideShow3.setFont(First.myFont);
 		btnsHideShow3.setBorder(First.border);
 		btnsHideShow3.setBackground(First.greenC);
@@ -1927,45 +2416,14 @@ public class Reales extends JFrame {
 			@Override
 			public void itemStateChanged(ItemEvent e) {
 				if (e.getStateChange() == ItemEvent.SELECTED)
-					btnsHideShow3.setText("NO");
+					btnsHideShow3.setText(idiomaString(language)[12]);
 				else
-					btnsHideShow3.setText("SI");
+					btnsHideShow3.setText(idiomaString(language)[11]);
 			}
-		});
-		// OP6 slider speed summary
-		JLabel op6 = new JLabel("VELOCIDAD DE ANIMACIÓN");
-		op6.setFont(First.myFont);
-		op6.setBounds(50, 370, 340, 40);
-		JLabel speedValue = new JLabel("MEDIANO");
-		speedValue.setBounds(415, 390, 80, 40);
-		speedValue.setFont(First.myFontXS);
-		JSlider speedSumm = new JSlider();
-		speedSumm.setBackground(First.grisD);
-		speedSumm.setBounds(415, 360, 80, 40);
-		speedSumm.setMaximum(2);
-		speedSumm.setMinimum(0);
-		speedSumm.setMajorTickSpacing(1);
-		if (conf[6] == null || conf[6].equals("1")) {
-			speedValue.setText("MEDIANO");
-			speedSumm.setValue(1);
-		} else if (conf[6].equals("0")) {
-			speedSumm.setValue(0);
-			speedValue.setText("LENTO");
-		} else {
-			speedSumm.setValue(2);
-			speedValue.setText("RÁPIDO");
-		}
-		speedSumm.addChangeListener(e -> {
-			if (speedSumm.getValue() == 0)
-				speedValue.setText("LENTO");
-			else if (speedSumm.getValue() == 1)
-				speedValue.setText("MEDIANO");
-			else
-				speedValue.setText("RÁPIDO");
 		});
 
 		// Bottom line
-		JButton defSet = new JButton("POR DEFECTO");
+		JButton defSet = new JButton(idiomaString(language)[9]);
 		defSet.setBounds(120, 440, 200, 50);
 		First.btnStyle(defSet);
 		defSet.setBackground(First.redC);
@@ -1997,19 +2455,21 @@ public class Reales extends JFrame {
 		defSet.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				op1C.setSelectedIndex(0);
-				Reales.this.setIconImage(iconImages[0].getImage());
-				btnsHideShow.setSelectedIndex(0);
-				btnsHideShow2.setText("SI");
-				btnsHideShow2.setSelected(false);
-				op2C.setSelectedIndex(0);
-				opResolution(clearEverthing, pesosF, notasF, newDay, resoD, aggPanel, gastosPanel);
-				btnsHideShow3.setText("SI");
-				btnsHideShow3.setSelected(false);
+				op1C.setSelectedIndex(0);// icon
+				Reales.this.setIconImage(iconImages[0].getImage());// icon
+				conf[1] = "0";// btn hide
+				btnsHideShow2.setText(idiomaString(language)[11]);// key shortcut
+				btnsHideShow2.setSelected(false);// key shortcut
+				conf[3] = "0";// res
+				opResolution(clearEverthing, pesosF, notasF, newDay, resoD, aggPanel, gastosPanel);// res
+				btnsHideShow3.setText(idiomaString(language)[11]);// autosave
+				btnsHideShow3.setSelected(false);// autosave
+				conf[6] = "1";// speed
+				lang.setSelectedIndex(0);// lan
 			}
 		});
 		// SAVE
-		JButton save = new JButton("GUARDAR");
+		JButton save = new JButton(idiomaString(language)[10]);
 		save.setBounds(400, 440, 150, 50);
 		First.btnStyle(save);
 		save.setBackground(First.blueC);
@@ -2043,13 +2503,14 @@ public class Reales extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				try {
 					FileWriter savedF = new FileWriter("conf.txt");
-					savedF.write(op1C.getSelectedIndex() + System.lineSeparator());
-					savedF.write(btnsHideShow.getSelectedIndex() + System.lineSeparator());
-					savedF.write(btnsHideShow2.isSelected() + System.lineSeparator());
-					savedF.write(op2C.getSelectedIndex() + System.lineSeparator());
-					savedF.write(btnsHideShow3.isSelected() + System.lineSeparator());
-					savedF.write(conf[5] + System.lineSeparator());
-					savedF.write(speedSumm.getValue() + System.lineSeparator());
+					savedF.write(op1C.getSelectedIndex() + System.lineSeparator());// icon
+					savedF.write(conf[1] + System.lineSeparator());// btn hide
+					savedF.write(btnsHideShow2.isSelected() + System.lineSeparator());// key shortcut
+					savedF.write(conf[3] + System.lineSeparator());// res
+					savedF.write(btnsHideShow3.isSelected() + System.lineSeparator());// autosave
+					savedF.write(conf[5] + System.lineSeparator());// first frame to open
+					savedF.write(conf[6] + System.lineSeparator());// speed
+					savedF.write(lang.getSelectedIndex() + System.lineSeparator());// lan
 					savedF.close();
 				} catch (Exception e2) {
 				}
@@ -2073,16 +2534,11 @@ public class Reales extends JFrame {
 		temp.add(op1);
 		temp.add(op1C);
 		temp.add(op2);
+		temp.add(lang);
 		temp.add(op3);
-		temp.add(btnsHideShow);
 		temp.add(btnsHideShow2);
-		temp.add(op2C);
-		temp.add(op4);
 		temp.add(op5);
 		temp.add(btnsHideShow3);
-		temp.add(op6);
-		temp.add(speedSumm);
-		temp.add(speedValue);
 		temp.add(defSet);
 		temp.add(save);
 		temp.setVisible(true);
@@ -2090,22 +2546,14 @@ public class Reales extends JFrame {
 
 	// Hide/show the buttons
 	private void hideBtn(JButton notasF, JButton pesosF, JButton newDay, JButton clearEverthing, JMenuItem hideBtn) {
-		if (pesosF.isShowing()) {
-			pesosF.hide();
-			clearEverthing.hide();
-			notasF.hide();
-			hideBtn.setText("MONSTRAR LOS BOTONES");
-		} else {
-			pesosF.show();
-			clearEverthing.show();
-			notasF.show();
-			hideBtn.setText("ESCONDER LOS BOTONES");
-		}
+		pesosF.hide();
+		clearEverthing.hide();
+		notasF.hide();
 	}
 
 	// Clear all
 	private void clearAll() {
-		int op = JOptionPane.showConfirmDialog(null, "¿QUIERES BORRAR TODO?", "BORRAR TODO",
+		int op = JOptionPane.showConfirmDialog(null, idiomaString(language)[18], idiomaString(language)[19],
 				JOptionPane.OK_CANCEL_OPTION);
 		if (op == 0) {
 			for (int i = 0; i < 6; i++)
@@ -2126,7 +2574,7 @@ public class Reales extends JFrame {
 
 	// NEW DAY
 	private void newDay() {
-		int op = JOptionPane.showConfirmDialog(null, "¿QUIERES EMPEZAR NUEVO DIA?", "NUEVO DIA",
+		int op = JOptionPane.showConfirmDialog(null, idiomaString(language)[16], idiomaString(language)[17],
 				JOptionPane.OK_CANCEL_OPTION);
 		if (op == 0) {
 			exBtn();
@@ -2304,7 +2752,7 @@ public class Reales extends JFrame {
 			}
 		if (counter > 0) {
 			aggBtn[0].show();
-			aggBtn[0].setText("Más " + counter);
+			aggBtn[0].setText(idiomaString(language)[20] + counter);
 		} else
 			aggBtn[0].hide();
 		// Add set of 100
@@ -2316,7 +2764,7 @@ public class Reales extends JFrame {
 		}
 		if (counter > 0) {
 			aggBtn[1].show();
-			aggBtn[1].setText("Más" + counter);
+			aggBtn[1].setText(idiomaString(language)[20] + counter);
 		} else
 			aggBtn[1].hide();
 		// Calculate the totals
@@ -2374,16 +2822,16 @@ public class Reales extends JFrame {
 		total[7].setText("R$" + totalCaja);
 		// Calculate the diferencia
 		if (totalCaja == totalO) {
-			diffResult[1].setText("<html><center>No Hay Diferencia</html>");
+			diffResult[1].setText(idiomaString(language)[21]);
 			diffResult[1].setBackground(First.greenD);
 			diffResult[1].setForeground(Color.white);
 		} else {
 			if (totalCaja > totalO) {
-				diffResult[1].setText("Sobró R$" + (totalCaja - totalO));
+				diffResult[1].setText(idiomaString(language)[22] + (totalCaja - totalO));
 				diffResult[1].setBackground(Color.orange);
 				diffResult[1].setForeground(Color.black);
 			} else {
-				diffResult[1].setText("Faltó R$" + (totalO - totalCaja));
+				diffResult[1].setText(idiomaString(language)[23] + (totalO - totalCaja));
 				diffResult[1].setBackground(First.redD);
 				diffResult[1].setForeground(Color.white);
 			}
@@ -3473,7 +3921,7 @@ public class Reales extends JFrame {
 		else if (aggBtn[1].isShowing())
 			addSetHun();
 		else {
-			JOptionPane opt = new JOptionPane("NO HAY NADA PARA ARMAR!", JOptionPane.ERROR_MESSAGE);
+			JOptionPane opt = new JOptionPane(idiomaString(language)[24], JOptionPane.ERROR_MESSAGE);
 			final JDialog dlg = opt.createDialog("Error");
 			new Thread(new Runnable() {
 				public void run() {
@@ -3499,6 +3947,203 @@ public class Reales extends JFrame {
 		g2.dispose();
 
 		return resizedImg;
+	}
+
+	private void idiomaTexts(int idioma, JMenuItem hideBtn, JMenuItem noHide, JMenuItem hideDate, JMenuItem hideAll,
+			JButton notasF, JButton newDay, JMenuItem resoD, JButton aggPanel, JButton gastosPanel, JMenu file,
+			JMenuItem novo, JMenuItem clear, JMenuItem calc, JMenuItem save, JMenuItem option, JMenuItem exit,
+			JMenu summary, JMenuItem sumV, JMenu effectChooser, JMenuItem sumV1, JMenuItem sumV2, JMenuItem sumV3,
+			JMenuItem exMenu, JMenu speedChooser, JMenuItem speed1, JMenuItem speed2, JMenuItem speed3, JMenu goTo,
+			JMenuItem pesos, JMenuItem fatura, JMenuItem firstFrame, JMenu reso, JMenuItem reso1, JMenuItem reso2,
+			JMenuItem reso3, JMenuItem reso4, JMenu help, JMenu hideMenu, JMenuItem keyShortcut, JMenuItem creator,
+			JMenuItem about) {
+		if (idioma == 0) {
+
+			gastos.setText("G A S T O S");// Spend of the day TITLE
+			agregado.setText("A G R E G A D O");// Added to cash title
+			hideBtn.setText("LOS BOTONES");
+			noHide.setText("NADA");
+			hideDate.setText("LA FECHA");
+			hideAll.setText("TODO");
+			newDay.setText("<html><center>Se Quedará<br>Para Mañana</center></html>");// REST
+			resoD.setText("ÓPTIMO");
+			aggPanel.setText("↑MÁS↓");
+			gastosPanel.setText("↑MÁS↓");
+			summaryT[0].setText("Inicio");
+			summaryT[1].setText("Gastos");
+			summaryT[2].setText("Agregado");
+			summaryT[3].setText("Ventas");
+			summaryT[4].setText("Total");
+
+			diffResult[0].setText("Diferencia");
+			file.setText("ARCHIVO");
+			novo.setText("NUEVO DÍA");
+			clear.setText("BORRAR TODO");
+			calc.setText("ASUMAR");
+			save.setText("SALVAR");
+			option.setText("CONFIGURACIÓN");
+			exit.setText("SALIR");
+
+			summary.setText("SUMARIO");
+			sumV.setText("VISTA PREVIA DEL RESUMEN");
+			effectChooser.setText("ELIGE TU EFECTO");
+			sumV1.setText("APARIENCIA GRADUAL");
+			sumV2.setText("APARECE PALABRA POR PALABRA");
+			sumV3.setText("APARECE LETRA POR LETRA");
+			exMenu.setText("GUARDAR RESUMEN");
+			speedChooser.setText("VELOCIDAD DE ANIMACIÓN");
+			speed1.setText("LENTO");
+			speed2.setText("MEDIANO");
+			speed3.setText("RÁPIDO");
+
+			goTo.setText("IR A");
+			pesos.setText("PESOS");
+			fatura.setText("FACTURA");
+			firstFrame.setText("PRIMER CUADRO");
+			reso.setText("RESOLUCIÓN");
+			reso1.setText("GRANDE");
+			reso2.setText("MEDIO");
+			reso3.setText("PEQUENA");
+			reso4.setText("X-PEQUENA");
+			help.setText("AYUDA");
+			hideMenu.setText("ESCONDER");
+			keyShortcut.setText("ATAJOS DE TECLADO");
+			creator.setText("SOBRE EL CREADOR");
+			about.setText("SOBRE EL APLICATIVO");
+		} else {
+			gastos.setText("G A S T O S");// Spend of the day TITLE
+			agregado.setText("A G R E G A D O");// Added to cash title
+			hideBtn.setText("OS BOTÕES");
+			noHide.setText("NADA");
+			hideDate.setText("DATA");
+			hideAll.setText("TUDO");
+			newDay.setText("<html><center>Vai Ficar<br>Para Amanhã</center></html>");// REST
+			resoD.setText("ÓTIMO");
+			aggPanel.setText("↑MAIS↓");
+			gastosPanel.setText("↑MAIS↓");
+			summaryT[0].setText("Início");
+			summaryT[1].setText("Gastos");
+			summaryT[2].setText("Agregado");
+			summaryT[3].setText("Vendas");
+			summaryT[4].setText("Total");
+
+			diffResult[0].setText("Diferença");
+			file.setText("ARQUIVO");
+			novo.setText("NOVO DIA");
+			clear.setText("LIMPAR TUDO");
+			calc.setText("ASSUMIR");
+			save.setText("SALVAR");
+			option.setText("CONFIGURAÇÃO");
+			exit.setText("SAIR");
+
+			summary.setText("SUMÁRIO");
+			sumV.setText("VISUALIZAÇÃO DO RESUMO");
+			effectChooser.setText("ESCOLHA SEU EFEITO");
+			sumV1.setText("APARECIMENTO GRADUAL");
+			sumV2.setText("APARECE PALAVRA POR PALAVRA");
+			sumV3.setText("APARECE LETRA POR LETRA");
+			exMenu.setText("SALVAR RESUMO");
+			speedChooser.setText("VELOCIDADE DA ANIMAÇÃO");
+			speed1.setText("LENTO");
+			speed2.setText("MÉDIO");
+			speed3.setText("RÁPIDO");
+
+			goTo.setText("VAI");
+			pesos.setText("PESOS");
+			fatura.setText("FATURA");
+			firstFrame.setText("PRIMEIRA TELA");
+			reso.setText("RESOLUÇÃO");
+			reso1.setText("GRANDE");
+			reso2.setText("MEDIO");
+			reso3.setText("PEQUENA");
+			reso4.setText("X-PEQUENA");
+			help.setText("AJUDA");
+			hideMenu.setText("ESCONDER");
+			keyShortcut.setText("ATALHOS DO TECLADO");
+			creator.setText("SOBRE O CRIADOR");
+			about.setText("SOBRE O APLICATIVO");
+		}
+	}
+
+	private String[] idiomaString(int idioma) {
+		String[] espanol = { "• CTRL + S → ir la fatura.\n" + "• CTRL + P → ir al pesos.\n"
+				+ "• CTRL + B → borrar todo.\n" + "• CTRL + N → prepárate para el día siguiente.\n"
+				+ "• FLECHAS → subir, abajo, derecha e izquierda.\n" + "• CTRL + D → ir al detalles.\n"
+				+ "• CTRL + I → ir al inicio.\n" + "• CTRL + G → ir al gastos.\n" + "• CTRL + A → ir al agregado.\n"
+				+ "• CTRL + T → ir a la caja.\n" + "• CTRL + E → ir al ultimo numero.\n"
+				+ "• CTRL + M → mas un 100 o de 1000 si posible.\n" + "• CTRL + O → esconder los botones.\n"
+				+ "• CTRL + C → abrir el configuración."// key shortcut 1
+				, "ATAJOS DE TECLADO" // key shortcut 2
+				, "Crédito y Diseñado por MhmdSAbdlh ©"// creator 3
+				,
+				"ESTA APLICACIÓN ESTÁ DISEÑADA PARA CEDROS Y NARJES FREE SHOP.\r\n"
+						+ "TIENE MARCO PARA CERRAR LA CAJA TANTO EN REALES COMO PESOS.\r\n"
+						+ "TIENE UN MARCO PARA CALCULAR EL TROCO DE UNA VENTA TANTO EN REALES COMO PESOS.\r\n"
+						+ "SABE CÓMO QUEDARÁ PARA EL PRÓXIMO DÍA.\r\n" + "3 MÉTODOS PARA DAR EL CAMBIO.\r\n"
+						+ "CAMBIARÁ TODO SEGÚN EL ICONO SELECCIONADO.\r\n" + "\r\n" + "MOHAMAD ABDALLAH ABBASS ©"// about4
+				, "CONFIGURACIÓN"// conf title 5
+				, "ICONO"// icon 6
+				, "IDIOMA"// LANGUAGE 7
+				, "xxx"// 8
+				, "AUTOGUARDAR"// AUTO SAVE 9
+				, "POR DEFECTO"// DEFAULT 10
+				, "GUARDAR"// SAVE 11
+				, "SI"// YES 12
+				, "NO"// NO 13
+				, "¿Seguro que quieres salir?"// exit 14
+				, "SALIR"// exit15
+				, "Si /Nuevo Dia"// new day 16
+				, "¿QUIERES EMPEZAR NUEVO DIA?"// new day 17
+				, "NUEVO DIA" // new day 18
+				, "¿QUIERES BORRAR TODO?"// clear 19
+				, "BORRAR TODO" // clear20
+				, "Más "// mas 21
+				, "<html><center>No Hay Diferencia</html>"// diif 22
+				, "Sobró R$" // sobro 23
+				, "Faltó R$" // falta 24
+				, "NO HAY NADA PARA ARMAR!"// nada mas 25
+		};
+		String[] portugues = { "• CTRL + S → ir para a fatura.\n" + "• CTRL + P → ir para os pesos.\n"
+				+ "• CTRL + B → excluir tudo.\n" + "• CTRL + N → prepare-se para o dia seguinte.\n"
+				+ "• SETAS → cima, baixo, esquerda e direita.\n" + "• CTRL + D → ir para detalhes.\n"
+				+ "• CTRL + I → ir para o início.\n" + "• CTRL + G → ir para as despesas.\n"
+				+ "• CTRL + A → ir para agregar.\n" + "• CTRL + T → ir para finalizar a compra.\n"
+				+ "• CTRL + E → ir para o último número.\n" + "• CTRL + M → mais 100 ou 1000 se possível.\n"
+				+ "• CTRL + O → ocultar os botões.\n" + "• CTRL + C → abrir configurações."// atalho de tecla 1
+				, "ATALHOS DE TECLAS" // tecla de atalho 2
+				, "Crédito e Desenhado por MhmdSAbdlh ©"// creator 3
+				,
+				"ESTE APLICATIVO FOI DESENVOLVIDO PARA O FREE SHOP DE CEDROS E NARJES.\r\n"
+						+ "TEM MOLDURA PARA FECHAR A CAIXA TANTO EM REAIS QUANTO EM PESOS.\r\n"
+						+ "TEM UM QUADRO PARA CALCULAR O TROCO DE UMA VENDA TANTO EM REAIS QUANTO EM PESOS.\r\n"
+						+ "SAIBA COMO SERÁ PARA O DIA SEGUINTE.\r\n" + "3 MÉTODOS PARA FAZER A MUDANÇA.\r\n"
+						+ "MUDARÁ TUDO DE ACORDO COM O ÍCONE SELECIONADO.\r\n" + "\r\n" + "MOHAMAD ABDALLAH ABBASS ©" // 4
+				, "CONFIGURAÇÃO"// conf title 5
+				, "ÍCONE"// icon 6
+				, "LINGUAGEM"// LANGUAGE 7
+				, "xxx"// xxx 8
+				, "AUTO-SALVAR"// AUTO SAVE 9
+				, "POR PADRÃO"// DEFAULT 10
+				, "SALVAR"// SAVE 11
+				, "SIM"// YES 12
+				, "NÃO"// NO 13
+				, "Tem certeza que quer sair?"// exit 14
+				, "SAIR"// exit15
+				, "Sim / Novo Dia"// new day 16
+				, "VOCÊ QUER COMEÇAR UM NOVO DIA?"// new day 17
+				, "NOVO DIA" // new day 18
+				, "VOCÊ QUER APAGAR TUDO?"// clear 19
+				, "LIMPAR TUDO" // clear20
+				, "Mais "// mas 21
+				, "<html><center>Não há diferença</html>"// diif 22
+				, "Sobra R$" // sobro 23
+				, "Faltou R$" // falta 24
+				, "NÃO HÁ NADA PARA MONTAR!"// nada mas 25
+		};
+		if (idioma == 0)
+			return espanol;
+		else
+			return portugues;
 	}
 
 	// Auto-complete words for gastos and agregados

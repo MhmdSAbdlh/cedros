@@ -108,6 +108,8 @@ public class FaturaP extends JFrame {
 	FaturaP() {
 		// Notification when its time to end the day
 		long delay = ChronoUnit.MILLIS.between(LocalTime.now(), LocalTime.of(17, 30, 00));
+		if (delay < -60000)
+			delay = -delay;
 		ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 		scheduler.schedule(First.itsAlmostTime(), delay, TimeUnit.MILLISECONDS);
 
@@ -118,7 +120,7 @@ public class FaturaP extends JFrame {
 		JButton calculate = new JButton("Magic");
 		JButton mainF = new JButton();
 		JButton clearB = new JButton();
-		JMenuItem hideBtn = new JMenuItem("ESCONDER EL BOTON");
+		JMenuItem hideBtn = new JMenuItem("LOS BOTONES");
 
 		// Frame
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -168,7 +170,7 @@ public class FaturaP extends JFrame {
 		this.setIconImage(new ImageIcon(url).getImage());
 
 		// hide btns
-		if (conf[1] == null || !conf[1].equals("2")) {
+		if (conf[1] == null || conf[1].equals("0") || conf[1].equals("1")) {
 			mainF.show();
 			clearB.show();
 			hideBtn.setText("ESCONDER LOS BOTONES");
@@ -535,16 +537,7 @@ public class FaturaP extends JFrame {
 		reso.add(reso3);
 		reso.add(reso2);
 		reso.add(reso1);
-		resoD.addActionListener(e -> {
-			if (width > 1800 && height > 1000)
-				resG(resoD, cambioN, cambioN2, mainF, cambioN3, clearB);
-			else if (width > 1500 && height > 700)
-				resM(resoD, cambioN, cambioN2, mainF, cambioN3, clearB);
-			else if (width > 1300 && height > 700)
-				resP(resoD, cambioN, cambioN2, mainF, cambioN3, clearB);
-			else
-				resXP(resoD, cambioN, cambioN2, mainF, cambioN3, clearB);
-		});
+		resoD.addActionListener(e -> opResolution(cambioN, cambioN2, cambioN3, mainF, clearB, resoD));
 		reso1.addActionListener(e -> resG(resoD, cambioN, cambioN2, mainF, cambioN3, clearB));
 		reso2.addActionListener(e -> resM(resoD, cambioN, cambioN2, mainF, cambioN3, clearB));
 		reso3.addActionListener(e -> resP(resoD, cambioN, cambioN2, mainF, cambioN3, clearB));
@@ -569,16 +562,9 @@ public class FaturaP extends JFrame {
 		this.setVisible(true);
 
 		// Resolution
-		if (conf[3] == null || conf[3].equals("0")) {
-			if (width > 1800 && height > 1000)
-				resG(resoD, cambioN, cambioN2, mainF, cambioN3, clearB);
-			else if (width > 1500 && height > 700)
-				resM(resoD, cambioN, cambioN2, mainF, cambioN3, clearB);
-			else if (width > 1300 && height > 700)
-				resP(resoD, cambioN, cambioN2, mainF, cambioN3, clearB);
-			else
-				resXP(resoD, cambioN, cambioN2, mainF, cambioN3, clearB);
-		} else if (conf[3].equals("1"))
+		if (conf[3] == null || conf[3].equals("0"))
+			opResolution(cambioN, cambioN2, cambioN3, mainF, clearB, resoD);
+		else if (conf[3].equals("1"))
 			resXP(resoD, cambioN, cambioN2, mainF, cambioN3, clearB);
 		else if (conf[3].equals("2"))
 			resP(resoD, cambioN, cambioN2, mainF, cambioN3, clearB);
@@ -600,6 +586,18 @@ public class FaturaP extends JFrame {
 			}
 		});
 
+	}
+
+	private void opResolution(JButton cambioN, JButton cambioN2, JButton cambioN3, JButton mainF, JButton clearB,
+			JMenuItem resoD) {
+		if (width > 1800 && height > 1000)
+			resG(resoD, cambioN, cambioN2, mainF, cambioN3, clearB);
+		else if (width > 1500 && height > 700)
+			resM(resoD, cambioN, cambioN2, mainF, cambioN3, clearB);
+		else if (width > 1300 && height > 700)
+			resP(resoD, cambioN, cambioN2, mainF, cambioN3, clearB);
+		else
+			resXP(resoD, cambioN, cambioN2, mainF, cambioN3, clearB);
 	}
 
 	private void confFrame(String[] conf, JButton realesF, JButton clearEverthing, JMenuItem hideBtn, JMenuItem resoD,
@@ -641,28 +639,10 @@ public class FaturaP extends JFrame {
 				op1C.setSelectedIndex(op1C.getSelectedIndex());
 			}
 		});
-		// OPTION 2 BUTTONS HIDE
-		JLabel op2 = new JLabel("ESCONDER");
-		op2.setBounds(50, 90, 150, 40);
-		op2.setFont(First.myFont);
-		String hOp[] = { "NADA", "LA FECHA", "LA FECHA Y LOS BOTONES" };
-		JComboBox<String> btnsHideShow = new JComboBox<String>(hOp);
-		btnsHideShow.setRenderer(dlcr);
-		if (conf[1] != null && First.isNumeric(conf[1]))
-			btnsHideShow.setSelectedIndex(Integer.valueOf(conf[1]));
-		btnsHideShow.setBounds(305, 90, 300, 40);
-		btnsHideShow.setFont(First.myFontS);
-		btnsHideShow.setBackground(First.lightC);
-		btnsHideShow.setForeground(First.blueD);
-		btnsHideShow.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				btnsHideShow.setSelectedIndex(btnsHideShow.getSelectedIndex());
-			}
-		});
+
 		// OPTION 2 DISABLE KEYBOARD SHORTCUT
 		JLabel op3 = new JLabel("ATAJO DE TECLADO");
-		op3.setBounds(50, 230, 250, 40);
+		op3.setBounds(50, 90, 250, 40);
 		op3.setFont(First.myFont);
 		JToggleButton btnsHideShow2 = new JToggleButton();
 		if (conf[2] == null || conf[2].equals("false")) {
@@ -671,7 +651,7 @@ public class FaturaP extends JFrame {
 			btnsHideShow2.setText("NO");
 			btnsHideShow2.setSelected(true);
 		}
-		btnsHideShow2.setBounds(405, 230, 100, 40);
+		btnsHideShow2.setBounds(405, 90, 100, 40);
 		btnsHideShow2.setFont(First.myFont);
 		btnsHideShow2.setBorder(First.border);
 		btnsHideShow2.setBackground(First.greenC);
@@ -716,43 +696,9 @@ public class FaturaP extends JFrame {
 			}
 		});
 
-		// OPTION 3 CHANGE RESOLUTION
-		JLabel op4 = new JLabel("RESOLUCIÓN");
-		op4.setBounds(50, 160, 250, 40);
-		op4.setFont(First.myFont);
-		String res[] = { "OPTIMAL", "X-P", "P", "M", "G" };
-		JComboBox<String> op2C = new JComboBox<>(res);
-		op2C.setRenderer(dlcr);
-		op2C.setBounds(365, 160, 180, 40);
-		op2C.setFont(First.myFontS);
-		op2C.setBackground(First.lightC);
-		op2C.setForeground(First.blueD);
-		if (conf[3] != null)
-			op2C.setSelectedIndex(Integer.valueOf(conf[3]));
-		op2C.addActionListener(e -> {
-			op2C.setSelectedIndex(op2C.getSelectedIndex());
-			// Resolution
-			if (op2C.getSelectedIndex() == 0) {
-				if (width > 1800 && height > 1000)
-					resG(resoD, cambioN, cambioN2, realesF, cambioN3, clearEverthing);
-				else if (width > 1500 && height > 700)
-					resM(resoD, cambioN, cambioN2, realesF, cambioN3, clearEverthing);
-				else if (width > 1300 && height > 700)
-					resP(resoD, cambioN, cambioN2, realesF, cambioN3, clearEverthing);
-				else
-					resXP(resoD, cambioN, cambioN2, realesF, cambioN3, clearEverthing);
-			} else if (op2C.getSelectedIndex() == 1)
-				resXP(resoD, cambioN, cambioN2, realesF, cambioN3, clearEverthing);
-			else if (op2C.getSelectedIndex() == 2)
-				resP(resoD, cambioN, cambioN2, realesF, cambioN3, clearEverthing);
-			else if (op2C.getSelectedIndex() == 3)
-				resM(resoD, cambioN, cambioN2, realesF, cambioN3, clearEverthing);
-			else
-				resG(resoD, cambioN, cambioN2, realesF, cambioN3, clearEverthing);
-		});
 		// OPTION 5 AUTOSAVE
 		JLabel op5 = new JLabel("AUTOGUARDAR");
-		op5.setBounds(50, 300, 200, 40);
+		op5.setBounds(50, 160, 200, 40);
 		op5.setFont(First.myFont);
 		JToggleButton btnsHideShow3 = new JToggleButton();
 		if (conf[4] == null || conf[4].equals("false")) {
@@ -761,7 +707,7 @@ public class FaturaP extends JFrame {
 			btnsHideShow3.setText("NO");
 			btnsHideShow3.setSelected(true);
 		}
-		btnsHideShow3.setBounds(415, 300, 80, 40);
+		btnsHideShow3.setBounds(415, 160, 80, 40);
 		btnsHideShow3.setFont(First.myFont);
 		btnsHideShow3.setBorder(First.border);
 		btnsHideShow3.setBackground(First.greenC);
@@ -841,22 +787,16 @@ public class FaturaP extends JFrame {
 		defSet.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				op1C.setSelectedIndex(0);
-				FaturaP.this.setIconImage(iconImages[0].getImage());
-				btnsHideShow.setSelectedIndex(0);
-				btnsHideShow2.setText("SI");
-				btnsHideShow2.setSelected(false);
-				op2C.setSelectedIndex(0);
-				if (width > 1800 && height > 1000)
-					resG(resoD, cambioN, cambioN2, realesF, cambioN3, clearEverthing);
-				else if (width > 1500 && height > 700)
-					resM(resoD, cambioN, cambioN2, realesF, cambioN3, clearEverthing);
-				else if (width > 1300 && height > 700)
-					resP(resoD, cambioN, cambioN2, realesF, cambioN3, clearEverthing);
-				else
-					resXP(resoD, cambioN, cambioN2, realesF, cambioN3, clearEverthing);
-				btnsHideShow3.setText("SI");
-				btnsHideShow3.setSelected(false);
+				op1C.setSelectedIndex(0);// icon
+				FaturaP.this.setIconImage(iconImages[0].getImage());// icon
+				conf[1] = "0";// btn hide
+				btnsHideShow2.setText("SI");// key shortcut
+				btnsHideShow2.setSelected(false);// key shortcut
+				conf[3] = "0";// res
+				opResolution(cambioN, cambioN2, cambioN3, realesF, clearEverthing, resoD);// res
+				btnsHideShow3.setText("SI");// autosave
+				btnsHideShow3.setSelected(false);// autosave
+				conf[6] = "1";// speed
 			}
 		});
 		// SAVE
@@ -894,13 +834,13 @@ public class FaturaP extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				try {
 					FileWriter savedF = new FileWriter("conf.txt");
-					savedF.write(op1C.getSelectedIndex() + System.lineSeparator());
-					savedF.write(btnsHideShow.getSelectedIndex() + System.lineSeparator());
-					savedF.write(btnsHideShow2.isSelected() + System.lineSeparator());
-					savedF.write(op2C.getSelectedIndex() + System.lineSeparator());
-					savedF.write(btnsHideShow3.isSelected() + System.lineSeparator());
-					savedF.write(conf[5] + System.lineSeparator());
-					savedF.write(conf[6] + System.lineSeparator());
+					savedF.write(op1C.getSelectedIndex() + System.lineSeparator());// icon
+					savedF.write(conf[1] + System.lineSeparator());// btn hide
+					savedF.write(btnsHideShow2.isSelected() + System.lineSeparator());// key shortcut
+					savedF.write(conf[3] + System.lineSeparator());// res
+					savedF.write(btnsHideShow3.isSelected() + System.lineSeparator());// autosave
+					savedF.write(conf[5] + System.lineSeparator());// first frame to open
+					savedF.write(conf[6] + System.lineSeparator());// speed
 					savedF.close();
 				} catch (Exception e2) {
 				}
@@ -923,12 +863,8 @@ public class FaturaP extends JFrame {
 		temp.setIconImage(iconImages[0].getImage());
 		temp.add(op1);
 		temp.add(op1C);
-		temp.add(op2);
 		temp.add(op3);
-		temp.add(btnsHideShow);
 		temp.add(btnsHideShow2);
-		temp.add(op2C);
-		temp.add(op4);
 		temp.add(op5);
 		temp.add(btnsHideShow3);
 		temp.add(defSet);
