@@ -75,7 +75,15 @@ public class First extends JFrame {
 	private ImageIcon iconI = new ImageIcon(icon);
 	private URL setting = getClass().getResource("images/setting.png");
 	private ImageIcon settingI = new ImageIcon(setting);
-	static String appVersion = "v5.8";
+	private URL conf = getClass().getResource("images/menubar/setting.png");
+	private ImageIcon confI = new ImageIcon(conf);
+	private URL creator = getClass().getResource("images/menubar/creator.png");
+	private ImageIcon creatorI = new ImageIcon(creator);
+	private URL about = getClass().getResource("images/menubar/about.png");
+	private ImageIcon aboutI = new ImageIcon(about);
+	private URL exit = getClass().getResource("images/menubar/exit.png");
+	private ImageIcon exitI = new ImageIcon(exit);
+	static String appVersion = "v5.9";
 	private int language;
 
 	static Runnable itsAlmostTime() {
@@ -104,7 +112,7 @@ public class First extends JFrame {
 		BufferedReader dataOpened = null;
 		String line = "";
 		int z = 0;
-		String conf[] = new String[8];
+		String conf[] = new String[9];
 		try {
 			dataOpened = new BufferedReader(new FileReader(new File("conf.txt")));
 			while ((line = dataOpened.readLine()) != null) {
@@ -114,9 +122,7 @@ public class First extends JFrame {
 			dataOpened.close();
 		} catch (Exception e) {
 		}
-
-		// LAN
-		if (conf[7] == null || conf[7].equals("0"))
+		if (conf[7] == null || conf[7].equals("0"))// LANGUAGE
 			language = 0;
 		else
 			language = 1;
@@ -241,11 +247,15 @@ public class First extends JFrame {
 		JMenuItem creator = new JMenuItem("SOBRE EL CREADOR");
 		JMenuItem about = new JMenuItem("SOBRE EL APLICATIVO");
 		JMenuItem option = new JMenuItem("CONFIGURACIÓN");
+		option.setIcon(new ImageIcon(getScaledImage(confI.getImage(), 35, 35)));
 		creator.addActionListener(e -> JOptionPane.showMessageDialog(null, idiomaString(language)[3], "SOBRE MI", 1));
+		creator.setIcon(new ImageIcon(getScaledImage(creatorI.getImage(), 35, 35)));
 		about.addActionListener(
 				e -> JOptionPane.showMessageDialog(null, idiomaString(language)[4], "CEDROS/NARJES", 1));
+		about.setIcon(new ImageIcon(getScaledImage(aboutI.getImage(), 35, 35)));
 		option.addActionListener(e -> confFrame(conf, height, photoLabel));
 		exit.addActionListener(e -> System.exit(0));
+		exit.setIcon(new ImageIcon(getScaledImage(exitI.getImage(), 35, 35)));
 		file.add(option);
 		file.add(creator);
 		file.add(about);
@@ -290,8 +300,23 @@ public class First extends JFrame {
 
 		// Check if a conf is exist
 		File conFile = new File("conf.txt");
-		if (!conFile.exists())
+		if (!conFile.exists()) {
+			try {
+				FileWriter savedF = new FileWriter("conf.txt");
+				savedF.write(0 + System.lineSeparator());// icon
+				savedF.write(0 + System.lineSeparator());/// btn hide
+				savedF.write("false" + System.lineSeparator());// key shortcut
+				savedF.write(0 + System.lineSeparator());// res
+				savedF.write("false" + System.lineSeparator());// auto save
+				savedF.write(0 + System.lineSeparator());// first frame
+				savedF.write(1 + System.lineSeparator());// speed
+				savedF.write(0 + System.lineSeparator());// lang
+				savedF.write(0 + System.lineSeparator());// effect chooser
+				savedF.close();
+			} catch (Exception e2) {
+			}
 			confFrame(conf, height, photoLabel);
+		}
 
 		// language
 		espIdioma(inputText, showHide, file, exit, creator, about, option, language);
@@ -456,7 +481,7 @@ public class First extends JFrame {
 		JLabel op2 = new JLabel(idiomaString(language)[8]);
 		op2.setBounds(50, 160, 200, 40);
 		op2.setFont(myFont);
-		String lan[] = { "ESPAÑOL", "PORTUGUÊS", "ENGLISH" };
+		String lan[] = { "ESPAÑOL", "PORTUGUÊS" };
 		JComboBox<String> lang = new JComboBox<>(lan);
 		lang.setRenderer(dlcr);
 		lang.setBounds(355, 160, 200, 40);
@@ -627,7 +652,7 @@ public class First extends JFrame {
 				conf[3] = "0";
 				btnsHideShow3.setText(idiomaString(language)[13]);
 				btnsHideShow3.setSelected(false);
-				op3C.setSelectedIndex(0);
+				op3C.setSelectedIndex(1);
 				lang.setSelectedIndex(0);
 			}
 		});
@@ -675,6 +700,7 @@ public class First extends JFrame {
 					savedF.write(op3C.getSelectedIndex() + System.lineSeparator());// first frame
 					savedF.write((conf[6] == null ? 1 : conf[6]) + System.lineSeparator());// speed
 					savedF.write(lang.getSelectedIndex() + System.lineSeparator());// lang
+					savedF.write((conf[8] == null ? 0 : conf[8]) + System.lineSeparator());// speed
 					savedF.close();
 				} catch (Exception e2) {
 				}

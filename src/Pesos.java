@@ -44,6 +44,11 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import javax.imageio.ImageIO;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -103,6 +108,71 @@ public class Pesos extends JFrame {
 	private ImageIcon sumI = new ImageIcon(symPhoto);
 	private URL expP = getClass().getResource("images/save.png");
 	private ImageIcon expI = new ImageIcon(expP);
+	//menubar
+	private URL aboutP = getClass().getResource("images/menubar/about.png");
+	private ImageIcon aboutI = new ImageIcon(aboutP);
+	private URL calcP = getClass().getResource("images/menubar/calc.png");
+	private ImageIcon calcI = new ImageIcon(calcP);
+	private URL clearP = getClass().getResource("images/menubar/clear.png");
+	private ImageIcon clearI = new ImageIcon(clearP);
+	private URL creatorP = getClass().getResource("images/menubar/creator.png");
+	private ImageIcon creatorI = new ImageIcon(creatorP);
+	private URL exitP = getClass().getResource("images/menubar/exit.png");
+	private ImageIcon exitI = new ImageIcon(exitP);
+	private URL firstP = getClass().getResource("images/menubar/first.png");
+	private ImageIcon firstI = new ImageIcon(firstP);
+	private URL hideP = getClass().getResource("images/menubar/hide.png");
+	private ImageIcon hideI = new ImageIcon(hideP);
+	private URL invoiceP = getClass().getResource("images/menubar/invoice.png");
+	private ImageIcon invoiceI = new ImageIcon(invoiceP);
+	private URL keyboardP = getClass().getResource("images/menubar/keyboard.png");
+	private ImageIcon keyboardI = new ImageIcon(keyboardP);
+	private URL largeP = getClass().getResource("images/menubar/large.png");
+	private ImageIcon largeI = new ImageIcon(largeP);
+	private URL medP = getClass().getResource("images/menubar/med.png");
+	private ImageIcon medI = new ImageIcon(medP);
+	private URL moneyP = getClass().getResource("images/menubar/money.png");
+	private ImageIcon moneyI = new ImageIcon(moneyP);
+	private URL newdayP = getClass().getResource("images/menubar/newday.png");
+	private ImageIcon newdayI = new ImageIcon(newdayP);
+	private URL saveP = getClass().getResource("images/menubar/save.png");
+	private ImageIcon saveI = new ImageIcon(saveP);
+	private URL screenshotP = getClass().getResource("images/menubar/screenshot.png");
+	private ImageIcon screenshotI = new ImageIcon(screenshotP);
+	private URL settingP = getClass().getResource("images/menubar/setting.png");
+	private ImageIcon settingI = new ImageIcon(settingP);
+	private URL smallP = getClass().getResource("images/menubar/small.png");
+	private ImageIcon smallI = new ImageIcon(smallP);
+	private URL speedP = getClass().getResource("images/menubar/speed.png");
+	private ImageIcon speedI = new ImageIcon(speedP);
+	private URL summP = getClass().getResource("images/menubar/sum.png");
+	private ImageIcon summI = new ImageIcon(summP);
+	private URL themeP = getClass().getResource("images/menubar/theme.png");
+	private ImageIcon themeI = new ImageIcon(themeP);
+	private URL xsmallP = getClass().getResource("images/menubar/xsmall.png");
+	private ImageIcon xsmallI = new ImageIcon(xsmallP);
+	private URL optimalP = getClass().getResource("images/menubar/optimal.png");
+	private ImageIcon optimalI = new ImageIcon(optimalP);
+	private URL slowP = getClass().getResource("images/menubar/slow.png");
+	private ImageIcon slowI = new ImageIcon(slowP);
+	private URL normalP = getClass().getResource("images/menubar/normal.png");
+	private ImageIcon normalI = new ImageIcon(normalP);
+	private URL fastP = getClass().getResource("images/menubar/fast.png");
+	private ImageIcon fastI = new ImageIcon(fastP);
+	private URL effect1P = getClass().getResource("images/menubar/effect1.png");
+	private ImageIcon effect1I = new ImageIcon(effect1P);
+	private URL effect2P = getClass().getResource("images/menubar/effect2.png");
+	private ImageIcon effect2I = new ImageIcon(effect2P);
+	private URL effect3P = getClass().getResource("images/menubar/effect3.png");
+	private ImageIcon effect3I = new ImageIcon(effect3P);
+	private URL showP = getClass().getResource("images/menubar/show.png");
+	private ImageIcon showI = new ImageIcon(showP);
+	private URL buttonP = getClass().getResource("images/menubar/button.png");
+	private ImageIcon buttonI = new ImageIcon(buttonP);
+	private URL dateP = getClass().getResource("images/menubar/date.png");
+	private ImageIcon dateI = new ImageIcon(dateP);
+	private URL allP = getClass().getResource("images/menubar/all.png");
+	private ImageIcon allI = new ImageIcon(allP);
 
 	// Define Parameter
 	static JTextField details[][] = new JTextField[6][20];// Numbers of notes
@@ -127,8 +197,7 @@ public class Pesos extends JFrame {
 	static int colorX = 0, order = 0, speedValue, wordsN, wordL, effChooser;
 	boolean status = false;
 	Timer timer;
-	String conf[] = new String[8];
-
+	String conf[] = new String[9];
 	JLabel date = new JLabel();// date of the day
 	String monthS, dayN, dayS, yearS;
 
@@ -201,13 +270,6 @@ public class Pesos extends JFrame {
 			dataOpened.close();
 		} catch (Exception e) {
 		}
-		// Speed
-		if (conf[6] == null || conf[6].equals("1"))
-			speedValue = 700;
-		else if (conf[6].equals("0"))
-			speedValue = 1000;
-		else
-			speedValue = 500;
 		// Icon
 		if (conf[0] == null || conf[0].equals("0")) {
 			url = getClass().getResource("images/icon/cedros0.png");
@@ -356,7 +418,6 @@ public class Pesos extends JFrame {
 		summaryT[3].setForeground(Color.white);
 		summaryT[4].setBackground(Color.black);
 		summaryT[4].setForeground(Color.white);
-
 		textFieldStyle(initialDay);
 		initialDay.setBackground(First.lightC);
 		initialDay.setForeground(Color.black);
@@ -621,7 +682,29 @@ public class Pesos extends JFrame {
 		calc.addActionListener(e -> sumF());
 		clear.addActionListener(e -> clearAll());
 		save.addActionListener(e -> saveProgress());
-		screenShot.addActionListener(e -> screenShooter());
+		screenShot.addActionListener(e -> {
+			screenShooter();
+			JOptionPane opt = new JOptionPane(language == 0 ? "LA CAPTURA DE PANTALLA SE TOMA CON ÉXITO"
+					: "A CAPTURA DE TELA FOI REALIZADA COM SUCESSO", JOptionPane.NO_OPTION);
+			final JDialog dlg = opt.createDialog("SALVO");
+			new Thread(new Runnable() {
+				public void run() {
+					try {
+						Thread.sleep(1000);
+						dlg.dispose();
+					} catch (Throwable th) {
+					}
+				}
+			}).start();
+			dlg.setVisible(true);
+			try {// sounds
+				AudioInputStream audioStream = AudioSystem.getAudioInputStream(Reales.screenSound);
+				Clip clip = AudioSystem.getClip();
+				clip.open(audioStream);
+				clip.start();
+			} catch (UnsupportedAudioFileException | IOException | LineUnavailableException e1) {
+			}
+		});
 		option.addActionListener(e -> confFrame(conf, faturaBtn, realesF, newDay, clearEverthing, hideBtn, resoD,
 				gastosPanel, aggPanel));
 		exit.addActionListener(e -> System.exit(0));
@@ -645,27 +728,88 @@ public class Pesos extends JFrame {
 		JMenuItem speed2 = new JMenuItem("MEDIANO");
 		JMenuItem speed3 = new JMenuItem("RÁPIDO");
 		sumV.addActionListener(e -> summaryFrame());
-		sumV1.setEnabled(false);
-		sumV2.setEnabled(true);
-		sumV3.setEnabled(true);
+		/* effect choose default conf */
+		if (conf[8] == null || conf[8].equals("0")) {
+			effChooser = 0;
+			sumV1.setEnabled(false);
+			sumV2.setEnabled(true);
+			sumV3.setEnabled(true);
+		} else if (conf[8].equals("1")) {
+			effChooser = 1;
+			sumV1.setEnabled(true);
+			sumV2.setEnabled(false);
+			sumV3.setEnabled(true);
+		} else {
+			effChooser = 2;
+			sumV1.setEnabled(true);
+			sumV2.setEnabled(true);
+			sumV3.setEnabled(false);
+		}
 		sumV1.addActionListener(e -> {
 			effChooser = 0;
 			sumV1.setEnabled(false);
 			sumV2.setEnabled(true);
 			sumV3.setEnabled(true);
+			conf[8] = "0";
+			try {
+				FileWriter savedF = new FileWriter("conf.txt");
+				savedF.write(conf[0] + System.lineSeparator());
+				savedF.write(conf[1] + System.lineSeparator());
+				savedF.write(conf[2] + System.lineSeparator());
+				savedF.write(conf[3] + System.lineSeparator());
+				savedF.write(conf[4] + System.lineSeparator());
+				savedF.write(conf[5] + System.lineSeparator());
+				savedF.write(conf[6] + System.lineSeparator());// speed
+				savedF.write(conf[7] + System.lineSeparator());// lan
+				savedF.write(0 + System.lineSeparator());// effect chooser
+				savedF.close();
+			} catch (Exception e2) {
+			}
 		});
 		sumV2.addActionListener(e -> {
 			effChooser = 1;
 			sumV1.setEnabled(true);
 			sumV2.setEnabled(false);
 			sumV3.setEnabled(true);
+			conf[8] = "1";
+			try {
+				FileWriter savedF = new FileWriter("conf.txt");
+				savedF.write(conf[0] + System.lineSeparator());
+				savedF.write(conf[1] + System.lineSeparator());
+				savedF.write(conf[2] + System.lineSeparator());
+				savedF.write(conf[3] + System.lineSeparator());
+				savedF.write(conf[4] + System.lineSeparator());
+				savedF.write(conf[5] + System.lineSeparator());
+				savedF.write(conf[6] + System.lineSeparator());// speed
+				savedF.write(conf[7] + System.lineSeparator());// lan
+				savedF.write(1 + System.lineSeparator());// effect chooser
+				savedF.close();
+			} catch (Exception e2) {
+			}
 		});
 		sumV3.addActionListener(e -> {
 			effChooser = 2;
 			sumV1.setEnabled(true);
 			sumV2.setEnabled(true);
 			sumV3.setEnabled(false);
+			conf[8] = "2";
+			try {
+				FileWriter savedF = new FileWriter("conf.txt");
+				savedF.write(conf[0] + System.lineSeparator());
+				savedF.write(conf[1] + System.lineSeparator());
+				savedF.write(conf[2] + System.lineSeparator());
+				savedF.write(conf[3] + System.lineSeparator());
+				savedF.write(conf[4] + System.lineSeparator());
+				savedF.write(conf[5] + System.lineSeparator());
+				savedF.write(conf[6] + System.lineSeparator());// speed
+				savedF.write(conf[7] + System.lineSeparator());// lan
+				savedF.write(2 + System.lineSeparator());// effect chooser
+				savedF.close();
+			} catch (Exception e2) {
+			}
 		});
+		/* effect choose default conf */
+		/* speed default conf */
 		if (conf[6] == null || conf[6].equals("1")) {
 			speed1.setEnabled(true);
 			speed2.setEnabled(false);
@@ -689,8 +833,9 @@ public class Pesos extends JFrame {
 				savedF.write(conf[3] + System.lineSeparator());
 				savedF.write(conf[4] + System.lineSeparator());
 				savedF.write(conf[5] + System.lineSeparator());
-				savedF.write(0 + System.lineSeparator());
+				savedF.write(0 + System.lineSeparator());// speed
 				savedF.write(conf[7] + System.lineSeparator());// lan
+				savedF.write(conf[8] + System.lineSeparator());// effchooser
 				savedF.close();
 			} catch (Exception e2) {
 			}
@@ -710,6 +855,7 @@ public class Pesos extends JFrame {
 				savedF.write(conf[5] + System.lineSeparator());
 				savedF.write(1 + System.lineSeparator());
 				savedF.write(conf[7] + System.lineSeparator());// lan
+				savedF.write(conf[8] + System.lineSeparator());// effchooser
 				savedF.close();
 			} catch (Exception e2) {
 			}
@@ -729,6 +875,7 @@ public class Pesos extends JFrame {
 				savedF.write(conf[5] + System.lineSeparator());
 				savedF.write(2 + System.lineSeparator());
 				savedF.write(conf[7] + System.lineSeparator());// lan
+				savedF.write(conf[8] + System.lineSeparator());// effchooser
 				savedF.close();
 			} catch (Exception e2) {
 			}
@@ -736,6 +883,7 @@ public class Pesos extends JFrame {
 			speed2.setEnabled(true);
 			speed3.setEnabled(false);
 		});
+		/* speed default conf */
 		exMenu.addActionListener(e -> exBtn());
 		speedChooser.add(speed1);
 		speedChooser.add(speed2);
@@ -790,6 +938,7 @@ public class Pesos extends JFrame {
 				savedF.write(conf[5] + System.lineSeparator());
 				savedF.write(conf[6] + System.lineSeparator());
 				savedF.write(conf[7] + System.lineSeparator());// lan
+				savedF.write(conf[8] + System.lineSeparator());// effchooser
 				savedF.close();
 			} catch (Exception e2) {
 			}
@@ -806,6 +955,7 @@ public class Pesos extends JFrame {
 				savedF.write(conf[5] + System.lineSeparator());
 				savedF.write(conf[6] + System.lineSeparator());
 				savedF.write(conf[7] + System.lineSeparator());// lan
+				savedF.write(conf[8] + System.lineSeparator());// effchooser
 				savedF.close();
 			} catch (Exception e2) {
 			}
@@ -822,6 +972,7 @@ public class Pesos extends JFrame {
 				savedF.write(conf[5] + System.lineSeparator());
 				savedF.write(conf[6] + System.lineSeparator());
 				savedF.write(conf[7] + System.lineSeparator());// lan
+				savedF.write(conf[8] + System.lineSeparator());// effchooser
 				savedF.close();
 			} catch (Exception e2) {
 			}
@@ -838,6 +989,7 @@ public class Pesos extends JFrame {
 				savedF.write(conf[5] + System.lineSeparator());
 				savedF.write(conf[6] + System.lineSeparator());
 				savedF.write(conf[7] + System.lineSeparator());// lan
+				savedF.write(conf[8] + System.lineSeparator());// effchooser
 				savedF.close();
 			} catch (Exception e2) {
 			}
@@ -854,6 +1006,7 @@ public class Pesos extends JFrame {
 				savedF.write(conf[5] + System.lineSeparator());
 				savedF.write(conf[6] + System.lineSeparator());
 				savedF.write(conf[7] + System.lineSeparator());// lan
+				savedF.write(conf[8] + System.lineSeparator());// effchooser
 				savedF.close();
 			} catch (Exception e2) {
 			}
@@ -886,6 +1039,7 @@ public class Pesos extends JFrame {
 				savedF.write(conf[5] + System.lineSeparator());
 				savedF.write(conf[6] + System.lineSeparator());
 				savedF.write(conf[7] + System.lineSeparator());// lan
+				savedF.write(conf[8] + System.lineSeparator());// effchooser
 				savedF.close();
 			} catch (Exception e2) {
 			}
@@ -913,6 +1067,7 @@ public class Pesos extends JFrame {
 				savedF.write(conf[5] + System.lineSeparator());
 				savedF.write(conf[6] + System.lineSeparator());
 				savedF.write(conf[7] + System.lineSeparator());// lan
+				savedF.write(conf[8] + System.lineSeparator());// effchooser
 				savedF.close();
 			} catch (Exception e2) {
 			}
@@ -940,6 +1095,7 @@ public class Pesos extends JFrame {
 				savedF.write(conf[5] + System.lineSeparator());
 				savedF.write(conf[6] + System.lineSeparator());
 				savedF.write(conf[7] + System.lineSeparator());// lan
+				savedF.write(conf[8] + System.lineSeparator());// effchooser
 				savedF.close();
 			} catch (Exception e2) {
 			}
@@ -962,13 +1118,13 @@ public class Pesos extends JFrame {
 				savedF.write(conf[5] + System.lineSeparator());
 				savedF.write(conf[6] + System.lineSeparator());
 				savedF.write(conf[7] + System.lineSeparator());// lan
+				savedF.write(conf[8] + System.lineSeparator());// effchooser
 				savedF.close();
 			} catch (Exception e2) {
 			}
 			hideBtn(faturaBtn, realesF, newDay, clearEverthing, hideBtn);
 			date.hide();
 		});
-
 		if (conf[2] == null || conf[2].equals("false"))
 			keyShortcut.addActionListener(
 					e -> JOptionPane.showMessageDialog(null, idiomaString(language)[0], idiomaString(language)[1], 1));
@@ -987,6 +1143,45 @@ public class Pesos extends JFrame {
 		help.add(keyShortcut);
 		help.add(creator);
 		help.add(about);
+		//Image Icon
+		novo.setIcon(new ImageIcon(getScaledImage(newdayI.getImage(), 35, 35)));
+		screenShot.setIcon(new ImageIcon(getScaledImage(screenshotI.getImage(), 35, 35)));
+		save.setIcon(new ImageIcon(getScaledImage(saveI.getImage(), 35, 35)));
+		clear.setIcon(new ImageIcon(getScaledImage(clearI.getImage(), 35, 35)));
+		calc.setIcon(new ImageIcon(getScaledImage(calcI.getImage(), 35, 35)));
+		option.setIcon(new ImageIcon(getScaledImage(settingI.getImage(), 35, 35)));
+		exit.setIcon(new ImageIcon(getScaledImage(exitI.getImage(), 35, 35)));
+		
+		sumV.setIcon(new ImageIcon(getScaledImage(summI.getImage(), 35, 35)));
+		effectChooser.setIcon(new ImageIcon(getScaledImage(themeI.getImage(), 35, 35)));
+		speedChooser.setIcon(new ImageIcon(getScaledImage(speedI.getImage(), 35, 35)));
+		exMenu.setIcon(new ImageIcon(getScaledImage(saveI.getImage(), 35, 35)));
+		sumV1.setIcon(new ImageIcon(getScaledImage(effect1I.getImage(), 35, 35)));
+		sumV2.setIcon(new ImageIcon(getScaledImage(effect2I.getImage(), 35, 35)));
+		sumV3.setIcon(new ImageIcon(getScaledImage(effect3I.getImage(), 35, 35)));
+		speed1.setIcon(new ImageIcon(getScaledImage(slowI.getImage(), 35, 35)));
+		speed2.setIcon(new ImageIcon(getScaledImage(normalI.getImage(), 35, 35)));
+		speed3.setIcon(new ImageIcon(getScaledImage(fastI.getImage(), 35, 35)));
+		
+		firstFrame.setIcon(new ImageIcon(getScaledImage(firstI.getImage(), 35, 35)));
+		reales.setIcon(new ImageIcon(getScaledImage(moneyI.getImage(), 35, 35)));
+		fatura.setIcon(new ImageIcon(getScaledImage(invoiceI.getImage(), 35, 35)));
+		
+		resoD.setIcon(new ImageIcon(getScaledImage(optimalI.getImage(), 35, 35)));
+		reso4.setIcon(new ImageIcon(getScaledImage(xsmallI.getImage(), 35, 35)));
+		reso3.setIcon(new ImageIcon(getScaledImage(smallI.getImage(), 35, 35)));
+		reso2.setIcon(new ImageIcon(getScaledImage(medI.getImage(), 35, 35)));
+		reso1.setIcon(new ImageIcon(getScaledImage(largeI.getImage(), 35, 35)));
+		
+		hideMenu.setIcon(new ImageIcon(getScaledImage(hideI.getImage(), 35, 35)));
+		noHide.setIcon(new ImageIcon(getScaledImage(showI.getImage(), 35, 35)));
+		hideDate.setIcon(new ImageIcon(getScaledImage(dateI.getImage(), 35, 35)));
+		hideBtn.setIcon(new ImageIcon(getScaledImage(buttonI.getImage(), 35, 35)));
+		hideAll.setIcon(new ImageIcon(getScaledImage(allI.getImage(), 35, 35)));
+		keyShortcut.setIcon(new ImageIcon(getScaledImage(keyboardI.getImage(), 35, 35)));
+		creator.setIcon(new ImageIcon(getScaledImage(creatorI.getImage(), 35, 35)));
+		about.setIcon(new ImageIcon(getScaledImage(aboutI.getImage(), 35, 35)));
+		//ADD TO MENUBAR
 		mb.add(file);
 		mb.add(summary);
 		mb.add(goTo);
@@ -1030,9 +1225,9 @@ public class Pesos extends JFrame {
 
 		// LANGUAGE
 		idiomaTexts(language, hideBtn, noHide, hideDate, hideAll, faturaBtn, newDay, resoD, aggPanel, gastosPanel, file,
-				novo, clear, calc, save, option, exit, summary, sumV, effectChooser, sumV1, sumV2, sumV3, exMenu,
-				speedChooser, speed1, speed2, speed3, goTo, fatura, firstFrame, reso, reso1, reso2, reso3, reso4, help,
-				hideMenu, keyShortcut, creator, about);
+				novo, clear, calc, save, screenShot, option, exit, summary, sumV, effectChooser, sumV1, sumV2, sumV3,
+				exMenu, speedChooser, speed1, speed2, speed3, goTo, fatura, firstFrame, reso, reso1, reso2, reso3,
+				reso4, help, hideMenu, keyShortcut, creator, about);
 
 		// Close Popup
 		this.addWindowListener(new java.awt.event.WindowAdapter() {
@@ -1070,41 +1265,6 @@ public class Pesos extends JFrame {
 			}
 		});
 
-	}
-
-	private void screenShooter() {
-		BufferedImage img = new BufferedImage(this.getWidth(), this.getHeight(), BufferedImage.TYPE_INT_RGB);
-		this.paint(img.getGraphics());
-		String currentpath = System.getProperty("user.dir");
-		File tempFile1 = new File(currentpath + "\\" + yearS);
-		tempFile1.mkdir();
-		File tempFile2 = new File(tempFile1 + "\\" + monthS);
-		tempFile2.mkdir();
-		File newFile = new File(tempFile2, "p " + dayN + "-" + monthS + "-" + yearS + ".png");
-		try {
-			ImageIO.write(img, "png", newFile);
-		} catch (IOException e1) {
-		}
-	}
-
-	
-	private void resFun(JButton clearEverthing, JButton faturaBtn, JButton realesF, JButton newDay, JMenuItem resoD,
-			JButton aggPanel, JButton gastosPanel) {
-		if (width > 1800 && height > 1000)
-			resG(resoD, realesF, faturaBtn, newDay, clearEverthing, gastosPanel, aggPanel);
-		else if (width > 1500 && height > 700)
-			resM(resoD, realesF, faturaBtn, newDay, clearEverthing, gastosPanel, aggPanel);
-		else if (width > 1300 && height > 700)
-			resP(resoD, realesF, faturaBtn, newDay, clearEverthing, gastosPanel, aggPanel);
-		else
-			resXP(resoD, realesF, faturaBtn, newDay, clearEverthing, gastosPanel, aggPanel);
-	}
-
-	private String titleName() {
-		if (conf[0] == null || !conf[0].equals("3"))
-			return "CEDROS";
-		else
-			return "NARJES";
 	}
 
 	private void summaryFrame() {
@@ -1145,6 +1305,15 @@ public class Pesos extends JFrame {
 		sumItem.setEditable(false);
 		sumItem.setOpaque(false);
 		sumItem.setForeground(new Color(0, 0, 0, 255));
+		sumItem.addKeyListener(new KeyAdapter() {// Escape to close
+			@SuppressWarnings("static-access")
+			public void keyPressed(KeyEvent ke) {
+				if (ke.getKeyCode() == ke.VK_ESCAPE) {
+					timer.stop();
+					sum.dispose();
+				}
+			}
+		});
 		// Timer
 		order = 0;
 		wordsN = 0;
@@ -1833,9 +2002,7 @@ public class Pesos extends JFrame {
 				}
 			}
 		};
-
 		if (effChooser == 0) {
-			// Speed
 			if (conf[6] == null || conf[6].equals("1"))
 				speedValue = 15;
 			else if (conf[6].equals("0"))
@@ -1976,15 +2143,14 @@ public class Pesos extends JFrame {
 				savedF.write(language == 0 ? espSumm[12] : porSumm[12]);
 			savedF.write(language == 0 ? espSumm[13] : porSumm[13]);
 			savedF.close();
-
 			JOptionPane opt = new JOptionPane(
 					language == 0 ? "SALVADO CON ÉXITO, GRACIAS" : "SALVO COM SUCESSO, OBRIGADO",
-					JOptionPane.INFORMATION_MESSAGE);
-			final JDialog dlg = opt.createDialog("success");
+					JOptionPane.NO_OPTION);
+			final JDialog dlg = opt.createDialog("SALVO");
 			new Thread(new Runnable() {
 				public void run() {
 					try {
-						Thread.sleep(2000);
+						Thread.sleep(1000);
 						dlg.dispose();
 
 					} catch (Throwable th) {
@@ -1992,63 +2158,12 @@ public class Pesos extends JFrame {
 				}
 			}).start();
 			dlg.setVisible(true);
-
 		} catch (Exception e2) {
-			System.out.println("ERROR " + e2);
+			JOptionPane opt = new JOptionPane(language == 0 ? "ERROR, NO SALVO!" : "ERROR, NAO SALVO!",
+					JOptionPane.ERROR_MESSAGE);
+			opt.show();
 		}
-
-		 screenShooter();
-	}
-
-	private String agregadoDetalles() {
-		String aggString = "";
-		int num = 1;
-		for (int i = 8; i < 16; i++)
-			if (First.isNumeric(agregadoTable[i].getText())) {
-				aggString += num + "- "
-						+ (agregadoTable[i - 8].getText().isBlank() ? "XXX" : agregadoTable[i - 8].getText()) + " -> "
-						+ "$" + agregadoTable[i].getText() + "\n";
-				num++;
-			}
-		return aggString;
-	}
-
-	private int nbAgregados() {
-		int agregado = 0;
-		for (int i = 8; i < 16; i++)
-			if (First.isNumeric(agregadoTable[i].getText()))
-				agregado++;
-		return agregado;
-	}
-
-	private String gastosDetalles() {
-		String gasString = "";
-		int num = 1;
-		for (int i = 8; i < 16; i++)
-			if (First.isNumeric(gastosTable[i].getText())) {
-				gasString += num + "- "
-						+ (gastosTable[i - 8].getText().isBlank() ? "XXX" : gastosTable[i - 8].getText()) + " -> " + "$"
-						+ gastosTable[i].getText() + "\n";
-				num++;
-			}
-		return gasString;
-	}
-
-	private int nbGastos() {
-		int gastos = 0;
-		for (int i = 8; i < 16; i++)
-			if (First.isNumeric(gastosTable[i].getText()))
-				gastos++;
-		return gastos;
-	}
-
-	private int nbVentas() {
-		int ventas = 0;
-		for (int i = 0; i < 6; i++)
-			for (int j = 0; j < 20; j++)
-				if (First.isNumeric(details[i][j].getText()))
-					ventas++;
-		return ventas;
+		screenShooter();
 	}
 
 	private void gastosFrame(ArrayList<String> keywords, JButton notasF, JButton pesosF, JButton newDay,
@@ -2182,7 +2297,7 @@ public class Pesos extends JFrame {
 		JLabel op2 = new JLabel(idiomaString(language)[6]);
 		op2.setBounds(50, 90, 200, 40);
 		op2.setFont(First.myFont);
-		String lan[] = { "ESPAÑOL", "PORTUGUÊS", "ENGLISH" };
+		String lan[] = { "ESPAÑOL", "PORTUGUÊS" };
 		JComboBox<String> lang = new JComboBox<>(lan);
 		lang.setRenderer(dlcr);
 		lang.setBounds(355, 90, 200, 40);
@@ -2200,7 +2315,7 @@ public class Pesos extends JFrame {
 
 		// OPTION 2 DISABLE KEYBOARD SHORTCUT
 		JLabel op3 = new JLabel(idiomaString(language)[1]);
-		op3.setBounds(50, 160, 250, 40);
+		op3.setBounds(50, 160, 260, 40);
 		op3.setFont(First.myFont);
 		JToggleButton btnsHideShow2 = new JToggleButton();
 		if (conf[2] == null || conf[2].equals("false")) {
@@ -2356,6 +2471,7 @@ public class Pesos extends JFrame {
 				btnsHideShow3.setSelected(false);// autosave
 				conf[6] = "1";// speed
 				lang.setSelectedIndex(0);// lan
+				conf[8] = "0";// eff
 			}
 		});
 		// SAVE
@@ -2401,6 +2517,7 @@ public class Pesos extends JFrame {
 					savedF.write(conf[5] + System.lineSeparator());// first frame to open
 					savedF.write(conf[6] + System.lineSeparator());// speed
 					savedF.write(lang.getSelectedIndex() + System.lineSeparator());// lan
+					savedF.write(conf[8] + System.lineSeparator());// effchooser
 					savedF.close();
 				} catch (Exception e2) {
 				}
@@ -2665,469 +2782,6 @@ public class Pesos extends JFrame {
 		restTmrw.setText("$" + restN);
 		restTmrw.setForeground(Color.black);
 		restTmrw.setBackground(First.lightC);
-	}
-
-	// Key listener for the table
-	private void tableFocus(int i, int j, JFrame frame, JButton newDay, JButton notasF, JButton pesosF,
-			JButton clearEverthing, JMenuItem hideBtn, JMenuItem resoD, JButton gastosPanel, JButton aggPanel) {
-		details[i][j].addKeyListener(new KeyAdapter() {
-			@Override
-			public void keyPressed(KeyEvent e) {
-				// Hide
-				if ((e.getKeyCode() == KeyEvent.VK_O) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0))
-					hideBtn(notasF, pesosF, newDay, clearEverthing, hideBtn);
-				// GO TO Notas
-				else if ((e.getKeyCode() == KeyEvent.VK_S) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
-					saveProgress();
-					FaturaP.totalC.setText("0");
-					FaturaP.total.setText("0");
-					frame.dispose();
-					new FaturaP();
-				} // GO TO Reales
-				else if ((e.getKeyCode() == KeyEvent.VK_R) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
-					saveProgress();
-					frame.dispose();
-					new Reales();
-				} else// Clear
-				if ((e.getKeyCode() == KeyEvent.VK_B) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
-					clearAll();
-				} // Conf
-				else if ((e.getKeyCode() == KeyEvent.VK_C) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
-					confFrame(conf, notasF, pesosF, newDay, clearEverthing, hideBtn, resoD, gastosPanel, aggPanel);
-				} else// new day
-				if ((e.getKeyCode() == KeyEvent.VK_N) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
-					newDay();
-				} else// Direction
-				if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-					if (i < 5) {
-						details[i][j].setNextFocusableComponent(details[i + 1][j]);
-						details[i][j].nextFocus();
-					} else {
-						if (j != 19) {
-							details[i][j].setNextFocusableComponent(details[0][j + 1]);
-							details[i][j].nextFocus();
-						} else {
-							details[i][j].setNextFocusableComponent(details[0][0]);
-							details[i][j].nextFocus();
-						}
-					}
-				} else if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-					if (i > 0) {
-						details[i][j].setNextFocusableComponent(details[i - 1][j]);
-						details[i][j].nextFocus();
-					} else {
-						if (j != 0) {
-							details[i][j].setNextFocusableComponent(details[5][j - 1]);
-							details[i][j].nextFocus();
-						} else {
-							details[i][j].setNextFocusableComponent(details[5][19]);
-							details[i][j].nextFocus();
-						}
-					}
-				} else if (e.getKeyCode() == KeyEvent.VK_UP) {
-					if (j > 0) {
-						details[i][j].setNextFocusableComponent(details[i][j - 1]);
-						details[i][j].nextFocus();
-					} else {
-						if (i != 0) {
-							details[i][j].setNextFocusableComponent(details[i - 1][19]);
-							details[i][j].nextFocus();
-						} else {
-							details[i][j].setNextFocusableComponent(details[5][19]);
-							details[i][j].nextFocus();
-						}
-					}
-				} else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
-					if (j < 19) {
-						details[i][j].setNextFocusableComponent(details[i][j + 1]);
-						details[i][j].nextFocus();
-					} else {
-						if (i != 5) {
-							details[i][j].setNextFocusableComponent(details[i + 1][0]);
-							details[i][j].nextFocus();
-						} else {
-							details[i][j].setNextFocusableComponent(details[0][0]);
-							details[i][j].nextFocus();
-						}
-					}
-				} else// GO TO INITIAL
-				if ((e.getKeyCode() == KeyEvent.VK_I) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
-					details[i][j].setNextFocusableComponent(initialDay);
-					details[i][j].nextFocus();
-				} else// GO TO GASTOS
-				if ((e.getKeyCode() == KeyEvent.VK_G) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
-					details[i][j].setNextFocusableComponent(gastosTable[0]);
-					details[i][j].nextFocus();
-				} else// GO TO AGGREG
-				if ((e.getKeyCode() == KeyEvent.VK_A) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
-					details[i][j].setNextFocusableComponent(agregadoTable[0]);
-					details[i][j].nextFocus();
-				} else// GO TO TROCO
-				if ((e.getKeyCode() == KeyEvent.VK_T) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
-					details[i][j].setNextFocusableComponent(panelCnum[0]);
-					details[i][j].nextFocus();
-				} else// |Go to the last one
-				if ((e.getKeyCode() == KeyEvent.VK_E) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
-					int k = 0, l = 0;
-					schiffe_loop: while (k < 5) {
-						l = 0;
-						while (l < 15) {
-							if (details[k][l].getText().isBlank()) {
-								break schiffe_loop;
-							}
-							l++;
-						}
-						k++;
-					}
-					if (k == 5 && l == 15)
-						k = l = 0;
-					details[i][j].setNextFocusableComponent(details[k][l]);
-					details[i][j].nextFocus();
-				}
-			}
-		});
-	}
-
-	// Key listener for the initial
-	private void iniFocus(JButton newDay, JButton notasF, JButton pesosF, JButton clearEverthing, JMenuItem hideBtn,
-			JMenuItem resoD, JButton gastosPanel, JButton aggPanel) {
-		initialDay.addKeyListener(new KeyAdapter() {
-			@Override
-			public void keyPressed(KeyEvent e) {
-				// Hide
-				if ((e.getKeyCode() == KeyEvent.VK_O) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0))
-					hideBtn(notasF, pesosF, newDay, clearEverthing, hideBtn);
-				else // Clear
-				if ((e.getKeyCode() == KeyEvent.VK_B) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
-					clearAll();
-				} else// new day
-				if ((e.getKeyCode() == KeyEvent.VK_N) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
-					newDay();
-				} // Conf
-				else if ((e.getKeyCode() == KeyEvent.VK_C) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
-					confFrame(conf, notasF, pesosF, newDay, clearEverthing, hideBtn, resoD, gastosPanel, aggPanel);
-				} else // GO TO GASTOS
-				if ((e.getKeyCode() == KeyEvent.VK_G) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
-					initialDay.setNextFocusableComponent(gastosTable[0]);
-					initialDay.nextFocus();
-				} else // GO TO AGG
-				if ((e.getKeyCode() == KeyEvent.VK_A) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
-					initialDay.setNextFocusableComponent(agregadoTable[0]);
-					initialDay.nextFocus();
-				} else // GO TO Details
-				if ((e.getKeyCode() == KeyEvent.VK_D) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
-					initialDay.setNextFocusableComponent(details[0][0]);
-					initialDay.nextFocus();
-				} else // GO TO Troco
-				if ((e.getKeyCode() == KeyEvent.VK_T) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
-					initialDay.setNextFocusableComponent(panelCnum[0]);
-					initialDay.nextFocus();
-				}
-			}
-		});
-	}
-
-	// Key listener for the ADDITION
-	private void aggFocus(int i, JFrame frame, JButton newDay, JButton notasF, JButton pesosF, JButton clearEverthing,
-			JMenuItem hideBtn, JMenuItem resoD, JButton gastosPanel, JButton aggPanel) {
-		agregadoTable[i].addKeyListener(new KeyAdapter() {
-			@Override
-			public void keyPressed(KeyEvent e) {
-				// Hide
-				if ((e.getKeyCode() == KeyEvent.VK_O) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0))
-					hideBtn(notasF, pesosF, newDay, clearEverthing, hideBtn);
-				// GO TO Notas
-				else if ((e.getKeyCode() == KeyEvent.VK_S) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
-					saveProgress();
-					FaturaP.totalC.setText("0");
-					FaturaP.total.setText("0");
-					frame.dispose();
-					new FaturaP();
-				} else // GO TO REALES
-				if ((e.getKeyCode() == KeyEvent.VK_R) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
-					saveProgress();
-					frame.dispose();
-					new Reales();
-				} // Conf
-				else if ((e.getKeyCode() == KeyEvent.VK_C) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
-					confFrame(conf, notasF, pesosF, newDay, clearEverthing, hideBtn, resoD, gastosPanel, aggPanel);
-				} else// Clear
-				if ((e.getKeyCode() == KeyEvent.VK_B) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
-					clearAll();
-				} else// new day
-				if ((e.getKeyCode() == KeyEvent.VK_N) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
-					newDay();
-				} else// GO TO INITIAL
-				if ((e.getKeyCode() == KeyEvent.VK_I) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
-					agregadoTable[i].setNextFocusableComponent(initialDay);
-					agregadoTable[i].nextFocus();
-				} else// GO TO GASTOS
-				if ((e.getKeyCode() == KeyEvent.VK_G) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
-					agregadoTable[i].setNextFocusableComponent(gastosTable[0]);
-					agregadoTable[i].nextFocus();
-				} else// GO TO Details
-				if ((e.getKeyCode() == KeyEvent.VK_D) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
-					agregadoTable[i].setNextFocusableComponent(details[0][0]);
-					agregadoTable[i].nextFocus();
-				} else// GO TO Troco
-				if ((e.getKeyCode() == KeyEvent.VK_T) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
-					agregadoTable[i].setNextFocusableComponent(panelCnum[0]);
-					agregadoTable[i].nextFocus();
-				} else// Direction
-				if (e.getKeyCode() == KeyEvent.VK_UP) {
-					if (i > 0 && i < 4 || i > 8 && i < 12) {
-						agregadoTable[i].setNextFocusableComponent(agregadoTable[i - 1]);
-						agregadoTable[i].nextFocus();
-					} else if (i == 0) {
-						agregadoTable[i].setNextFocusableComponent(agregadoTable[11]);
-						agregadoTable[i].nextFocus();
-					} else if (i == 8) {
-						agregadoTable[i].setNextFocusableComponent(agregadoTable[3]);
-						agregadoTable[i].nextFocus();
-					}
-				} else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
-					if (i < 3 || i > 7 && i < 11) {
-						agregadoTable[i].setNextFocusableComponent(agregadoTable[i + 1]);
-						agregadoTable[i].nextFocus();
-					} else if (i == 3) {
-						agregadoTable[i].setNextFocusableComponent(agregadoTable[8]);
-						agregadoTable[i].nextFocus();
-					} else if (i == 11) {
-						agregadoTable[i].setNextFocusableComponent(agregadoTable[0]);
-						agregadoTable[i].nextFocus();
-					}
-				} else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-					if (i != 11) {
-						if (i < 8) {
-							agregadoTable[i].setNextFocusableComponent(agregadoTable[i + 8]);
-							agregadoTable[i].nextFocus();
-						} else {
-							agregadoTable[i].setNextFocusableComponent(agregadoTable[i - 7]);
-							agregadoTable[i].nextFocus();
-						}
-					} else {
-						agregadoTable[i].setNextFocusableComponent(agregadoTable[0]);
-						agregadoTable[i].nextFocus();
-					}
-				} else if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-					if (i != 0) {
-						if (i < 8) {
-							agregadoTable[i].setNextFocusableComponent(agregadoTable[i + 7]);
-							agregadoTable[i].nextFocus();
-						} else {
-							agregadoTable[i].setNextFocusableComponent(agregadoTable[i - 8]);
-							agregadoTable[i].nextFocus();
-						}
-					} else {
-						agregadoTable[i].setNextFocusableComponent(agregadoTable[11]);
-						agregadoTable[i].nextFocus();
-					}
-				} else// |Go to the last one
-				if ((e.getKeyCode() == KeyEvent.VK_E) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
-					int k = 0;
-					while (k < 3) {
-						if (agregadoTable[k].getText().isBlank())
-							break;
-						k++;
-					}
-					if (k == 3)
-						k = 0;
-					agregadoTable[i].setNextFocusableComponent(agregadoTable[k]);
-					agregadoTable[i].nextFocus();
-				}
-			}
-		});
-	}
-
-	// Key listener for the SPENT
-	private void gasFocus(int i, JFrame frame, JButton newDay, JButton notasF, JButton pesosF, JButton clearEverthing,
-			JMenuItem hideBtn, JMenuItem resoD, JButton gastosPanel, JButton aggPanel) {
-		gastosTable[i].addKeyListener(new KeyAdapter() {
-			@Override
-			public void keyPressed(KeyEvent e) {
-				// Hide
-				if ((e.getKeyCode() == KeyEvent.VK_O) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0))
-					hideBtn(notasF, pesosF, newDay, clearEverthing, hideBtn);
-				// GO TO Notas
-				else if ((e.getKeyCode() == KeyEvent.VK_S) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
-					saveProgress();
-					FaturaP.totalC.setText("0");
-					FaturaP.total.setText("0");
-					frame.dispose();
-					new FaturaP();
-				} else // GO TO REALES
-				if ((e.getKeyCode() == KeyEvent.VK_R) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
-					saveProgress();
-					frame.dispose();
-					new Reales();
-				} // Conf
-				else if ((e.getKeyCode() == KeyEvent.VK_C) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
-					confFrame(conf, notasF, pesosF, newDay, clearEverthing, hideBtn, resoD, gastosPanel, aggPanel);
-				} else// Clear
-				if ((e.getKeyCode() == KeyEvent.VK_B) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
-					clearAll();
-				} else
-				// new day
-				if ((e.getKeyCode() == KeyEvent.VK_N) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
-					newDay();
-				} else// GO TO INITIAL
-				if ((e.getKeyCode() == KeyEvent.VK_I) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
-					gastosTable[i].setNextFocusableComponent(initialDay);
-					gastosTable[i].nextFocus();
-				} else// GO TO AGG
-				if ((e.getKeyCode() == KeyEvent.VK_A) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
-					gastosTable[i].setNextFocusableComponent(agregadoTable[0]);
-					gastosTable[i].nextFocus();
-				} else// GO TO Details
-				if ((e.getKeyCode() == KeyEvent.VK_D) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
-					gastosTable[i].setNextFocusableComponent(details[0][0]);
-					gastosTable[i].nextFocus();
-				} else// GO TO Troco
-				if ((e.getKeyCode() == KeyEvent.VK_T) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
-					gastosTable[i].setNextFocusableComponent(panelCnum[0]);
-					gastosTable[i].nextFocus();
-				} else// Direction
-				if (e.getKeyCode() == KeyEvent.VK_UP) {
-					if (i > 0 && i < 4 || i > 8 && i < 12) {
-						gastosTable[i].setNextFocusableComponent(gastosTable[i - 1]);
-						gastosTable[i].nextFocus();
-					} else if (i == 0) {
-						gastosTable[i].setNextFocusableComponent(gastosTable[11]);
-						gastosTable[i].nextFocus();
-					} else if (i == 8) {
-						gastosTable[i].setNextFocusableComponent(gastosTable[3]);
-						gastosTable[i].nextFocus();
-					}
-				} else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
-					if (i < 3 || i > 7 && i < 11) {
-						gastosTable[i].setNextFocusableComponent(gastosTable[i + 1]);
-						gastosTable[i].nextFocus();
-					} else if (i == 3) {
-						gastosTable[i].setNextFocusableComponent(gastosTable[8]);
-						gastosTable[i].nextFocus();
-					} else if (i == 11) {
-						gastosTable[i].setNextFocusableComponent(gastosTable[0]);
-						gastosTable[i].nextFocus();
-					}
-				} else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-					if (i != 11) {
-						if (i < 8) {
-							gastosTable[i].setNextFocusableComponent(gastosTable[i + 8]);
-							gastosTable[i].nextFocus();
-						} else {
-							gastosTable[i].setNextFocusableComponent(gastosTable[i - 7]);
-							gastosTable[i].nextFocus();
-						}
-					} else {
-						gastosTable[i].setNextFocusableComponent(gastosTable[0]);
-						gastosTable[i].nextFocus();
-					}
-				} else if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-					if (i != 0) {
-						if (i < 8) {
-							gastosTable[i].setNextFocusableComponent(gastosTable[i + 7]);
-							gastosTable[i].nextFocus();
-						} else {
-							gastosTable[i].setNextFocusableComponent(gastosTable[i - 8]);
-							gastosTable[i].nextFocus();
-						}
-					} else {
-						gastosTable[i].setNextFocusableComponent(gastosTable[11]);
-						gastosTable[i].nextFocus();
-					}
-				} else// |Go to the last one
-				if ((e.getKeyCode() == KeyEvent.VK_E) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
-					int k = 0;
-					while (k < 3) {
-						if (gastosTable[k].getText().isBlank())
-							break;
-						k++;
-					}
-					if (k == 3)
-						k = 0;
-					gastosTable[i].setNextFocusableComponent(gastosTable[k]);
-					gastosTable[i].nextFocus();
-				}
-			}
-		});
-	}
-
-	// Key listener for the CASH
-	private void cajaFocus(int i, JFrame frame, JButton newDay, JButton notasF, JButton pesosF, JButton clearEverthing,
-			JMenuItem hideBtn, JMenuItem resoD, JButton gastosPanel, JButton aggPanel) {
-		panelCnum[i].addKeyListener(new KeyAdapter() {
-			@Override
-			public void keyPressed(KeyEvent e) {
-				// Hide
-				if ((e.getKeyCode() == KeyEvent.VK_O) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0))
-					hideBtn(notasF, pesosF, newDay, clearEverthing, hideBtn);
-				// GO TO Notas
-				else if ((e.getKeyCode() == KeyEvent.VK_S) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
-					saveProgress();
-					FaturaP.totalC.setText("0");
-					FaturaP.total.setText("0");
-					frame.dispose();
-					new FaturaP();
-				} // GO TO Reales
-				else if ((e.getKeyCode() == KeyEvent.VK_R) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
-					saveProgress();
-					frame.dispose();
-					new Reales();
-				} // Conf
-				else if ((e.getKeyCode() == KeyEvent.VK_C) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
-					confFrame(conf, notasF, pesosF, newDay, clearEverthing, hideBtn, resoD, gastosPanel, aggPanel);
-				} else // Clear
-				if ((e.getKeyCode() == KeyEvent.VK_B) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
-					clearAll();
-				} else// new day
-				if ((e.getKeyCode() == KeyEvent.VK_N) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
-					newDay();
-				} else // GO TO INITIAL
-				if ((e.getKeyCode() == KeyEvent.VK_I) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
-					panelCnum[i].setNextFocusableComponent(initialDay);
-					panelCnum[i].nextFocus();
-				} else // GO TO AGG
-				if ((e.getKeyCode() == KeyEvent.VK_A) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
-					panelCnum[i].setNextFocusableComponent(agregadoTable[0]);
-					panelCnum[i].nextFocus();
-				} else// GO TO Details
-				if ((e.getKeyCode() == KeyEvent.VK_D) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
-					panelCnum[i].setNextFocusableComponent(details[0][0]);
-					panelCnum[i].nextFocus();
-				} else// GO TO Gastos
-				if ((e.getKeyCode() == KeyEvent.VK_G) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
-					panelCnum[i].setNextFocusableComponent(gastosTable[0]);
-					panelCnum[i].nextFocus();
-				} else// GO Direction
-				if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-					if (i < 10) {
-						panelCnum[i].setNextFocusableComponent(panelCnum[i + 1]);
-						panelCnum[i].nextFocus();
-					} else {
-						panelCnum[i].setNextFocusableComponent(panelCnum[0]);
-						panelCnum[i].nextFocus();
-					}
-				} else if (e.getKeyCode() == KeyEvent.VK_LEFT)
-					if (i > 0) {
-						panelCnum[i].setNextFocusableComponent(panelCnum[i - 1]);
-						panelCnum[i].nextFocus();
-					} else {
-						panelCnum[i].setNextFocusableComponent(panelCnum[10]);
-						panelCnum[i].nextFocus();
-					}
-			}
-		});
-	}
-
-	// Style of textField
-	private void textFieldStyle(JTextField tf) {
-		tf.setBackground(First.darkC);
-		tf.setForeground(First.lightC);
-		tf.setFont(First.myFont);
-		tf.setBorder(First.border);
-		tf.setHorizontalAlignment(0);
-		tf.setCaretColor(First.lightC);
-		tf.addFocusListener(textFocus);
 	}
 
 	private void resXP(JMenuItem resoD, JButton pesosF, JButton notasF, JButton newDay, JButton clearEverthing,
@@ -3710,11 +3364,12 @@ public class Pesos extends JFrame {
 
 	private void idiomaTexts(int idioma, JMenuItem hideBtn, JMenuItem noHide, JMenuItem hideDate, JMenuItem hideAll,
 			JButton notasF, JButton newDay, JMenuItem resoD, JButton aggPanel, JButton gastosPanel, JMenu file,
-			JMenuItem novo, JMenuItem clear, JMenuItem calc, JMenuItem save, JMenuItem option, JMenuItem exit,
-			JMenu summary, JMenuItem sumV, JMenu effectChooser, JMenuItem sumV1, JMenuItem sumV2, JMenuItem sumV3,
-			JMenuItem exMenu, JMenu speedChooser, JMenuItem speed1, JMenuItem speed2, JMenuItem speed3, JMenu goTo,
-			JMenuItem fatura, JMenuItem firstFrame, JMenu reso, JMenuItem reso1, JMenuItem reso2, JMenuItem reso3,
-			JMenuItem reso4, JMenu help, JMenu hideMenu, JMenuItem keyShortcut, JMenuItem creator, JMenuItem about) {
+			JMenuItem novo, JMenuItem clear, JMenuItem calc, JMenuItem save, JMenuItem screenShot, JMenuItem option,
+			JMenuItem exit, JMenu summary, JMenuItem sumV, JMenu effectChooser, JMenuItem sumV1, JMenuItem sumV2,
+			JMenuItem sumV3, JMenuItem exMenu, JMenu speedChooser, JMenuItem speed1, JMenuItem speed2, JMenuItem speed3,
+			JMenu goTo, JMenuItem fatura, JMenuItem firstFrame, JMenu reso, JMenuItem reso1, JMenuItem reso2,
+			JMenuItem reso3, JMenuItem reso4, JMenu help, JMenu hideMenu, JMenuItem keyShortcut, JMenuItem creator,
+			JMenuItem about) {
 		if (idioma == 0) {
 
 			gastos.setText("G A S T O S");// Spend of the day TITLE
@@ -3739,6 +3394,7 @@ public class Pesos extends JFrame {
 			clear.setText("BORRAR TODO");
 			calc.setText("ASUMAR");
 			save.setText("SALVAR");
+			screenShot.setText("CAPTURA DE PANTALLA");
 			option.setText("CONFIGURACIÓN");
 			exit.setText("SALIR");
 
@@ -3790,6 +3446,7 @@ public class Pesos extends JFrame {
 			clear.setText("LIMPAR TUDO");
 			calc.setText("ASSUMIR");
 			save.setText("SALVAR");
+			screenShot.setText("CAPTURA DE TELA");
 			option.setText("CONFIGURAÇÃO");
 			exit.setText("SAIR");
 
@@ -3899,6 +3556,555 @@ public class Pesos extends JFrame {
 			return portugues;
 	}
 
+	private String agregadoDetalles() {
+		String aggString = "";
+		int num = 1;
+		for (int i = 8; i < 16; i++)
+			if (First.isNumeric(agregadoTable[i].getText())) {
+				aggString += num + "- "
+						+ (agregadoTable[i - 8].getText().isBlank() ? "XXX" : agregadoTable[i - 8].getText()) + " -> "
+						+ "$" + agregadoTable[i].getText() + "\n";
+				num++;
+			}
+		return aggString;
+	}
+
+	private int nbAgregados() {
+		int agregado = 0;
+		for (int i = 8; i < 16; i++)
+			if (First.isNumeric(agregadoTable[i].getText()))
+				agregado++;
+		return agregado;
+	}
+
+	private String gastosDetalles() {
+		String gasString = "";
+		int num = 1;
+		for (int i = 8; i < 16; i++)
+			if (First.isNumeric(gastosTable[i].getText())) {
+				gasString += num + "- "
+						+ (gastosTable[i - 8].getText().isBlank() ? "XXX" : gastosTable[i - 8].getText()) + " -> " + "$"
+						+ gastosTable[i].getText() + "\n";
+				num++;
+			}
+		return gasString;
+	}
+
+	private int nbGastos() {
+		int gastos = 0;
+		for (int i = 8; i < 16; i++)
+			if (First.isNumeric(gastosTable[i].getText()))
+				gastos++;
+		return gastos;
+	}
+
+	private int nbVentas() {
+		int ventas = 0;
+		for (int i = 0; i < 6; i++)
+			for (int j = 0; j < 20; j++)
+				if (First.isNumeric(details[i][j].getText()))
+					ventas++;
+		return ventas;
+	}
+
+	// Key listener for the table
+	private void tableFocus(int i, int j, JFrame frame, JButton newDay, JButton notasF, JButton pesosF,
+			JButton clearEverthing, JMenuItem hideBtn, JMenuItem resoD, JButton gastosPanel, JButton aggPanel) {
+		details[i][j].addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				// Hide
+				if ((e.getKeyCode() == KeyEvent.VK_O) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0))
+					hideBtn(notasF, pesosF, newDay, clearEverthing, hideBtn);
+				// GO TO Notas
+				else if ((e.getKeyCode() == KeyEvent.VK_S) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+					saveProgress();
+					FaturaP.totalC.setText("0");
+					FaturaP.total.setText("0");
+					frame.dispose();
+					new FaturaP();
+				} // GO TO Reales
+				else if ((e.getKeyCode() == KeyEvent.VK_R) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+					saveProgress();
+					frame.dispose();
+					new Reales();
+				} else// Clear
+				if ((e.getKeyCode() == KeyEvent.VK_B) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+					clearAll();
+				} // Conf
+				else if ((e.getKeyCode() == KeyEvent.VK_C) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+					confFrame(conf, notasF, pesosF, newDay, clearEverthing, hideBtn, resoD, gastosPanel, aggPanel);
+				} else// new day
+				if ((e.getKeyCode() == KeyEvent.VK_N) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+					newDay();
+				} else// Direction
+				if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
+					if (i < 5) {
+						details[i][j].setNextFocusableComponent(details[i + 1][j]);
+						details[i][j].nextFocus();
+					} else {
+						if (j != 19) {
+							details[i][j].setNextFocusableComponent(details[0][j + 1]);
+							details[i][j].nextFocus();
+						} else {
+							details[i][j].setNextFocusableComponent(details[0][0]);
+							details[i][j].nextFocus();
+						}
+					}
+				} else if (e.getKeyCode() == KeyEvent.VK_LEFT) {
+					if (i > 0) {
+						details[i][j].setNextFocusableComponent(details[i - 1][j]);
+						details[i][j].nextFocus();
+					} else {
+						if (j != 0) {
+							details[i][j].setNextFocusableComponent(details[5][j - 1]);
+							details[i][j].nextFocus();
+						} else {
+							details[i][j].setNextFocusableComponent(details[5][19]);
+							details[i][j].nextFocus();
+						}
+					}
+				} else if (e.getKeyCode() == KeyEvent.VK_UP) {
+					if (j > 0) {
+						details[i][j].setNextFocusableComponent(details[i][j - 1]);
+						details[i][j].nextFocus();
+					} else {
+						if (i != 0) {
+							details[i][j].setNextFocusableComponent(details[i - 1][19]);
+							details[i][j].nextFocus();
+						} else {
+							details[i][j].setNextFocusableComponent(details[5][19]);
+							details[i][j].nextFocus();
+						}
+					}
+				} else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
+					if (j < 19) {
+						details[i][j].setNextFocusableComponent(details[i][j + 1]);
+						details[i][j].nextFocus();
+					} else {
+						if (i != 5) {
+							details[i][j].setNextFocusableComponent(details[i + 1][0]);
+							details[i][j].nextFocus();
+						} else {
+							details[i][j].setNextFocusableComponent(details[0][0]);
+							details[i][j].nextFocus();
+						}
+					}
+				} else// GO TO INITIAL
+				if ((e.getKeyCode() == KeyEvent.VK_I) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+					details[i][j].setNextFocusableComponent(initialDay);
+					details[i][j].nextFocus();
+				} else// GO TO GASTOS
+				if ((e.getKeyCode() == KeyEvent.VK_G) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+					details[i][j].setNextFocusableComponent(gastosTable[0]);
+					details[i][j].nextFocus();
+				} else// GO TO AGGREG
+				if ((e.getKeyCode() == KeyEvent.VK_A) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+					details[i][j].setNextFocusableComponent(agregadoTable[0]);
+					details[i][j].nextFocus();
+				} else// GO TO TROCO
+				if ((e.getKeyCode() == KeyEvent.VK_T) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+					details[i][j].setNextFocusableComponent(panelCnum[0]);
+					details[i][j].nextFocus();
+				} else// |Go to the last one
+				if ((e.getKeyCode() == KeyEvent.VK_E) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+					int k = 0, l = 0;
+					schiffe_loop: while (k < 5) {
+						l = 0;
+						while (l < 15) {
+							if (details[k][l].getText().isBlank()) {
+								break schiffe_loop;
+							}
+							l++;
+						}
+						k++;
+					}
+					if (k == 5 && l == 15)
+						k = l = 0;
+					details[i][j].setNextFocusableComponent(details[k][l]);
+					details[i][j].nextFocus();
+				}
+			}
+		});
+	}
+
+	// Key listener for the initial
+	private void iniFocus(JButton newDay, JButton notasF, JButton pesosF, JButton clearEverthing, JMenuItem hideBtn,
+			JMenuItem resoD, JButton gastosPanel, JButton aggPanel) {
+		initialDay.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				// Hide
+				if ((e.getKeyCode() == KeyEvent.VK_O) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0))
+					hideBtn(notasF, pesosF, newDay, clearEverthing, hideBtn);
+				else // Clear
+				if ((e.getKeyCode() == KeyEvent.VK_B) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+					clearAll();
+				} else// new day
+				if ((e.getKeyCode() == KeyEvent.VK_N) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+					newDay();
+				} // Conf
+				else if ((e.getKeyCode() == KeyEvent.VK_C) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+					confFrame(conf, notasF, pesosF, newDay, clearEverthing, hideBtn, resoD, gastosPanel, aggPanel);
+				} else // GO TO GASTOS
+				if ((e.getKeyCode() == KeyEvent.VK_G) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+					initialDay.setNextFocusableComponent(gastosTable[0]);
+					initialDay.nextFocus();
+				} else // GO TO AGG
+				if ((e.getKeyCode() == KeyEvent.VK_A) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+					initialDay.setNextFocusableComponent(agregadoTable[0]);
+					initialDay.nextFocus();
+				} else // GO TO Details
+				if ((e.getKeyCode() == KeyEvent.VK_D) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+					initialDay.setNextFocusableComponent(details[0][0]);
+					initialDay.nextFocus();
+				} else // GO TO Troco
+				if ((e.getKeyCode() == KeyEvent.VK_T) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+					initialDay.setNextFocusableComponent(panelCnum[0]);
+					initialDay.nextFocus();
+				}
+			}
+		});
+	}
+
+	// Key listener for the ADDITION
+	private void aggFocus(int i, JFrame frame, JButton newDay, JButton notasF, JButton pesosF, JButton clearEverthing,
+			JMenuItem hideBtn, JMenuItem resoD, JButton gastosPanel, JButton aggPanel) {
+		agregadoTable[i].addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				// Hide
+				if ((e.getKeyCode() == KeyEvent.VK_O) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0))
+					hideBtn(notasF, pesosF, newDay, clearEverthing, hideBtn);
+				// GO TO Notas
+				else if ((e.getKeyCode() == KeyEvent.VK_S) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+					saveProgress();
+					FaturaP.totalC.setText("0");
+					FaturaP.total.setText("0");
+					frame.dispose();
+					new FaturaP();
+				} else // GO TO REALES
+				if ((e.getKeyCode() == KeyEvent.VK_R) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+					saveProgress();
+					frame.dispose();
+					new Reales();
+				} // Conf
+				else if ((e.getKeyCode() == KeyEvent.VK_C) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+					confFrame(conf, notasF, pesosF, newDay, clearEverthing, hideBtn, resoD, gastosPanel, aggPanel);
+				} else// Clear
+				if ((e.getKeyCode() == KeyEvent.VK_B) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+					clearAll();
+				} else// new day
+				if ((e.getKeyCode() == KeyEvent.VK_N) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+					newDay();
+				} else// GO TO INITIAL
+				if ((e.getKeyCode() == KeyEvent.VK_I) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+					agregadoTable[i].setNextFocusableComponent(initialDay);
+					agregadoTable[i].nextFocus();
+				} else// GO TO GASTOS
+				if ((e.getKeyCode() == KeyEvent.VK_G) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+					agregadoTable[i].setNextFocusableComponent(gastosTable[0]);
+					agregadoTable[i].nextFocus();
+				} else// GO TO Details
+				if ((e.getKeyCode() == KeyEvent.VK_D) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+					agregadoTable[i].setNextFocusableComponent(details[0][0]);
+					agregadoTable[i].nextFocus();
+				} else// GO TO Troco
+				if ((e.getKeyCode() == KeyEvent.VK_T) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+					agregadoTable[i].setNextFocusableComponent(panelCnum[0]);
+					agregadoTable[i].nextFocus();
+				} else// Direction
+				if (e.getKeyCode() == KeyEvent.VK_UP) {
+					if (i > 0 && i < 4 || i > 8 && i < 12) {
+						agregadoTable[i].setNextFocusableComponent(agregadoTable[i - 1]);
+						agregadoTable[i].nextFocus();
+					} else if (i == 0) {
+						agregadoTable[i].setNextFocusableComponent(agregadoTable[11]);
+						agregadoTable[i].nextFocus();
+					} else if (i == 8) {
+						agregadoTable[i].setNextFocusableComponent(agregadoTable[3]);
+						agregadoTable[i].nextFocus();
+					}
+				} else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
+					if (i < 3 || i > 7 && i < 11) {
+						agregadoTable[i].setNextFocusableComponent(agregadoTable[i + 1]);
+						agregadoTable[i].nextFocus();
+					} else if (i == 3) {
+						agregadoTable[i].setNextFocusableComponent(agregadoTable[8]);
+						agregadoTable[i].nextFocus();
+					} else if (i == 11) {
+						agregadoTable[i].setNextFocusableComponent(agregadoTable[0]);
+						agregadoTable[i].nextFocus();
+					}
+				} else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
+					if (i != 11) {
+						if (i < 8) {
+							agregadoTable[i].setNextFocusableComponent(agregadoTable[i + 8]);
+							agregadoTable[i].nextFocus();
+						} else {
+							agregadoTable[i].setNextFocusableComponent(agregadoTable[i - 7]);
+							agregadoTable[i].nextFocus();
+						}
+					} else {
+						agregadoTable[i].setNextFocusableComponent(agregadoTable[0]);
+						agregadoTable[i].nextFocus();
+					}
+				} else if (e.getKeyCode() == KeyEvent.VK_LEFT) {
+					if (i != 0) {
+						if (i < 8) {
+							agregadoTable[i].setNextFocusableComponent(agregadoTable[i + 7]);
+							agregadoTable[i].nextFocus();
+						} else {
+							agregadoTable[i].setNextFocusableComponent(agregadoTable[i - 8]);
+							agregadoTable[i].nextFocus();
+						}
+					} else {
+						agregadoTable[i].setNextFocusableComponent(agregadoTable[11]);
+						agregadoTable[i].nextFocus();
+					}
+				} else// |Go to the last one
+				if ((e.getKeyCode() == KeyEvent.VK_E) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+					int k = 0;
+					while (k < 3) {
+						if (agregadoTable[k].getText().isBlank())
+							break;
+						k++;
+					}
+					if (k == 3)
+						k = 0;
+					agregadoTable[i].setNextFocusableComponent(agregadoTable[k]);
+					agregadoTable[i].nextFocus();
+				}
+			}
+		});
+	}
+
+	// Key listener for the SPENT
+	private void gasFocus(int i, JFrame frame, JButton newDay, JButton notasF, JButton pesosF, JButton clearEverthing,
+			JMenuItem hideBtn, JMenuItem resoD, JButton gastosPanel, JButton aggPanel) {
+		gastosTable[i].addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				// Hide
+				if ((e.getKeyCode() == KeyEvent.VK_O) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0))
+					hideBtn(notasF, pesosF, newDay, clearEverthing, hideBtn);
+				// GO TO Notas
+				else if ((e.getKeyCode() == KeyEvent.VK_S) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+					saveProgress();
+					FaturaP.totalC.setText("0");
+					FaturaP.total.setText("0");
+					frame.dispose();
+					new FaturaP();
+				} else // GO TO REALES
+				if ((e.getKeyCode() == KeyEvent.VK_R) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+					saveProgress();
+					frame.dispose();
+					new Reales();
+				} // Conf
+				else if ((e.getKeyCode() == KeyEvent.VK_C) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+					confFrame(conf, notasF, pesosF, newDay, clearEverthing, hideBtn, resoD, gastosPanel, aggPanel);
+				} else// Clear
+				if ((e.getKeyCode() == KeyEvent.VK_B) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+					clearAll();
+				} else
+				// new day
+				if ((e.getKeyCode() == KeyEvent.VK_N) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+					newDay();
+				} else// GO TO INITIAL
+				if ((e.getKeyCode() == KeyEvent.VK_I) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+					gastosTable[i].setNextFocusableComponent(initialDay);
+					gastosTable[i].nextFocus();
+				} else// GO TO AGG
+				if ((e.getKeyCode() == KeyEvent.VK_A) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+					gastosTable[i].setNextFocusableComponent(agregadoTable[0]);
+					gastosTable[i].nextFocus();
+				} else// GO TO Details
+				if ((e.getKeyCode() == KeyEvent.VK_D) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+					gastosTable[i].setNextFocusableComponent(details[0][0]);
+					gastosTable[i].nextFocus();
+				} else// GO TO Troco
+				if ((e.getKeyCode() == KeyEvent.VK_T) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+					gastosTable[i].setNextFocusableComponent(panelCnum[0]);
+					gastosTable[i].nextFocus();
+				} else// Direction
+				if (e.getKeyCode() == KeyEvent.VK_UP) {
+					if (i > 0 && i < 4 || i > 8 && i < 12) {
+						gastosTable[i].setNextFocusableComponent(gastosTable[i - 1]);
+						gastosTable[i].nextFocus();
+					} else if (i == 0) {
+						gastosTable[i].setNextFocusableComponent(gastosTable[11]);
+						gastosTable[i].nextFocus();
+					} else if (i == 8) {
+						gastosTable[i].setNextFocusableComponent(gastosTable[3]);
+						gastosTable[i].nextFocus();
+					}
+				} else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
+					if (i < 3 || i > 7 && i < 11) {
+						gastosTable[i].setNextFocusableComponent(gastosTable[i + 1]);
+						gastosTable[i].nextFocus();
+					} else if (i == 3) {
+						gastosTable[i].setNextFocusableComponent(gastosTable[8]);
+						gastosTable[i].nextFocus();
+					} else if (i == 11) {
+						gastosTable[i].setNextFocusableComponent(gastosTable[0]);
+						gastosTable[i].nextFocus();
+					}
+				} else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
+					if (i != 11) {
+						if (i < 8) {
+							gastosTable[i].setNextFocusableComponent(gastosTable[i + 8]);
+							gastosTable[i].nextFocus();
+						} else {
+							gastosTable[i].setNextFocusableComponent(gastosTable[i - 7]);
+							gastosTable[i].nextFocus();
+						}
+					} else {
+						gastosTable[i].setNextFocusableComponent(gastosTable[0]);
+						gastosTable[i].nextFocus();
+					}
+				} else if (e.getKeyCode() == KeyEvent.VK_LEFT) {
+					if (i != 0) {
+						if (i < 8) {
+							gastosTable[i].setNextFocusableComponent(gastosTable[i + 7]);
+							gastosTable[i].nextFocus();
+						} else {
+							gastosTable[i].setNextFocusableComponent(gastosTable[i - 8]);
+							gastosTable[i].nextFocus();
+						}
+					} else {
+						gastosTable[i].setNextFocusableComponent(gastosTable[11]);
+						gastosTable[i].nextFocus();
+					}
+				} else// |Go to the last one
+				if ((e.getKeyCode() == KeyEvent.VK_E) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+					int k = 0;
+					while (k < 3) {
+						if (gastosTable[k].getText().isBlank())
+							break;
+						k++;
+					}
+					if (k == 3)
+						k = 0;
+					gastosTable[i].setNextFocusableComponent(gastosTable[k]);
+					gastosTable[i].nextFocus();
+				}
+			}
+		});
+	}
+
+	// Key listener for the CASH
+	private void cajaFocus(int i, JFrame frame, JButton newDay, JButton notasF, JButton pesosF, JButton clearEverthing,
+			JMenuItem hideBtn, JMenuItem resoD, JButton gastosPanel, JButton aggPanel) {
+		panelCnum[i].addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				// Hide
+				if ((e.getKeyCode() == KeyEvent.VK_O) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0))
+					hideBtn(notasF, pesosF, newDay, clearEverthing, hideBtn);
+				// GO TO Notas
+				else if ((e.getKeyCode() == KeyEvent.VK_S) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+					saveProgress();
+					FaturaP.totalC.setText("0");
+					FaturaP.total.setText("0");
+					frame.dispose();
+					new FaturaP();
+				} // GO TO Reales
+				else if ((e.getKeyCode() == KeyEvent.VK_R) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+					saveProgress();
+					frame.dispose();
+					new Reales();
+				} // Conf
+				else if ((e.getKeyCode() == KeyEvent.VK_C) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+					confFrame(conf, notasF, pesosF, newDay, clearEverthing, hideBtn, resoD, gastosPanel, aggPanel);
+				} else // Clear
+				if ((e.getKeyCode() == KeyEvent.VK_B) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+					clearAll();
+				} else// new day
+				if ((e.getKeyCode() == KeyEvent.VK_N) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+					newDay();
+				} else // GO TO INITIAL
+				if ((e.getKeyCode() == KeyEvent.VK_I) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+					panelCnum[i].setNextFocusableComponent(initialDay);
+					panelCnum[i].nextFocus();
+				} else // GO TO AGG
+				if ((e.getKeyCode() == KeyEvent.VK_A) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+					panelCnum[i].setNextFocusableComponent(agregadoTable[0]);
+					panelCnum[i].nextFocus();
+				} else// GO TO Details
+				if ((e.getKeyCode() == KeyEvent.VK_D) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+					panelCnum[i].setNextFocusableComponent(details[0][0]);
+					panelCnum[i].nextFocus();
+				} else// GO TO Gastos
+				if ((e.getKeyCode() == KeyEvent.VK_G) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+					panelCnum[i].setNextFocusableComponent(gastosTable[0]);
+					panelCnum[i].nextFocus();
+				} else// GO Direction
+				if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
+					if (i < 10) {
+						panelCnum[i].setNextFocusableComponent(panelCnum[i + 1]);
+						panelCnum[i].nextFocus();
+					} else {
+						panelCnum[i].setNextFocusableComponent(panelCnum[0]);
+						panelCnum[i].nextFocus();
+					}
+				} else if (e.getKeyCode() == KeyEvent.VK_LEFT)
+					if (i > 0) {
+						panelCnum[i].setNextFocusableComponent(panelCnum[i - 1]);
+						panelCnum[i].nextFocus();
+					} else {
+						panelCnum[i].setNextFocusableComponent(panelCnum[10]);
+						panelCnum[i].nextFocus();
+					}
+			}
+		});
+	}
+
+	private void screenShooter() {
+		BufferedImage img = new BufferedImage(this.getWidth(), this.getHeight(), BufferedImage.TYPE_INT_RGB);
+		this.paint(img.getGraphics());
+		String currentpath = System.getProperty("user.dir");
+		File tempFile1 = new File(currentpath + "\\" + yearS);
+		tempFile1.mkdir();
+		File tempFile2 = new File(tempFile1 + "\\" + monthS);
+		tempFile2.mkdir();
+		File newFile = new File(tempFile2, "p " + dayN + "-" + monthS + "-" + yearS + ".png");
+		try {
+			ImageIO.write(img, "png", newFile);
+		} catch (IOException e) {
+		}
+	}
+
+	private String titleName() {
+		if (conf[0] == null || !conf[0].equals("3"))
+			return "CEDROS";
+		else
+			return "NARJES";
+	}
+
+	// Style of textField
+	private void textFieldStyle(JTextField tf) {
+		tf.setBackground(First.darkC);
+		tf.setForeground(First.lightC);
+		tf.setFont(First.myFont);
+		tf.setBorder(First.border);
+		tf.setHorizontalAlignment(0);
+		tf.setCaretColor(First.lightC);
+		tf.addFocusListener(textFocus);
+	}
+
+	// OPTIMAL RESOLUTION
+	private void resFun(JButton clearEverthing, JButton faturaBtn, JButton realesF, JButton newDay, JMenuItem resoD,
+			JButton aggPanel, JButton gastosPanel) {
+		if (width > 1800 && height > 1000)
+			resG(resoD, realesF, faturaBtn, newDay, clearEverthing, gastosPanel, aggPanel);
+		else if (width > 1500 && height > 700)
+			resM(resoD, realesF, faturaBtn, newDay, clearEverthing, gastosPanel, aggPanel);
+		else if (width > 1300 && height > 700)
+			resP(resoD, realesF, faturaBtn, newDay, clearEverthing, gastosPanel, aggPanel);
+		else
+			resXP(resoD, realesF, faturaBtn, newDay, clearEverthing, gastosPanel, aggPanel);
+	}
+
 	private Image getScaledImage(Image srcImg, int w, int h) {
 		BufferedImage resizedImg = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g2 = resizedImg.createGraphics();
@@ -3951,6 +4157,10 @@ public class Pesos extends JFrame {
 		keywords.add("contadora");
 		keywords.add("oscar");
 		keywords.add("pan arabe");
+		keywords.add("cedros");
+		keywords.add("separados");
+		keywords.add("ose");
+		keywords.add("rge");
 		return keywords;
 	}
 }

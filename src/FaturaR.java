@@ -78,6 +78,35 @@ public class FaturaR extends JFrame {
 	private ImageIcon mainIcon = new ImageIcon(main);
 	private URL clearP = getClass().getResource("images/clear.png");
 	private ImageIcon clearI = new ImageIcon(clearP);
+	// menubar
+	private URL aboutP = getClass().getResource("images/menubar/about.png");
+	private ImageIcon aboutI = new ImageIcon(aboutP);
+	private URL calcP = getClass().getResource("images/menubar/calc.png");
+	private ImageIcon calcI = new ImageIcon(calcP);
+	private URL clearmbP = getClass().getResource("images/menubar/clear.png");
+	private ImageIcon clearmbI = new ImageIcon(clearmbP);
+	private URL creatorP = getClass().getResource("images/menubar/creator.png");
+	private ImageIcon creatorI = new ImageIcon(creatorP);
+	private URL exitP = getClass().getResource("images/menubar/exit.png");
+	private ImageIcon exitI = new ImageIcon(exitP);
+	private URL hideP = getClass().getResource("images/menubar/hide.png");
+	private ImageIcon hideI = new ImageIcon(hideP);
+	private URL largeP = getClass().getResource("images/menubar/large.png");
+	private ImageIcon largeI = new ImageIcon(largeP);
+	private URL medP = getClass().getResource("images/menubar/med.png");
+	private ImageIcon medI = new ImageIcon(medP);
+	private URL moneyP = getClass().getResource("images/menubar/money.png");
+	private ImageIcon moneyI = new ImageIcon(moneyP);
+	private URL settingP = getClass().getResource("images/menubar/setting.png");
+	private ImageIcon settingI = new ImageIcon(settingP);
+	private URL smallP = getClass().getResource("images/menubar/small.png");
+	private ImageIcon smallI = new ImageIcon(smallP);
+	private URL xsmallP = getClass().getResource("images/menubar/xsmall.png");
+	private ImageIcon xsmallI = new ImageIcon(xsmallP);
+	private URL optimalP = getClass().getResource("images/menubar/optimal.png");
+	private ImageIcon optimalI = new ImageIcon(optimalP);
+	private URL keyboardP = getClass().getResource("images/menubar/keyboard.png");
+	private ImageIcon keyboardI = new ImageIcon(keyboardP);
 	int width, height;
 
 	// Def
@@ -492,7 +521,7 @@ public class FaturaR extends JFrame {
 		JMenuItem option = new JMenuItem("CONFIGURACIÓN");
 		JMenuItem exit = new JMenuItem("SALIR");
 		JMenuItem reales = new JMenuItem("REALES");
-		JMenuItem getHelp = new JMenuItem("ATAJOS DE TECLADO");
+		JMenuItem keyShortcut = new JMenuItem("ATAJOS DE TECLADO");
 		JMenuItem creator = new JMenuItem("SOBRE EL CREADOR");
 		JMenuItem about = new JMenuItem("SOBRE EL APLICATIVO");
 		JMenu reso = new JMenu("RESOLUCIÓN");
@@ -511,13 +540,13 @@ public class FaturaR extends JFrame {
 			this.dispose();
 		});
 		if (conf[2] == null || conf[2].equals("false"))
-			getHelp.addActionListener(e -> JOptionPane.showMessageDialog(null,
+			keyShortcut.addActionListener(e -> JOptionPane.showMessageDialog(null,
 					"• CTRL + S → ir la reales.\n" + "• CTRL + O → esconder los botones.\n"
 							+ "• SHIFT → cambiar entre las dos tablas.\n"
 							+ "• FLECHAS → subir, abajo, derecha e izquierda.\n",
 					"ATAJOS DE TECLADO", 1));
 		else
-			getHelp.hide();
+			keyShortcut.hide();
 		hideBtn.addActionListener(e -> hideBtns(mainF, clearB, hideBtn));
 		creator.addActionListener(
 				e -> JOptionPane.showMessageDialog(null, "Crédito y Diseñado por MhmdSAbdlh ©", "SOBRE MI", 1));
@@ -544,7 +573,7 @@ public class FaturaR extends JFrame {
 		file.add(option);
 		file.add(exit);
 		goTo.add(reales);
-		help.add(getHelp);
+		help.add(keyShortcut);
 		help.add(hideBtn);
 		help.add(creator);
 		help.add(about);
@@ -553,6 +582,21 @@ public class FaturaR extends JFrame {
 		mb.add(reso);
 		mb.add(help);
 		this.setJMenuBar(mb);
+		// Image Icon
+		clear.setIcon(new ImageIcon(getScaledImage(clearmbI.getImage(), 35, 35)));
+		calc.setIcon(new ImageIcon(getScaledImage(calcI.getImage(), 35, 35)));
+		option.setIcon(new ImageIcon(getScaledImage(settingI.getImage(), 35, 35)));
+		exit.setIcon(new ImageIcon(getScaledImage(exitI.getImage(), 35, 35)));
+		reales.setIcon(new ImageIcon(getScaledImage(moneyI.getImage(), 35, 35)));
+		resoD.setIcon(new ImageIcon(getScaledImage(optimalI.getImage(), 35, 35)));
+		reso4.setIcon(new ImageIcon(getScaledImage(xsmallI.getImage(), 35, 35)));
+		reso3.setIcon(new ImageIcon(getScaledImage(smallI.getImage(), 35, 35)));
+		reso2.setIcon(new ImageIcon(getScaledImage(medI.getImage(), 35, 35)));
+		reso1.setIcon(new ImageIcon(getScaledImage(largeI.getImage(), 35, 35)));
+		hideBtn.setIcon(new ImageIcon(getScaledImage(hideI.getImage(), 35, 35)));
+		keyShortcut.setIcon(new ImageIcon(getScaledImage(keyboardI.getImage(), 35, 35)));
+		creator.setIcon(new ImageIcon(getScaledImage(creatorI.getImage(), 35, 35)));
+		about.setIcon(new ImageIcon(getScaledImage(aboutI.getImage(), 35, 35)));
 
 		// Frame start
 		this.getRootPane().setDefaultButton(calculate);
