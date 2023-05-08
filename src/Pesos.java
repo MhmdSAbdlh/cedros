@@ -34,14 +34,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
-import java.time.LocalTime;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Locale;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 import javax.imageio.ImageIO;
 import javax.sound.sampled.AudioInputStream;
@@ -108,7 +103,7 @@ public class Pesos extends JFrame {
 	private ImageIcon sumI = new ImageIcon(symPhoto);
 	private URL expP = getClass().getResource("images/save.png");
 	private ImageIcon expI = new ImageIcon(expP);
-	//menubar
+	// menubar
 	private URL aboutP = getClass().getResource("images/menubar/about.png");
 	private ImageIcon aboutI = new ImageIcon(aboutP);
 	private URL calcP = getClass().getResource("images/menubar/calc.png");
@@ -216,11 +211,7 @@ public class Pesos extends JFrame {
 
 	Pesos() {
 		// Notification when its time to end the day
-		long delay = ChronoUnit.MILLIS.between(LocalTime.now(), LocalTime.of(17, 30, 00));
-		if (delay < -60000)
-			delay = -delay;
-		ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
-		scheduler.schedule(First.itsAlmostTime(), delay, TimeUnit.MILLISECONDS);
+		First.timeToClose();
 
 		// Buttons
 		JMenuItem hideBtn = new JMenuItem("LOS BOTONES");
@@ -1143,7 +1134,7 @@ public class Pesos extends JFrame {
 		help.add(keyShortcut);
 		help.add(creator);
 		help.add(about);
-		//Image Icon
+		// Image Icon
 		novo.setIcon(new ImageIcon(getScaledImage(newdayI.getImage(), 35, 35)));
 		screenShot.setIcon(new ImageIcon(getScaledImage(screenshotI.getImage(), 35, 35)));
 		save.setIcon(new ImageIcon(getScaledImage(saveI.getImage(), 35, 35)));
@@ -1151,7 +1142,7 @@ public class Pesos extends JFrame {
 		calc.setIcon(new ImageIcon(getScaledImage(calcI.getImage(), 35, 35)));
 		option.setIcon(new ImageIcon(getScaledImage(settingI.getImage(), 35, 35)));
 		exit.setIcon(new ImageIcon(getScaledImage(exitI.getImage(), 35, 35)));
-		
+
 		sumV.setIcon(new ImageIcon(getScaledImage(summI.getImage(), 35, 35)));
 		effectChooser.setIcon(new ImageIcon(getScaledImage(themeI.getImage(), 35, 35)));
 		speedChooser.setIcon(new ImageIcon(getScaledImage(speedI.getImage(), 35, 35)));
@@ -1162,17 +1153,17 @@ public class Pesos extends JFrame {
 		speed1.setIcon(new ImageIcon(getScaledImage(slowI.getImage(), 35, 35)));
 		speed2.setIcon(new ImageIcon(getScaledImage(normalI.getImage(), 35, 35)));
 		speed3.setIcon(new ImageIcon(getScaledImage(fastI.getImage(), 35, 35)));
-		
+
 		firstFrame.setIcon(new ImageIcon(getScaledImage(firstI.getImage(), 35, 35)));
 		reales.setIcon(new ImageIcon(getScaledImage(moneyI.getImage(), 35, 35)));
 		fatura.setIcon(new ImageIcon(getScaledImage(invoiceI.getImage(), 35, 35)));
-		
+
 		resoD.setIcon(new ImageIcon(getScaledImage(optimalI.getImage(), 35, 35)));
 		reso4.setIcon(new ImageIcon(getScaledImage(xsmallI.getImage(), 35, 35)));
 		reso3.setIcon(new ImageIcon(getScaledImage(smallI.getImage(), 35, 35)));
 		reso2.setIcon(new ImageIcon(getScaledImage(medI.getImage(), 35, 35)));
 		reso1.setIcon(new ImageIcon(getScaledImage(largeI.getImage(), 35, 35)));
-		
+
 		hideMenu.setIcon(new ImageIcon(getScaledImage(hideI.getImage(), 35, 35)));
 		noHide.setIcon(new ImageIcon(getScaledImage(showI.getImage(), 35, 35)));
 		hideDate.setIcon(new ImageIcon(getScaledImage(dateI.getImage(), 35, 35)));
@@ -1181,7 +1172,7 @@ public class Pesos extends JFrame {
 		keyShortcut.setIcon(new ImageIcon(getScaledImage(keyboardI.getImage(), 35, 35)));
 		creator.setIcon(new ImageIcon(getScaledImage(creatorI.getImage(), 35, 35)));
 		about.setIcon(new ImageIcon(getScaledImage(aboutI.getImage(), 35, 35)));
-		//ADD TO MENUBAR
+		// ADD TO MENUBAR
 		mb.add(file);
 		mb.add(summary);
 		mb.add(goTo);
@@ -2044,7 +2035,7 @@ public class Pesos extends JFrame {
 		});
 
 		sum.add(sumItem);
-		sum.setIconImage(notasI.getImage());
+		sum.setIconImage(summI.getImage());
 		sum.setVisible(true);
 	}
 
@@ -2537,7 +2528,7 @@ public class Pesos extends JFrame {
 		});
 
 		// Finalize
-		temp.setIconImage(iconImages[0].getImage());
+		temp.setIconImage(settingI.getImage());
 		temp.add(op1);
 		temp.add(op1C);
 		temp.add(op2);

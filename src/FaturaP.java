@@ -21,12 +21,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.net.URL;
-import java.time.LocalTime;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.ImageIcon;
@@ -136,11 +131,7 @@ public class FaturaP extends JFrame {
 
 	FaturaP() {
 		// Notification when its time to end the day
-		long delay = ChronoUnit.MILLIS.between(LocalTime.now(), LocalTime.of(17, 30, 00));
-		if (delay < -60000)
-			delay = -delay;
-		ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
-		scheduler.schedule(First.itsAlmostTime(), delay, TimeUnit.MILLISECONDS);
+		First.timeToClose();
 
 		// BTNS
 		JButton cambioN = new JButton("<html><center>" + "MÉTODO" + "<br>" + "SMART" + "</center></html>");
@@ -585,7 +576,7 @@ public class FaturaP extends JFrame {
 		mb.add(reso);
 		mb.add(help);
 		this.setJMenuBar(mb);
-		//Image Icon
+		// Image Icon
 		clear.setIcon(new ImageIcon(getScaledImage(clearmbI.getImage(), 35, 35)));
 		calc.setIcon(new ImageIcon(getScaledImage(calcI.getImage(), 35, 35)));
 		option.setIcon(new ImageIcon(getScaledImage(settingI.getImage(), 35, 35)));
@@ -904,7 +895,7 @@ public class FaturaP extends JFrame {
 		});
 
 		// Finalize
-		temp.setIconImage(iconImages[0].getImage());
+		temp.setIconImage(settingI.getImage());
 		temp.add(op1);
 		temp.add(op1C);
 		temp.add(op3);

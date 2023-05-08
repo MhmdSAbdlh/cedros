@@ -34,14 +34,10 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
-import java.time.LocalTime;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Locale;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.ThreadLocalRandom;
 
 import javax.imageio.ImageIO;
 import javax.sound.sampled.AudioInputStream;
@@ -158,6 +154,8 @@ public class Reales extends JFrame {
 	private ImageIcon normalI = new ImageIcon(normalP);
 	private URL fastP = getClass().getResource("images/menubar/fast.png");
 	private ImageIcon fastI = new ImageIcon(fastP);
+	private URL randomP = getClass().getResource("images/menubar/random.png");
+	private ImageIcon randomI = new ImageIcon(randomP);
 	private URL effect1P = getClass().getResource("images/menubar/effect1.png");
 	private ImageIcon effect1I = new ImageIcon(effect1P);
 	private URL effect2P = getClass().getResource("images/menubar/effect2.png");
@@ -206,11 +204,7 @@ public class Reales extends JFrame {
 
 	Reales() {
 		// Notification when its time to end the day
-		long delay = ChronoUnit.MILLIS.between(LocalTime.now(), LocalTime.of(17, 30, 00));
-		if (delay < -60000)
-			delay = -delay;
-		ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
-		scheduler.schedule(First.itsAlmostTime(), delay, TimeUnit.MILLISECONDS);
+		First.timeToClose();
 
 		// Buttons
 		JMenuItem hideBtn = new JMenuItem("LOS BOTONES");
@@ -720,6 +714,8 @@ public class Reales extends JFrame {
 		JMenu summary = new JMenu("SUMARIO");
 		JMenuItem sumV = new JMenuItem("VISTA PREVIA DEL RESUMEN");
 		JMenu effectChooser = new JMenu("ELIGE TU EFECTO");
+		JMenuItem sumV0 = new JMenuItem("ALEATORIO");
+		JSeparator sep1 = new JSeparator();
 		JMenuItem sumV1 = new JMenuItem("FUNDIDO ENTRADA/FUERA");
 		JMenuItem sumV2 = new JMenuItem("APARECE PALABRA POR PALABRA");
 		JMenuItem sumV3 = new JMenuItem("APARECE LETRA POR LETRA");
@@ -746,6 +742,24 @@ public class Reales extends JFrame {
 			sumV2.setEnabled(true);
 			sumV3.setEnabled(false);
 		}
+		sumV0.addActionListener(e -> {
+			int randomNum = ThreadLocalRandom.current().nextInt(0, 3);
+			effChooser = randomNum;
+			if (effChooser == 0) {
+				sumV1.setEnabled(false);
+				sumV2.setEnabled(true);
+				sumV3.setEnabled(true);
+			} else if (effChooser == 1) {
+				sumV1.setEnabled(true);
+				sumV2.setEnabled(false);
+				sumV3.setEnabled(true);
+			} else {
+				effChooser = 2;
+				sumV1.setEnabled(true);
+				sumV2.setEnabled(true);
+				sumV3.setEnabled(false);
+			}
+		});
 		sumV1.addActionListener(e -> {
 			effChooser = 0;
 			sumV1.setEnabled(false);
@@ -889,6 +903,8 @@ public class Reales extends JFrame {
 		speedChooser.add(speed1);
 		speedChooser.add(speed2);
 		speedChooser.add(speed3);
+		effectChooser.add(sumV0);
+		effectChooser.add(sep1);
 		effectChooser.add(sumV1);
 		effectChooser.add(sumV2);
 		effectChooser.add(sumV3);
@@ -1149,6 +1165,7 @@ public class Reales extends JFrame {
 		effectChooser.setIcon(new ImageIcon(getScaledImage(themeI.getImage(), 35, 35)));
 		speedChooser.setIcon(new ImageIcon(getScaledImage(speedI.getImage(), 35, 35)));
 		exMenu.setIcon(new ImageIcon(getScaledImage(saveI.getImage(), 35, 35)));
+		sumV0.setIcon(new ImageIcon(getScaledImage(randomI.getImage(), 35, 35)));
 		sumV1.setIcon(new ImageIcon(getScaledImage(effect1I.getImage(), 35, 35)));
 		sumV2.setIcon(new ImageIcon(getScaledImage(effect2I.getImage(), 35, 35)));
 		sumV3.setIcon(new ImageIcon(getScaledImage(effect3I.getImage(), 35, 35)));
@@ -1325,6 +1342,7 @@ public class Reales extends JFrame {
 		sumItem.setBounds(0, 200, 650, 550);
 		sumItem.setFont(First.myFont);
 		sumItem.setEditable(false);
+		sumItem.setCaretColor(First.lightC);
 		sumItem.setOpaque(false);
 		sumItem.addKeyListener(new KeyAdapter() {// Escape to close
 			@SuppressWarnings("static-access")
@@ -2146,7 +2164,7 @@ public class Reales extends JFrame {
 		});
 
 		sum.add(sumItem);
-		sum.setIconImage(notasI.getImage());
+		sum.setIconImage(summI.getImage());
 		sum.setVisible(true);
 	}
 
@@ -2577,7 +2595,7 @@ public class Reales extends JFrame {
 		});
 
 		// Finalize
-		temp.setIconImage(iconImages[0].getImage());
+		temp.setIconImage(settingI.getImage());
 		temp.add(op1);
 		temp.add(op1C);
 		temp.add(op2);

@@ -24,11 +24,9 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.net.URL;
-import java.time.LocalTime;
-import java.time.temporal.ChronoUnit;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.Calendar;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.ImageIcon;
@@ -86,27 +84,13 @@ public class First extends JFrame {
 	static String appVersion = "v5.9";
 	private int language;
 
-	static Runnable itsAlmostTime() {
-		final Runnable timeOut = new Runnable() {
-			public void run() {
-				JOptionPane.showMessageDialog(null, "<html><div font-weight: bold>YA ES CASI LA HORA DE CERRAR!<br><br>"
-						+ "HAZ LA CAJA!<br></div></html>", "ATENCIÓN", JOptionPane.WARNING_MESSAGE);
-			}
-		};
-		return timeOut;
-	}
-
 	public static void main(String[] args) {
 		new First();
 	}
 
 	First() {
-		// Notification when its time to end the day
-		long delay = ChronoUnit.MILLIS.between(LocalTime.now(), LocalTime.of(17, 30, 00));
-		if (delay < -60000)
-			delay = -delay;
-		ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
-		scheduler.schedule(itsAlmostTime(), delay, TimeUnit.MILLISECONDS);
+
+		timeToClose();
 
 		// Open Conf
 		BufferedReader dataOpened = null;
@@ -320,6 +304,29 @@ public class First extends JFrame {
 
 		// language
 		espIdioma(inputText, showHide, file, exit, creator, about, option, language);
+	}
+
+	// Notification when its time to end the day
+	static void timeToClose() {
+		Timer timer = new Timer();
+		TimerTask task = new TimerTask() {
+
+			@Override
+			public void run() {
+				JOptionPane.showMessageDialog(null, "<html><div font-weight: bold>YA ES CASI LA HORA DE CERRAR!<br><br>"
+						+ "HAZ LA CAJA!<br></div></html>", "ATENCIÓN", JOptionPane.WARNING_MESSAGE);
+			}
+		};
+		Calendar date = Calendar.getInstance();
+		Calendar date1 = Calendar.getInstance();
+		date.set(Calendar.HOUR_OF_DAY, 17);
+		date.set(Calendar.MINUTE, 29);
+		date.set(Calendar.SECOND, 30);
+		date.set(Calendar.MILLISECOND, 0);
+		timer.schedule(task, date.getTime());
+		if (date1.getTime().getHours() >= 17 && date1.getTime().getMinutes() > 29) {
+			timer.cancel();
+		}
 	}
 
 	private void espIdioma(JLabel inputText, JButton showHide, JMenu file, JMenuItem exit, JMenuItem creator,
@@ -730,7 +737,7 @@ public class First extends JFrame {
 		});
 
 		// Finalize
-		temp.setIconImage(iconImages[0].getImage());
+		temp.setIconImage(settingI.getImage());
 		temp.add(op1);
 		temp.add(op1C);
 		temp.add(op2);
