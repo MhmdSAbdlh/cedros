@@ -23,8 +23,11 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -40,6 +43,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
+import javax.swing.JTextPane;
 import javax.swing.JToggleButton;
 import javax.swing.UIDefaults;
 import javax.swing.UIManager;
@@ -48,6 +52,9 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.plaf.ColorUIResource;
 import javax.swing.plaf.metal.MetalToggleButtonUI;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyledDocument;
 
 @SuppressWarnings("serial")
 public class First extends JFrame {
@@ -81,7 +88,16 @@ public class First extends JFrame {
 	private ImageIcon aboutI = new ImageIcon(about);
 	private URL exit = getClass().getResource("images/menubar/exit.png");
 	private ImageIcon exitI = new ImageIcon(exit);
-	static String appVersion = "v5.9";
+	private URL symPhoto = getClass().getResource("images/sum.png");
+	private ImageIcon sumI = new ImageIcon(symPhoto);
+	private URL introP = getClass().getResource("images/menubar/intro.png");
+	private ImageIcon introI = new ImageIcon(introP);
+	String dayN = new SimpleDateFormat("dd").format(Calendar.getInstance().getTime());
+	String monthN = new SimpleDateFormat("M").format(Calendar.getInstance().getTime());
+	javax.swing.Timer timer;
+	int order = 0, wordL = 0;
+
+	static String appVersion = "v6.0";
 	private int language;
 
 	public static void main(String[] args) {
@@ -89,14 +105,38 @@ public class First extends JFrame {
 	}
 
 	First() {
+		// Dimension
+		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+		int width = (int) screenSize.getWidth() - 100;
+		int height = (int) screenSize.getHeight() - 100;
+		JLabel photoLabel = new JLabel();
 
-		timeToClose();
-
+		timeToClose();// TIMER TO END THE DAY
 		// Open Conf
 		BufferedReader dataOpened = null;
 		String line = "";
 		int z = 0;
-		String conf[] = new String[9];
+		String conf[] = new String[10];
+		// Check if a conf is exist
+		File conFile = new File("conf.txt");
+		if (!conFile.exists()) {
+			try {
+				FileWriter savedF = new FileWriter("conf.txt");
+				savedF.write(0 + System.lineSeparator());// icon
+				savedF.write(0 + System.lineSeparator());/// btn hide
+				savedF.write("false" + System.lineSeparator());// key shortcut
+				savedF.write(0 + System.lineSeparator());// res
+				savedF.write("false" + System.lineSeparator());// auto save
+				savedF.write(0 + System.lineSeparator());// first frame
+				savedF.write(1 + System.lineSeparator());// speed
+				savedF.write(0 + System.lineSeparator());// lang
+				savedF.write(0 + System.lineSeparator());// effect chooser
+				savedF.write("1,1" + System.lineSeparator());// intro
+				savedF.close();
+			} catch (Exception e1) {
+			}
+			confFrame(conf, height, photoLabel);
+		} // OPEN CONF
 		try {
 			dataOpened = new BufferedReader(new FileReader(new File("conf.txt")));
 			while ((line = dataOpened.readLine()) != null) {
@@ -106,15 +146,13 @@ public class First extends JFrame {
 			dataOpened.close();
 		} catch (Exception e) {
 		}
-		if (conf[7] == null || conf[7].equals("0"))// LANGUAGE
+		// LANGUAGE
+		if (conf[7] == null || conf[7].equals("0"))
 			language = 0;
-		else
+		else if (conf[7].equals("1"))
 			language = 1;
-
-		// Dimension
-		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-		int width = (int) screenSize.getWidth() - 100;
-		int height = (int) screenSize.getHeight() - 100;
+		else
+			language = 2;
 		this.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 		this.setAlwaysOnTop(false);
 		this.setSize(width, height);
@@ -144,10 +182,9 @@ public class First extends JFrame {
 		// Stuff
 		JButton settingL = new JButton();
 		ImageIcon photo = new ImageIcon(url);
-		JLabel photoLabel = new JLabel();
-		JLabel inputText = new JLabel("Escribe la contraseña");
+		JLabel inputText = new JLabel();
 		JPasswordField passTF = new JPasswordField();
-		JButton showHide = new JButton("Mostrar");
+		JButton showHide = new JButton();
 		settingL.setContentAreaFilled(false);
 		settingL.setBorderPainted(false);
 		settingL.setBounds(width - 115, 20, 75, 75);
@@ -226,11 +263,13 @@ public class First extends JFrame {
 
 		// MenuBar
 		JMenuBar mb = new JMenuBar();
-		JMenu file = new JMenu("AYUDA");
-		JMenuItem exit = new JMenuItem("SALIR");
-		JMenuItem creator = new JMenuItem("SOBRE EL CREADOR");
-		JMenuItem about = new JMenuItem("SOBRE EL APLICATIVO");
-		JMenuItem option = new JMenuItem("CONFIGURACIÓN");
+		JMenu file = new JMenu();
+		JMenuItem exit = new JMenuItem();
+		JMenuItem creator = new JMenuItem();
+		JMenuItem about = new JMenuItem();
+		JMenuItem option = new JMenuItem();
+		JMenuItem introM = new JMenuItem("INTRO");
+		introM.setIcon(new ImageIcon(getScaledImage(introI.getImage(), 35, 35)));
 		option.setIcon(new ImageIcon(getScaledImage(confI.getImage(), 35, 35)));
 		creator.addActionListener(e -> JOptionPane.showMessageDialog(null, idiomaString(language)[3], "SOBRE MI", 1));
 		creator.setIcon(new ImageIcon(getScaledImage(creatorI.getImage(), 35, 35)));
@@ -238,20 +277,18 @@ public class First extends JFrame {
 				e -> JOptionPane.showMessageDialog(null, idiomaString(language)[4], "CEDROS/NARJES", 1));
 		about.setIcon(new ImageIcon(getScaledImage(aboutI.getImage(), 35, 35)));
 		option.addActionListener(e -> confFrame(conf, height, photoLabel));
+		introM.addActionListener(e -> introFrame());
 		exit.addActionListener(e -> System.exit(0));
 		exit.setIcon(new ImageIcon(getScaledImage(exitI.getImage(), 35, 35)));
 		file.add(option);
+		file.add(introM);
 		file.add(creator);
 		file.add(about);
 		file.add(exit);
 		mb.add(file);
 
-		String name = "John Mark   Le.ster Andrew Todd";
-		String[] names = name.split(" ");
-		for (int i = 0; i < names.length; i++)
-
-			// Add to frame
-			this.setJMenuBar(mb);
+		// Add to frame
+		this.setJMenuBar(mb);
 		this.add(settingL);
 		this.add(photoLabel);
 		this.add(login);
@@ -282,24 +319,24 @@ public class First extends JFrame {
 		defaults.put("Button.disabledText", new ColorUIResource(Color.white));
 		defaults.put("textInactiveText", UIManager.get("Button.disabledText"));
 
-		// Check if a conf is exist
-		File conFile = new File("conf.txt");
-		if (!conFile.exists()) {
+		// intro
+		if (conf[9] == null || !conf[9].equals(dayN + "," + monthN)) {
 			try {
 				FileWriter savedF = new FileWriter("conf.txt");
-				savedF.write(0 + System.lineSeparator());// icon
-				savedF.write(0 + System.lineSeparator());/// btn hide
-				savedF.write("false" + System.lineSeparator());// key shortcut
-				savedF.write(0 + System.lineSeparator());// res
-				savedF.write("false" + System.lineSeparator());// auto save
-				savedF.write(0 + System.lineSeparator());// first frame
-				savedF.write(1 + System.lineSeparator());// speed
-				savedF.write(0 + System.lineSeparator());// lang
-				savedF.write(0 + System.lineSeparator());// effect chooser
+				savedF.write((conf[0].equals("null") ? 0 : conf[0]) + System.lineSeparator());// icon
+				savedF.write((conf[1].equals("null") ? 0 : conf[1]) + System.lineSeparator());/// btn hide
+				savedF.write((conf[2].equals("null") ? "false" : conf[2]) + System.lineSeparator());// key shortcut
+				savedF.write((conf[3].equals("null") ? 0 : conf[3]) + System.lineSeparator());// res
+				savedF.write((conf[4].equals("null") ? "false" : conf[4]) + System.lineSeparator());// auto save
+				savedF.write((conf[5].equals("null") ? 0 : conf[5]) + System.lineSeparator());// first frame
+				savedF.write((conf[6].equals("null") ? 1 : conf[6]) + System.lineSeparator());// speed
+				savedF.write((conf[7].equals("null") ? 0 : conf[7]) + System.lineSeparator());// lang
+				savedF.write((conf[8].equals("null") ? 0 : conf[8]) + System.lineSeparator());// speed
+				savedF.write(dayN + "," + monthN + System.lineSeparator());// intro
 				savedF.close();
-			} catch (Exception e2) {
+			} catch (Exception e) {
 			}
-			confFrame(conf, height, photoLabel);
+			introFrame();
 		}
 
 		// language
@@ -321,10 +358,11 @@ public class First extends JFrame {
 		Calendar date1 = Calendar.getInstance();
 		date.set(Calendar.HOUR_OF_DAY, 17);
 		date.set(Calendar.MINUTE, 29);
-		date.set(Calendar.SECOND, 30);
+		date.set(Calendar.SECOND, 55);
 		date.set(Calendar.MILLISECOND, 0);
 		timer.schedule(task, date.getTime());
-		if (date1.getTime().getHours() >= 17 && date1.getTime().getMinutes() > 29) {
+		if ((date1.getTime().getHours() == 17 && date1.getTime().getMinutes() > 29)
+				|| date1.getTime().getHours() > 17) {
 			timer.cancel();
 		}
 	}
@@ -340,7 +378,7 @@ public class First extends JFrame {
 			creator.setText("SOBRE EL CREADOR");
 			about.setText("SOBRE EL APLICATIVO");
 			option.setText("CONFIGURACIÓN");
-		} else {
+		} else if (idioma == 1) {
 			inputText.setText("Digite a senha");
 			showHide.setText("Mostrar");
 			// menu
@@ -349,6 +387,15 @@ public class First extends JFrame {
 			creator.setText("SOBRE O CRIADOR");
 			about.setText("SOBRE O APLICATIVO");
 			option.setText("CONFIGURAÇÃO");
+		} else {
+			inputText.setText("Type the password");
+			showHide.setText("Show");
+			// menu
+			file.setText("HELP");
+			exit.setText("EXIT");
+			creator.setText("ABOUT THE CREATOR");
+			about.setText("ABOUT THE APP");
+			option.setText("CONFIGURATION");
 		}
 	}
 
@@ -400,10 +447,36 @@ public class First extends JFrame {
 				, "Tem certeza que quer sair?"// exit 14
 				, "SAIR"// exit
 		};
+		String[] english = { "Show", "Hide", // pass hide show
+				"<html><div style=color:red>Wrong password.</div>"
+						+ "<div style=color:blue>Hint: Store's password!</div></html>",
+				"Created and designed by MhmdSAbdlh ©"// creator
+				,
+				"THIS APP IS DESIGNED FOR CEDROS AND NARJES FREE SHOP.\r\n"
+						+ "HAS A FRAME TO CLOSE THE BOX IN REALS AND PESOS.\r\n"
+						+ "THERE IS A FRAME TO CALCULATE THE CHANGE FOR A SALE, BOTH IN BRL AND IN PESOS.\r\n"
+						+ "KNOW HOW MUCH IT WILL BE FOR THE NEXT DAY.\r\n" + "3 METHODS OF GIVING CHANGE.\r\n"
+						+ "WILL CHANGE EVERYTHING ACCORDING TO THE SELECTED ICON.\r\n" + "\r\n"
+						+ "MOHAMAD ABDALLAH ABBASS ©"// about
+				, "CONFIGURATION"// conf title
+				, "ICON"// icon
+				, "FIRST FRAME"// FIRST FRAME
+				, "LANGUAGE"// LANGUAGE
+				, "KEY SHORTCUT"// KEY SHORTCUT
+				, "AUTO SAVE"// AUTO SAVE
+				, "DEFAULT"// DEFAULT
+				, "SAVE"// SAVE
+				, "YES"// YES
+				, "NO"// NO
+				, "ARE YOU SURE YOU WANT TO CLOSE?"// exit 14
+				, "EXIT"// exit
+		};
 		if (idioma == 0)
 			return espanol;
-		else
+		else if (idioma == 1)
 			return portugues;
+		else
+			return english;
 	}
 
 	private void confFrame(String[] conf, int height, JLabel photoLabel) {
@@ -488,7 +561,7 @@ public class First extends JFrame {
 		JLabel op2 = new JLabel(idiomaString(language)[8]);
 		op2.setBounds(50, 160, 200, 40);
 		op2.setFont(myFont);
-		String lan[] = { "ESPAÑOL", "PORTUGUÊS" };
+		String lan[] = { "ESPAÑOL", "PORTUGUÊS", "ENGLISH" };
 		JComboBox<String> lang = new JComboBox<>(lan);
 		lang.setRenderer(dlcr);
 		lang.setBounds(355, 160, 200, 40);
@@ -700,14 +773,15 @@ public class First extends JFrame {
 				try {
 					FileWriter savedF = new FileWriter("conf.txt");
 					savedF.write(op1C.getSelectedIndex() + System.lineSeparator());// icon
-					savedF.write((conf[1] == null ? 0 : conf[1]) + System.lineSeparator());/// btn hide
+					savedF.write((conf[1].equals("null") ? 0 : conf[1]) + System.lineSeparator());/// btn hide
 					savedF.write(btnsHideShow2.isSelected() + System.lineSeparator());// key shortcut
-					savedF.write((conf[3] == null ? 0 : conf[3]) + System.lineSeparator());// res
+					savedF.write((conf[3].equals("null") ? 0 : conf[3]) + System.lineSeparator());// res
 					savedF.write(btnsHideShow3.isSelected() + System.lineSeparator());// auto save
 					savedF.write(op3C.getSelectedIndex() + System.lineSeparator());// first frame
-					savedF.write((conf[6] == null ? 1 : conf[6]) + System.lineSeparator());// speed
+					savedF.write((conf[6].equals("null") ? 1 : conf[6]) + System.lineSeparator());// speed
 					savedF.write(lang.getSelectedIndex() + System.lineSeparator());// lang
-					savedF.write((conf[8] == null ? 0 : conf[8]) + System.lineSeparator());// speed
+					savedF.write((conf[8].equals("null") ? 0 : conf[8]) + System.lineSeparator());// speed
+					savedF.write((conf[9].equals("null") ? "1,1" : conf[9]) + System.lineSeparator());// intro
 					savedF.close();
 				} catch (Exception e2) {
 				}
@@ -822,6 +896,134 @@ public class First extends JFrame {
 		return String.valueOf(chars);
 	}
 
+	private void introFrame() {
+		JFrame introFrame = new JFrame();
+		introFrame.setTitle("INTRO");
+		introFrame.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+		introFrame.setAlwaysOnTop(false);
+		introFrame.setSize(650, 550);
+		introFrame.setLocationRelativeTo(null);
+		introFrame.setResizable(false);
+		introFrame.setLayout(null);
+		introFrame.getContentPane().setBackground(lightC);
+
+		// Background
+		JLabel bg = new JLabel(sumI);
+		bg.setBounds(0, 0, 650, 550);
+		introFrame.add(bg);
+
+		//
+		JTextPane introL = new JTextPane();
+		StyledDocument doc = introL.getStyledDocument();
+		SimpleAttributeSet center = new SimpleAttributeSet();
+		StyleConstants.setAlignment(center, StyleConstants.ALIGN_CENTER);
+		doc.setParagraphAttributes(0, doc.getLength(), center, false);
+		introL.setEditable(false);
+		introL.setCaretColor(lightC);
+		introL.setBounds(20, 200, 610, 550);
+		introL.setFont(myFont);
+		introL.setForeground(darkC);
+		introL.setOpaque(false);
+		introL.addKeyListener(new KeyAdapter() {// Escape to close
+			@SuppressWarnings("static-access")
+			public void keyPressed(KeyEvent ke) {
+				if (ke.getKeyCode() == ke.VK_ESCAPE) {
+					timer.stop();
+					wordL = 0;
+					order = 0;
+					introFrame.dispose();
+				}
+			}
+		});
+		String dayESP = new SimpleDateFormat("EEEE", new Locale("es")).format(Calendar.getInstance().getTime())
+				.toUpperCase();
+		String dayPOR = new SimpleDateFormat("EEEE", new Locale("pt")).format(Calendar.getInstance().getTime())
+				.toUpperCase();
+		String dayENG = new SimpleDateFormat("EEEE", new Locale("en")).format(Calendar.getInstance().getTime())
+				.toUpperCase();
+		ActionListener letterByLetter = new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+
+				switch (order) {
+				case 0: {// details start
+					char[] wordT = ("BUEN " + dayESP + " PARA USTED\n\nBOM " + dayPOR + " PARA VOCÊ\n\nGOOD " + dayENG
+							+ " TO YOU\n\n^_^").toCharArray();
+					if (wordL < wordT.length)
+						introL.setText(introL.getText() + wordT[wordL++]);
+					else {
+						if (wordL < wordT.length + 6) {
+							wordL++;
+						} else {
+							order++;
+							wordL = 0;
+							introL.setText("");
+						}
+					}
+					break;
+				}
+				case 1: {// details start
+					char[] wordT = "ESPERO QUE TENGAS UN EXCELENTE DÍA CON GRAN VENTA\n\nESPERO QUE VOCÊ TENHA UM ÓTIMO DIA COM ÓTIMAS VENDAS\n\nI HOPE YOU HAVE A GREAT DAY WITH GREAT SELLING\n\n^o^"
+							.toCharArray();
+					introL.setBounds(20, 170, 610, 550);
+					if (wordL < wordT.length)
+						introL.setText(introL.getText() + wordT[wordL++]);
+					else {
+						if (wordL < wordT.length + 6) {
+							wordL++;
+						} else {
+							order++;
+							wordL = 0;
+							introL.setText("");
+						}
+					}
+					break;
+				}
+				case 2: {// export button
+					char[] wordT = "AHORA VAMOS A TRABAJAR\n\nAGORA, VAMOS AO TRABALHO\n\nNOW, LET'S GO TO WORK\n\n(● | ●)"
+							.toCharArray();
+					if (wordL < wordT.length)
+						introL.setText(introL.getText() + (wordT[wordL++]));
+					else {
+						if (wordL < wordT.length + 6) {
+							wordL++;
+						} else {
+							order++;
+							wordL = 0;
+							timer.stop();
+							introFrame.dispose();
+						}
+					}
+					break;
+				}
+				default:
+					timer.stop();
+					break;
+				}
+			}
+		};
+		timer = new javax.swing.Timer(100, letterByLetter);
+		timer.start();
+
+		// Close popup
+		introFrame.addWindowListener(new java.awt.event.WindowAdapter() {
+			@Override
+			public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+				try {
+					wordL = 0;
+					order = 0;
+					timer.stop();
+					Runtime.getRuntime().exec("taskkill /f /im java.exe");
+
+				} catch (IOException e4) {
+				}
+			}
+		});
+		introFrame.add(introL);
+		introFrame.setIconImage(introI.getImage());
+		introFrame.setVisible(true);
+	}
 }
 
 class InitialFocusSetter {

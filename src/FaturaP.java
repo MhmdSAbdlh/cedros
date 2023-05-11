@@ -113,7 +113,7 @@ public class FaturaP extends JFrame {
 	// Def
 	static JTextField details[][] = new JTextField[10][3];
 	static JLabel detailsR[] = new JLabel[10];
-	static JLabel total = new JLabel("Total");
+	static JLabel total = new JLabel("TOTAL");
 	static JLabel cambio[] = new JLabel[6];
 	static JLabel[][] cajaTroco = new JLabel[2][10];
 	static JLabel[] trocoC = new JLabel[11];
@@ -122,52 +122,23 @@ public class FaturaP extends JFrame {
 	static JLabel[][] troco2 = new JLabel[2][10];
 	static JLabel[][] troco3 = new JLabel[2][10];
 	static String numbers[] = new String[165];
-	static JLabel totalC = new JLabel("Total");
-	static int totalFatura = 0, totalCV = 0, trocoV = 0;
-	JLabel cambioC = new JLabel("Cliente");
+	static JLabel totalC = new JLabel("TOTAL");
+	static int totalFatura = 0, totalCV = 0, trocoV = 0, language = 0;
+	JLabel cambioC = new JLabel();
 	JLabel title[] = new JLabel[4];
-	JLabel caja = new JLabel("Caja");
+	JLabel caja = new JLabel();
 	private MouseListener m1, m2, m3;
 
 	FaturaP() {
 		// Notification when its time to end the day
 		First.timeToClose();
 
-		// BTNS
-		JButton cambioN = new JButton("<html><center>" + "MÉTODO" + "<br>" + "SMART" + "</center></html>");
-		JButton cambioN2 = new JButton("<html><center>" + "MÉTODO" + "<br>" + "POPULAR" + "</center></html>");
-		JButton cambioN3 = new JButton("<html><center>" + "MÉTODO" + "<br>" + " BÁSICO" + "</center></html>");
-		JButton calculate = new JButton("Magic");
-		JButton mainF = new JButton();
-		JButton clearB = new JButton();
-		JMenuItem hideBtn = new JMenuItem("LOS BOTONES");
-
-		// Frame
-		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-		width = (int) screenSize.getWidth();
-		height = (int) screenSize.getHeight();
-		this.setTitle("FATURA - P$");
-		this.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
-		this.setAlwaysOnTop(false);
-		if (width > 1800 && height > 1000)
-			this.setSize(1820, 980);
-		else if (width > 1500 && height > 700)
-			this.setSize(1500, 800);
-		else if (width > 1300 && height > 700)
-			this.setSize(1300, 700);
-		else
-			this.setSize(1000, 600);
-		this.setLocationRelativeTo(null);
-		this.setResizable(false);
-		this.setLayout(null);
-		this.getContentPane().setBackground(First.darkC);
-
 		// Open Conf
 		URL url;
 		BufferedReader dataOpened = null;
 		String line = "";
 		int tempC = 0;
-		String conf[] = new String[7];
+		String conf[] = new String[10];
 		try {
 			dataOpened = new BufferedReader(new FileReader(new File("conf.txt")));
 			while ((line = dataOpened.readLine()) != null) {
@@ -188,16 +159,52 @@ public class FaturaP extends JFrame {
 			url = getClass().getResource("images/icon/narjes.png");
 		}
 		this.setIconImage(new ImageIcon(url).getImage());
+		// LANGUAGE
+		if (conf[7] == null || conf[7].equals("0"))
+			language = 0;
+		else if (conf[7].equals("1"))
+			language = 1;
+		else
+			language = 2;
+
+		// BTNS
+		JButton cambioN = new JButton(idiomaString(language)[22]);
+		JButton cambioN2 = new JButton(idiomaString(language)[23]);
+		JButton cambioN3 = new JButton(idiomaString(language)[24]);
+		JButton calculate = new JButton();
+		JButton mainF = new JButton();
+		JButton clearB = new JButton();
+		JMenuItem hideBtn = new JMenuItem();
+
+		// Frame
+		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+		width = (int) screenSize.getWidth();
+		height = (int) screenSize.getHeight();
+		this.setTitle(idiomaString(language)[25]);
+		this.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+		this.setAlwaysOnTop(false);
+		if (width > 1800 && height > 1000)
+			this.setSize(1820, 980);
+		else if (width > 1500 && height > 700)
+			this.setSize(1500, 800);
+		else if (width > 1300 && height > 700)
+			this.setSize(1300, 700);
+		else
+			this.setSize(1000, 600);
+		this.setLocationRelativeTo(null);
+		this.setResizable(false);
+		this.setLayout(null);
+		this.getContentPane().setBackground(First.darkC);
 
 		// hide btns
 		if (conf[1] == null || conf[1].equals("0") || conf[1].equals("1")) {
 			mainF.show();
 			clearB.show();
-			hideBtn.setText("ESCONDER LOS BOTONES");
+			hideBtn.setText(idiomaString(language)[26]);
 		} else {
 			mainF.hide();
 			clearB.hide();
-			hideBtn.setText("MONSTRAR LOS BOTONES");
+			hideBtn.setText(idiomaString(language)[27]);
 		}
 
 		// Open values of cash
@@ -224,10 +231,10 @@ public class FaturaP extends JFrame {
 			title[i].setOpaque(true);
 			this.add(title[i]);
 		}
-		title[0].setText("Cant");
-		title[1].setText("Detalle");
-		title[2].setText("P/Unit");
-		title[3].setText("Importe");
+		title[0].setText(idiomaString(language)[15]);
+		title[1].setText(idiomaString(language)[16]);
+		title[2].setText(idiomaString(language)[17]);
+		title[3].setText(idiomaString(language)[18]);
 		ArrayList<String> keywords = listMercadoria();
 		for (int i = 0; i < 10; i++) {
 			for (int j = 0; j < 3; j++) {
@@ -259,6 +266,7 @@ public class FaturaP extends JFrame {
 		this.add(total);
 
 		// Caja
+		caja.setText(idiomaString(language)[19]);
 		caja.setHorizontalAlignment(0);
 		caja.setBorder(First.border);
 		caja.setForeground(Color.white);
@@ -279,6 +287,7 @@ public class FaturaP extends JFrame {
 			}
 
 		// Cliente
+		cambioC.setText(idiomaString(language)[20]);
 		cambioC.setBorder(First.border);
 		cambioC.setForeground(blueC);
 		cambioC.setBackground(blueD);
@@ -319,9 +328,9 @@ public class FaturaP extends JFrame {
 			cambio[i].setOpaque(true);
 			this.add(cambio[i]);
 		}
-		cambio[0].setText("Cliente");
-		cambio[1].setText("Total");
-		cambio[2].setText("Troco");
+		cambio[0].setText(idiomaString(language)[20]);
+		cambio[1].setText("TOTAL");
+		cambio[2].setText(idiomaString(language)[21]);
 
 		// 1ST CAMBIO
 		m1 = new MouseListener() {
@@ -400,9 +409,9 @@ public class FaturaP extends JFrame {
 		cambioN.setFocusable(false);
 		cambioN.addActionListener(e -> {
 			cambioF();
-			cambioN.setText("<html><center>" + "MÉTODO" + "<br>" + "SMART" + "</center></html>");
-			cambioN2.setText("<html><center>" + "MÉTODO" + "<br>" + " POPULAR" + "</center></html>");
-			cambioN3.setText("<html><center>" + "MÉTODO" + "<br>" + " BÁSICO" + "</center></html>");
+			cambioN.setText(idiomaString(language)[22]);
+			cambioN2.setText(idiomaString(language)[23]);
+			cambioN3.setText(idiomaString(language)[24]);
 			cambioN.setEnabled(false);
 			cambioN2.setEnabled(false);
 			cambioN3.setEnabled(false);
@@ -429,9 +438,9 @@ public class FaturaP extends JFrame {
 		cambioN2.setFocusable(false);
 		cambioN2.addActionListener(e -> {
 			cambioF2();
-			cambioN.setText("<html><center>" + "MÉTODO" + "<br>" + "SMART" + "</center></html>");
-			cambioN2.setText("<html><center>" + "MÉTODO" + "<br>" + " POPULAR" + "</center></html>");
-			cambioN3.setText("<html><center>" + "MÉTODO" + "<br>" + " BÁSICO" + "</center></html>");
+			cambioN.setText(idiomaString(language)[22]);
+			cambioN2.setText(idiomaString(language)[23]);
+			cambioN3.setText(idiomaString(language)[24]);
 			cambioN.setEnabled(false);
 			cambioN2.setEnabled(false);
 			cambioN3.setEnabled(false);
@@ -458,9 +467,9 @@ public class FaturaP extends JFrame {
 		cambioN3.setFocusable(false);
 		cambioN3.addActionListener(e -> {
 			cambioF3();
-			cambioN.setText("<html><center>" + "MÉTODO" + "<br>" + "SMART" + "</center></html>");
-			cambioN2.setText("<html><center>" + "MÉTODO" + "<br>" + " POPULAR" + "</center></html>");
-			cambioN3.setText("<html><center>" + "MÉTODO" + "<br>" + " BÁSICO" + "</center></html>");
+			cambioN.setText(idiomaString(language)[22]);
+			cambioN2.setText(idiomaString(language)[23]);
+			cambioN3.setText(idiomaString(language)[24]);
 			cambioN.setEnabled(false);
 			cambioN2.setEnabled(false);
 			cambioN3.setEnabled(false);
@@ -507,24 +516,24 @@ public class FaturaP extends JFrame {
 
 		// MenuBar
 		JMenuBar mb = new JMenuBar();
-		JMenu file = new JMenu("ARCHIVO");
-		JMenu goTo = new JMenu("IR A");
-		JMenu help = new JMenu("AYUDA");
-		JMenuItem clear = new JMenuItem("BORRAR TODO");
-		JMenuItem calc = new JMenuItem("ASUMAR");
-		JMenuItem option = new JMenuItem("CONFIGURACIÓN");
-		JMenuItem exit = new JMenuItem("SALIR");
+		JMenu file = new JMenu(idiomaString(language)[28]);
+		JMenu goTo = new JMenu();
+		JMenu help = new JMenu();
+		JMenuItem clear = new JMenuItem(idiomaString(language)[14]);
+		JMenuItem calc = new JMenuItem();
+		JMenuItem option = new JMenuItem(idiomaString(language)[4]);
+		JMenuItem exit = new JMenuItem(idiomaString(language)[13]);
 		JMenuItem reales = new JMenuItem("PESOS");
-		JMenuItem keyShortcut = new JMenuItem("ATAJOS DE TECLADO");
-		JMenuItem creator = new JMenuItem("SOBRE EL CREADOR");
-		JMenuItem about = new JMenuItem("SOBRE EL APLICATIVO");
-		JMenu reso = new JMenu("RESOLUCIÓN");
-		JMenuItem resoD = new JMenuItem("ÓPTIMO");
+		JMenuItem keyShortcut = new JMenuItem(idiomaString(language)[1]);
+		JMenuItem creator = new JMenuItem();
+		JMenuItem about = new JMenuItem();
+		JMenu reso = new JMenu();
+		JMenuItem resoD = new JMenuItem();
 		JSeparator sep = new JSeparator();
-		JMenuItem reso1 = new JMenuItem("GRANDE");
-		JMenuItem reso2 = new JMenuItem("MEDIO");
-		JMenuItem reso3 = new JMenuItem("PEQUENA");
-		JMenuItem reso4 = new JMenuItem("X-PEQUENA");
+		JMenuItem reso1 = new JMenuItem();
+		JMenuItem reso2 = new JMenuItem();
+		JMenuItem reso3 = new JMenuItem();
+		JMenuItem reso4 = new JMenuItem();
 		calc.addActionListener(e -> calTodo(cambioN, cambioN2, cambioN3));
 		clear.addActionListener(e -> clearAll(cambioN, cambioN2, cambioN3));
 		option.addActionListener(e -> confFrame(conf, mainF, clearB, hideBtn, resoD, cambioN, cambioN2, cambioN3));
@@ -534,34 +543,115 @@ public class FaturaP extends JFrame {
 			this.dispose();
 		});
 		if (conf[2] == null || conf[2].equals("false"))
-			keyShortcut.addActionListener(e -> JOptionPane.showMessageDialog(null,
-					"• CTRL + S → ir la pesos.\n" + "• CTRL + O → esconder los botones.\n"
-							+ "• SHIFT → cambiar entre las dos tablas.\n"
-							+ "• FLECHAS → subir, abajo, derecha e izquierda.\n",
-					"ATAJOS DE TECLADO", 1));
+			keyShortcut.addActionListener(
+					e -> JOptionPane.showMessageDialog(null, idiomaString(language)[0], idiomaString(language)[1], 1));
 		else
 			keyShortcut.hide();
 		hideBtn.addActionListener(e -> hideBtns(mainF, clearB, hideBtn));
-		creator.addActionListener(
-				e -> JOptionPane.showMessageDialog(null, "Crédito y Diseñado por MhmdSAbdlh ©", "SOBRE MI", 1));
-		about.addActionListener(e -> JOptionPane.showMessageDialog(null,
-				"ESTA APLICACIÓN ESTÁ DISEÑADA PARA CEDROS Y NARJES FREE SHOP.\r\n"
-						+ "TIENE MARCO PARA CERRAR LA CAJA TANTO EN REALES COMO PESOS.\r\n"
-						+ "TIENE UN MARCO PARA CALCULAR EL TROCO DE UNA VENTA TANTO EN REALES COMO PESOS.\r\n"
-						+ "SABE CÓMO QUEDARÁ PARA EL PRÓXIMO DÍA.\r\n" + "3 MÉTODOS PARA DAR EL CAMBIO.\r\n"
-						+ "CAMBIARÁ TODO SEGÚN EL ICONO SELECCIONADO.\r\n" + "\r\n" + "MOHAMAD ABDALLAH ABBASS ©",
-				"CEDROS/NARJES", 1));
+		creator.addActionListener(e -> JOptionPane.showMessageDialog(null, idiomaString(language)[2], "SOBRE MI", 1));
+		about.addActionListener(
+				e -> JOptionPane.showMessageDialog(null, idiomaString(language)[3], "CEDROS/NARJES", 1));
 		reso.add(resoD);
 		reso.add(sep);
 		reso.add(reso4);
 		reso.add(reso3);
 		reso.add(reso2);
 		reso.add(reso1);
-		resoD.addActionListener(e -> opResolution(cambioN, cambioN2, cambioN3, mainF, clearB, resoD));
-		reso1.addActionListener(e -> resG(resoD, cambioN, cambioN2, mainF, cambioN3, clearB));
-		reso2.addActionListener(e -> resM(resoD, cambioN, cambioN2, mainF, cambioN3, clearB));
-		reso3.addActionListener(e -> resP(resoD, cambioN, cambioN2, mainF, cambioN3, clearB));
-		reso4.addActionListener(e -> resXP(resoD, cambioN, cambioN2, mainF, cambioN3, clearB));
+		resoD.addActionListener(e -> {
+			conf[3] = "0";
+			opResolution(mainF, clearB, resoD, reso4, reso3, reso2, reso1, cambioN, cambioN2, cambioN3);
+			try {
+				FileWriter savedF = new FileWriter("conf.txt");
+				savedF.write((conf[0].equals("null") ? 0 : conf[0]) + System.lineSeparator());
+				savedF.write((conf[1].equals("null") ? 0 : conf[1]) + System.lineSeparator());
+				savedF.write((conf[2].equals("null") ? "false" : conf[2]) + System.lineSeparator());
+				savedF.write(0 + System.lineSeparator());
+				savedF.write((conf[4].equals("null") ? "false" : conf[4]) + System.lineSeparator());
+				savedF.write((conf[5].equals("null") ? 0 : conf[5]) + System.lineSeparator());
+				savedF.write((conf[6].equals("null") ? 0 : conf[6]) + System.lineSeparator());
+				savedF.write((conf[7].equals("null") ? 0 : conf[7]) + System.lineSeparator());// lan
+				savedF.write((conf[8].equals("null") ? 0 : conf[8]) + System.lineSeparator());// effchooser
+				savedF.write((conf[9].equals("null") ? "1,1" : conf[9]) + System.lineSeparator());// intro
+				savedF.close();
+			} catch (Exception e2) {
+			}
+		});
+		reso1.addActionListener(e -> {
+			conf[3] = "4";
+			resG(resoD, reso4, reso3, reso2, reso1, cambioN, cambioN2, mainF, cambioN3, clearB);
+			try {
+				FileWriter savedF = new FileWriter("conf.txt");
+				savedF.write((conf[0].equals("null") ? 0 : conf[0]) + System.lineSeparator());
+				savedF.write((conf[1].equals("null") ? 0 : conf[1]) + System.lineSeparator());
+				savedF.write((conf[2].equals("null") ? "false" : conf[2]) + System.lineSeparator());
+				savedF.write(4 + System.lineSeparator());
+				savedF.write((conf[4].equals("null") ? "false" : conf[4]) + System.lineSeparator());
+				savedF.write((conf[5].equals("null") ? 0 : conf[5]) + System.lineSeparator());
+				savedF.write((conf[6].equals("null") ? 0 : conf[6]) + System.lineSeparator());
+				savedF.write((conf[7].equals("null") ? 0 : conf[7]) + System.lineSeparator());// lan
+				savedF.write((conf[8].equals("null") ? 0 : conf[8]) + System.lineSeparator());// effchooser
+				savedF.write((conf[9].equals("null") ? "1,1" : conf[9]) + System.lineSeparator());// intro
+				savedF.close();
+			} catch (Exception e2) {
+			}
+		});
+		reso2.addActionListener(e -> {
+			conf[3] = "3";
+			resM(resoD, reso4, reso3, reso2, reso1, cambioN, cambioN2, mainF, cambioN3, clearB);
+			try {
+				FileWriter savedF = new FileWriter("conf.txt");
+				savedF.write((conf[0].equals("null") ? 0 : conf[0]) + System.lineSeparator());
+				savedF.write((conf[1].equals("null") ? 0 : conf[1]) + System.lineSeparator());
+				savedF.write((conf[2].equals("null") ? "false" : conf[2]) + System.lineSeparator());
+				savedF.write(3 + System.lineSeparator());
+				savedF.write((conf[4].equals("null") ? "false" : conf[4]) + System.lineSeparator());
+				savedF.write((conf[5].equals("null") ? 0 : conf[5]) + System.lineSeparator());
+				savedF.write((conf[6].equals("null") ? 0 : conf[6]) + System.lineSeparator());
+				savedF.write((conf[7].equals("null") ? 0 : conf[7]) + System.lineSeparator());// lan
+				savedF.write((conf[8].equals("null") ? 0 : conf[8]) + System.lineSeparator());// effchooser
+				savedF.write((conf[9].equals("null") ? "1,1" : conf[9]) + System.lineSeparator());// intro
+				savedF.close();
+			} catch (Exception e2) {
+			}
+		});
+		reso3.addActionListener(e -> {
+			conf[3] = "2";
+			resP(resoD, reso4, reso3, reso2, reso1, cambioN, cambioN2, mainF, cambioN3, clearB);
+			try {
+				FileWriter savedF = new FileWriter("conf.txt");
+				savedF.write((conf[0].equals("null") ? 0 : conf[0]) + System.lineSeparator());
+				savedF.write((conf[1].equals("null") ? 0 : conf[1]) + System.lineSeparator());
+				savedF.write((conf[2].equals("null") ? "false" : conf[2]) + System.lineSeparator());
+				savedF.write(2 + System.lineSeparator());
+				savedF.write((conf[4].equals("null") ? "false" : conf[4]) + System.lineSeparator());
+				savedF.write((conf[5].equals("null") ? 0 : conf[5]) + System.lineSeparator());
+				savedF.write((conf[6].equals("null") ? 0 : conf[6]) + System.lineSeparator());
+				savedF.write((conf[7].equals("null") ? 0 : conf[7]) + System.lineSeparator());// lan
+				savedF.write((conf[8].equals("null") ? 0 : conf[8]) + System.lineSeparator());// effchooser
+				savedF.write((conf[9].equals("null") ? "1,1" : conf[9]) + System.lineSeparator());// intro
+				savedF.close();
+			} catch (Exception e2) {
+			}
+		});
+		reso4.addActionListener(e -> {
+			conf[3] = "1";
+			resXP(resoD, reso4, reso3, reso2, reso1, cambioN, cambioN2, mainF, cambioN3, clearB);
+			try {
+				FileWriter savedF = new FileWriter("conf.txt");
+				savedF.write((conf[0].equals("null") ? 0 : conf[0]) + System.lineSeparator());
+				savedF.write((conf[1].equals("null") ? 0 : conf[1]) + System.lineSeparator());
+				savedF.write((conf[2].equals("null") ? "false" : conf[2]) + System.lineSeparator());
+				savedF.write(1 + System.lineSeparator());
+				savedF.write((conf[4].equals("null") ? "false" : conf[4]) + System.lineSeparator());
+				savedF.write((conf[5].equals("null") ? 0 : conf[5]) + System.lineSeparator());
+				savedF.write((conf[6].equals("null") ? 0 : conf[6]) + System.lineSeparator());
+				savedF.write((conf[7].equals("null") ? 0 : conf[7]) + System.lineSeparator());// lan
+				savedF.write((conf[8].equals("null") ? 0 : conf[8]) + System.lineSeparator());// effchooser
+				savedF.write((conf[9].equals("null") ? "1,1" : conf[9]) + System.lineSeparator());// intro
+				savedF.close();
+			} catch (Exception e2) {
+			}
+		});
 		file.add(calc);
 		file.add(clear);
 		file.add(option);
@@ -598,23 +688,28 @@ public class FaturaP extends JFrame {
 
 		// Resolution
 		if (conf[3] == null || conf[3].equals("0"))
-			opResolution(cambioN, cambioN2, cambioN3, mainF, clearB, resoD);
+			opResolution(mainF, clearB, resoD, reso4, reso3, reso2, reso1, cambioN, cambioN2, cambioN3);
 		else if (conf[3].equals("1"))
-			resXP(resoD, cambioN, cambioN2, mainF, cambioN3, clearB);
+			resXP(resoD, reso4, reso3, reso2, reso1, cambioN, cambioN2, mainF, cambioN3, clearB);
 		else if (conf[3].equals("2"))
-			resP(resoD, cambioN, cambioN2, mainF, cambioN3, clearB);
+			resP(resoD, reso4, reso3, reso2, reso1, cambioN, cambioN2, mainF, cambioN3, clearB);
 		else if (conf[3].equals("3"))
-			resM(resoD, cambioN, cambioN2, mainF, cambioN3, clearB);
+			resM(resoD, reso4, reso3, reso2, reso1, cambioN, cambioN2, mainF, cambioN3, clearB);
 		else
-			resG(resoD, cambioN, cambioN2, mainF, cambioN3, clearB);
+			resG(resoD, reso4, reso3, reso2, reso1, cambioN, cambioN2, mainF, cambioN3, clearB);
+
+		// language
+		idiomaTexts(language, resoD, file, clear, calc, option, goTo, reales, reso, reso1, reso2, reso3, reso4, help,
+				creator, about);
 
 		// Close popup
 		this.addWindowListener(new java.awt.event.WindowAdapter() {
 			@Override
 			public void windowClosing(java.awt.event.WindowEvent windowEvent) {
-				Object[] options = { "Si", "No" };
-				int selectedOption = JOptionPane.showOptionDialog(null, "¿Seguro que quieres salir?", "SALIR",
-						JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+				Object[] options = { idiomaString(language)[10], idiomaString(language)[11] };
+				int selectedOption = JOptionPane.showOptionDialog(null, idiomaString(language)[12],
+						idiomaString(language)[13], JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null,
+						options, options[0]);
 
 				if (selectedOption == JOptionPane.YES_OPTION)
 					System.exit(0);
@@ -623,22 +718,22 @@ public class FaturaP extends JFrame {
 
 	}
 
-	private void opResolution(JButton cambioN, JButton cambioN2, JButton cambioN3, JButton mainF, JButton clearB,
-			JMenuItem resoD) {
+	private void opResolution(JButton realesF, JButton clearEverthing, JMenuItem resoD, JMenuItem resoXP,
+			JMenuItem resoP, JMenuItem resoM, JMenuItem resoG, JButton cambioN, JButton cambioN2, JButton cambioN3) {
 		if (width > 1800 && height > 1000)
-			resG(resoD, cambioN, cambioN2, mainF, cambioN3, clearB);
+			resG(resoD, resoXP, resoP, resoM, resoG, cambioN, cambioN2, realesF, cambioN3, clearEverthing);
 		else if (width > 1500 && height > 700)
-			resM(resoD, cambioN, cambioN2, mainF, cambioN3, clearB);
+			resM(resoD, resoXP, resoP, resoM, resoG, cambioN, cambioN2, realesF, cambioN3, clearEverthing);
 		else if (width > 1300 && height > 700)
-			resP(resoD, cambioN, cambioN2, mainF, cambioN3, clearB);
+			resP(resoD, resoXP, resoP, resoM, resoG, cambioN, cambioN2, realesF, cambioN3, clearEverthing);
 		else
-			resXP(resoD, cambioN, cambioN2, mainF, cambioN3, clearB);
+			resXP(resoD, resoXP, resoP, resoM, resoG, cambioN, cambioN2, realesF, cambioN3, clearEverthing);
 	}
 
 	private void confFrame(String[] conf, JButton realesF, JButton clearEverthing, JMenuItem hideBtn, JMenuItem resoD,
 			JButton cambioN, JButton cambioN2, JButton cambioN3) {
 		JFrame temp = new JFrame();
-		temp.setTitle("CONFIGURACIÓN");
+		temp.setTitle(idiomaString(language)[4]);
 		temp.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		temp.setAlwaysOnTop(false);
 		temp.setSize(650, 550);
@@ -649,8 +744,8 @@ public class FaturaP extends JFrame {
 		//
 		DefaultListCellRenderer dlcr = new DefaultListCellRenderer();
 		dlcr.setHorizontalAlignment(DefaultListCellRenderer.CENTER);
-		JLabel op1 = new JLabel("ICONO");
 		// Op1 icon
+		JLabel op1 = new JLabel(idiomaString(language)[5]);
 		op1.setBounds(50, 20, 150, 50);
 		op1.setFont(First.myFont);
 		URL cedros1 = getClass().getResource("images/icon/cedros0.png");
@@ -675,18 +770,38 @@ public class FaturaP extends JFrame {
 			}
 		});
 
-		// OPTION 2 DISABLE KEYBOARD SHORTCUT
-		JLabel op3 = new JLabel("ATAJO DE TECLADO");
-		op3.setBounds(50, 90, 250, 40);
+		// op2 language
+		JLabel op2 = new JLabel(idiomaString(language)[6]);
+		op2.setBounds(50, 90, 200, 40);
+		op2.setFont(First.myFont);
+		String lan[] = { "ESPAÑOL", "PORTUGUÊS", "ENGLISH" };
+		JComboBox<String> lang = new JComboBox<>(lan);
+		lang.setRenderer(dlcr);
+		lang.setBounds(355, 90, 200, 40);
+		lang.setBackground(First.lightC);
+		lang.setForeground(First.blueD);
+		lang.setFont(First.myFontS);
+		if (conf[7] != null && First.isNumeric(conf[7]))
+			lang.setSelectedIndex(Integer.valueOf(conf[7]));
+		lang.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				lang.setSelectedIndex(lang.getSelectedIndex());
+			}
+		});
+
+		// OPTION 3 DISABLE KEYBOARD SHORTCUT
+		JLabel op3 = new JLabel(idiomaString(language)[1]);
+		op3.setBounds(50, 160, 250, 40);
 		op3.setFont(First.myFont);
 		JToggleButton btnsHideShow2 = new JToggleButton();
 		if (conf[2] == null || conf[2].equals("false")) {
-			btnsHideShow2.setText("SI");
+			btnsHideShow2.setText(idiomaString(language)[10]);
 		} else {
-			btnsHideShow2.setText("NO");
+			btnsHideShow2.setText(idiomaString(language)[11]);
 			btnsHideShow2.setSelected(true);
 		}
-		btnsHideShow2.setBounds(405, 90, 100, 40);
+		btnsHideShow2.setBounds(405, 160, 100, 40);
 		btnsHideShow2.setFont(First.myFont);
 		btnsHideShow2.setBorder(First.border);
 		btnsHideShow2.setBackground(First.greenC);
@@ -725,24 +840,24 @@ public class FaturaP extends JFrame {
 			@Override
 			public void itemStateChanged(ItemEvent e) {
 				if (e.getStateChange() == ItemEvent.SELECTED)
-					btnsHideShow2.setText("NO");
+					btnsHideShow2.setText(idiomaString(language)[11]);
 				else
-					btnsHideShow2.setText("SI");
+					btnsHideShow2.setText(idiomaString(language)[10]);
 			}
 		});
 
 		// OPTION 5 AUTOSAVE
-		JLabel op5 = new JLabel("AUTOGUARDAR");
-		op5.setBounds(50, 160, 200, 40);
+		JLabel op5 = new JLabel(idiomaString(language)[7]);
+		op5.setBounds(50, 230, 200, 40);
 		op5.setFont(First.myFont);
 		JToggleButton btnsHideShow3 = new JToggleButton();
 		if (conf[4] == null || conf[4].equals("false")) {
-			btnsHideShow3.setText("SI");
+			btnsHideShow3.setText(idiomaString(language)[10]);
 		} else {
-			btnsHideShow3.setText("NO");
+			btnsHideShow3.setText(idiomaString(language)[11]);
 			btnsHideShow3.setSelected(true);
 		}
-		btnsHideShow3.setBounds(415, 160, 80, 40);
+		btnsHideShow3.setBounds(415, 230, 80, 40);
 		btnsHideShow3.setFont(First.myFont);
 		btnsHideShow3.setBorder(First.border);
 		btnsHideShow3.setBackground(First.greenC);
@@ -783,14 +898,14 @@ public class FaturaP extends JFrame {
 			@Override
 			public void itemStateChanged(ItemEvent e) {
 				if (e.getStateChange() == ItemEvent.SELECTED)
-					btnsHideShow3.setText("NO");
+					btnsHideShow3.setText(idiomaString(language)[11]);
 				else
-					btnsHideShow3.setText("SI");
+					btnsHideShow3.setText(idiomaString(language)[10]);
 			}
 		});
 
 		// bottom line
-		JButton defSet = new JButton("POR DEFECTO");
+		JButton defSet = new JButton(idiomaString(language)[8]);
 		defSet.setBounds(120, 440, 200, 50);
 		First.btnStyle(defSet);
 		defSet.setBackground(First.redC);
@@ -825,17 +940,18 @@ public class FaturaP extends JFrame {
 				op1C.setSelectedIndex(0);// icon
 				FaturaP.this.setIconImage(iconImages[0].getImage());// icon
 				conf[1] = "0";// btn hide
-				btnsHideShow2.setText("SI");// key shortcut
+				btnsHideShow2.setText(idiomaString(language)[10]);// key shortcut
 				btnsHideShow2.setSelected(false);// key shortcut
 				conf[3] = "0";// res
-				opResolution(cambioN, cambioN2, cambioN3, realesF, clearEverthing, resoD);// res
-				btnsHideShow3.setText("SI");// autosave
+				btnsHideShow3.setText(idiomaString(language)[10]);// autosave
 				btnsHideShow3.setSelected(false);// autosave
 				conf[6] = "1";// speed
+				lang.setSelectedIndex(0);// lan
+				conf[8] = "0";// eff
 			}
 		});
 		// SAVE
-		JButton save = new JButton("GUARDAR");
+		JButton save = new JButton(idiomaString(language)[9]);
 		save.setBounds(400, 440, 150, 50);
 		First.btnStyle(save);
 		save.setBackground(First.blueC);
@@ -870,12 +986,15 @@ public class FaturaP extends JFrame {
 				try {
 					FileWriter savedF = new FileWriter("conf.txt");
 					savedF.write(op1C.getSelectedIndex() + System.lineSeparator());// icon
-					savedF.write(conf[1] + System.lineSeparator());// btn hide
+					savedF.write((conf[1].equals("null") ? 0 : conf[1]) + System.lineSeparator());// btn hide
 					savedF.write(btnsHideShow2.isSelected() + System.lineSeparator());// key shortcut
-					savedF.write(conf[3] + System.lineSeparator());// res
+					savedF.write((conf[3].equals("null") ? 0 : conf[3]) + System.lineSeparator());// res
 					savedF.write(btnsHideShow3.isSelected() + System.lineSeparator());// autosave
-					savedF.write(conf[5] + System.lineSeparator());// first frame to open
-					savedF.write(conf[6] + System.lineSeparator());// speed
+					savedF.write((conf[5].equals("null") ? 0 : conf[5]) + System.lineSeparator());// FIRST OPEN
+					savedF.write((conf[6].equals("null") ? 1 : conf[6]) + System.lineSeparator());// SPEED
+					savedF.write(lang.getSelectedIndex() + System.lineSeparator());// lan
+					savedF.write((conf[8].equals("null") ? 0 : conf[8]) + System.lineSeparator());// effchooser
+					savedF.write((conf[9].equals("null") ? "1,1" : conf[9]) + System.lineSeparator());// intro
 					savedF.close();
 				} catch (Exception e2) {
 				}
@@ -898,6 +1017,8 @@ public class FaturaP extends JFrame {
 		temp.setIconImage(settingI.getImage());
 		temp.add(op1);
 		temp.add(op1C);
+		temp.add(op2);
+		temp.add(lang);
 		temp.add(op3);
 		temp.add(btnsHideShow2);
 		temp.add(op5);
@@ -916,9 +1037,9 @@ public class FaturaP extends JFrame {
 		for (int i = 0; i < 9; i++)
 			detailsR[i].setText("");
 		calTodo(cambioN, cambioN2, cambioN3);
-		cambioN.setText("<html><center>" + "MÉTODO" + "<br>" + "SMART" + "</center></html>");
-		cambioN2.setText("<html><center>" + "MÉTODO" + "<br>" + " POPULAR" + "</center></html>");
-		cambioN3.setText("<html><center>" + "MÉTODO" + "<br>" + " BÁSICO" + "</center></html>");
+		cambioN.setText(idiomaString(language)[22]);
+		cambioN2.setText(idiomaString(language)[23]);
+		cambioN3.setText(idiomaString(language)[24]);
 		cambioN.setEnabled(false);
 		cambioN2.setEnabled(false);
 		cambioN3.setEnabled(false);
@@ -1021,11 +1142,11 @@ public class FaturaP extends JFrame {
 		if (mainF.isShowing()) {
 			mainF.hide();
 			clearB.hide();
-			hideBtn.setText("MONSTRAR EL BOTON");
+			hideBtn.setText(idiomaString(language)[27]);
 		} else {
 			mainF.show();
 			clearB.show();
-			hideBtn.setText("ESCONDER EL BOTON");
+			hideBtn.setText(idiomaString(language)[26]);
 		}
 	}
 
@@ -1981,9 +2102,13 @@ public class FaturaP extends JFrame {
 
 	}
 
-	private void resXP(JMenuItem resoD, JButton cambioN, JButton cambioN2, JButton mainF, JButton cambioN3,
-			JButton clearB) {
+	private void resXP(JMenuItem resoD, JMenuItem resoXP, JMenuItem resoP, JMenuItem resoM, JMenuItem resoG,
+			JButton cambioN, JButton cambioN2, JButton mainF, JButton cambioN3, JButton clearB) {
 		this.setSize(1000, 600);
+		resoXP.setEnabled(false);
+		resoP.setEnabled(true);
+		resoM.setEnabled(true);
+		resoG.setEnabled(true);
 		if (width >= 1800)
 			if (this.getWidth() == 1820)
 				resoD.setEnabled(false);
@@ -2284,9 +2409,13 @@ public class FaturaP extends JFrame {
 
 	}
 
-	private void resP(JMenuItem resoD, JButton cambioN, JButton cambioN2, JButton mainF, JButton cambioN3,
-			JButton clearB) {
+	private void resP(JMenuItem resoD, JMenuItem resoXP, JMenuItem resoP, JMenuItem resoM, JMenuItem resoG,
+			JButton cambioN, JButton cambioN2, JButton mainF, JButton cambioN3, JButton clearB) {
 		this.setSize(1300, 700);
+		resoXP.setEnabled(true);
+		resoP.setEnabled(false);
+		resoM.setEnabled(true);
+		resoG.setEnabled(true);
 		if (width >= 1800)
 			if (this.getWidth() == 1820)
 				resoD.setEnabled(false);
@@ -2586,10 +2715,13 @@ public class FaturaP extends JFrame {
 		clearB.setIcon(new ImageIcon(getScaledImage(clearI.getImage(), 70, 70)));
 	}
 
-	private void resM(JMenuItem resoD, JButton cambioN, JButton cambioN2, JButton mainF, JButton cambioN3,
-			JButton clearB) {
-		// Definitions
+	private void resM(JMenuItem resoD, JMenuItem resoXP, JMenuItem resoP, JMenuItem resoM, JMenuItem resoG,
+			JButton cambioN, JButton cambioN2, JButton mainF, JButton cambioN3, JButton clearB) {
 		this.setSize(1500, 800);
+		resoXP.setEnabled(true);
+		resoP.setEnabled(true);
+		resoM.setEnabled(false);
+		resoG.setEnabled(true);
 		if (width >= 1800)
 			if (this.getWidth() == 1820)
 				resoD.setEnabled(false);
@@ -2894,10 +3026,14 @@ public class FaturaP extends JFrame {
 		clearB.setIcon(new ImageIcon(getScaledImage(clearI.getImage(), 70, 70)));
 	}
 
-	private void resG(JMenuItem resoD, JButton cambioN, JButton cambioN2, JButton mainF, JButton cambioN3,
-			JButton clearB) {
+	private void resG(JMenuItem resoD, JMenuItem resoXP, JMenuItem resoP, JMenuItem resoM, JMenuItem resoG,
+			JButton cambioN, JButton cambioN2, JButton mainF, JButton cambioN3, JButton clearB) {
 		// Definitions
 		this.setSize(1820, 980);
+		resoXP.setEnabled(true);
+		resoP.setEnabled(true);
+		resoM.setEnabled(true);
+		resoG.setEnabled(false);
 		if (width >= 1800)
 			if (this.getWidth() == 1820)
 				resoD.setEnabled(false);
@@ -3200,6 +3336,180 @@ public class FaturaP extends JFrame {
 		clearB.setBounds(720, 350, 80, 80);
 		clearB.setIcon(new ImageIcon(getScaledImage(clearI.getImage(), 80, 80)));
 
+	}
+
+	private void idiomaTexts(int idioma, JMenuItem resoD, JMenu file, JMenuItem clear, JMenuItem calc, JMenuItem option,
+			JMenu goTo, JMenuItem pesos, JMenu reso, JMenuItem reso1, JMenuItem reso2, JMenuItem reso3, JMenuItem reso4,
+			JMenu help, JMenuItem creator, JMenuItem about) {
+		if (idioma == 0) {
+			resoD.setText("ÓPTIMO");
+			file.setText("ARCHIVO");
+			clear.setText("BORRAR TODO");
+			calc.setText("ASUMAR");
+			option.setText("CONFIGURACIÓN");
+			goTo.setText("IR A");
+			pesos.setText("REALES");
+			reso.setText("RESOLUCIÓN");
+			reso1.setText("GRANDE");
+			reso2.setText("MEDIO");
+			reso3.setText("PEQUENA");
+			reso4.setText("X-PEQUENA");
+			help.setText("AYUDA");
+			creator.setText("SOBRE EL CREADOR");
+			about.setText("SOBRE EL APLICATIVO");
+		} else if (idioma == 1) {
+			resoD.setText("ÓTIMO");
+			file.setText("ARQUIVO");
+			clear.setText("LIMPAR TUDO");
+			calc.setText("ASSUMIR");
+			option.setText("CONFIGURAÇÃO");
+			goTo.setText("VAI");
+			pesos.setText("REALES");
+			reso.setText("RESOLUÇÃO");
+			reso1.setText("GRANDE");
+			reso2.setText("MEDIO");
+			reso3.setText("PEQUENA");
+			reso4.setText("X-PEQUENA");
+			help.setText("AJUDA");
+			creator.setText("SOBRE O CRIADOR");
+			about.setText("SOBRE O APLICATIVO");
+		} else {
+			resoD.setText("OPTIMAL");
+			file.setText("FILE");
+			clear.setText("CLEAN ALL");
+			calc.setText("ASSUME");
+			option.setText("CONFIGURATION");
+			goTo.setText("GO");
+			pesos.setText("REALES");
+			reso.setText("RESOLUTION");
+			reso1.setText("LARGE");
+			reso2.setText("MEDIUM");
+			reso3.setText("SMALL");
+			reso4.setText("X-SMALL");
+			help.setText("HELP");
+			creator.setText("ABOUT THE CREATOR");
+			about.setText("ABOUT THE APP");
+		}
+	}
+
+	private String[] idiomaString(int idioma) {
+		String[] espanol = { "• CTRL + S → ir la pesos.\n" + "• CTRL + O → esconder los botones.\n"
+				+ "• SHIFT → cambiar entre las dos tablas.\n" + "• FLECHAS → subir, abajo, derecha e izquierda.\n"
+				+ "• CTRL + C → abrir el configuración."// key shortcut 0
+				, "ATAJOS DE TECLADO" // key shortcut 1
+				, "Crédito y Diseñado por MhmdSAbdlh ©"// creator 2
+				,
+				"ESTA APLICACIÓN ESTÁ DISEÑADA PARA CEDROS Y NARJES FREE SHOP.\r\n"
+						+ "TIENE MARCO PARA CERRAR LA CAJA TANTO EN REALES COMO PESOS.\r\n"
+						+ "TIENE UN MARCO PARA CALCULAR EL TROCO DE UNA VENTA TANTO EN REALES COMO PESOS.\r\n"
+						+ "SABE CÓMO QUEDARÁ PARA EL PRÓXIMO DÍA.\r\n" + "3 MÉTODOS PARA DAR EL CAMBIO.\r\n"
+						+ "CAMBIARÁ TODO SEGÚN EL ICONO SELECCIONADO.\r\n" + "\r\n" + "MOHAMAD ABDALLAH ABBASS ©"// about4
+				, "CONFIGURACIÓN"// conf title 4
+				, "ICONO"// icon 5
+				, "IDIOMA"// LANGUAGE 6
+				, "AUTOGUARDAR"// AUTO SAVE 7
+				, "POR DEFECTO"// DEFAULT 8
+				, "GUARDAR"// SAVE 9
+				, "SI"// YES 10
+				, "NO"// NO 11
+				, "¿Seguro que quieres salir?"// exit 12
+				, "SALIR"// exit 13
+				, "BORRAR TODO" // clear 14
+				, "CANT"// CANTIDAD 15
+				, "DETALLE"// deta 16
+				, "P/U"// p/u 17
+				, "IMPORTE"// mer 18
+				, "CAJA"// cash 19
+				, "CLIENTE"// cl 20
+				, "TROCÓ"// change 21
+				, "<html><center>" + "MÉTODO" + "<br>" + "SMART" + "</center></html>"// exit 22
+				, "<html><center>" + "MÉTODO" + "<br>" + "POPULAR" + "</center></html>"// exit 23
+				, "<html><center>" + "MÉTODO" + "<br>" + "BÁSICO" + "</center></html>"// exit 24
+				, "FACTURA - $"// 25
+				, "ESCONDER LOS BOTONES"// 26
+				, "MOSTRAR LOS BOTONES"// 27
+				, "ARCHIVO"// 28
+		};
+		String[] portugues = { "• CTRL + S → ir para o pesos.\n" + "• CTRL + O → ocultar os botões.\n"
+				+ "• SHIFT → alternar entre as duas tabelas.\n" + "• SETAS → cima, baixo, direita e esquerda.\n",
+				"ATALHOS DE TECLAS" // tecla de atalho 2
+				, "Crédito e Desenhado por MhmdSAbdlh ©"// creator 3
+				,
+				"ESTE APLICATIVO FOI DESENVOLVIDO PARA O FREE SHOP DE CEDROS E NARJES.\r\n"
+						+ "TEM MOLDURA PARA FECHAR A CAIXA TANTO EM REAIS QUANTO EM PESOS.\r\n"
+						+ "TEM UM QUADRO PARA CALCULAR O TROCO DE UMA VENDA TANTO EM REAIS QUANTO EM PESOS.\r\n"
+						+ "SAIBA COMO SERÁ PARA O DIA SEGUINTE.\r\n" + "3 MÉTODOS PARA FAZER A MUDANÇA.\r\n"
+						+ "MUDARÁ TUDO DE ACORDO COM O ÍCONE SELECIONADO.\r\n" + "\r\n" + "MOHAMAD ABDALLAH ABBASS ©" // 4
+				, "CONFIGURAÇÃO"// conf title 5
+				, "ÍCONE"// icon 6
+				, "LINGUAGEM"// LANGUAGE 7
+				, "AUTO-SALVAR"// AUTO SAVE 8
+				, "POR PADRÃO"// DEFAULT 9
+				, "SALVAR"// SAVE 10
+				, "SIM"// YES 11
+				, "NÃO"// NO 12
+				, "Tem certeza que quer sair?"// exit 13
+				, "SAIR"// exit 14
+				, "LIMPAR TUDO" // clear 14
+				, "CANT"// CANTIDAD 16
+				, "DETALHE"// DETAILS 17
+				, "P/U"// P/U 18
+				, "VALOR"// VALUE 19
+				, "CAIXA"// CASH 20
+				, "CLIENTE"// CL 21
+				, "TROCÓ"// CHANGE 22
+				, "<html><center>" + "MÉTODO" + "<br>" + "SMART" + "</center></html>"// S M 23
+				, "<html><center>" + "MÉTODO" + "<br>" + "POPULAR" + "</center></html>"// P M 24
+				, "<html><center>" + "MÉTODO" + "<br>" + "BÁSICO" + "</center></html>"// B M 25
+				, "FATURA - $"// 25
+				, "ESCONDE OS BOTÕES"// 26
+				, "MOSTRAR OS BOTÕES"// 27
+				, "ARCHIVO"// 28
+		};
+		String[] english = {
+				"• CTRL + S → go to real.\n" + "• CTRL + O → hide buttons.\n"
+						+ "• SHIFT → switch between the two tables.\n" + "• ARROWS → up, down, right and left.\n",
+				"KEY SHORTCUTS" // tecla de atalho 2
+				, "Credit and Designed by MhmdSAbdlh ©"// creator 3
+				,
+				"THIS APP IS DESIGNED FOR CEDROS AND NARJES FREE SHOP.\r\n"
+						+ "HAS A FRAME TO CLOSE THE BOX IN REALS AND PESOS.\r\n"
+						+ "THERE IS A FRAME TO CALCULATE THE CHANGE FOR A SALE, BOTH IN BRL AND IN PESOS.\r\n"
+						+ "KNOW HOW MUCH IT WILL BE FOR THE NEXT DAY.\r\n" + "3 METHODS OF GIVING CHANGE.\r\n"
+						+ "WILL CHANGE EVERYTHING ACCORDING TO THE SELECTED ICON.\r\n" + "\r\n"
+						+ "MOHAMAD ABDALLAH ABBASS ©"// about
+				, "SETTINGS"// conf title 5
+				, "ICON"// icon 6
+				, "LANGUAGE"// LANGUAGE 7
+				, "AUTO-SAVE"// AUTO SAVE 8
+				, "DEFAULT"// DEFAULT 9
+				, "SAVE"// SAVE 10
+				, "YES"// YES 11
+				, "NO"// NO 12
+				, "Are you sure you want to leave?"// exit 13
+				, "EXIT"// exit 14
+				, "CLEAN ALL" // clear 14
+				, "QNT"// CANTIDAD 16
+				, "DETAIL"// DETAILS 17
+				, "P/U"// P/U 18
+				, "VALUE"// VALUE 19
+				, "CASH"// CASH 20
+				, "CLIENT"// CL 21
+				, "CHANGE"// CHANGE 22
+				, "<html><center>" + "METHOD" + "<br>" + "SMART" + "</center></html>"// S M 23
+				, "<html><center>" + "METHOD" + "<br>" + "POPULAR" + "</center></html>"// P M 24
+				, "<html><center>" + "METHOD" + "<br>" + "BASIC" + "</center></html>"// B M 25
+				, "INVOICE - $"// 25
+				, "HIDE THE BUTTONS"// 26
+				, "SHOW THE BUTTONS"// 27
+				, "FILE"// 28
+		};
+		if (idioma == 0)
+			return espanol;
+		else if (idioma == 1)
+			return portugues;
+		else
+			return english;
 	}
 
 	private Image getScaledImage(Image srcImg, int w, int h) {

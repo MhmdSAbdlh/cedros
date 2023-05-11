@@ -37,7 +37,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Locale;
-import java.util.concurrent.ThreadLocalRandom;
 
 import javax.imageio.ImageIO;
 import javax.sound.sampled.AudioInputStream;
@@ -154,14 +153,20 @@ public class Reales extends JFrame {
 	private ImageIcon normalI = new ImageIcon(normalP);
 	private URL fastP = getClass().getResource("images/menubar/fast.png");
 	private ImageIcon fastI = new ImageIcon(fastP);
-	private URL randomP = getClass().getResource("images/menubar/random.png");
-	private ImageIcon randomI = new ImageIcon(randomP);
 	private URL effect1P = getClass().getResource("images/menubar/effect1.png");
 	private ImageIcon effect1I = new ImageIcon(effect1P);
 	private URL effect2P = getClass().getResource("images/menubar/effect2.png");
 	private ImageIcon effect2I = new ImageIcon(effect2P);
 	private URL effect3P = getClass().getResource("images/menubar/effect3.png");
 	private ImageIcon effect3I = new ImageIcon(effect3P);
+	private URL engP = getClass().getResource("images/menubar/eng.png");
+	private ImageIcon engI = new ImageIcon(engP);
+	private URL espP = getClass().getResource("images/menubar/esp.png");
+	private ImageIcon espI = new ImageIcon(espP);
+	private URL defaultP = getClass().getResource("images/menubar/default.png");
+	private ImageIcon defaultI = new ImageIcon(defaultP);
+	private URL porP = getClass().getResource("images/menubar/por.png");
+	private ImageIcon porI = new ImageIcon(porP);
 	private URL showP = getClass().getResource("images/menubar/show.png");
 	private ImageIcon showI = new ImageIcon(showP);
 	private URL buttonP = getClass().getResource("images/menubar/button.png");
@@ -198,47 +203,13 @@ public class Reales extends JFrame {
 	static int colorX = 0, order = 0, speedValue, wordsN, wordL, effChooser;
 	boolean status = false;
 	Timer timer;
-	String conf[] = new String[9];
+	String conf[] = new String[10];
 	JLabel date = new JLabel();// date of the day
 	String monthS, dayN, dayS, yearS;
 
 	Reales() {
 		// Notification when its time to end the day
 		First.timeToClose();
-
-		// Buttons
-		JMenuItem hideBtn = new JMenuItem("LOS BOTONES");
-		JMenuItem noHide = new JMenuItem("NADA");
-		JMenuItem hideDate = new JMenuItem("LA FECHA");
-		JMenuItem hideAll = new JMenuItem("TODO");
-		JButton clearEverthing = new JButton();
-		JButton pesosF = new JButton();
-		JButton notasF = new JButton();// FATURA BUTTON
-		JButton newDay = new JButton("<html><center>Se Quedará<br>Para Mañana</center></html>");// REST
-		JMenuItem resoD = new JMenuItem("ÓPTIMO");
-		JButton aggPanel = new JButton("↑MÁS↓");
-		JButton gastosPanel = new JButton("↑MÁS↓");
-
-		// Frame
-		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-		width = (int) screenSize.getWidth();
-		height = (int) screenSize.getHeight();
-		this.setTitle("CIERRE DE CAJA - R$");
-		this.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
-		this.setAlwaysOnTop(false);
-		if (width > 1800 && height > 1000)
-			this.setSize(1820, 980);
-		else if (width > 1500 && height > 700)
-			this.setSize(1500, 800);
-		else if (width > 1300 && height > 700)
-			this.setSize(1300, 700);
-		else
-			this.setSize(1000, 600);
-		this.setLocationRelativeTo(null);
-		this.setLayout(null);
-		this.setResizable(false);
-		this.getContentPane().setBackground(First.darkC);
-
 		// Open Conf
 		URL url;
 		BufferedReader dataOpened = null;
@@ -264,6 +235,48 @@ public class Reales extends JFrame {
 			url = getClass().getResource("images/icon/narjes.png");
 		}
 		this.setIconImage(new ImageIcon(url).getImage());
+		// LANGUAGE
+		if (conf[7] == null || conf[7].equals("0"))
+			language = 0;
+		else if (conf[7].equals("1"))
+			language = 1;
+		else
+			language = 2;
+		dateLang(language);
+
+		// Buttons
+		JMenuItem hideBtn = new JMenuItem();
+		JMenuItem noHide = new JMenuItem();
+		JMenuItem hideDate = new JMenuItem();
+		JMenuItem hideAll = new JMenuItem();
+		JButton clearEverthing = new JButton();
+		JButton pesosF = new JButton();
+		JButton notasF = new JButton();// FATURA BUTTON
+		JButton newDay = new JButton();// REST
+		JMenuItem resoD = new JMenuItem();
+		JButton aggPanel = new JButton();
+		JButton gastosPanel = new JButton();
+
+		// Frame
+		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+		width = (int) screenSize.getWidth();
+		height = (int) screenSize.getHeight();
+		this.setTitle(idiomaString(language)[27]);
+		this.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+		this.setAlwaysOnTop(false);
+		if (width > 1800 && height > 1000)
+			this.setSize(1820, 980);
+		else if (width > 1500 && height > 700)
+			this.setSize(1500, 800);
+		else if (width > 1300 && height > 700)
+			this.setSize(1300, 700);
+		else
+			this.setSize(1000, 600);
+		this.setLocationRelativeTo(null);
+		this.setLayout(null);
+		this.setResizable(false);
+		this.getContentPane().setBackground(First.darkC);
+
 		// BUTTONS
 		if (conf[1] == null || conf[1].equals("0")) {// show all
 			noHide.setEnabled(false);
@@ -297,26 +310,6 @@ public class Reales extends JFrame {
 			hideAll.setEnabled(false);
 			hideBtn(notasF, pesosF, newDay, clearEverthing, hideBtn);
 			date.hide();
-		}
-		// LANGUAGE
-		if (conf[7] == null || conf[7].equals("0"))
-			language = 0;
-		else
-			language = 1;
-		if (language == 0) {
-			monthS = new SimpleDateFormat("MMMM", new Locale("es")).format(Calendar.getInstance().getTime())
-					.toUpperCase();
-			dayN = new SimpleDateFormat("dd", new Locale("es")).format(Calendar.getInstance().getTime());
-			dayS = new SimpleDateFormat("EEEE", new Locale("es")).format(Calendar.getInstance().getTime())
-					.toUpperCase();
-			yearS = new SimpleDateFormat("YYYY", new Locale("es")).format(Calendar.getInstance().getTime());
-		} else {
-			monthS = new SimpleDateFormat("MMMM", new Locale("pt")).format(Calendar.getInstance().getTime())
-					.toUpperCase();
-			dayN = new SimpleDateFormat("dd", new Locale("pt")).format(Calendar.getInstance().getTime());
-			dayS = new SimpleDateFormat("EEEE", new Locale("pt")).format(Calendar.getInstance().getTime())
-					.toUpperCase();
-			yearS = new SimpleDateFormat("YYYY", new Locale("pt")).format(Calendar.getInstance().getTime());
 		}
 
 		// Panel 1
@@ -679,8 +672,7 @@ public class Reales extends JFrame {
 		save.addActionListener(e -> saveProgress());
 		screenShot.addActionListener(e -> {
 			screenShooter();
-			JOptionPane opt = new JOptionPane(language == 0 ? "LA CAPTURA DE PANTALLA SE TOMA CON ÉXITO"
-					: "A CAPTURA DE TELA FOI REALIZADA COM SUCESSO", JOptionPane.NO_OPTION);
+			JOptionPane opt = new JOptionPane(idiomaString(language)[25], JOptionPane.NO_OPTION);
 			final JDialog dlg = opt.createDialog("SALVO");
 			new Thread(new Runnable() {
 				public void run() {
@@ -714,12 +706,15 @@ public class Reales extends JFrame {
 		JMenu summary = new JMenu("SUMARIO");
 		JMenuItem sumV = new JMenuItem("VISTA PREVIA DEL RESUMEN");
 		JMenu effectChooser = new JMenu("ELIGE TU EFECTO");
-		JMenuItem sumV0 = new JMenuItem("ALEATORIO");
-		JSeparator sep1 = new JSeparator();
 		JMenuItem sumV1 = new JMenuItem("FUNDIDO ENTRADA/FUERA");
 		JMenuItem sumV2 = new JMenuItem("APARECE PALABRA POR PALABRA");
 		JMenuItem sumV3 = new JMenuItem("APARECE LETRA POR LETRA");
-		JMenuItem exMenu = new JMenuItem("GUARDAR RESUMEN");
+		JMenu exMenu = new JMenu("GUARDAR RESUMEN");
+		JSeparator sep3 = new JSeparator();
+		JMenuItem exMenuS = new JMenuItem("SPANISH");
+		JMenuItem exMenuP = new JMenuItem("PORTUGUES");
+		JMenuItem exMenuE = new JMenuItem("ENGLISH");
+		JMenuItem exMenuD = new JMenuItem("DEFAULT");
 		JMenu speedChooser = new JMenu("VELOCIDAD DE ANIMACIÓN");
 		JMenuItem speed1 = new JMenuItem("LENTO");
 		JMenuItem speed2 = new JMenuItem("MEDIANO");
@@ -742,24 +737,6 @@ public class Reales extends JFrame {
 			sumV2.setEnabled(true);
 			sumV3.setEnabled(false);
 		}
-		sumV0.addActionListener(e -> {
-			int randomNum = ThreadLocalRandom.current().nextInt(0, 3);
-			effChooser = randomNum;
-			if (effChooser == 0) {
-				sumV1.setEnabled(false);
-				sumV2.setEnabled(true);
-				sumV3.setEnabled(true);
-			} else if (effChooser == 1) {
-				sumV1.setEnabled(true);
-				sumV2.setEnabled(false);
-				sumV3.setEnabled(true);
-			} else {
-				effChooser = 2;
-				sumV1.setEnabled(true);
-				sumV2.setEnabled(true);
-				sumV3.setEnabled(false);
-			}
-		});
 		sumV1.addActionListener(e -> {
 			effChooser = 0;
 			sumV1.setEnabled(false);
@@ -768,15 +745,16 @@ public class Reales extends JFrame {
 			conf[8] = "0";
 			try {
 				FileWriter savedF = new FileWriter("conf.txt");
-				savedF.write(conf[0] + System.lineSeparator());
-				savedF.write(conf[1] + System.lineSeparator());
-				savedF.write(conf[2] + System.lineSeparator());
-				savedF.write(conf[3] + System.lineSeparator());
-				savedF.write(conf[4] + System.lineSeparator());
-				savedF.write(conf[5] + System.lineSeparator());
-				savedF.write(conf[6] + System.lineSeparator());// speed
-				savedF.write(conf[7] + System.lineSeparator());// lan
+				savedF.write((conf[0].equals("null") ? 0 : conf[0]) + System.lineSeparator());
+				savedF.write((conf[1].equals("null") ? 0 : conf[1]) + System.lineSeparator());
+				savedF.write((conf[2].equals("null") ? "false" : conf[2]) + System.lineSeparator());
+				savedF.write((conf[3].equals("null") ? 0 : conf[3]) + System.lineSeparator());
+				savedF.write((conf[4].equals("null") ? "false" : conf[4]) + System.lineSeparator());
+				savedF.write((conf[5].equals("null") ? 0 : conf[5]) + System.lineSeparator());
+				savedF.write((conf[6].equals("null") ? 0 : conf[6]) + System.lineSeparator());// speed
+				savedF.write((conf[7].equals("null") ? 0 : conf[7]) + System.lineSeparator());// lan
 				savedF.write(0 + System.lineSeparator());// effect chooser
+				savedF.write((conf[9].equals("null") ? "1,1" : conf[9]) + System.lineSeparator());// intro
 				savedF.close();
 			} catch (Exception e2) {
 			}
@@ -789,15 +767,16 @@ public class Reales extends JFrame {
 			conf[8] = "1";
 			try {
 				FileWriter savedF = new FileWriter("conf.txt");
-				savedF.write(conf[0] + System.lineSeparator());
-				savedF.write(conf[1] + System.lineSeparator());
-				savedF.write(conf[2] + System.lineSeparator());
-				savedF.write(conf[3] + System.lineSeparator());
-				savedF.write(conf[4] + System.lineSeparator());
-				savedF.write(conf[5] + System.lineSeparator());
-				savedF.write(conf[6] + System.lineSeparator());// speed
-				savedF.write(conf[7] + System.lineSeparator());// lan
+				savedF.write((conf[0].equals("null") ? 0 : conf[0]) + System.lineSeparator());
+				savedF.write((conf[1].equals("null") ? 0 : conf[1]) + System.lineSeparator());
+				savedF.write((conf[2].equals("null") ? "false" : conf[2]) + System.lineSeparator());
+				savedF.write((conf[3].equals("null") ? 0 : conf[3]) + System.lineSeparator());
+				savedF.write((conf[4].equals("null") ? "false" : conf[4]) + System.lineSeparator());
+				savedF.write((conf[5].equals("null") ? 0 : conf[5]) + System.lineSeparator());
+				savedF.write((conf[6].equals("null") ? 0 : conf[6]) + System.lineSeparator());// speed
+				savedF.write((conf[7].equals("null") ? 0 : conf[7]) + System.lineSeparator());// lan
 				savedF.write(1 + System.lineSeparator());// effect chooser
+				savedF.write((conf[9].equals("null") ? "1,1" : conf[9]) + System.lineSeparator());// intro
 				savedF.close();
 			} catch (Exception e2) {
 			}
@@ -810,15 +789,16 @@ public class Reales extends JFrame {
 			conf[8] = "2";
 			try {
 				FileWriter savedF = new FileWriter("conf.txt");
-				savedF.write(conf[0] + System.lineSeparator());
-				savedF.write(conf[1] + System.lineSeparator());
-				savedF.write(conf[2] + System.lineSeparator());
-				savedF.write(conf[3] + System.lineSeparator());
-				savedF.write(conf[4] + System.lineSeparator());
-				savedF.write(conf[5] + System.lineSeparator());
-				savedF.write(conf[6] + System.lineSeparator());// speed
-				savedF.write(conf[7] + System.lineSeparator());// lan
+				savedF.write((conf[0].equals("null") ? 0 : conf[0]) + System.lineSeparator());
+				savedF.write((conf[1].equals("null") ? 0 : conf[1]) + System.lineSeparator());
+				savedF.write((conf[2].equals("null") ? "false" : conf[2]) + System.lineSeparator());
+				savedF.write((conf[3].equals("null") ? 0 : conf[3]) + System.lineSeparator());
+				savedF.write((conf[4].equals("null") ? "false" : conf[4]) + System.lineSeparator());
+				savedF.write((conf[5].equals("null") ? 0 : conf[5]) + System.lineSeparator());
+				savedF.write((conf[6].equals("null") ? 0 : conf[6]) + System.lineSeparator());// speed
+				savedF.write((conf[7].equals("null") ? 0 : conf[7]) + System.lineSeparator());// lan
 				savedF.write(2 + System.lineSeparator());// effect chooser
+				savedF.write((conf[9].equals("null") ? "1,1" : conf[9]) + System.lineSeparator());// intro
 				savedF.close();
 			} catch (Exception e2) {
 			}
@@ -842,15 +822,16 @@ public class Reales extends JFrame {
 			conf[6] = "0";
 			try {
 				FileWriter savedF = new FileWriter("conf.txt");
-				savedF.write(conf[0] + System.lineSeparator());
-				savedF.write(conf[1] + System.lineSeparator());
-				savedF.write(conf[2] + System.lineSeparator());
-				savedF.write(conf[3] + System.lineSeparator());
-				savedF.write(conf[4] + System.lineSeparator());
-				savedF.write(conf[5] + System.lineSeparator());
+				savedF.write((conf[0].equals("null") ? 0 : conf[0]) + System.lineSeparator());
+				savedF.write((conf[1].equals("null") ? 0 : conf[1]) + System.lineSeparator());
+				savedF.write((conf[2].equals("null") ? "false" : conf[2]) + System.lineSeparator());
+				savedF.write((conf[3].equals("null") ? 0 : conf[3]) + System.lineSeparator());
+				savedF.write((conf[4].equals("null") ? "false" : conf[4]) + System.lineSeparator());
+				savedF.write((conf[5].equals("null") ? 0 : conf[5]) + System.lineSeparator());
 				savedF.write(0 + System.lineSeparator());// speed
-				savedF.write(conf[7] + System.lineSeparator());// lan
-				savedF.write(conf[8] + System.lineSeparator());// effchooser
+				savedF.write((conf[7].equals("null") ? 0 : conf[7]) + System.lineSeparator());// lan
+				savedF.write((conf[8].equals("null") ? 0 : conf[8]) + System.lineSeparator());// effchooser
+				savedF.write((conf[9].equals("null") ? "1,1" : conf[9]) + System.lineSeparator());// intro
 				savedF.close();
 			} catch (Exception e2) {
 			}
@@ -862,15 +843,16 @@ public class Reales extends JFrame {
 			conf[6] = "1";
 			try {
 				FileWriter savedF = new FileWriter("conf.txt");
-				savedF.write(conf[0] + System.lineSeparator());
-				savedF.write(conf[1] + System.lineSeparator());
-				savedF.write(conf[2] + System.lineSeparator());
-				savedF.write(conf[3] + System.lineSeparator());
-				savedF.write(conf[4] + System.lineSeparator());
-				savedF.write(conf[5] + System.lineSeparator());
+				savedF.write((conf[0].equals("null") ? 0 : conf[0]) + System.lineSeparator());
+				savedF.write((conf[1].equals("null") ? 0 : conf[1]) + System.lineSeparator());
+				savedF.write((conf[2].equals("null") ? "false" : conf[2]) + System.lineSeparator());
+				savedF.write((conf[3].equals("null") ? 0 : conf[3]) + System.lineSeparator());
+				savedF.write((conf[4].equals("null") ? "false" : conf[4]) + System.lineSeparator());
+				savedF.write((conf[5].equals("null") ? 0 : conf[5]) + System.lineSeparator());
 				savedF.write(1 + System.lineSeparator());
-				savedF.write(conf[7] + System.lineSeparator());// lan
-				savedF.write(conf[8] + System.lineSeparator());// effchooser
+				savedF.write((conf[7].equals("null") ? 0 : conf[7]) + System.lineSeparator());// lan
+				savedF.write((conf[8].equals("null") ? 0 : conf[8]) + System.lineSeparator());// effchooser
+				savedF.write((conf[9].equals("null") ? "1,1" : conf[9]) + System.lineSeparator());// intro
 				savedF.close();
 			} catch (Exception e2) {
 			}
@@ -882,15 +864,16 @@ public class Reales extends JFrame {
 			conf[6] = "2";
 			try {
 				FileWriter savedF = new FileWriter("conf.txt");
-				savedF.write(conf[0] + System.lineSeparator());
-				savedF.write(conf[1] + System.lineSeparator());
-				savedF.write(conf[2] + System.lineSeparator());
-				savedF.write(conf[3] + System.lineSeparator());
-				savedF.write(conf[4] + System.lineSeparator());
-				savedF.write(conf[5] + System.lineSeparator());
+				savedF.write((conf[0].equals("null") ? 0 : conf[0]) + System.lineSeparator());
+				savedF.write((conf[1].equals("null") ? 0 : conf[1]) + System.lineSeparator());
+				savedF.write((conf[2].equals("null") ? "false" : conf[2]) + System.lineSeparator());
+				savedF.write((conf[3].equals("null") ? 0 : conf[3]) + System.lineSeparator());
+				savedF.write((conf[4].equals("null") ? "false" : conf[4]) + System.lineSeparator());
+				savedF.write((conf[5].equals("null") ? 0 : conf[5]) + System.lineSeparator());
 				savedF.write(2 + System.lineSeparator());
-				savedF.write(conf[7] + System.lineSeparator());// lan
-				savedF.write(conf[8] + System.lineSeparator());// effchooser
+				savedF.write((conf[7].equals("null") ? 0 : conf[7]) + System.lineSeparator());// lan
+				savedF.write((conf[8].equals("null") ? 0 : conf[8]) + System.lineSeparator());// effchooser
+				savedF.write((conf[9].equals("null") ? "1,1" : conf[9]) + System.lineSeparator());// intro
 				savedF.close();
 			} catch (Exception e2) {
 			}
@@ -899,12 +882,18 @@ public class Reales extends JFrame {
 			speed3.setEnabled(false);
 		});
 		/* speed default conf */
-		exMenu.addActionListener(e -> exBtn());
+		exMenuD.addActionListener(e -> exBtn(language));
+		exMenuS.addActionListener(e -> exBtn(0));
+		exMenuP.addActionListener(e -> exBtn(1));
+		exMenuE.addActionListener(e -> exBtn(2));
+		exMenu.add(exMenuD);
+		exMenu.add(sep3);
+		exMenu.add(exMenuS);
+		exMenu.add(exMenuP);
+		exMenu.add(exMenuE);
 		speedChooser.add(speed1);
 		speedChooser.add(speed2);
 		speedChooser.add(speed3);
-		effectChooser.add(sumV0);
-		effectChooser.add(sep1);
 		effectChooser.add(sumV1);
 		effectChooser.add(sumV2);
 		effectChooser.add(sumV3);
@@ -950,86 +939,97 @@ public class Reales extends JFrame {
 		reso.add(reso2);
 		reso.add(reso1);
 		resoD.addActionListener(e -> {
-			opResolution(clearEverthing, pesosF, notasF, newDay, resoD, aggPanel, gastosPanel);
+			conf[3] = "0";
+			opResolution(clearEverthing, pesosF, notasF, newDay, resoD, reso4, reso3, reso2, reso1, aggPanel,
+					gastosPanel);
 			try {
 				FileWriter savedF = new FileWriter("conf.txt");
-				savedF.write(conf[0] + System.lineSeparator());
-				savedF.write(conf[1] + System.lineSeparator());
-				savedF.write(conf[2] + System.lineSeparator());
+				savedF.write((conf[0].equals("null") ? 0 : conf[0]) + System.lineSeparator());
+				savedF.write((conf[1].equals("null") ? 0 : conf[1]) + System.lineSeparator());
+				savedF.write((conf[2].equals("null") ? "false" : conf[2]) + System.lineSeparator());
 				savedF.write(0 + System.lineSeparator());
-				savedF.write(conf[4] + System.lineSeparator());
-				savedF.write(conf[5] + System.lineSeparator());
-				savedF.write(conf[6] + System.lineSeparator());
-				savedF.write(conf[7] + System.lineSeparator());// lan
-				savedF.write(conf[8] + System.lineSeparator());// effchooser
+				savedF.write((conf[4].equals("null") ? "false" : conf[4]) + System.lineSeparator());
+				savedF.write((conf[5].equals("null") ? 0 : conf[5]) + System.lineSeparator());
+				savedF.write((conf[6].equals("null") ? 0 : conf[6]) + System.lineSeparator());
+				savedF.write((conf[7].equals("null") ? 0 : conf[7]) + System.lineSeparator());// lan
+				savedF.write((conf[8].equals("null") ? 0 : conf[8]) + System.lineSeparator());// effchooser
+				savedF.write((conf[9].equals("null") ? "1,1" : conf[9]) + System.lineSeparator());// intro
 				savedF.close();
 			} catch (Exception e2) {
 			}
 		});
 		reso1.addActionListener(e -> {
-			resG(resoD, notasF, pesosF, newDay, clearEverthing, gastosPanel, aggPanel);
+			conf[3] = "4";
+			resG(resoD, reso4, reso3, reso2, reso1, notasF, pesosF, newDay, clearEverthing, gastosPanel, aggPanel);
 			try {
 				FileWriter savedF = new FileWriter("conf.txt");
-				savedF.write(conf[0] + System.lineSeparator());
-				savedF.write(conf[1] + System.lineSeparator());
-				savedF.write(conf[2] + System.lineSeparator());
+				savedF.write((conf[0].equals("null") ? 0 : conf[0]) + System.lineSeparator());
+				savedF.write((conf[1].equals("null") ? 0 : conf[1]) + System.lineSeparator());
+				savedF.write((conf[2].equals("null") ? "false" : conf[2]) + System.lineSeparator());
 				savedF.write(4 + System.lineSeparator());
-				savedF.write(conf[4] + System.lineSeparator());
-				savedF.write(conf[5] + System.lineSeparator());
-				savedF.write(conf[6] + System.lineSeparator());
-				savedF.write(conf[7] + System.lineSeparator());// lan
-				savedF.write(conf[8] + System.lineSeparator());// effchooser
+				savedF.write((conf[4].equals("null") ? "false" : conf[4]) + System.lineSeparator());
+				savedF.write((conf[5].equals("null") ? 0 : conf[5]) + System.lineSeparator());
+				savedF.write((conf[6].equals("null") ? 0 : conf[6]) + System.lineSeparator());
+				savedF.write((conf[7].equals("null") ? 0 : conf[7]) + System.lineSeparator());// lan
+				savedF.write((conf[8].equals("null") ? 0 : conf[8]) + System.lineSeparator());// effchooser
+				savedF.write((conf[9].equals("null") ? "1,1" : conf[9]) + System.lineSeparator());// intro
 				savedF.close();
 			} catch (Exception e2) {
 			}
 		});
 		reso2.addActionListener(e -> {
-			resM(resoD, notasF, pesosF, newDay, clearEverthing, gastosPanel, aggPanel);
+			conf[3] = "3";
+			resM(resoD, reso4, reso3, reso2, reso1, notasF, pesosF, newDay, clearEverthing, gastosPanel, aggPanel);
 			try {
 				FileWriter savedF = new FileWriter("conf.txt");
-				savedF.write(conf[0] + System.lineSeparator());
-				savedF.write(conf[1] + System.lineSeparator());
-				savedF.write(conf[2] + System.lineSeparator());
+				savedF.write((conf[0].equals("null") ? 0 : conf[0]) + System.lineSeparator());
+				savedF.write((conf[1].equals("null") ? 0 : conf[1]) + System.lineSeparator());
+				savedF.write((conf[2].equals("null") ? "false" : conf[2]) + System.lineSeparator());
 				savedF.write(3 + System.lineSeparator());
-				savedF.write(conf[4] + System.lineSeparator());
-				savedF.write(conf[5] + System.lineSeparator());
-				savedF.write(conf[6] + System.lineSeparator());
-				savedF.write(conf[7] + System.lineSeparator());// lan
-				savedF.write(conf[8] + System.lineSeparator());// effchooser
+				savedF.write((conf[4].equals("null") ? "false" : conf[4]) + System.lineSeparator());
+				savedF.write((conf[5].equals("null") ? 0 : conf[5]) + System.lineSeparator());
+				savedF.write((conf[6].equals("null") ? 0 : conf[6]) + System.lineSeparator());
+				savedF.write((conf[7].equals("null") ? 0 : conf[7]) + System.lineSeparator());// lan
+				savedF.write((conf[8].equals("null") ? 0 : conf[8]) + System.lineSeparator());// effchooser
+				savedF.write((conf[9].equals("null") ? "1,1" : conf[9]) + System.lineSeparator());// intro
 				savedF.close();
 			} catch (Exception e2) {
 			}
 		});
 		reso3.addActionListener(e -> {
-			resP(resoD, notasF, pesosF, newDay, clearEverthing, gastosPanel, aggPanel);
+			conf[3] = "2";
+			resP(resoD, reso4, reso3, reso2, reso1, notasF, pesosF, newDay, clearEverthing, gastosPanel, aggPanel);
 			try {
 				FileWriter savedF = new FileWriter("conf.txt");
-				savedF.write(conf[0] + System.lineSeparator());
-				savedF.write(conf[1] + System.lineSeparator());
-				savedF.write(conf[2] + System.lineSeparator());
+				savedF.write((conf[0].equals("null") ? 0 : conf[0]) + System.lineSeparator());
+				savedF.write((conf[1].equals("null") ? 0 : conf[1]) + System.lineSeparator());
+				savedF.write((conf[2].equals("null") ? "false" : conf[2]) + System.lineSeparator());
 				savedF.write(2 + System.lineSeparator());
-				savedF.write(conf[4] + System.lineSeparator());
-				savedF.write(conf[5] + System.lineSeparator());
-				savedF.write(conf[6] + System.lineSeparator());
-				savedF.write(conf[7] + System.lineSeparator());// lan
-				savedF.write(conf[8] + System.lineSeparator());// effchooser
+				savedF.write((conf[4].equals("null") ? "false" : conf[4]) + System.lineSeparator());
+				savedF.write((conf[5].equals("null") ? 0 : conf[5]) + System.lineSeparator());
+				savedF.write((conf[6].equals("null") ? 0 : conf[6]) + System.lineSeparator());
+				savedF.write((conf[7].equals("null") ? 0 : conf[7]) + System.lineSeparator());// lan
+				savedF.write((conf[8].equals("null") ? 0 : conf[8]) + System.lineSeparator());// effchooser
+				savedF.write((conf[9].equals("null") ? "1,1" : conf[9]) + System.lineSeparator());// intro
 				savedF.close();
 			} catch (Exception e2) {
 			}
 		});
 		reso4.addActionListener(e -> {
-			resXP(resoD, notasF, pesosF, newDay, clearEverthing, gastosPanel, aggPanel);
+			conf[3] = "1";
+			resXP(resoD, reso4, reso3, reso2, reso1, notasF, pesosF, newDay, clearEverthing, gastosPanel, aggPanel);
 			try {
 				FileWriter savedF = new FileWriter("conf.txt");
-				savedF.write(conf[0] + System.lineSeparator());
-				savedF.write(conf[1] + System.lineSeparator());
-				savedF.write(conf[2] + System.lineSeparator());
+				savedF.write((conf[0].equals("null") ? 0 : conf[0]) + System.lineSeparator());
+				savedF.write((conf[1].equals("null") ? 0 : conf[1]) + System.lineSeparator());
+				savedF.write((conf[2].equals("null") ? "false" : conf[2]) + System.lineSeparator());
 				savedF.write(1 + System.lineSeparator());
-				savedF.write(conf[4] + System.lineSeparator());
-				savedF.write(conf[5] + System.lineSeparator());
-				savedF.write(conf[6] + System.lineSeparator());
-				savedF.write(conf[7] + System.lineSeparator());// lan
-				savedF.write(conf[8] + System.lineSeparator());// effchooser
+				savedF.write((conf[4].equals("null") ? "false" : conf[4]) + System.lineSeparator());
+				savedF.write((conf[5].equals("null") ? 0 : conf[5]) + System.lineSeparator());
+				savedF.write((conf[6].equals("null") ? 0 : conf[6]) + System.lineSeparator());
+				savedF.write((conf[7].equals("null") ? 0 : conf[7]) + System.lineSeparator());// lan
+				savedF.write((conf[8].equals("null") ? 0 : conf[8]) + System.lineSeparator());// effchooser
+				savedF.write((conf[9].equals("null") ? "1,1" : conf[9]) + System.lineSeparator());// intro
 				savedF.close();
 			} catch (Exception e2) {
 			}
@@ -1048,15 +1048,16 @@ public class Reales extends JFrame {
 			hideAll.setEnabled(true);
 			try {
 				FileWriter savedF = new FileWriter("conf.txt");
-				savedF.write(conf[0] + System.lineSeparator());
+				savedF.write((conf[0].equals("null") ? 0 : conf[0]) + System.lineSeparator());
 				savedF.write(0 + System.lineSeparator());
-				savedF.write(conf[2] + System.lineSeparator());
-				savedF.write(conf[3] + System.lineSeparator());
-				savedF.write(conf[4] + System.lineSeparator());
-				savedF.write(conf[5] + System.lineSeparator());
-				savedF.write(conf[6] + System.lineSeparator());
-				savedF.write(conf[7] + System.lineSeparator());// lan
-				savedF.write(conf[8] + System.lineSeparator());// effchooser
+				savedF.write((conf[2].equals("null") ? "false" : conf[2]) + System.lineSeparator());
+				savedF.write((conf[3].equals("null") ? 0 : conf[3]) + System.lineSeparator());
+				savedF.write((conf[4].equals("null") ? "false" : conf[4]) + System.lineSeparator());
+				savedF.write((conf[5].equals("null") ? 0 : conf[5]) + System.lineSeparator());
+				savedF.write((conf[6].equals("null") ? 0 : conf[6]) + System.lineSeparator());
+				savedF.write((conf[7].equals("null") ? 0 : conf[7]) + System.lineSeparator());// lan
+				savedF.write((conf[8].equals("null") ? 0 : conf[8]) + System.lineSeparator());// effchooser
+				savedF.write((conf[9].equals("null") ? "1,1" : conf[9]) + System.lineSeparator());// intro
 				savedF.close();
 			} catch (Exception e2) {
 			}
@@ -1073,15 +1074,16 @@ public class Reales extends JFrame {
 			hideAll.setEnabled(true);
 			try {
 				FileWriter savedF = new FileWriter("conf.txt");
-				savedF.write(conf[0] + System.lineSeparator());
+				savedF.write((conf[0].equals("null") ? 0 : conf[0]) + System.lineSeparator());
 				savedF.write(1 + System.lineSeparator());
-				savedF.write(conf[2] + System.lineSeparator());
-				savedF.write(conf[3] + System.lineSeparator());
-				savedF.write(conf[4] + System.lineSeparator());
-				savedF.write(conf[5] + System.lineSeparator());
-				savedF.write(conf[6] + System.lineSeparator());
-				savedF.write(conf[7] + System.lineSeparator());// lan
-				savedF.write(conf[8] + System.lineSeparator());// effchooser
+				savedF.write((conf[2].equals("null") ? "false" : conf[2]) + System.lineSeparator());
+				savedF.write((conf[3].equals("null") ? 0 : conf[3]) + System.lineSeparator());
+				savedF.write((conf[4].equals("null") ? "false" : conf[4]) + System.lineSeparator());
+				savedF.write((conf[5].equals("null") ? 0 : conf[5]) + System.lineSeparator());
+				savedF.write((conf[6].equals("null") ? 0 : conf[6]) + System.lineSeparator());
+				savedF.write((conf[7].equals("null") ? 0 : conf[7]) + System.lineSeparator());// lan
+				savedF.write((conf[8].equals("null") ? 0 : conf[8]) + System.lineSeparator());// effchooser
+				savedF.write((conf[9].equals("null") ? "1,1" : conf[9]) + System.lineSeparator());// intro
 				savedF.close();
 			} catch (Exception e2) {
 			}
@@ -1098,15 +1100,16 @@ public class Reales extends JFrame {
 			hideAll.setEnabled(true);
 			try {
 				FileWriter savedF = new FileWriter("conf.txt");
-				savedF.write(conf[0] + System.lineSeparator());
+				savedF.write((conf[0].equals("null") ? 0 : conf[0]) + System.lineSeparator());
 				savedF.write(2 + System.lineSeparator());
-				savedF.write(conf[2] + System.lineSeparator());
-				savedF.write(conf[3] + System.lineSeparator());
-				savedF.write(conf[4] + System.lineSeparator());
-				savedF.write(conf[5] + System.lineSeparator());
-				savedF.write(conf[6] + System.lineSeparator());
-				savedF.write(conf[7] + System.lineSeparator());// lan
-				savedF.write(conf[8] + System.lineSeparator());// effchooser
+				savedF.write((conf[2].equals("null") ? "false" : conf[2]) + System.lineSeparator());
+				savedF.write((conf[3].equals("null") ? 0 : conf[3]) + System.lineSeparator());
+				savedF.write((conf[4].equals("null") ? "false" : conf[4]) + System.lineSeparator());
+				savedF.write((conf[5].equals("null") ? 0 : conf[5]) + System.lineSeparator());
+				savedF.write((conf[6].equals("null") ? 0 : conf[6]) + System.lineSeparator());
+				savedF.write((conf[7].equals("null") ? 0 : conf[7]) + System.lineSeparator());// lan
+				savedF.write((conf[8].equals("null") ? 0 : conf[8]) + System.lineSeparator());// effchooser
+				savedF.write((conf[9].equals("null") ? "1,1" : conf[9]) + System.lineSeparator());// intro
 				savedF.close();
 			} catch (Exception e2) {
 			}
@@ -1121,15 +1124,16 @@ public class Reales extends JFrame {
 			hideAll.setEnabled(false);
 			try {
 				FileWriter savedF = new FileWriter("conf.txt");
-				savedF.write(conf[0] + System.lineSeparator());
+				savedF.write((conf[0].equals("null") ? 0 : conf[0]) + System.lineSeparator());
 				savedF.write(3 + System.lineSeparator());
-				savedF.write(conf[2] + System.lineSeparator());
-				savedF.write(conf[3] + System.lineSeparator());
-				savedF.write(conf[4] + System.lineSeparator());
-				savedF.write(conf[5] + System.lineSeparator());
-				savedF.write(conf[6] + System.lineSeparator());
-				savedF.write(conf[7] + System.lineSeparator());// lan
-				savedF.write(conf[8] + System.lineSeparator());// effchooser
+				savedF.write((conf[2].equals("null") ? "false" : conf[2]) + System.lineSeparator());
+				savedF.write((conf[3].equals("null") ? 0 : conf[3]) + System.lineSeparator());
+				savedF.write((conf[4].equals("null") ? "false" : conf[4]) + System.lineSeparator());
+				savedF.write((conf[5].equals("null") ? 0 : conf[5]) + System.lineSeparator());
+				savedF.write((conf[6].equals("null") ? 0 : conf[6]) + System.lineSeparator());
+				savedF.write((conf[7].equals("null") ? 0 : conf[7]) + System.lineSeparator());// lan
+				savedF.write((conf[8].equals("null") ? 0 : conf[8]) + System.lineSeparator());// effchooser
+				savedF.write((conf[9].equals("null") ? "1,1" : conf[9]) + System.lineSeparator());// intro
 				savedF.close();
 			} catch (Exception e2) {
 			}
@@ -1165,7 +1169,10 @@ public class Reales extends JFrame {
 		effectChooser.setIcon(new ImageIcon(getScaledImage(themeI.getImage(), 35, 35)));
 		speedChooser.setIcon(new ImageIcon(getScaledImage(speedI.getImage(), 35, 35)));
 		exMenu.setIcon(new ImageIcon(getScaledImage(saveI.getImage(), 35, 35)));
-		sumV0.setIcon(new ImageIcon(getScaledImage(randomI.getImage(), 35, 35)));
+		exMenuD.setIcon(new ImageIcon(getScaledImage(defaultI.getImage(), 35, 35)));
+		exMenuS.setIcon(new ImageIcon(getScaledImage(espI.getImage(), 35, 35)));
+		exMenuP.setIcon(new ImageIcon(getScaledImage(porI.getImage(), 35, 35)));
+		exMenuE.setIcon(new ImageIcon(getScaledImage(engI.getImage(), 35, 35)));
 		sumV1.setIcon(new ImageIcon(getScaledImage(effect1I.getImage(), 35, 35)));
 		sumV2.setIcon(new ImageIcon(getScaledImage(effect2I.getImage(), 35, 35)));
 		sumV3.setIcon(new ImageIcon(getScaledImage(effect3I.getImage(), 35, 35)));
@@ -1205,9 +1212,9 @@ public class Reales extends JFrame {
 		sumF();
 		// Open to the last value
 		int k = 0, l = 0;
-		schiffe_loop: while (k < 5) {
+		schiffe_loop: while (k < 6) {
 			l = 0;
-			while (l < 15) {
+			while (l < 20) {
 				if (details[k][l].getText().isBlank()) {
 					break schiffe_loop;
 				}
@@ -1215,7 +1222,7 @@ public class Reales extends JFrame {
 			}
 			k++;
 		}
-		if (k == 5 && l == 15)
+		if (k == 6 && l == 20)
 			k = l = 0;
 		InitialFocusSetter.setInitialFocus(this, details[k][l]);
 		this.getRootPane().setDefaultButton(magic);
@@ -1223,15 +1230,16 @@ public class Reales extends JFrame {
 
 		// Resolution
 		if (conf[3] == null || conf[3].equals("0")) {
-			opResolution(clearEverthing, pesosF, notasF, newDay, resoD, aggPanel, gastosPanel);
+			opResolution(clearEverthing, pesosF, notasF, newDay, resoD, reso4, reso3, reso2, reso1, aggPanel,
+					gastosPanel);
 		} else if (conf[3].equals("1"))
-			resXP(resoD, notasF, pesosF, newDay, clearEverthing, gastosPanel, aggPanel);
+			resXP(resoD, reso4, reso3, reso2, reso1, notasF, pesosF, newDay, clearEverthing, gastosPanel, aggPanel);
 		else if (conf[3].equals("2"))
-			resP(resoD, notasF, pesosF, newDay, clearEverthing, gastosPanel, aggPanel);
+			resP(resoD, reso4, reso3, reso2, reso1, notasF, pesosF, newDay, clearEverthing, gastosPanel, aggPanel);
 		else if (conf[3].equals("3"))
-			resM(resoD, notasF, pesosF, newDay, clearEverthing, gastosPanel, aggPanel);
+			resM(resoD, reso4, reso3, reso2, reso1, notasF, pesosF, newDay, clearEverthing, gastosPanel, aggPanel);
 		else
-			resG(resoD, notasF, pesosF, newDay, clearEverthing, gastosPanel, aggPanel);
+			resG(resoD, reso4, reso3, reso2, reso1, notasF, pesosF, newDay, clearEverthing, gastosPanel, aggPanel);
 
 		// Automatically add sets of 100 and 1000
 		if (aggBtn[0].isShowing() && aggBtn[1].isShowing()) {
@@ -1262,7 +1270,7 @@ public class Reales extends JFrame {
 				else if (selectedOption == 1) {
 					// Do Nothing
 				} else if (selectedOption == 2) {
-					exBtn();
+					exBtn(language);
 					for (int i = 0; i < 6; i++)
 						for (int j = 0; j < 20; j++)
 							details[i][j].setText("");
@@ -1311,8 +1319,10 @@ public class Reales extends JFrame {
 		JFrame sum = new JFrame();
 		if (language == 0)
 			sum.setTitle("SUMARIO");
-		else
+		else if (language == 1)
 			sum.setTitle("SUMÁRIO");
+		else
+			sum.setTitle("SUMMARY");
 		sum.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		sum.setAlwaysOnTop(false);
 		sum.setSize(650, 550);
@@ -1331,7 +1341,7 @@ public class Reales extends JFrame {
 		expBtn.setBorderPainted(false);
 		expBtn.setBounds(300, 300, 50, 50);
 		expBtn.setVisible(false);
-		expBtn.addActionListener(e -> exBtn());
+		expBtn.addActionListener(e -> exBtn(language));
 		sum.add(expBtn);
 		// LABEL
 		JTextPane sumItem = new JTextPane();
@@ -1414,7 +1424,7 @@ public class Reales extends JFrame {
 				"PARA RESUMIR\n\n" + "COMEÇAMOS O DIA COM R$" + initialDay.getText() + "\n\nE VENDEMOS R$" + totalVenta
 						+ "\n\nE GASTO R$" + gastosT + "\n\nE ADICIONO R$" + agregadoT + "\n\nQUE VAI ACABAR EM R$"
 						+ totalO + " EM TOTAL" + "\n\nCOM UM R$" + panelCnum[10].getText() + " COMO PIX", // 11
-				"PARA RESUMIR\n\n" + "COMEÇAMOS O DIA COM R$" + initialDay.getText() + "\n\nY VENDEMOS R$" + totalVenta
+				"PARA RESUMIR\n\n" + "COMEÇAMOS O DIA COM R$" + initialDay.getText() + "\n\nE VENDEMOS R$" + totalVenta
 						+ "\n\nE GASTO R$" + gastosT + "\n\nE ADICIONO R$" + agregadoT + "\n\nQUE VAI ACABAR EM R$"
 						+ totalO + " EM TOTAL", // 12
 				"A CAIXA DEU BEM\n\n" + "NÃO HÁ DIFERENÇA\n\n" + ":)", // 13
@@ -1422,6 +1432,40 @@ public class Reales extends JFrame {
 						+ "\n\nCONFIRA OS INGRESSOS E A CAIXA", // 14
 				"FICARÁ PARA AMANHÃ APROXIMADAMENTE\n\nR$" + restN, // 15
 				"TOQUE NO BOTÃO PARA EXPORTAR O RESULTADO"// 16
+		};
+		String[] engSumm = { "YOU DIDN'T SELL ANYTHING", // 0
+				"YOU SELL ONE SALE ONLY WORTH R$" + totalVenta, // 1
+				"YOU SELL R$" + totalVenta + "\n\nDIVIDING INTO " + nbVentas() + " SALES\n\n" + "WITH AVERAGE R$"
+						+ (nbVentas() == 0 ? 0 : totalVenta / nbVentas()) + " FOR SALE", // 2
+				"YOU HAVE NO EXPENSES!", // 3
+				"YOU HAVE IN TOTAL A SPENT WORTH R$" + gastosT + "\n\n" + "DETAILED LIKE:\n" + gastosDetalles(), // 4
+				"YOU HAVE A TOTAL R$" + gastosT + " AS EXPENSES\n\n" + "DIVIDED BY " + nbGastos() + " THINGS\n\n"
+						+ "WITH AVERAGE OF R$" + (nbGastos() == 0 ? 0 : gastosT / nbGastos()) + "\n\n"
+						+ "DETAILED AS:\n" + gastosDetalles(), // 5
+				"YOU HAVE NO AGGREGATE!", // 6
+				"YOU HAVE IN TOTAL AN AGGREGATE WORTH R$" + agregadoT + "\n\n" + "DETAILED LIKE:\n"
+						+ agregadoDetalles(), // 7
+				"YOU HAVE IN TOTAL A R$" + agregadoT + " AS AGGREGATES\n\n" + "DIVIDED BY " + nbAgregados()
+						+ " THINGS\n\n" + "WITH AVERAGE OF R$" + (nbAgregados() == 0 ? 0 : agregadoT / nbAgregados())
+						+ "\n\n" + "DETAILED AS:\n" + agregadoDetalles(), // 8
+				"TO SUMMARIZE\n\n" + "WE START THE DAY WITH R$" + initialDay.getText() + "\n\nAND WE SELL R$"
+						+ totalVenta + "\n\nAND WE SPENT R$" + gastosT + "\n\nWHAT WILL END IN R$" + totalO
+						+ " IN TOTAL" + "\n\nWITH R$" + panelCnum[10].getText() + " AS PIX", // 9
+				"TO SUMMARIZE\n\n" + "WE START THE DAY WITH R$" + initialDay.getText() + "\n\nAND WE SELL R$"
+						+ totalVenta + "\n\nAND WE SPENT R$" + gastosT + "\n\nWHAT WILL END IN R$" + totalO
+						+ " IN TOTAL", // 10
+				"TO SUMMARIZE\n\n" + "WE START THE DAY WITH R$" + initialDay.getText() + "\n\nAND WE SELL R$"
+						+ totalVenta + "\n\nAND WE SPENT R$" + gastosT + "\n\nAND WE ADD R$" + agregadoT
+						+ "\n\nWHAT WILL END IN R$" + totalO + " IN TOTAL" + "\n\nWITH R$" + panelCnum[10].getText()
+						+ " AS PIX", // 11
+				"TO SUMMARIZE\n\n" + "WE START THE DAY WITH R$" + initialDay.getText() + "\n\nAND WE SELL R$"
+						+ totalVenta + "\n\nAND WE SPENT R$" + gastosT + "\n\nAND WE ADD R$" + agregadoT
+						+ "\n\nWHAT WILL END IN R$" + totalO + " IN TOTAL", // 12
+				"THE CASH DID WELL\n\n" + "NO DIFFERENCE\n\n" + ":)", // 13
+				"THE CASH DIDN'T FIT\n\n" + "LOOKS LIKE THERE ARE " + diffResult[1].getText().toUpperCase()
+						+ "\n\nRE-CHECK THE TICKETS AND THE BOX", // 14
+				"WILL BE OUT TOMORROW APPROXIMATELY\n\nR$" + restN, // 15
+				"TOUCH THE BUTTON TO EXPORT THE RESULT"// 16
 		};
 
 		ActionListener fadeTimer = new ActionListener() {
@@ -1432,14 +1476,14 @@ public class Reales extends JFrame {
 				switch (order) {
 				case 0: {// details start
 					if (totalVenta == 0) {
-						sumItem.setText(language == 0 ? espSumm[0] : porSumm[0]);
+						sumItem.setText(language == 0 ? espSumm[0] : language == 1 ? porSumm[0] : engSumm[0]);
 						sumItem.setBounds(0, 240, 650, 550);
 					} else {
 						if (nbVentas() == 1) {
-							sumItem.setText(language == 0 ? espSumm[1] : porSumm[1]);
+							sumItem.setText(language == 0 ? espSumm[1] : language == 1 ? porSumm[1] : engSumm[1]);
 							sumItem.setBounds(0, 240, 650, 550);
 						} else {
-							sumItem.setText(language == 0 ? espSumm[2] : porSumm[2]);
+							sumItem.setText(language == 0 ? espSumm[2] : language == 1 ? porSumm[2] : engSumm[2]);
 							sumItem.setBounds(0, 200, 650, 550);
 						}
 					}
@@ -1457,13 +1501,13 @@ public class Reales extends JFrame {
 				case 1: {// gastos start
 					if (gastosT == 0) {
 						sumItem.setBounds(0, 240, 650, 550);
-						sumItem.setText(language == 0 ? espSumm[3] : porSumm[3]);
+						sumItem.setText(language == 0 ? espSumm[3] : language == 1 ? porSumm[3] : engSumm[3]);
 					} else {
 						if (nbGastos() == 1) {
-							sumItem.setText(language == 0 ? espSumm[4] : porSumm[4]);
+							sumItem.setText(language == 0 ? espSumm[4] : language == 1 ? porSumm[4] : engSumm[4]);
 							sumItem.setBounds(0, 220, 650, 550);
 						} else {
-							sumItem.setText(language == 0 ? espSumm[5] : porSumm[5]);
+							sumItem.setText(language == 0 ? espSumm[5] : language == 1 ? porSumm[5] : engSumm[5]);
 							sumItem.setBounds(0, 140, 650, 550);
 						}
 					}
@@ -1480,14 +1524,14 @@ public class Reales extends JFrame {
 				}
 				case 2: {// agg start
 					if (agregadoT == 0) {
-						sumItem.setText(language == 0 ? espSumm[6] : porSumm[6]);
+						sumItem.setText(language == 0 ? espSumm[6] : language == 1 ? porSumm[6] : engSumm[6]);
 						sumItem.setBounds(0, 240, 650, 550);
 					} else {
 						if (nbAgregados() == 1) {
-							sumItem.setText(language == 0 ? espSumm[7] : porSumm[7]);
+							sumItem.setText(language == 0 ? espSumm[7] : language == 1 ? porSumm[7] : engSumm[7]);
 							sumItem.setBounds(0, 220, 650, 550);
 						} else {
-							sumItem.setText(language == 0 ? espSumm[8] : porSumm[8]);
+							sumItem.setText(language == 0 ? espSumm[8] : language == 1 ? porSumm[8] : engSumm[8]);
 							sumItem.setBounds(0, 140, 650, 550);
 						}
 					}
@@ -1506,13 +1550,13 @@ public class Reales extends JFrame {
 					sumItem.setBounds(0, 100, 650, 550);
 					if (agregadoT == 0)
 						if (Integer.valueOf(panelCnum[10].getText()) > 0)
-							sumItem.setText(language == 0 ? espSumm[9] : porSumm[9]);
+							sumItem.setText(language == 0 ? espSumm[9] : language == 1 ? porSumm[9] : engSumm[9]);
 						else
-							sumItem.setText(language == 0 ? espSumm[10] : porSumm[10]);
+							sumItem.setText(language == 0 ? espSumm[10] : language == 1 ? porSumm[10] : engSumm[10]);
 					else if (Integer.valueOf(panelCnum[10].getText()) > 0)
-						sumItem.setText(language == 0 ? espSumm[11] : porSumm[11]);
+						sumItem.setText(language == 0 ? espSumm[11] : language == 1 ? porSumm[11] : engSumm[11]);
 					else
-						sumItem.setText(language == 0 ? espSumm[12] : porSumm[12]);
+						sumItem.setText(language == 0 ? espSumm[12] : language == 1 ? porSumm[12] : engSumm[12]);
 					if (colorX < 254 && !status)// summ fade in
 						colorX++;
 					else {
@@ -1527,9 +1571,9 @@ public class Reales extends JFrame {
 				case 4: {// diferrence
 					sumItem.setBounds(0, 200, 650, 550);
 					if (totalO == totalCaja)
-						sumItem.setText(language == 0 ? espSumm[13] : porSumm[13]);
+						sumItem.setText(language == 0 ? espSumm[13] : language == 1 ? porSumm[13] : engSumm[13]);
 					else
-						sumItem.setText(language == 0 ? espSumm[14] : porSumm[14]);
+						sumItem.setText(language == 0 ? espSumm[14] : language == 1 ? porSumm[14] : engSumm[14]);
 					// diferrence fade in
 					if (colorX < 254 && status)
 						colorX += 2;
@@ -1544,8 +1588,7 @@ public class Reales extends JFrame {
 				}
 				case 5: {// remain for tmrw
 					sumItem.setBounds(0, 220, 650, 550);
-					if (language == 0)
-						sumItem.setText(language == 0 ? espSumm[15] : porSumm[15]);
+					sumItem.setText(language == 0 ? espSumm[15] : language == 1 ? porSumm[15] : engSumm[15]);
 					if (colorX < 254 && !status)// remain fade in
 						colorX += 2;
 					else {
@@ -1559,8 +1602,7 @@ public class Reales extends JFrame {
 				}
 				case 6: {// export button
 					sumItem.setBounds(0, 200, 650, 550);
-					if (language == 0)
-						sumItem.setText(language == 0 ? espSumm[16] : porSumm[16]);
+					sumItem.setText(language == 0 ? espSumm[16] : language == 1 ? porSumm[16] : engSumm[16]);
 					if (colorX < 254)// export label fade in
 						colorX += 2;
 					else {
@@ -1582,7 +1624,8 @@ public class Reales extends JFrame {
 				switch (order) {
 				case 0: {// details start
 					if (totalVenta == 0) {// if ventas = 0
-						String[] wordT = (language == 0 ? espSumm[0].split(" ") : porSumm[0].split(" "));
+						String[] wordT = language == 0 ? espSumm[0].split(" ")
+								: language == 1 ? porSumm[0].split(" ") : engSumm[0].split(" ");
 						sumItem.setBounds(0, 240, 650, 550);
 						if (wordL < wordT.length)
 							sumItem.setText(sumItem.getText().concat(wordT[wordL++] + " "));
@@ -1596,7 +1639,8 @@ public class Reales extends JFrame {
 							}
 						}
 					} else if (nbVentas() == 1) {// if = 1
-						String[] wordT = language == 0 ? espSumm[1].split(" ") : porSumm[1].split(" ");
+						String[] wordT = language == 0 ? espSumm[1].split(" ")
+								: language == 1 ? porSumm[1].split(" ") : engSumm[1].split(" ");
 						sumItem.setBounds(0, 220, 650, 550);
 						if (wordL < wordT.length)
 							sumItem.setText(sumItem.getText().concat(wordT[wordL++] + " "));
@@ -1610,7 +1654,8 @@ public class Reales extends JFrame {
 							}
 						}
 					} else {// if >1
-						String[] wordT = language == 0 ? espSumm[2].split(" ") : porSumm[2].split(" ");
+						String[] wordT = language == 0 ? espSumm[2].split(" ")
+								: language == 1 ? porSumm[2].split(" ") : engSumm[2].split(" ");
 						sumItem.setBounds(0, 200, 650, 550);
 						if (wordL < wordT.length)
 							sumItem.setText(sumItem.getText().concat(wordT[wordL++] + " "));
@@ -1628,7 +1673,8 @@ public class Reales extends JFrame {
 				}
 				case 1: {// gastos start
 					if (gastosT == 0) {
-						String[] wordT = language == 0 ? espSumm[3].split(" ") : porSumm[3].split(" ");
+						String[] wordT = language == 0 ? espSumm[3].split(" ")
+								: language == 1 ? porSumm[3].split(" ") : engSumm[3].split(" ");
 						sumItem.setBounds(0, 240, 650, 550);
 						if (wordL < wordT.length)
 							sumItem.setText(sumItem.getText().concat(wordT[wordL++] + " "));
@@ -1642,8 +1688,9 @@ public class Reales extends JFrame {
 							}
 						}
 					} else if (nbGastos() == 1) {
-						String[] wordT = language == 0 ? espSumm[4].split(" ") : porSumm[4].split(" ");
-						sumItem.setBounds(0, 240, 650, 550);
+						String[] wordT = language == 0 ? espSumm[4].split(" ")
+								: language == 1 ? porSumm[4].split(" ") : engSumm[4].split(" ");
+						sumItem.setBounds(0, 200, 650, 550);
 						if (wordL < wordT.length)
 							sumItem.setText(sumItem.getText().concat(wordT[wordL++] + " "));
 						else {
@@ -1656,7 +1703,8 @@ public class Reales extends JFrame {
 							}
 						}
 					} else {
-						String[] wordT = language == 0 ? espSumm[5].split(" ") : porSumm[5].split(" ");
+						String[] wordT = language == 0 ? espSumm[5].split(" ")
+								: language == 1 ? porSumm[5].split(" ") : engSumm[5].split(" ");
 						sumItem.setBounds(0, 140, 650, 550);
 						if (wordL < wordT.length)
 							sumItem.setText(sumItem.getText().concat(wordT[wordL++] + " "));
@@ -1674,7 +1722,8 @@ public class Reales extends JFrame {
 				}
 				case 2: {// agg start
 					if (agregadoT == 0) {
-						String[] wordT = language == 0 ? espSumm[6].split(" ") : porSumm[6].split(" ");
+						String[] wordT = language == 0 ? espSumm[6].split(" ")
+								: language == 1 ? porSumm[6].split(" ") : engSumm[6].split(" ");
 						sumItem.setBounds(0, 240, 650, 550);
 						if (wordL < wordT.length)
 							sumItem.setText(sumItem.getText().concat(wordT[wordL++] + " "));
@@ -1688,8 +1737,9 @@ public class Reales extends JFrame {
 							}
 						}
 					} else if (nbAgregados() == 1) {
-						String[] wordT = language == 0 ? espSumm[7].split(" ") : porSumm[7].split(" ");
-						sumItem.setBounds(0, 220, 650, 550);
+						String[] wordT = language == 0 ? espSumm[7].split(" ")
+								: language == 1 ? porSumm[7].split(" ") : engSumm[7].split(" ");
+						sumItem.setBounds(0, 200, 650, 550);
 						if (wordL < wordT.length)
 							sumItem.setText(sumItem.getText().concat(wordT[wordL++] + " "));
 						else {
@@ -1702,7 +1752,8 @@ public class Reales extends JFrame {
 							}
 						}
 					} else {
-						String[] wordT = language == 0 ? espSumm[8].split(" ") : porSumm[8].split(" ");
+						String[] wordT = language == 0 ? espSumm[8].split(" ")
+								: language == 1 ? porSumm[8].split(" ") : engSumm[8].split(" ");
 						sumItem.setBounds(0, 140, 650, 550);
 						if (wordL < wordT.length)
 							sumItem.setText(sumItem.getText().concat(wordT[wordL++] + " "));
@@ -1722,7 +1773,8 @@ public class Reales extends JFrame {
 					if (agregadoT == 0)
 						if (Integer.valueOf(panelCnum[10].getText()) > 0) {
 							sumItem.setBounds(0, 120, 650, 550);
-							String[] wordT = language == 0 ? espSumm[9].split(" ") : porSumm[9].split(" ");
+							String[] wordT = language == 0 ? espSumm[9].split(" ")
+									: language == 1 ? porSumm[9].split(" ") : engSumm[9].split(" ");
 							if (wordL < wordT.length)
 								sumItem.setText(sumItem.getText().concat(wordT[wordL++] + " "));
 							else {
@@ -1736,7 +1788,8 @@ public class Reales extends JFrame {
 							}
 						} else {
 							sumItem.setBounds(0, 140, 650, 550);
-							String[] wordT = language == 0 ? espSumm[10].split(" ") : porSumm[10].split(" ");
+							String[] wordT = language == 0 ? espSumm[10].split(" ")
+									: language == 1 ? porSumm[10].split(" ") : engSumm[10].split(" ");
 							if (wordL < wordT.length)
 								sumItem.setText(sumItem.getText().concat(wordT[wordL++] + " "));
 							else {
@@ -1751,7 +1804,8 @@ public class Reales extends JFrame {
 						}
 					else if (Integer.valueOf(panelCnum[10].getText()) > 0) {
 						sumItem.setBounds(0, 100, 650, 550);
-						String[] wordT = language == 0 ? espSumm[11].split(" ") : porSumm[11].split(" ");
+						String[] wordT = language == 0 ? espSumm[11].split(" ")
+								: language == 1 ? porSumm[11].split(" ") : engSumm[11].split(" ");
 						if (wordL < wordT.length)
 							sumItem.setText(sumItem.getText().concat(wordT[wordL++] + " "));
 						else {
@@ -1765,7 +1819,8 @@ public class Reales extends JFrame {
 						}
 					} else {
 						sumItem.setBounds(0, 120, 650, 550);
-						String[] wordT = language == 0 ? espSumm[12].split(" ") : porSumm[12].split(" ");
+						String[] wordT = language == 0 ? espSumm[12].split(" ")
+								: language == 1 ? porSumm[12].split(" ") : engSumm[12].split(" ");
 						if (wordL < wordT.length)
 							sumItem.setText(sumItem.getText().concat(wordT[wordL++] + " "));
 						else {
@@ -1782,7 +1837,8 @@ public class Reales extends JFrame {
 				}
 				case 4: {// diferrence start
 					if (totalO == totalCaja) {
-						String[] wordT = language == 0 ? espSumm[13].split(" ") : porSumm[13].split(" ");
+						String[] wordT = language == 0 ? espSumm[13].split(" ")
+								: language == 1 ? porSumm[13].split(" ") : engSumm[13].split(" ");
 						sumItem.setBounds(0, 220, 650, 550);
 						if (wordL < wordT.length)
 							sumItem.setText(sumItem.getText().concat(wordT[wordL++] + " "));
@@ -1796,7 +1852,8 @@ public class Reales extends JFrame {
 							}
 						}
 					} else {
-						String[] wordT = language == 0 ? espSumm[14].split(" ") : porSumm[14].split(" ");
+						String[] wordT = language == 0 ? espSumm[14].split(" ")
+								: language == 1 ? porSumm[14].split(" ") : engSumm[14].split(" ");
 						sumItem.setBounds(0, 200, 650, 550);
 						if (wordL < wordT.length)
 							sumItem.setText(sumItem.getText().concat(wordT[wordL++] + " "));
@@ -1813,7 +1870,8 @@ public class Reales extends JFrame {
 					break;
 				}
 				case 5: {// remain for tmrw
-					String[] wordT = language == 0 ? espSumm[15].split(" ") : porSumm[15].split(" ");
+					String[] wordT = language == 0 ? espSumm[15].split(" ")
+							: language == 1 ? porSumm[15].split(" ") : engSumm[15].split(" ");
 					sumItem.setBounds(0, 220, 650, 550);
 					if (wordL < wordT.length)
 						sumItem.setText(sumItem.getText().concat(wordT[wordL++] + " "));
@@ -1829,7 +1887,8 @@ public class Reales extends JFrame {
 					break;
 				}
 				case 6: {// export button
-					String[] wordT = language == 0 ? espSumm[16].split(" ") : porSumm[16].split(" ");
+					String[] wordT = language == 0 ? espSumm[16].split(" ")
+							: language == 1 ? porSumm[16].split(" ") : engSumm[16].split(" ");
 					if (wordL < wordT.length)
 						sumItem.setText(sumItem.getText().concat(wordT[wordL++] + " "));
 					else {
@@ -1853,7 +1912,8 @@ public class Reales extends JFrame {
 				switch (order) {
 				case 0: {// details start
 					if (totalVenta == 0) {
-						char[] wordT = language == 0 ? espSumm[0].toCharArray() : porSumm[0].toCharArray();
+						char[] wordT = language == 0 ? espSumm[0].toCharArray()
+								: language == 1 ? porSumm[0].toCharArray() : engSumm[0].toCharArray();
 						sumItem.setBounds(0, 240, 650, 550);
 						if (wordL < wordT.length)
 							sumItem.setText(sumItem.getText() + wordT[wordL++]);
@@ -1867,7 +1927,8 @@ public class Reales extends JFrame {
 							}
 						}
 					} else if (nbVentas() == 1) {
-						char[] wordT = language == 0 ? espSumm[1].toCharArray() : porSumm[1].toCharArray();
+						char[] wordT = language == 0 ? espSumm[1].toCharArray()
+								: language == 1 ? porSumm[1].toCharArray() : engSumm[1].toCharArray();
 						sumItem.setBounds(0, 240, 650, 550);
 						if (wordL < wordT.length)
 							sumItem.setText(sumItem.getText() + wordT[wordL++]);
@@ -1881,7 +1942,8 @@ public class Reales extends JFrame {
 							}
 						}
 					} else {
-						char[] wordT = language == 0 ? espSumm[2].toCharArray() : porSumm[2].toCharArray();
+						char[] wordT = language == 0 ? espSumm[2].toCharArray()
+								: language == 1 ? porSumm[2].toCharArray() : engSumm[2].toCharArray();
 						sumItem.setBounds(0, 200, 650, 550);
 						if (wordL < wordT.length)
 							sumItem.setText(sumItem.getText() + wordT[wordL++]);
@@ -1899,7 +1961,8 @@ public class Reales extends JFrame {
 				}
 				case 1: {// gastos start
 					if (gastosT == 0) {
-						char[] wordT = language == 0 ? espSumm[3].toCharArray() : porSumm[3].toCharArray();
+						char[] wordT = language == 0 ? espSumm[3].toCharArray()
+								: language == 1 ? porSumm[3].toCharArray() : engSumm[3].toCharArray();
 						sumItem.setBounds(0, 240, 650, 550);
 						if (wordL < wordT.length)
 							sumItem.setText(sumItem.getText() + wordT[wordL++]);
@@ -1913,7 +1976,8 @@ public class Reales extends JFrame {
 							}
 						}
 					} else if (nbGastos() == 1) {
-						char[] wordT = language == 0 ? espSumm[4].toCharArray() : porSumm[4].toCharArray();
+						char[] wordT = language == 0 ? espSumm[4].toCharArray()
+								: language == 1 ? porSumm[4].toCharArray() : engSumm[4].toCharArray();
 						sumItem.setBounds(0, 200, 650, 550);
 						if (wordL < wordT.length)
 							sumItem.setText(sumItem.getText() + (wordT[wordL++]));
@@ -1927,7 +1991,8 @@ public class Reales extends JFrame {
 							}
 						}
 					} else {
-						char[] wordT = language == 0 ? espSumm[5].toCharArray() : porSumm[5].toCharArray();
+						char[] wordT = language == 0 ? espSumm[5].toCharArray()
+								: language == 1 ? porSumm[5].toCharArray() : engSumm[5].toCharArray();
 						sumItem.setBounds(0, 140, 650, 550);
 						if (wordL < wordT.length)
 							sumItem.setText(sumItem.getText() + (wordT[wordL++]));
@@ -1945,7 +2010,8 @@ public class Reales extends JFrame {
 				}
 				case 2: {// agg start
 					if (agregadoT == 0) {
-						char[] wordT = language == 0 ? espSumm[6].toCharArray() : porSumm[6].toCharArray();
+						char[] wordT = language == 0 ? espSumm[6].toCharArray()
+								: language == 1 ? porSumm[6].toCharArray() : engSumm[6].toCharArray();
 						sumItem.setBounds(0, 240, 650, 550);
 						if (wordL < wordT.length)
 							sumItem.setText(sumItem.getText() + (wordT[wordL++]));
@@ -1959,7 +2025,8 @@ public class Reales extends JFrame {
 							}
 						}
 					} else if (nbAgregados() == 1) {
-						char[] wordT = language == 0 ? espSumm[7].toCharArray() : porSumm[7].toCharArray();
+						char[] wordT = language == 0 ? espSumm[7].toCharArray()
+								: language == 1 ? porSumm[7].toCharArray() : engSumm[7].toCharArray();
 						sumItem.setBounds(0, 200, 650, 550);
 						if (wordL < wordT.length)
 							sumItem.setText(sumItem.getText() + (wordT[wordL++]));
@@ -1973,7 +2040,8 @@ public class Reales extends JFrame {
 							}
 						}
 					} else {
-						char[] wordT = language == 0 ? espSumm[8].toCharArray() : porSumm[8].toCharArray();
+						char[] wordT = language == 0 ? espSumm[8].toCharArray()
+								: language == 1 ? porSumm[8].toCharArray() : engSumm[8].toCharArray();
 						sumItem.setBounds(0, 140, 650, 550);
 						if (wordL < wordT.length)
 							sumItem.setText(sumItem.getText() + (wordT[wordL++]));
@@ -1993,7 +2061,8 @@ public class Reales extends JFrame {
 					if (agregadoT == 0)
 						if (Integer.valueOf(panelCnum[10].getText()) > 0) {
 							sumItem.setBounds(0, 120, 650, 550);
-							char[] wordT = language == 0 ? espSumm[9].toCharArray() : porSumm[9].toCharArray();
+							char[] wordT = language == 0 ? espSumm[9].toCharArray()
+									: language == 1 ? porSumm[9].toCharArray() : engSumm[9].toCharArray();
 							if (wordL < wordT.length)
 								sumItem.setText(sumItem.getText() + (wordT[wordL++]));
 							else {
@@ -2007,7 +2076,8 @@ public class Reales extends JFrame {
 							}
 						} else {
 							sumItem.setBounds(0, 140, 650, 550);
-							char[] wordT = language == 0 ? espSumm[10].toCharArray() : porSumm[10].toCharArray();
+							char[] wordT = language == 0 ? espSumm[10].toCharArray()
+									: language == 1 ? porSumm[10].toCharArray() : engSumm[10].toCharArray();
 							if (wordL < wordT.length)
 								sumItem.setText(sumItem.getText() + (wordT[wordL++]));
 							else {
@@ -2023,7 +2093,8 @@ public class Reales extends JFrame {
 						}
 					else if (Integer.valueOf(panelCnum[10].getText()) > 0) {
 						sumItem.setBounds(0, 100, 650, 550);
-						char[] wordT = language == 0 ? espSumm[11].toCharArray() : porSumm[11].toCharArray();
+						char[] wordT = language == 0 ? espSumm[11].toCharArray()
+								: language == 1 ? porSumm[11].toCharArray() : engSumm[11].toCharArray();
 						if (wordL < wordT.length) {
 							sumItem.setText(sumItem.getText() + (wordT[wordL++]));
 						} else {
@@ -2037,7 +2108,8 @@ public class Reales extends JFrame {
 						}
 					} else {
 						sumItem.setBounds(0, 120, 650, 550);
-						char[] wordT = language == 0 ? espSumm[12].toCharArray() : porSumm[12].toCharArray();
+						char[] wordT = language == 0 ? espSumm[12].toCharArray()
+								: language == 1 ? porSumm[12].toCharArray() : engSumm[12].toCharArray();
 						if (wordL < wordT.length) {
 							sumItem.setText(sumItem.getText() + (wordT[wordL++]));
 						} else {
@@ -2054,7 +2126,8 @@ public class Reales extends JFrame {
 				}
 				case 4: {// diferrence start
 					if (totalO == totalCaja) {
-						char[] wordT = language == 0 ? espSumm[13].toCharArray() : porSumm[13].toCharArray();
+						char[] wordT = language == 0 ? espSumm[13].toCharArray()
+								: language == 1 ? porSumm[13].toCharArray() : engSumm[13].toCharArray();
 						sumItem.setBounds(0, 200, 650, 550);
 						if (wordL < wordT.length)
 							sumItem.setText(sumItem.getText() + (wordT[wordL++]));
@@ -2068,7 +2141,8 @@ public class Reales extends JFrame {
 							}
 						}
 					} else {
-						char[] wordT = language == 0 ? espSumm[14].toCharArray() : porSumm[14].toCharArray();
+						char[] wordT = language == 0 ? espSumm[14].toCharArray()
+								: language == 1 ? porSumm[14].toCharArray() : engSumm[14].toCharArray();
 						sumItem.setBounds(0, 200, 650, 550);
 						if (wordL < wordT.length)
 							sumItem.setText(sumItem.getText() + (wordT[wordL++]));
@@ -2085,7 +2159,8 @@ public class Reales extends JFrame {
 					break;
 				}
 				case 5: {// remain for tmrw
-					char[] wordT = language == 0 ? espSumm[15].toCharArray() : porSumm[15].toCharArray();
+					char[] wordT = language == 0 ? espSumm[15].toCharArray()
+							: language == 1 ? porSumm[15].toCharArray() : engSumm[15].toCharArray();
 					sumItem.setBounds(0, 220, 650, 550);
 					if (wordL < wordT.length)
 						sumItem.setText(sumItem.getText() + (wordT[wordL++]));
@@ -2101,7 +2176,8 @@ public class Reales extends JFrame {
 					break;
 				}
 				case 6: {// export button
-					char[] wordT = language == 0 ? espSumm[16].toCharArray() : porSumm[16].toCharArray();
+					char[] wordT = language == 0 ? espSumm[16].toCharArray()
+							: language == 1 ? porSumm[16].toCharArray() : engSumm[16].toCharArray();
 					sumItem.setBounds(0, 200, 650, 550);
 					if (wordL < wordT.length)
 						sumItem.setText(sumItem.getText() + (wordT[wordL++]));
@@ -2169,7 +2245,8 @@ public class Reales extends JFrame {
 	}
 
 	// Save the summary of the day
-	private void exBtn() {
+	private void exBtn(int lang) {
+		dateLang(lang);
 		try {
 			String currentpath = System.getProperty("user.dir");
 			File tempFile1 = new File(currentpath + "\\" + yearS);
@@ -2254,42 +2331,80 @@ public class Reales extends JFrame {
 					System.lineSeparator() + "*FICARÁ PARA AMANHÃ APROXIMADAMENTE R$" + restN + System.lineSeparator(), // 14
 					System.lineSeparator() + "*OBRIGADO E ATÉ AMANHÃ :)"// 15
 			};
-			savedF.write(titleName() + (language == 0 ? " - SUMARIO POR EL DIA " : " - SUMÁRIO DO DIA ") + dayS + " "
-					+ dayN + "-" + monthS + "-" + yearS + System.lineSeparator() + System.lineSeparator());
+			String[] engSumm = { "*SALES:\nYOU DIDN'T SELL ANYTHING" + System.lineSeparator(), // 0
+					"*SALES:\nYOU SELL ONE SALE ONLY WORTH R$" + totalVenta + System.lineSeparator(), // 1
+					"*SALES:\nYOU SELL R$" + totalVenta + ", DIVIDING INTO " + nbVentas() + " SALES, "
+							+ "WITH AVERAGE R$" + (nbVentas() == 0 ? 0 : totalVenta / nbVentas())
+							+ System.lineSeparator(), // 2
+					System.lineSeparator() + "*EXPENSES:\nYOU HAVE NO EXPENSES!" + System.lineSeparator(), // 3
+					System.lineSeparator() + "*EXPENSES:\nYOU HAVE IN TOTAL A SPENT WORTH R$" + gastosT + "\n"
+							+ "DETAILED LIKE:\n" + gastosDetalles(), // 4
+					System.lineSeparator() + "*EXPENSES:\nYOU HAVE A TOTAL R$" + gastosT + " AS EXPENSES, "
+							+ "DIVIDED BY " + nbGastos() + " THINGS, " + "WITH AVERAGE OF R$"
+							+ (nbGastos() == 0 ? 0 : gastosT / nbGastos()) + "\n" + "DETAILED AS:\n" + gastosDetalles(), // 5
+					System.lineSeparator() + "*AGGREGATES:\nYOU HAVE IN TOTAL AN AGGREGATE WORTH R$" + agregadoT + "\n"
+							+ "DETAILED LIKE:\n" + agregadoDetalles(), // 6
+					System.lineSeparator() + "*AGGREGATES:\nYOU HAVE A TOTAL R$" + agregadoT + " AS AGGREGATES, "
+							+ "DIVIDED BY " + nbAgregados() + " THINGS, " + "WITH AVERAGE OF R$"
+							+ (nbAgregados() == 0 ? 0 : agregadoT / nbAgregados()) + "\n" + "DETAILED AS:\n"
+							+ agregadoDetalles(), // 7
+					System.lineSeparator() + "*TO SUMMARIZE:\n" + "WE START THE DAY WITH R$" + initialDay.getText()
+							+ "\nSELL R$" + totalVenta + "\nSPENT R$" + gastosT + "\nWHAT WILL END IN R$" + totalO
+							+ " IN TOTAL" + "\nWITH ONE R$" + panelCnum[10].getText() + " AS PIX"
+							+ System.lineSeparator(), // 8
+					System.lineSeparator() + "*TO SUMMARIZE:\n" + "WE START THE DAY WITH R$" + initialDay.getText()
+							+ "\nSELL R$" + totalVenta + "\nSPENT R$" + gastosT + "\nWHAT WILL END IN R$" + totalO
+							+ " IN TOTAL" + System.lineSeparator(), // 9
+					System.lineSeparator() + "*TO SUMMARIZE:\n" + "WE START THE DAY WITH R$" + initialDay.getText()
+							+ "\nSELL R$" + totalVenta + "\nSPENT R$" + gastosT + "\nADD R$" + agregadoT
+							+ "\nWHAT WILL END IN R$" + totalO + " IN TOTAL" + "\nWITH R$" + panelCnum[10].getText()
+							+ " AS PIX" + System.lineSeparator(), // 10
+					System.lineSeparator() + "*TO SUMMARIZE:\n" + "WE START THE DAY WITH R$" + initialDay.getText()
+							+ "\nSELL R$" + totalVenta + "\nSPENT R$" + gastosT + "\nADD R$" + agregadoT
+							+ "\nWHAT WILL END IN R$" + totalO + " IN TOTAL" + System.lineSeparator(), // 11
+					System.lineSeparator() + "*THE CASH DID WELL, " + "NO DIFFERENCE" + System.lineSeparator(), // 12
+					System.lineSeparator() + "*THE CASH DIDN'T FIT, " + "LOOKS LIKE "
+							+ diffResult[1].getText().toUpperCase() + System.lineSeparator(), // 13
+					System.lineSeparator() + "*WILL BE OUT TOMORROW APPROXIMATELY R$" + restN + System.lineSeparator(), // 14
+					System.lineSeparator() + "*THANKS AND SEE YOU TOMORROW :)" // 15
+			};
+			savedF.write(titleName()
+					+ (lang == 0 ? " - SUMARIO POR EL DIA "
+							: lang == 1 ? " - SUMÁRIO DO DIA " : " - SUMMARY OF THE DAY ")
+					+ dayS + " " + dayN + "-" + monthS + "-" + yearS + System.lineSeparator() + System.lineSeparator());
 			if (totalVenta == 0)
-				savedF.write(language == 0 ? espSumm[0] : porSumm[0]);
+				savedF.write(lang == 0 ? espSumm[0] : lang == 1 ? porSumm[0] : engSumm[0]);
 			else if (nbVentas() == 1)
-				savedF.write(language == 0 ? espSumm[1] : porSumm[1]);
+				savedF.write(lang == 0 ? espSumm[1] : lang == 1 ? porSumm[1] : engSumm[1]);
 			else
-				savedF.write(language == 0 ? espSumm[2] : porSumm[2]);
+				savedF.write(lang == 0 ? espSumm[2] : lang == 1 ? porSumm[2] : engSumm[2]);
 			if (gastosT == 0)// GASTOS SAVE
-				savedF.write(language == 0 ? espSumm[3] : porSumm[3]);
+				savedF.write(lang == 0 ? espSumm[3] : lang == 1 ? porSumm[3] : engSumm[3]);
 			else if (nbGastos() == 1)
-				savedF.write(language == 0 ? espSumm[4] : porSumm[4]);
+				savedF.write(lang == 0 ? espSumm[4] : lang == 1 ? porSumm[4] : engSumm[4]);
 			else
-				savedF.write(language == 0 ? espSumm[5] : porSumm[5]);
+				savedF.write(lang == 0 ? espSumm[5] : lang == 1 ? porSumm[5] : engSumm[5]);
 			if (nbAgregados() != 0) { // AGG SAVE if 1
 				if (nbAgregados() == 1)
-					savedF.write(language == 0 ? espSumm[6] : porSumm[6]);
+					savedF.write(lang == 0 ? espSumm[6] : lang == 1 ? porSumm[6] : engSumm[6]);
 				else
-					savedF.write(language == 0 ? espSumm[7] : porSumm[7]);
+					savedF.write(lang == 0 ? espSumm[7] : lang == 1 ? porSumm[7] : engSumm[7]);
 				if (Integer.valueOf(panelCnum[10].getText()) > 0)
-					savedF.write(language == 0 ? espSumm[10] : porSumm[10]);
+					savedF.write(lang == 0 ? espSumm[10] : lang == 1 ? porSumm[10] : engSumm[10]);
 				else
-					savedF.write(language == 0 ? espSumm[11] : porSumm[11]);
+					savedF.write(lang == 0 ? espSumm[11] : lang == 1 ? porSumm[11] : engSumm[11]);
 			} else if (Integer.valueOf(panelCnum[10].getText()) > 0)
-				savedF.write(language == 0 ? espSumm[8] : porSumm[8]);
+				savedF.write(lang == 0 ? espSumm[8] : lang == 1 ? porSumm[8] : engSumm[8]);
 			else
-				savedF.write(language == 0 ? espSumm[9] : porSumm[9]);
+				savedF.write(lang == 0 ? espSumm[9] : lang == 1 ? porSumm[9] : engSumm[9]);
 			if (totalO == totalCaja)
-				savedF.write(language == 0 ? espSumm[12] : porSumm[12]);
+				savedF.write(lang == 0 ? espSumm[12] : lang == 1 ? porSumm[12] : engSumm[12]);
 			else
-				savedF.write(language == 0 ? espSumm[13] : porSumm[13]);
-			savedF.write(language == 0 ? espSumm[14] : porSumm[15]);
+				savedF.write(lang == 0 ? espSumm[13] : lang == 1 ? porSumm[13] : engSumm[13]);
+			savedF.write(lang == 0 ? espSumm[14] : lang == 1 ? porSumm[14] : engSumm[14]);
+			savedF.write(lang == 0 ? espSumm[15] : lang == 1 ? porSumm[15] : engSumm[15]);
 			savedF.close();
-			JOptionPane opt = new JOptionPane(
-					language == 0 ? "SALVADO CON ÉXITO, GRACIAS" : "SALVO COM SUCESSO, OBRIGADO",
-					JOptionPane.NO_OPTION);
+			JOptionPane opt = new JOptionPane(idiomaString(lang)[26], JOptionPane.NO_OPTION);
 			final JDialog dlg = opt.createDialog("SALVO");
 			new Thread(new Runnable() {
 				public void run() {
@@ -2302,12 +2417,15 @@ public class Reales extends JFrame {
 				}
 			}).start();
 			dlg.setVisible(true);
+			System.out.println(lang);
 		} catch (Exception e2) {
-			JOptionPane opt = new JOptionPane(language == 0 ? "ERROR, NO SALVO!" : "ERROR, NAO SALVO!",
+			JOptionPane opt = new JOptionPane(
+					lang == 0 ? "ERROR, NO SALVO!" : lang == 1 ? "ERROR, NAO SALVO!" : "ERROR",
 					JOptionPane.ERROR_MESSAGE);
 			opt.show();
 		}
-		screenShooter();
+		if (language == lang)
+			screenShooter();
 	}
 
 	// Configuration tab
@@ -2356,7 +2474,7 @@ public class Reales extends JFrame {
 		JLabel op2 = new JLabel(idiomaString(language)[6]);
 		op2.setBounds(50, 90, 200, 40);
 		op2.setFont(First.myFont);
-		String lan[] = { "ESPAÑOL", "PORTUGUÊS" };
+		String lan[] = { "ESPAÑOL", "PORTUGUÊS", "ENGLISH" };
 		JComboBox<String> lang = new JComboBox<>(lan);
 		lang.setRenderer(dlcr);
 		lang.setBounds(355, 90, 200, 40);
@@ -2524,7 +2642,7 @@ public class Reales extends JFrame {
 				btnsHideShow2.setText(idiomaString(language)[11]);// key shortcut
 				btnsHideShow2.setSelected(false);// key shortcut
 				conf[3] = "0";// res
-				opResolution(clearEverthing, pesosF, notasF, newDay, resoD, aggPanel, gastosPanel);// res
+//				opResolution(clearEverthing, pesosF, notasF, newDay, resoD, aggPanel, gastosPanel);// res
 				btnsHideShow3.setText(idiomaString(language)[11]);// autosave
 				btnsHideShow3.setSelected(false);// autosave
 				conf[6] = "1";// speed
@@ -2568,14 +2686,15 @@ public class Reales extends JFrame {
 				try {
 					FileWriter savedF = new FileWriter("conf.txt");
 					savedF.write(op1C.getSelectedIndex() + System.lineSeparator());// icon
-					savedF.write(conf[1] + System.lineSeparator());// btn hide
+					savedF.write((conf[1].equals("null") ? 0 : conf[1]) + System.lineSeparator());// btn hide
 					savedF.write(btnsHideShow2.isSelected() + System.lineSeparator());// key shortcut
-					savedF.write(conf[3] + System.lineSeparator());// res
+					savedF.write((conf[3].equals("null") ? 0 : conf[3]) + System.lineSeparator());// res
 					savedF.write(btnsHideShow3.isSelected() + System.lineSeparator());// autosave
-					savedF.write(conf[5] + System.lineSeparator());// first frame to open
-					savedF.write(conf[6] + System.lineSeparator());// speed
+					savedF.write((conf[5].equals("null") ? 0 : conf[5]) + System.lineSeparator());// first frame to open
+					savedF.write((conf[6].equals("null") ? 0 : conf[6]) + System.lineSeparator());// speed
 					savedF.write(lang.getSelectedIndex() + System.lineSeparator());// lan
-					savedF.write(conf[8] + System.lineSeparator());// effchooser
+					savedF.write((conf[8].equals("null") ? 0 : conf[8]) + System.lineSeparator());// effchooser
+					savedF.write((conf[9].equals("null") ? "1,1" : conf[9]) + System.lineSeparator());// intro
 					savedF.close();
 				} catch (Exception e2) {
 				}
@@ -2642,7 +2761,7 @@ public class Reales extends JFrame {
 		int op = JOptionPane.showConfirmDialog(null, idiomaString(language)[16], idiomaString(language)[17],
 				JOptionPane.OK_CANCEL_OPTION);
 		if (op == 0) {
-			exBtn();
+			exBtn(language);
 			for (int i = 0; i < 6; i++)
 				for (int j = 0; j < 20; j++)
 					details[i][j].setText("");
@@ -2868,9 +2987,14 @@ public class Reales extends JFrame {
 	}
 
 	// Resolution X-small
-	private void resXP(JMenuItem resoD, JButton notasF, JButton pesosF, JButton newDay, JButton clearEverthing,
-			JButton gastosPanel, JButton aggPanel) {
+	private void resXP(JMenuItem resoD, JMenuItem resoXP, JMenuItem resoP, JMenuItem resoM, JMenuItem resoG,
+			JButton notasF, JButton pesosF, JButton newDay, JButton clearEverthing, JButton gastosPanel,
+			JButton aggPanel) {
 		this.setSize(1000, 600);
+		resoXP.setEnabled(false);
+		resoP.setEnabled(true);
+		resoM.setEnabled(true);
+		resoG.setEnabled(true);
 		if (width >= 1800)
 			if (this.getWidth() == 1820)
 				resoD.setEnabled(false);
@@ -3006,9 +3130,14 @@ public class Reales extends JFrame {
 	}
 
 	// Resolution small
-	private void resP(JMenuItem resoD, JButton notasF, JButton pesosF, JButton newDay, JButton clearEverthing,
-			JButton gastosPanel, JButton aggPanel) {
+	private void resP(JMenuItem resoD, JMenuItem resoXP, JMenuItem resoP, JMenuItem resoM, JMenuItem resoG,
+			JButton notasF, JButton pesosF, JButton newDay, JButton clearEverthing, JButton gastosPanel,
+			JButton aggPanel) {
 		this.setSize(1300, 700);
+		resoXP.setEnabled(true);
+		resoP.setEnabled(false);
+		resoM.setEnabled(true);
+		resoG.setEnabled(true);
 		if (width >= 1800)
 			if (this.getWidth() == 1820)
 				resoD.setEnabled(false);
@@ -3144,9 +3273,14 @@ public class Reales extends JFrame {
 	}
 
 	// Resolution meduim
-	private void resM(JMenuItem resoD, JButton notasF, JButton pesosF, JButton newDay, JButton clearEverthing,
-			JButton gastosPanel, JButton aggPanel) {
+	private void resM(JMenuItem resoD, JMenuItem resoXP, JMenuItem resoP, JMenuItem resoM, JMenuItem resoG,
+			JButton notasF, JButton pesosF, JButton newDay, JButton clearEverthing, JButton gastosPanel,
+			JButton aggPanel) {
 		this.setSize(1500, 800);
+		resoXP.setEnabled(true);
+		resoP.setEnabled(true);
+		resoM.setEnabled(false);
+		resoG.setEnabled(true);
 		if (width >= 1800)
 			if (this.getWidth() == 1820)
 				resoD.setEnabled(false);
@@ -3283,9 +3417,14 @@ public class Reales extends JFrame {
 	}
 
 	// Resolution large
-	private void resG(JMenuItem resoD, JButton notasF, JButton pesosF, JButton newDay, JButton clearEverthing,
-			JButton gastosPanel, JButton aggPanel) {
+	private void resG(JMenuItem resoD, JMenuItem resoXP, JMenuItem resoP, JMenuItem resoM, JMenuItem resoG,
+			JButton notasF, JButton pesosF, JButton newDay, JButton clearEverthing, JButton gastosPanel,
+			JButton aggPanel) {
 		this.setSize(1820, 980);
+		resoXP.setEnabled(true);
+		resoP.setEnabled(true);
+		resoM.setEnabled(true);
+		resoG.setEnabled(false);
 		if (width >= 1800)
 			if (this.getWidth() == 1820)
 				resoD.setEnabled(false);
@@ -3573,9 +3712,9 @@ public class Reales extends JFrame {
 				} else// |Go to the last one
 				if ((e.getKeyCode() == KeyEvent.VK_E) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
 					int k = 0, l = 0;
-					schiffe_loop: while (k < 5) {
+					schiffe_loop: while (k < 6) {
 						l = 0;
-						while (l < 15) {
+						while (l < 20) {
 							if (details[k][l].getText().isBlank()) {
 								break schiffe_loop;
 							}
@@ -3583,7 +3722,7 @@ public class Reales extends JFrame {
 						}
 						k++;
 					}
-					if (k == 5 && l == 15)
+					if (k == 6 && l == 20)
 						k = l = 0;
 					details[i][j].setNextFocusableComponent(details[k][l]);
 					details[i][j].nextFocus();
@@ -4034,15 +4173,16 @@ public class Reales extends JFrame {
 
 	// Optimal resolution
 	private void opResolution(JButton clearEverthing, JButton pesosF, JButton notasF, JButton newDay, JMenuItem resoD,
-			JButton aggPanel, JButton gastosPanel) {
+			JMenuItem resoXP, JMenuItem resoP, JMenuItem resoM, JMenuItem resoG, JButton aggPanel,
+			JButton gastosPanel) {
 		if (width > 1800 && height > 1000)
-			resG(resoD, notasF, pesosF, newDay, clearEverthing, gastosPanel, aggPanel);
+			resG(resoD, resoXP, resoP, resoM, resoG, notasF, pesosF, newDay, clearEverthing, gastosPanel, aggPanel);
 		else if (width > 1500 && height > 700)
-			resM(resoD, notasF, pesosF, newDay, clearEverthing, gastosPanel, aggPanel);
+			resM(resoD, resoXP, resoP, resoM, resoG, notasF, pesosF, newDay, clearEverthing, gastosPanel, aggPanel);
 		else if (width > 1300 && height > 700)
-			resP(resoD, notasF, pesosF, newDay, clearEverthing, gastosPanel, aggPanel);
+			resP(resoD, resoXP, resoP, resoM, resoG, notasF, pesosF, newDay, clearEverthing, gastosPanel, aggPanel);
 		else
-			resXP(resoD, notasF, pesosF, newDay, clearEverthing, gastosPanel, aggPanel);
+			resXP(resoD, resoXP, resoP, resoM, resoG, notasF, pesosF, newDay, clearEverthing, gastosPanel, aggPanel);
 	}
 
 	// Gastos frame if there is more than 4
@@ -4180,7 +4320,6 @@ public class Reales extends JFrame {
 			JMenuItem reso2, JMenuItem reso3, JMenuItem reso4, JMenu help, JMenu hideMenu, JMenuItem keyShortcut,
 			JMenuItem creator, JMenuItem about) {
 		if (idioma == 0) {
-
 			gastos.setText("G A S T O S");// Spend of the day TITLE
 			agregado.setText("A G R E G A D O");// Added to cash title
 			hideBtn.setText("LOS BOTONES");
@@ -4233,7 +4372,7 @@ public class Reales extends JFrame {
 			keyShortcut.setText("ATAJOS DE TECLADO");
 			creator.setText("SOBRE EL CREADOR");
 			about.setText("SOBRE EL APLICATIVO");
-		} else {
+		} else if (idioma == 1) {
 			gastos.setText("G A S T O S");// Spend of the day TITLE
 			agregado.setText("A G R E G A D O");// Added to cash title
 			hideBtn.setText("OS BOTÕES");
@@ -4286,6 +4425,59 @@ public class Reales extends JFrame {
 			keyShortcut.setText("ATALHOS DO TECLADO");
 			creator.setText("SOBRE O CRIADOR");
 			about.setText("SOBRE O APLICATIVO");
+		} else {
+			gastos.setText("B I L L S");// Spend of the day TITLE
+			agregado.setText("A G G R E G A T E S");// Added to cash title
+			hideBtn.setText("BUTTONS");
+			noHide.setText("NOTHING");
+			hideDate.setText("DATE");
+			hideAll.setText("ALL");
+			newDay.setText("<html><center>Will stay<br>For tomorrow</center></html>");// REST
+			resoD.setText("OPTIMAL");
+			aggPanel.setText("↑MORE↓");
+			gastosPanel.setText("↑MORE↓");
+			summaryT[0].setText("Initial");
+			summaryT[1].setText("Bills");
+			summaryT[2].setText("Aggregates");
+			summaryT[3].setText("Sales");
+			summaryT[4].setText("Total");
+
+			diffResult[0].setText("Difference");
+			file.setText("FILE");
+			novo.setText("NEW DAY");
+			clear.setText("CLEAN ALL");
+			calc.setText("ASSUME");
+			save.setText("SAVE");
+			screenShot.setText("SCREENSHOT");
+			option.setText("SETTINGS");
+			exit.setText("EXIT");
+
+			summary.setText("SUMMARY");
+			sumV.setText("SUMMARY VIEWING");
+			effectChooser.setText("CHOOSE YOUR EFFECT");
+			sumV1.setText("FADING");
+			sumV2.setText("APPEAR WORD BY WORD");
+			sumV3.setText("APPEAR LETTER BY LETTER");
+			exMenu.setText("SAVE SUMMARY");
+			speedChooser.setText("ANIMATION SPEED");
+			speed1.setText("SLOW");
+			speed2.setText("MEDIUM");
+			speed3.setText("FAST");
+
+			goTo.setText("GO");
+			pesos.setText("PESOS");
+			fatura.setText("INVOICE");
+			firstFrame.setText("FIRST FRAME");
+			reso.setText("RESOLUTION");
+			reso1.setText("LARGE");
+			reso2.setText("MEDIUM");
+			reso3.setText("SMALL");
+			reso4.setText("X-SMALL");
+			help.setText("HELP");
+			hideMenu.setText("HIDE");
+			keyShortcut.setText("KEY SHORTCUT");
+			creator.setText("ABOUT THE CREATOR");
+			about.setText("ABOUT THE APP");
 		}
 	}
 
@@ -4326,6 +4518,9 @@ public class Reales extends JFrame {
 				, "Sobró R$" // sobro 23
 				, "Faltó R$" // falta 24
 				, "NO HAY NADA PARA ARMAR!"// nada mas 25
+				, "LA CAPTURA DE PANTALLA SE TOMA CON ÉXITO", // SCREENSJOT 25
+				"SALVADO CON ÉXITO, GRACIAS", // SAVE 26
+				"CIERRE DE CAJA - R$" // TITLE 27
 		};
 		String[] portugues = { "• CTRL + S → ir para a fatura.\n" + "• CTRL + P → ir para os pesos.\n"
 				+ "• CTRL + B → excluir tudo.\n" + "• CTRL + N → prepare-se para o dia seguinte.\n"
@@ -4363,11 +4558,82 @@ public class Reales extends JFrame {
 				, "Sobra R$" // sobro 23
 				, "Faltou R$" // falta 24
 				, "NÃO HÁ NADA PARA MONTAR!"// nada mas 25
+				, "A CAPTURA DE TELA FOI REALIZADA COM SUCESSO", "SALVO COM SUCESSO, OBRIGADO"// SCREENSJOT 25
+				, "FECHAMENTO DE CAIXA - $" // SAVE 26
+				, "CIERRE DE CAJA - R$" // TITLE 27
+		};
+		String[] english = { "• CTRL + S → go to invoice.\n" + "• CTRL + P → go to the pesos.\n"
+				+ "• CTRL + B → delete all.\n" + "• CTRL + N → get ready for the next day.\n"
+				+ "• arrows → up, down, left and right.\n" + "• CTRL + D → go to details.\n"
+				+ "• CTRL + I → go to the beginning.\n" + "• CTRL + G → go to expenses.\n"
+				+ "• CTRL + A → go to aggregate.\n" + "• CTRL + T → go to checkout.\n"
+				+ "• CTRL + E → go to the last number.\n" + "• CTRL + M → add set of 100 or 1000 if possible.\n"
+				+ "• CTRL + O → hide the buttons.\n" + "• CTRL + C → open settings."// atalho de tecla 1
+				, "KEY SHORTCUTS" // tecla de atalho 2
+				, "Credit and Designed by MhmdSAbdlh ©"// creator 3
+				,
+				"THIS APP IS DESIGNED FOR CEDROS AND NARJES FREE SHOP.\r\n"
+						+ "HAS A FRAME TO CLOSE THE BOX IN REALS AND PESOS.\r\n"
+						+ "THERE IS A FRAME TO CALCULATE THE CHANGE FOR A SALE, BOTH IN BRL AND IN PESOS.\r\n"
+						+ "KNOW HOW MUCH IT WILL BE FOR THE NEXT DAY.\r\n" + "3 METHODS OF GIVING CHANGE.\r\n"
+						+ "WILL CHANGE EVERYTHING ACCORDING TO THE SELECTED ICON.\r\n" + "\r\n"
+						+ "MOHAMAD ABDALLAH ABBASS ©"// about
+				, "CONFIGURATION"// conf title
+				, "ICON"// icon
+				, "LANGUAGE"// FIRST FRAME
+				, "KEY SHORTCUT"// KEY SHORTCUT
+				, "AUTO SAVE"// AUTO SAVE
+				, "DEFAULT"// DEFAULT 10
+				, "SAVE"// SAVE 11
+				, "YES"// YES 12
+				, "NO"// NO 13
+				, "Are you sure you want to leave?"// exit 14
+				, "EXIT"// exit15
+				, "YES /NEW DAY"// new day 16
+				, "DO YOU WANT TO START A NEW DAY?"// new day 17
+				, "NEW DAY" // new day 18
+				, "DO YOU WANT TO DELETE EVERYTHING?"// clear 19
+				, "DELETE EVERYTHING" // clear20
+				, "MORE "// mas 21
+				, "<html><center>There is no difference</html>"// diif 22
+				, "More R$" // sobro 23
+				, "Missed R$" // falta 24
+				, "THERE IS NOTHING TO ASSEMBLE!"// nada mas 25
+				, "THE SCREENSHOT IS TAKING SUCCESSFULY"// SCREENSJOT 25
+				, "SUCCESSFULLY SAVED, THANK YOU" // SAVE 26
+				, "CASH CLOSING - R$"// TITLE 27
 		};
 		if (idioma == 0)
 			return espanol;
-		else
+		else if (idioma == 1)
 			return portugues;
+		else
+			return english;
+	}
+
+	private void dateLang(int lang) {
+		if (lang == 0) {
+			monthS = new SimpleDateFormat("MMMM", new Locale("es")).format(Calendar.getInstance().getTime())
+					.toUpperCase();
+			dayN = new SimpleDateFormat("dd", new Locale("es")).format(Calendar.getInstance().getTime());
+			dayS = new SimpleDateFormat("EEEE", new Locale("es")).format(Calendar.getInstance().getTime())
+					.toUpperCase();
+			yearS = new SimpleDateFormat("YYYY", new Locale("es")).format(Calendar.getInstance().getTime());
+		} else if (lang == 1) {
+			monthS = new SimpleDateFormat("MMMM", new Locale("pt")).format(Calendar.getInstance().getTime())
+					.toUpperCase();
+			dayN = new SimpleDateFormat("dd", new Locale("pt")).format(Calendar.getInstance().getTime());
+			dayS = new SimpleDateFormat("EEEE", new Locale("pt")).format(Calendar.getInstance().getTime())
+					.toUpperCase();
+			yearS = new SimpleDateFormat("YYYY", new Locale("pt")).format(Calendar.getInstance().getTime());
+		} else {
+			monthS = new SimpleDateFormat("MMMM", new Locale("en")).format(Calendar.getInstance().getTime())
+					.toUpperCase();
+			dayN = new SimpleDateFormat("dd", new Locale("en")).format(Calendar.getInstance().getTime());
+			dayS = new SimpleDateFormat("EEEE", new Locale("en")).format(Calendar.getInstance().getTime())
+					.toUpperCase();
+			yearS = new SimpleDateFormat("YYYY", new Locale("en")).format(Calendar.getInstance().getTime());
+		}
 	}
 
 	// Auto-complete words for gastos and agregados
