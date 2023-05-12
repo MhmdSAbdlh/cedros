@@ -70,7 +70,7 @@ public class First extends JFrame {
 	static Color grisD = new Color(212, 212, 212);
 	static Color blueD = new Color(48, 107, 161);
 	static Color blueC = new Color(70, 156, 235);
-	static Color darkC = new Color(40, 40, 43);
+	static Color darkC = new Color(40, 40, 40);
 	static Color lightC = new Color(236, 236, 236);
 	static Border border = new LineBorder(Color.white, 2);
 	static Border workM = new LineBorder(Color.yellow, 3);
@@ -93,11 +93,11 @@ public class First extends JFrame {
 	private URL introP = getClass().getResource("images/menubar/intro.png");
 	private ImageIcon introI = new ImageIcon(introP);
 	String dayN = new SimpleDateFormat("dd").format(Calendar.getInstance().getTime());
-	String monthN = new SimpleDateFormat("M").format(Calendar.getInstance().getTime());
+	static String monthN = new SimpleDateFormat("M").format(Calendar.getInstance().getTime());
 	javax.swing.Timer timer;
 	int order = 0, wordL = 0;
 
-	static String appVersion = "v6.0";
+	static String appVersion = "v6.1";
 	private int language;
 
 	public static void main(String[] args) {
@@ -360,11 +360,10 @@ public class First extends JFrame {
 		date.set(Calendar.MINUTE, 29);
 		date.set(Calendar.SECOND, 55);
 		date.set(Calendar.MILLISECOND, 0);
-		timer.schedule(task, date.getTime());
-		if ((date1.getTime().getHours() == 17 && date1.getTime().getMinutes() > 29)
-				|| date1.getTime().getHours() > 17) {
+		if ((date1.getTime().getHours() == 17 && date1.getTime().getMinutes() > 29) || date1.getTime().getHours() > 17)
 			timer.cancel();
-		}
+		else
+			timer.schedule(task, date.getTime());
 	}
 
 	private void espIdioma(JLabel inputText, JButton showHide, JMenu file, JMenuItem exit, JMenuItem creator,
@@ -1003,7 +1002,7 @@ public class First extends JFrame {
 				}
 			}
 		};
-		timer = new javax.swing.Timer(100, letterByLetter);
+		timer = new javax.swing.Timer(50, letterByLetter);
 		timer.start();
 
 		// Close popup

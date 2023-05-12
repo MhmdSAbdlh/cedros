@@ -410,6 +410,15 @@ public class FaturaR extends JFrame {
 			cambioN.setEnabled(false);
 			cambioN2.setEnabled(false);
 			cambioN3.setEnabled(false);
+			cambioN.removeMouseListener(m1);
+			cambioN2.removeMouseListener(m2);
+			cambioN3.removeMouseListener(m3);
+			cambioN.setBorder(First.border);
+			cambioN2.setBorder(First.border);
+			cambioN3.setBorder(First.border);
+			cambioN.setBackground(redD);
+			cambioN2.setBackground(violetD);
+			cambioN3.setBackground(turD);
 		});
 		this.add(cambioN);
 		for (int i = 0; i < 2; i++)
@@ -439,6 +448,15 @@ public class FaturaR extends JFrame {
 			cambioN.setEnabled(false);
 			cambioN2.setEnabled(false);
 			cambioN3.setEnabled(false);
+			cambioN.removeMouseListener(m1);
+			cambioN2.removeMouseListener(m2);
+			cambioN3.removeMouseListener(m3);
+			cambioN.setBorder(First.border);
+			cambioN2.setBorder(First.border);
+			cambioN3.setBorder(First.border);
+			cambioN.setBackground(redD);
+			cambioN2.setBackground(violetD);
+			cambioN3.setBackground(turD);
 		});
 		this.add(cambioN2);
 		for (int i = 0; i < 2; i++)
@@ -468,6 +486,15 @@ public class FaturaR extends JFrame {
 			cambioN.setEnabled(false);
 			cambioN2.setEnabled(false);
 			cambioN3.setEnabled(false);
+			cambioN.removeMouseListener(m1);
+			cambioN2.removeMouseListener(m2);
+			cambioN3.removeMouseListener(m3);
+			cambioN.setBorder(First.border);
+			cambioN2.setBorder(First.border);
+			cambioN3.setBorder(First.border);
+			cambioN.setBackground(redD);
+			cambioN2.setBackground(violetD);
+			cambioN3.setBackground(turD);
 		});
 		this.add(cambioN3);
 		for (int i = 0; i < 2; i++)
@@ -1757,10 +1784,27 @@ public class FaturaR extends JFrame {
 		}
 	}
 
+	// Add a set of 100
+	private static int setCounter(int nbTwenty) {
+		int numHun = nbTwenty * 20;
+		int counter = 0;
+		while (numHun > 100) {
+			numHun -= 100;
+			counter++;
+		}
+		return counter;
+	}
+
 	// SAVE NEW VALUE
 	private static void saveProgress() {
 		String temp = totalFatura + "";
 		int z = 0;
+		int nbOf100 = 0, nbOf20 = Integer.valueOf(cajaTroco[1][4].getText());
+		if (nbOf20 > 5) {
+			nbOf100 = setCounter(nbOf20);
+			nbOf20 -= nbOf100 * 5;
+		} else
+			nbOf100 = 0;
 		try {
 			FileWriter savedF = new FileWriter("cedros.txt");
 			int i = 0;
@@ -1789,7 +1833,7 @@ public class FaturaR extends JFrame {
 			}
 			savedF.write(numbers[i] + System.lineSeparator());// set of 1000
 			i++;
-			savedF.write("0" + System.lineSeparator());// set of 100
+			savedF.write(nbOf100 + System.lineSeparator());// set of 100
 			i++;// valor of 200 in the cash + that the cliente paid
 			if (!First.isNumeric(trocoCT[7].getText()))
 				trocoCT[7].setText("0");
@@ -1798,7 +1842,10 @@ public class FaturaR extends JFrame {
 			i++;
 			z = i + 7;
 			while (i < z) {// Valores from 1 to 100
-				savedF.write(cajaTroco[1][z - i - 1].getText() + System.lineSeparator());
+				if (i == (z - 5)) {
+					savedF.write(nbOf20 + System.lineSeparator());
+				} else
+					savedF.write(cajaTroco[1][z - i - 1].getText() + System.lineSeparator());
 				i++;
 			}
 			savedF.write(numbers[i]);// pix save

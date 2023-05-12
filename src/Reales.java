@@ -200,7 +200,7 @@ public class Reales extends JFrame {
 	static int gastosT = 0, agregadoT = 0;
 	static int restN, totalCaja = 0, nbOf20 = 0;
 	int width, height, language;
-	static int colorX = 0, order = 0, speedValue, wordsN, wordL, effChooser;
+	static int colorX = 0, order = 0, speedValue, wordsN, wordL, effChooser, colorBW = 254;
 	boolean status = false;
 	Timer timer;
 	String conf[] = new String[10];
@@ -448,9 +448,8 @@ public class Reales extends JFrame {
 		First.btnStyle(gastosPanel);
 		gastosPanel.setBackground(redT);
 		gastosPanel.setForeground(First.lightC);
-		gastosPanel.addActionListener(e -> {
-			gastosFrame(keywords, notasF, pesosF, newDay, clearEverthing, resoD, gastosPanel);
-		});
+		gastosPanel.addActionListener(
+				e -> gastosFrame(keywords, notasF, pesosF, newDay, clearEverthing, resoD, gastosPanel));
 		gastosPanel.addMouseListener(new MouseListener() {
 			@Override
 			public void mouseReleased(MouseEvent e) {
@@ -512,9 +511,7 @@ public class Reales extends JFrame {
 		First.btnStyle(aggPanel);
 		aggPanel.setBackground(greenT);
 		aggPanel.setForeground(First.lightC);
-		aggPanel.addActionListener(e -> {
-			aggFrame(keywords, notasF, pesosF, newDay, clearEverthing, resoD, gastosPanel);
-		});
+		aggPanel.addActionListener(e -> aggFrame(keywords, notasF, pesosF, newDay, clearEverthing, resoD, gastosPanel));
 		aggPanel.addMouseListener(new MouseListener() {
 			@Override
 			public void mouseReleased(MouseEvent e) {
@@ -1145,7 +1142,8 @@ public class Reales extends JFrame {
 					e -> JOptionPane.showMessageDialog(null, idiomaString(language)[0], idiomaString(language)[1], 1));
 		else
 			keyShortcut.hide();
-		creator.addActionListener(e -> JOptionPane.showMessageDialog(null, idiomaString(language)[2], "SOBRE MI", 1));
+		creator.addActionListener(
+				e -> JOptionPane.showMessageDialog(null, idiomaString(language)[2], idiomaString(language)[28], 1));
 		about.addActionListener(
 				e -> JOptionPane.showMessageDialog(null, idiomaString(language)[3], "CEDROS/NARJES", 1));
 		hideMenu.add(noHide);
@@ -1241,15 +1239,6 @@ public class Reales extends JFrame {
 		else
 			resG(resoD, reso4, reso3, reso2, reso1, notasF, pesosF, newDay, clearEverthing, gastosPanel, aggPanel);
 
-		// Automatically add sets of 100 and 1000
-		if (aggBtn[0].isShowing() && aggBtn[1].isShowing()) {
-			addSetMil();
-			addSetHun();
-		} else if (aggBtn[0].isShowing())
-			addSetMil();
-		else if (aggBtn[1].isShowing())
-			addSetHun();
-
 		// LANGUAGE
 		idiomaTexts(language, hideBtn, noHide, hideDate, hideAll, notasF, newDay, resoD, aggPanel, gastosPanel, file,
 				novo, clear, calc, save, screenShot, option, exit, summary, sumV, effectChooser, sumV1, sumV2, sumV3,
@@ -1299,9 +1288,30 @@ public class Reales extends JFrame {
 		tempFile1.mkdir();
 		File tempFile2 = new File(tempFile1 + "\\" + monthS);
 		tempFile2.mkdir();
-		File newFile = new File(tempFile2, "r " + dayN + "-" + monthS + "-" + yearS + ".png");
+		File tempFile3 = new File(tempFile2 + "\\IMG");
+		tempFile3.mkdir();
+		File newFile = new File(tempFile3, "R$ " + dayN + "-" + monthS + "-" + yearS + ".png");
 		try {
 			ImageIO.write(img, "png", newFile);
+			colorBW = 254;
+			ActionListener letterByLetter = new ActionListener() {
+
+				@Override
+				public void actionPerformed(ActionEvent e) {
+
+					Reales.this.getContentPane().setBackground(new Color(colorBW, colorBW, colorBW));
+					if (colorBW > 40)// Details fade in
+						colorBW -= 2;
+					else {
+						colorBW = 40;
+						Reales.this.getContentPane().setBackground(new Color(colorBW, colorBW, colorBW));
+						timer.stop();
+					}
+				}
+			};
+
+			timer = new Timer(1, letterByLetter);
+			timer.start();
 		} catch (IOException e) {
 		}
 	}
@@ -2253,7 +2263,7 @@ public class Reales extends JFrame {
 			tempFile1.mkdir();
 			File tempFile2 = new File(tempFile1 + "\\" + monthS);
 			tempFile2.mkdir();
-			File newFile = new File(tempFile2, titleName() + " " + dayS + " " + dayN + "-" + "reales.txt");
+			File newFile = new File(tempFile2, "R$ " + dayN + "-" + First.monthN + " (" + dayS + ").txt");
 			FileWriter savedF = new FileWriter(newFile);
 			String[] espSumm = { "*VENTAS:\nUSTED NO VENDIÓ NADA" + System.lineSeparator(), // 0
 					"*VENTAS:\nUSTED VENDIÓ UNA VENTA SOLO QUE VALE R$" + totalVenta + System.lineSeparator(), // 1
@@ -2417,7 +2427,6 @@ public class Reales extends JFrame {
 				}
 			}).start();
 			dlg.setVisible(true);
-			System.out.println(lang);
 		} catch (Exception e2) {
 			JOptionPane opt = new JOptionPane(
 					lang == 0 ? "ERROR, NO SALVO!" : lang == 1 ? "ERROR, NAO SALVO!" : "ERROR",
@@ -3615,11 +3624,8 @@ public class Reales extends JFrame {
 		details[i][j].addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
-				// Hide
-				if ((e.getKeyCode() == KeyEvent.VK_O) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0))
-					hideBtn(notasF, pesosF, newDay, clearEverthing, hideBtn);
 				// GO TO Notas
-				else if ((e.getKeyCode() == KeyEvent.VK_S) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+				if ((e.getKeyCode() == KeyEvent.VK_S) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
 					saveProgress();
 					frame.dispose();
 					FaturaR.totalC.setText("0");
@@ -3739,11 +3745,7 @@ public class Reales extends JFrame {
 		initialDay.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
-				// Hide
-				if ((e.getKeyCode() == KeyEvent.VK_O) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0))
-					hideBtn(notasF, pesosF, newDay, clearEverthing, hideBtn);
-				else // Clear
-				if ((e.getKeyCode() == KeyEvent.VK_B) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+				if ((e.getKeyCode() == KeyEvent.VK_B) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {// Clear
 					clearAll();
 				} // Conf
 				else if ((e.getKeyCode() == KeyEvent.VK_C) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
@@ -3788,11 +3790,8 @@ public class Reales extends JFrame {
 		agregadoTable[i].addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
-				// Hide
-				if ((e.getKeyCode() == KeyEvent.VK_O) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0))
-					hideBtn(notasF, pesosF, newDay, clearEverthing, hideBtn);
 				// GO TO Notas
-				else if ((e.getKeyCode() == KeyEvent.VK_S) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+				if ((e.getKeyCode() == KeyEvent.VK_S) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
 					saveProgress();
 					FaturaR.totalC.setText("0");
 					FaturaR.total.setText("0");
@@ -3910,11 +3909,8 @@ public class Reales extends JFrame {
 		gastosTable[i].addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
-				// Hide
-				if ((e.getKeyCode() == KeyEvent.VK_O) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0))
-					hideBtn(notasF, pesosF, newDay, clearEverthing, hideBtn);
 				// GO TO Notas
-				else if ((e.getKeyCode() == KeyEvent.VK_S) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+				if ((e.getKeyCode() == KeyEvent.VK_S) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
 					saveProgress();
 					FaturaR.totalC.setText("0");
 					FaturaR.total.setText("0");
@@ -4033,11 +4029,8 @@ public class Reales extends JFrame {
 		panelCnum[i].addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
-				// Hide
-				if ((e.getKeyCode() == KeyEvent.VK_O) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0))
-					hideBtn(notasF, pesosF, newDay, clearEverthing, hideBtn);
 				// GO TO Notas
-				else if ((e.getKeyCode() == KeyEvent.VK_S) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+				if ((e.getKeyCode() == KeyEvent.VK_S) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
 					saveProgress();
 					FaturaR.totalC.setText("0");
 					FaturaR.total.setText("0");
@@ -4189,7 +4182,7 @@ public class Reales extends JFrame {
 	private void gastosFrame(ArrayList<String> keywords, JButton notasF, JButton pesosF, JButton newDay,
 			JButton clearEverthing, JMenuItem resoD, JButton gastosPanel) {
 		JFrame gastosFrame = new JFrame();
-		gastosFrame.setTitle("GASTOS");
+		gastosFrame.setTitle(idiomaString(language)[29]);
 		gastosFrame.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		gastosFrame.setAlwaysOnTop(false);
 		gastosFrame.setSize(300, 403);
@@ -4197,6 +4190,7 @@ public class Reales extends JFrame {
 		gastosFrame.setResizable(false);
 		gastosFrame.setLayout(null);
 		gastosFrame.getContentPane().setBackground(First.redC);
+		gastosFrame.setIconImage(notasI.getImage());
 
 		for (int i = 0; i < 8; i++) {
 			// Autocomplete
@@ -4207,6 +4201,14 @@ public class Reales extends JFrame {
 			gTable[i].removeFocusListener(textFocus);
 			gTable[i].setBackground(First.redD);
 			gTable[i].setForeground(Color.white);
+			gTable[i].addKeyListener(new KeyAdapter() {// Escape to close
+				@SuppressWarnings("static-access")
+				public void keyPressed(KeyEvent ke) {
+					if (ke.getKeyCode() == ke.VK_ESCAPE) {
+						gastosFrame.dispose();
+					}
+				}
+			});
 			gastosFrame.add(gTable[i]);
 		}
 		for (int i = 8; i < 16; i++) {
@@ -4215,6 +4217,14 @@ public class Reales extends JFrame {
 			gTable[i].removeFocusListener(textFocus);
 			gTable[i].setBackground(First.redC);
 			gTable[i].setForeground(Color.white);
+			gTable[i].addKeyListener(new KeyAdapter() {// Escape to close
+				@SuppressWarnings("static-access")
+				public void keyPressed(KeyEvent ke) {
+					if (ke.getKeyCode() == ke.VK_ESCAPE) {
+						gastosFrame.dispose();
+					}
+				}
+			});
 			gastosFrame.add(gTable[i]);
 		}
 		// Close popup
@@ -4233,7 +4243,7 @@ public class Reales extends JFrame {
 	private void aggFrame(ArrayList<String> keywords, JButton notasF, JButton pesosF, JButton newDay,
 			JButton clearEverthing, JMenuItem resoD, JButton gastosPanel) {
 		JFrame aggFrame = new JFrame();
-		aggFrame.setTitle("AGREGADOS");
+		aggFrame.setTitle(idiomaString(language)[30]);
 		aggFrame.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		aggFrame.setAlwaysOnTop(false);
 		aggFrame.setSize(300, 403);
@@ -4241,6 +4251,7 @@ public class Reales extends JFrame {
 		aggFrame.setResizable(false);
 		aggFrame.setLayout(null);
 		aggFrame.getContentPane().setBackground(First.greenC);
+		aggFrame.setIconImage(notasI.getImage());
 
 		for (int i = 0; i < 8; i++) {
 			// Autocomplete
@@ -4251,6 +4262,14 @@ public class Reales extends JFrame {
 			aTable[i].setBounds(2, 2 + 45 * i, 140, 45);
 			aTable[i].setBackground(First.greenD);
 			aTable[i].setForeground(Color.white);
+			aTable[i].addKeyListener(new KeyAdapter() {// Escape to close
+				@SuppressWarnings("static-access")
+				public void keyPressed(KeyEvent ke) {
+					if (ke.getKeyCode() == ke.VK_ESCAPE) {
+						aggFrame.dispose();
+					}
+				}
+			});
 			aggFrame.add(aTable[i]);
 		}
 		for (int i = 8; i < 16; i++) {
@@ -4259,6 +4278,14 @@ public class Reales extends JFrame {
 			aTable[i].setBounds(142, 2 + 45 * (i - 8), 140, 45);
 			aTable[i].setBackground(First.greenC);
 			aTable[i].setForeground(Color.white);
+			aTable[i].addKeyListener(new KeyAdapter() {// Escape to close
+				@SuppressWarnings("static-access")
+				public void keyPressed(KeyEvent ke) {
+					if (ke.getKeyCode() == ke.VK_ESCAPE) {
+						aggFrame.dispose();
+					}
+				}
+			});
 			aggFrame.add(aTable[i]);
 		}
 		// Close popup
@@ -4487,40 +4514,42 @@ public class Reales extends JFrame {
 				+ "• FLECHAS → subir, abajo, derecha e izquierda.\n" + "• CTRL + D → ir al detalles.\n"
 				+ "• CTRL + I → ir al inicio.\n" + "• CTRL + G → ir al gastos.\n" + "• CTRL + A → ir al agregado.\n"
 				+ "• CTRL + T → ir a la caja.\n" + "• CTRL + E → ir al ultimo numero.\n"
-				+ "• CTRL + M → mas un 100 o de 1000 si posible.\n" + "• CTRL + O → esconder los botones.\n"
-				+ "• CTRL + C → abrir el configuración."// key shortcut 1
-				, "ATAJOS DE TECLADO" // key shortcut 2
-				, "Crédito y Diseñado por MhmdSAbdlh ©"// creator 3
+				+ "• CTRL + M → mas un 100 o de 1000 si posible.\n" + "• CTRL + C → abrir el configuración."// 0
+				, "ATAJOS DE TECLADO" // key shortcut 1
+				, "Crédito y Diseñado por MhmdSAbdlh ©"// creator 2
 				,
 				"ESTA APLICACIÓN ESTÁ DISEÑADA PARA CEDROS Y NARJES FREE SHOP.\r\n"
 						+ "TIENE MARCO PARA CERRAR LA CAJA TANTO EN REALES COMO PESOS.\r\n"
 						+ "TIENE UN MARCO PARA CALCULAR EL TROCO DE UNA VENTA TANTO EN REALES COMO PESOS.\r\n"
 						+ "SABE CÓMO QUEDARÁ PARA EL PRÓXIMO DÍA.\r\n" + "3 MÉTODOS PARA DAR EL CAMBIO.\r\n"
 						+ "CAMBIARÁ TODO SEGÚN EL ICONO SELECCIONADO.\r\n" + "\r\n" + "MOHAMAD ABDALLAH ABBASS ©"// about4
-				, "CONFIGURACIÓN"// conf title 5
-				, "ICONO"// icon 6
-				, "IDIOMA"// LANGUAGE 7
-				, "xxx"// 8
-				, "AUTOGUARDAR"// AUTO SAVE 9
-				, "POR DEFECTO"// DEFAULT 10
-				, "GUARDAR"// SAVE 11
-				, "SI"// YES 12
-				, "NO"// NO 13
-				, "¿Seguro que quieres salir?"// exit 14
-				, "SALIR"// exit15
-				, "Si /Nuevo Dia"// new day 16
-				, "¿QUIERES EMPEZAR NUEVO DIA?"// new day 17
-				, "NUEVO DIA" // new day 18
-				, "¿QUIERES BORRAR TODO?"// clear 19
-				, "BORRAR TODO" // clear20
-				, "Más "// mas 21
-				, "<html><center>No Hay Diferencia</html>"// diif 22
-				, "Sobró R$" // sobro 23
-				, "Faltó R$" // falta 24
-				, "NO HAY NADA PARA ARMAR!"// nada mas 25
+				, "CONFIGURACIÓN"// conf title 4
+				, "ICONO"// icon 5
+				, "IDIOMA"// LANGUAGE 6
+				, "xxx"// 7
+				, "AUTOGUARDAR"// AUTO SAVE 8
+				, "POR DEFECTO"// DEFAULT 9
+				, "GUARDAR"// SAVE 10
+				, "SI"// YES 11
+				, "NO"// NO 12
+				, "¿Seguro que quieres salir?"// exit 13
+				, "SALIR"// exit 14
+				, "Si /Nuevo Dia"// new day 15
+				, "¿QUIERES EMPEZAR NUEVO DIA?"// new day 16
+				, "NUEVO DIA" // new day 17
+				, "¿QUIERES BORRAR TODO?"// clear 18
+				, "BORRAR TODO" // clear 19
+				, "Más "// mas 20
+				, "<html><center>No Hay Diferencia</html>"// diif 21
+				, "Sobró R$" // sobro 22
+				, "Faltó R$" // falta 23
+				, "NO HAY NADA PARA ARMAR!"// nada mas 24
 				, "LA CAPTURA DE PANTALLA SE TOMA CON ÉXITO", // SCREENSJOT 25
-				"SALVADO CON ÉXITO, GRACIAS", // SAVE 26
-				"CIERRE DE CAJA - R$" // TITLE 27
+				"SALVADO CON ÉXITO, GRACIAS" // SAVE 26
+				, "CIERRE DE CAJA - R$" // TITLE 27
+				, "SOBRE MI"// about me 28
+				, "GASTOS"// 29
+				, "AGREGADOS"// 30
 		};
 		String[] portugues = { "• CTRL + S → ir para a fatura.\n" + "• CTRL + P → ir para os pesos.\n"
 				+ "• CTRL + B → excluir tudo.\n" + "• CTRL + N → prepare-se para o dia seguinte.\n"
@@ -4528,7 +4557,7 @@ public class Reales extends JFrame {
 				+ "• CTRL + I → ir para o início.\n" + "• CTRL + G → ir para as despesas.\n"
 				+ "• CTRL + A → ir para agregar.\n" + "• CTRL + T → ir para finalizar a compra.\n"
 				+ "• CTRL + E → ir para o último número.\n" + "• CTRL + M → mais 100 ou 1000 se possível.\n"
-				+ "• CTRL + O → ocultar os botões.\n" + "• CTRL + C → abrir configurações."// atalho de tecla 1
+				+ "• CTRL + C → abrir configurações."// atalho de tecla 1
 				, "ATALHOS DE TECLAS" // tecla de atalho 2
 				, "Crédito e Desenhado por MhmdSAbdlh ©"// creator 3
 				,
@@ -4559,16 +4588,18 @@ public class Reales extends JFrame {
 				, "Faltou R$" // falta 24
 				, "NÃO HÁ NADA PARA MONTAR!"// nada mas 25
 				, "A CAPTURA DE TELA FOI REALIZADA COM SUCESSO", "SALVO COM SUCESSO, OBRIGADO"// SCREENSJOT 25
-				, "FECHAMENTO DE CAIXA - $" // SAVE 26
-				, "CIERRE DE CAJA - R$" // TITLE 27
+				, "FECHAMENTO DE CAIXA - R$" // SAVE 26
+				, "SOBRE MIM"// about me 28
+				, "GASTOS"// 29
+				, "AGREGADOS"// 30
 		};
-		String[] english = { "• CTRL + S → go to invoice.\n" + "• CTRL + P → go to the pesos.\n"
-				+ "• CTRL + B → delete all.\n" + "• CTRL + N → get ready for the next day.\n"
-				+ "• arrows → up, down, left and right.\n" + "• CTRL + D → go to details.\n"
-				+ "• CTRL + I → go to the beginning.\n" + "• CTRL + G → go to expenses.\n"
-				+ "• CTRL + A → go to aggregate.\n" + "• CTRL + T → go to checkout.\n"
-				+ "• CTRL + E → go to the last number.\n" + "• CTRL + M → add set of 100 or 1000 if possible.\n"
-				+ "• CTRL + O → hide the buttons.\n" + "• CTRL + C → open settings."// atalho de tecla 1
+		String[] english = {
+				"• CTRL + S → go to invoice.\n" + "• CTRL + P → go to the pesos.\n" + "• CTRL + B → delete all.\n"
+						+ "• CTRL + N → get ready for the next day.\n" + "• arrows → up, down, left and right.\n"
+						+ "• CTRL + D → go to details.\n" + "• CTRL + I → go to the beginning.\n"
+						+ "• CTRL + G → go to expenses.\n" + "• CTRL + A → go to aggregate.\n"
+						+ "• CTRL + T → go to checkout.\n" + "• CTRL + E → go to the last number.\n"
+						+ "• CTRL + M → add set of 100 or 1000 if possible.\n" + "• CTRL + C → open settings."// 0
 				, "KEY SHORTCUTS" // tecla de atalho 2
 				, "Credit and Designed by MhmdSAbdlh ©"// creator 3
 				,
@@ -4602,6 +4633,9 @@ public class Reales extends JFrame {
 				, "THE SCREENSHOT IS TAKING SUCCESSFULY"// SCREENSJOT 25
 				, "SUCCESSFULLY SAVED, THANK YOU" // SAVE 26
 				, "CASH CLOSING - R$"// TITLE 27
+				, "ABOUT ME"// about me 28
+				, "BILLS"// 29
+				, "AGGREGATES"// 30
 		};
 		if (idioma == 0)
 			return espanol;

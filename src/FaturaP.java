@@ -415,6 +415,15 @@ public class FaturaP extends JFrame {
 			cambioN.setEnabled(false);
 			cambioN2.setEnabled(false);
 			cambioN3.setEnabled(false);
+			cambioN.removeMouseListener(m1);
+			cambioN2.removeMouseListener(m2);
+			cambioN3.removeMouseListener(m3);
+			cambioN.setBorder(First.border);
+			cambioN2.setBorder(First.border);
+			cambioN3.setBorder(First.border);
+			cambioN.setBackground(redD);
+			cambioN2.setBackground(violetD);
+			cambioN3.setBackground(turD);
 		});
 		this.add(cambioN);
 		for (int i = 0; i < 2; i++)
@@ -444,6 +453,15 @@ public class FaturaP extends JFrame {
 			cambioN.setEnabled(false);
 			cambioN2.setEnabled(false);
 			cambioN3.setEnabled(false);
+			cambioN.removeMouseListener(m1);
+			cambioN2.removeMouseListener(m2);
+			cambioN3.removeMouseListener(m3);
+			cambioN.setBorder(First.border);
+			cambioN2.setBorder(First.border);
+			cambioN3.setBorder(First.border);
+			cambioN.setBackground(redD);
+			cambioN2.setBackground(violetD);
+			cambioN3.setBackground(turD);
 		});
 		this.add(cambioN2);
 		for (int i = 0; i < 2; i++)
@@ -473,6 +491,15 @@ public class FaturaP extends JFrame {
 			cambioN.setEnabled(false);
 			cambioN2.setEnabled(false);
 			cambioN3.setEnabled(false);
+			cambioN.removeMouseListener(m1);
+			cambioN2.removeMouseListener(m2);
+			cambioN3.removeMouseListener(m3);
+			cambioN.setBorder(First.border);
+			cambioN2.setBorder(First.border);
+			cambioN3.setBorder(First.border);
+			cambioN.setBackground(redD);
+			cambioN2.setBackground(violetD);
+			cambioN3.setBackground(turD);
 		});
 		this.add(cambioN3);
 		for (int i = 0; i < 2; i++)
