@@ -1292,6 +1292,7 @@ public class Reales extends JFrame {
 					for (int i = 0; i < 5; i++)
 						panelCnum[i].setText("");
 					panelCnum[5].setText("" + nbOf20);
+					panelCnum[10].setText("");// pix
 					sumF();
 					System.exit(0);
 				}
@@ -2759,7 +2760,7 @@ public class Reales extends JFrame {
 				gTable[i].setText("");
 				aTable[i].setText("");
 			}
-			for (int i = 0; i < 10; i++)
+			for (int i = 0; i < 11; i++)
 				panelCnum[i].setText("");
 			sumF();
 		}
@@ -2771,19 +2772,20 @@ public class Reales extends JFrame {
 				JOptionPane.OK_CANCEL_OPTION);
 		if (op == 0) {
 			exBtn(language);
-			for (int i = 0; i < 6; i++)
+			for (int i = 0; i < 6; i++)// table detail
 				for (int j = 0; j < 20; j++)
 					details[i][j].setText("");
 			initialDay.setText(restN + "");
-			for (int i = 0; i < 16; i++) {
+			for (int i = 0; i < 16; i++) {// gastos nad agregados
 				gastosTable[i].setText("");
 				agregadoTable[i].setText("");
 				gTable[i].setText("");
 				aTable[i].setText("");
 			}
-			for (int i = 0; i < 5; i++)
+			for (int i = 0; i < 5; i++)// set of 1000 -> 50
 				panelCnum[i].setText("");
-			panelCnum[5].setText("" + nbOf20);
+			panelCnum[5].setText("" + nbOf20);// if there are more than 200 menos 20
+			panelCnum[10].setText("");// pix
 			sumF();
 		}
 	}
