@@ -671,6 +671,25 @@ public class Pesos extends JFrame {
 		clear.addActionListener(e -> clearAll());
 		save.addActionListener(e -> saveProgress());
 		screenShot.addActionListener(e -> {
+			colorBW = 254;
+			ActionListener letterByLetter = new ActionListener() {
+
+				@Override
+				public void actionPerformed(ActionEvent e) {
+
+					Pesos.this.getContentPane().setBackground(new Color(colorBW, colorBW, colorBW));
+					if (colorBW > 40)// Details fade in
+						colorBW -= 3;
+					else {
+						colorBW = 40;
+						Pesos.this.getContentPane().setBackground(new Color(colorBW, colorBW, colorBW));
+						timer.stop();
+					}
+				}
+			};
+
+			timer = new Timer(1, letterByLetter);
+			timer.start();
 			screenShooter();
 			JOptionPane opt = new JOptionPane(idiomaString(language)[24], JOptionPane.NO_OPTION);
 			final JDialog dlg = opt.createDialog("SALVO");
@@ -4330,25 +4349,6 @@ public class Pesos extends JFrame {
 		File newFile = new File(tempFile3, "P$ " + dayN + "-" + monthS + "-" + yearS + ".png");
 		try {
 			ImageIO.write(img, "png", newFile);
-			colorBW = 254;
-			ActionListener letterByLetter = new ActionListener() {
-
-				@Override
-				public void actionPerformed(ActionEvent e) {
-
-					Pesos.this.getContentPane().setBackground(new Color(colorBW, colorBW, colorBW));
-					if (colorBW > 40)// Details fade in
-						colorBW -= 2;
-					else {
-						colorBW = 40;
-						Pesos.this.getContentPane().setBackground(new Color(colorBW, colorBW, colorBW));
-						timer.stop();
-					}
-				}
-			};
-
-			timer = new Timer(1, letterByLetter);
-			timer.start();
 		} catch (IOException e) {
 		}
 	}

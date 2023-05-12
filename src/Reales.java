@@ -668,6 +668,25 @@ public class Reales extends JFrame {
 		clear.addActionListener(e -> clearAll());
 		save.addActionListener(e -> saveProgress());
 		screenShot.addActionListener(e -> {
+			colorBW = 254;
+			ActionListener letterByLetter = new ActionListener() {
+
+				@Override
+				public void actionPerformed(ActionEvent e) {
+
+					Reales.this.getContentPane().setBackground(new Color(colorBW, colorBW, colorBW));
+					if (colorBW > 40)// Details fade in
+						colorBW -= 3;
+					else {
+						colorBW = 40;
+						Reales.this.getContentPane().setBackground(new Color(colorBW, colorBW, colorBW));
+						timer.stop();
+					}
+				}
+			};
+
+			timer = new Timer(1, letterByLetter);
+			timer.start();
 			screenShooter();
 			JOptionPane opt = new JOptionPane(idiomaString(language)[25], JOptionPane.NO_OPTION);
 			final JDialog dlg = opt.createDialog("SALVO");
@@ -1293,25 +1312,6 @@ public class Reales extends JFrame {
 		File newFile = new File(tempFile3, "R$ " + dayN + "-" + monthS + "-" + yearS + ".png");
 		try {
 			ImageIO.write(img, "png", newFile);
-			colorBW = 254;
-			ActionListener letterByLetter = new ActionListener() {
-
-				@Override
-				public void actionPerformed(ActionEvent e) {
-
-					Reales.this.getContentPane().setBackground(new Color(colorBW, colorBW, colorBW));
-					if (colorBW > 40)// Details fade in
-						colorBW -= 2;
-					else {
-						colorBW = 40;
-						Reales.this.getContentPane().setBackground(new Color(colorBW, colorBW, colorBW));
-						timer.stop();
-					}
-				}
-			};
-
-			timer = new Timer(1, letterByLetter);
-			timer.start();
 		} catch (IOException e) {
 		}
 	}
