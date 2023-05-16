@@ -204,6 +204,10 @@ public class Pesos extends JFrame {
 	JLabel date = new JLabel();// date of the day
 	String monthS, dayN, dayS, yearS;
 
+	String currentpath = System.getProperty("user.dir");
+	File tempFile0 = new File(currentpath + "\\data");
+	File newFile = new File(tempFile0, "conf.txt");
+
 	FocusListener textFocus = new FocusListener() {
 
 		@Override
@@ -222,34 +226,26 @@ public class Pesos extends JFrame {
 		First.timeToClose();
 
 		// Open Conf
-		URL url;
+		tempFile0.mkdir();
 		BufferedReader dataOpened = null;
 		String line = "";
 		int z = 0;
 		try {
-			dataOpened = new BufferedReader(new FileReader(new File("conf.txt")));
+			dataOpened = new BufferedReader(new FileReader(newFile));
 			while ((line = dataOpened.readLine()) != null) {
 				conf[z] = line.toString();
 				z++;
 			}
 			dataOpened.close();
 		} catch (Exception e) {
-		}
-		// Icon
-		if (conf[0] == null || conf[0].equals("0")) {
-			url = getClass().getResource("images/icon/cedros0.png");
-			restTmrw.show();
-		} else if (conf[0].equals("1")) {
-			url = getClass().getResource("images/icon/cedros1.png");
-			restTmrw.show();
-		} else if (conf[0].equals("2")) {
-			url = getClass().getResource("images/icon/cedros2.png");
+		} // icon
+		if (conf[0] == null || !conf[0].equals("3")) {
+			this.setIconImage(new ImageIcon(getClass().getResource("images/icon/cedrosI.png")).getImage());
 			restTmrw.show();
 		} else {
-			url = getClass().getResource("images/icon/narjes.png");
+			this.setIconImage(new ImageIcon(getClass().getResource("images/icon/narjesI.png")).getImage());
 			restTmrw.hide();
 		}
-		this.setIconImage(new ImageIcon(url).getImage());
 		// LANGUAGE
 		if (conf[7] == null || conf[7].equals("0"))
 			language = 0;
@@ -440,6 +436,8 @@ public class Pesos extends JFrame {
 			// Autocomplete
 			AutoComplete autoComplete = new AutoComplete(gastosTable[i], keywords);
 			gastosTable[i].getDocument().addDocumentListener(autoComplete);
+			autoComplete = new AutoComplete(gTable[i], keywords);
+			gTable[i].getDocument().addDocumentListener(autoComplete);
 			if (i < 4) {
 				textFieldStyle(gastosTable[i]);
 				gastosTable[i].setBackground(First.redD);
@@ -506,6 +504,8 @@ public class Pesos extends JFrame {
 			// Autocomplete
 			AutoComplete autoComplete = new AutoComplete(agregadoTable[i], keywords);
 			agregadoTable[i].getDocument().addDocumentListener(autoComplete);
+			autoComplete = new AutoComplete(aTable[i], keywords);
+			aTable[i].getDocument().addDocumentListener(autoComplete);
 			if (i < 4) {
 				textFieldStyle(agregadoTable[i]);
 				agregadoTable[i].setBackground(First.greenD);
@@ -763,7 +763,7 @@ public class Pesos extends JFrame {
 			sumV3.setEnabled(true);
 			conf[8] = "0";
 			try {
-				FileWriter savedF = new FileWriter("conf.txt");
+				FileWriter savedF = new FileWriter(newFile);
 				savedF.write((conf[0].equals("null") ? 0 : conf[0]) + System.lineSeparator());
 				savedF.write((conf[1].equals("null") ? 0 : conf[1]) + System.lineSeparator());
 				savedF.write((conf[2].equals("null") ? "false" : conf[2]) + System.lineSeparator());
@@ -785,7 +785,7 @@ public class Pesos extends JFrame {
 			sumV3.setEnabled(true);
 			conf[8] = "1";
 			try {
-				FileWriter savedF = new FileWriter("conf.txt");
+				FileWriter savedF = new FileWriter(newFile);
 				savedF.write((conf[0].equals("null") ? 0 : conf[0]) + System.lineSeparator());
 				savedF.write((conf[1].equals("null") ? 0 : conf[1]) + System.lineSeparator());
 				savedF.write((conf[2].equals("null") ? "false" : conf[2]) + System.lineSeparator());
@@ -807,7 +807,7 @@ public class Pesos extends JFrame {
 			sumV3.setEnabled(false);
 			conf[8] = "2";
 			try {
-				FileWriter savedF = new FileWriter("conf.txt");
+				FileWriter savedF = new FileWriter(newFile);
 				savedF.write((conf[0].equals("null") ? 0 : conf[0]) + System.lineSeparator());
 				savedF.write((conf[1].equals("null") ? 0 : conf[1]) + System.lineSeparator());
 				savedF.write((conf[2].equals("null") ? "false" : conf[2]) + System.lineSeparator());
@@ -840,7 +840,7 @@ public class Pesos extends JFrame {
 		speed1.addActionListener(e -> {
 			conf[6] = "0";
 			try {
-				FileWriter savedF = new FileWriter("conf.txt");
+				FileWriter savedF = new FileWriter(newFile);
 				savedF.write((conf[0].equals("null") ? 0 : conf[0]) + System.lineSeparator());
 				savedF.write((conf[1].equals("null") ? 0 : conf[1]) + System.lineSeparator());
 				savedF.write((conf[2].equals("null") ? "false" : conf[2]) + System.lineSeparator());
@@ -861,7 +861,7 @@ public class Pesos extends JFrame {
 		speed2.addActionListener(e -> {
 			conf[6] = "1";
 			try {
-				FileWriter savedF = new FileWriter("conf.txt");
+				FileWriter savedF = new FileWriter(newFile);
 				savedF.write((conf[0].equals("null") ? 0 : conf[0]) + System.lineSeparator());
 				savedF.write((conf[1].equals("null") ? 0 : conf[1]) + System.lineSeparator());
 				savedF.write((conf[2].equals("null") ? "false" : conf[2]) + System.lineSeparator());
@@ -882,7 +882,7 @@ public class Pesos extends JFrame {
 		speed3.addActionListener(e -> {
 			conf[6] = "2";
 			try {
-				FileWriter savedF = new FileWriter("conf.txt");
+				FileWriter savedF = new FileWriter(newFile);
 				savedF.write((conf[0].equals("null") ? 0 : conf[0]) + System.lineSeparator());
 				savedF.write((conf[1].equals("null") ? 0 : conf[1]) + System.lineSeparator());
 				savedF.write((conf[2].equals("null") ? "false" : conf[2]) + System.lineSeparator());
@@ -956,7 +956,7 @@ public class Pesos extends JFrame {
 			resFun(clearEverthing, faturaBtn, realesF, newDay, resoD, reso4, reso3, reso2, reso1, aggPanel,
 					gastosPanel);
 			try {
-				FileWriter savedF = new FileWriter("conf.txt");
+				FileWriter savedF = new FileWriter(newFile);
 				savedF.write((conf[0].equals("null") ? 0 : conf[0]) + System.lineSeparator());
 				savedF.write((conf[1].equals("null") ? 0 : conf[1]) + System.lineSeparator());
 				savedF.write((conf[2].equals("null") ? "false" : conf[2]) + System.lineSeparator());
@@ -975,7 +975,7 @@ public class Pesos extends JFrame {
 			conf[3] = "4";
 			resG(resoD, reso4, reso3, reso2, reso1, realesF, faturaBtn, newDay, clearEverthing, gastosPanel, aggPanel);
 			try {
-				FileWriter savedF = new FileWriter("conf.txt");
+				FileWriter savedF = new FileWriter(newFile);
 				savedF.write((conf[0].equals("null") ? 0 : conf[0]) + System.lineSeparator());
 				savedF.write((conf[1].equals("null") ? 0 : conf[1]) + System.lineSeparator());
 				savedF.write((conf[2].equals("null") ? "false" : conf[2]) + System.lineSeparator());
@@ -994,7 +994,7 @@ public class Pesos extends JFrame {
 			conf[3] = "3";
 			resM(resoD, reso4, reso3, reso2, reso1, realesF, faturaBtn, newDay, clearEverthing, gastosPanel, aggPanel);
 			try {
-				FileWriter savedF = new FileWriter("conf.txt");
+				FileWriter savedF = new FileWriter(newFile);
 				savedF.write((conf[0].equals("null") ? 0 : conf[0]) + System.lineSeparator());
 				savedF.write((conf[1].equals("null") ? 0 : conf[1]) + System.lineSeparator());
 				savedF.write((conf[2].equals("null") ? "false" : conf[2]) + System.lineSeparator());
@@ -1013,7 +1013,7 @@ public class Pesos extends JFrame {
 			conf[3] = "2";
 			resP(resoD, reso4, reso3, reso2, reso1, realesF, faturaBtn, newDay, clearEverthing, gastosPanel, aggPanel);
 			try {
-				FileWriter savedF = new FileWriter("conf.txt");
+				FileWriter savedF = new FileWriter(newFile);
 				savedF.write((conf[0].equals("null") ? 0 : conf[0]) + System.lineSeparator());
 				savedF.write((conf[1].equals("null") ? 0 : conf[1]) + System.lineSeparator());
 				savedF.write((conf[2].equals("null") ? "false" : conf[2]) + System.lineSeparator());
@@ -1032,7 +1032,7 @@ public class Pesos extends JFrame {
 			conf[3] = "1";
 			resXP(resoD, reso4, reso3, reso2, reso1, realesF, faturaBtn, newDay, clearEverthing, gastosPanel, aggPanel);
 			try {
-				FileWriter savedF = new FileWriter("conf.txt");
+				FileWriter savedF = new FileWriter(newFile);
 				savedF.write((conf[0].equals("null") ? 0 : conf[0]) + System.lineSeparator());
 				savedF.write((conf[1].equals("null") ? 0 : conf[1]) + System.lineSeparator());
 				savedF.write((conf[2].equals("null") ? "false" : conf[2]) + System.lineSeparator());
@@ -1066,7 +1066,7 @@ public class Pesos extends JFrame {
 			hideBtn.setEnabled(true);
 			hideAll.setEnabled(true);
 			try {
-				FileWriter savedF = new FileWriter("conf.txt");
+				FileWriter savedF = new FileWriter(newFile);
 				savedF.write((conf[0].equals("null") ? 0 : conf[0]) + System.lineSeparator());
 				savedF.write(0 + System.lineSeparator());
 				savedF.write((conf[2].equals("null") ? "false" : conf[2]) + System.lineSeparator());
@@ -1094,7 +1094,7 @@ public class Pesos extends JFrame {
 			hideBtn.setEnabled(true);
 			hideAll.setEnabled(true);
 			try {
-				FileWriter savedF = new FileWriter("conf.txt");
+				FileWriter savedF = new FileWriter(newFile);
 				savedF.write((conf[0].equals("null") ? 0 : conf[0]) + System.lineSeparator());
 				savedF.write(1 + System.lineSeparator());
 				savedF.write((conf[2].equals("null") ? "false" : conf[2]) + System.lineSeparator());
@@ -1122,7 +1122,7 @@ public class Pesos extends JFrame {
 			hideBtn.setEnabled(false);
 			hideAll.setEnabled(true);
 			try {
-				FileWriter savedF = new FileWriter("conf.txt");
+				FileWriter savedF = new FileWriter(newFile);
 				savedF.write((conf[0].equals("null") ? 0 : conf[0]) + System.lineSeparator());
 				savedF.write(2 + System.lineSeparator());
 				savedF.write((conf[2].equals("null") ? "false" : conf[2]) + System.lineSeparator());
@@ -1146,7 +1146,7 @@ public class Pesos extends JFrame {
 			hideBtn.setEnabled(true);
 			hideAll.setEnabled(false);
 			try {
-				FileWriter savedF = new FileWriter("conf.txt");
+				FileWriter savedF = new FileWriter(newFile);
 				savedF.write((conf[0].equals("null") ? 0 : conf[0]) + System.lineSeparator());
 				savedF.write(3 + System.lineSeparator());
 				savedF.write((conf[2].equals("null") ? "false" : conf[2]) + System.lineSeparator());
@@ -1347,7 +1347,7 @@ public class Pesos extends JFrame {
 		StyleConstants.setAlignment(center, StyleConstants.ALIGN_CENTER);
 		doc.setParagraphAttributes(0, doc.getLength(), center, false);
 		sumItem.setBounds(0, 200, 650, 550);
-		sumItem.setFont(First.myFont);
+		sumItem.setFont(new Font("Tahoma", Font.BOLD, 18));
 		sumItem.setEditable(false);
 		sumItem.setOpaque(false);
 		sumItem.setCaretColor(First.lightC);
@@ -1484,7 +1484,7 @@ public class Pesos extends JFrame {
 							sumItem.setBounds(0, 220, 650, 550);
 						} else {
 							sumItem.setText(language == 0 ? espSumm[5] : language == 1 ? porSumm[5] : engSumm[5]);
-							sumItem.setBounds(0, 140, 650, 550);
+							sumItem.setBounds(0, 120, 650, 550);
 						}
 					}
 					if (colorX < 254 && !status)// gastos fade in
@@ -1508,7 +1508,7 @@ public class Pesos extends JFrame {
 							sumItem.setBounds(0, 220, 650, 550);
 						} else {
 							sumItem.setText(language == 0 ? espSumm[8] : language == 1 ? porSumm[8] : engSumm[8]);
-							sumItem.setBounds(0, 140, 650, 550);
+							sumItem.setBounds(0, 120, 650, 550);
 						}
 					}
 					if (colorX < 254 && status)// agg fade in
@@ -1676,7 +1676,7 @@ public class Pesos extends JFrame {
 					} else {
 						String[] wordT = language == 0 ? espSumm[5].split(" ")
 								: language == 1 ? porSumm[5].split(" ") : engSumm[5].split(" ");
-						sumItem.setBounds(0, 140, 650, 550);
+						sumItem.setBounds(0, 120, 650, 550);
 						if (wordL < wordT.length)
 							sumItem.setText(sumItem.getText().concat(wordT[wordL++] + " "));
 						else {
@@ -1725,7 +1725,7 @@ public class Pesos extends JFrame {
 					} else {
 						String[] wordT = language == 0 ? espSumm[8].split(" ")
 								: language == 1 ? porSumm[8].split(" ") : engSumm[8].split(" ");
-						sumItem.setBounds(0, 140, 650, 550);
+						sumItem.setBounds(0, 120, 650, 550);
 						if (wordL < wordT.length)
 							sumItem.setText(sumItem.getText().concat(wordT[wordL++] + " "));
 						else {
@@ -1932,7 +1932,7 @@ public class Pesos extends JFrame {
 					} else {
 						char[] wordT = language == 0 ? espSumm[5].toCharArray()
 								: language == 1 ? porSumm[5].toCharArray() : engSumm[5].toCharArray();
-						sumItem.setBounds(0, 140, 650, 550);
+						sumItem.setBounds(0, 120, 650, 550);
 						if (wordL < wordT.length)
 							sumItem.setText(sumItem.getText() + (wordT[wordL++]));
 						else {
@@ -1981,7 +1981,7 @@ public class Pesos extends JFrame {
 					} else {
 						char[] wordT = language == 0 ? espSumm[8].toCharArray()
 								: language == 1 ? porSumm[8].toCharArray() : engSumm[8].toCharArray();
-						sumItem.setBounds(0, 140, 650, 550);
+						sumItem.setBounds(0, 120, 650, 550);
 						if (wordL < wordT.length)
 							sumItem.setText(sumItem.getText() + (wordT[wordL++]));
 						else {
@@ -2151,9 +2151,11 @@ public class Pesos extends JFrame {
 	private void exBtn(int lang) {
 		dateLang(lang);
 		try {
-			String currentpath = System.getProperty("user.dir");
-			File tempFile1 = new File(currentpath + "\\" + yearS);
+			tempFile0.mkdir();
+			File tempFile1 = new File(tempFile0 + "\\" + yearS);
+			tempFile1.mkdir();
 			File tempFile2 = new File(tempFile1 + "\\" + monthS);
+			tempFile2.mkdir();
 			File newFile = new File(tempFile2, "P$ " + dayN + "-" + First.monthN + " (" + dayS + ").txt");
 			FileWriter savedF = new FileWriter(newFile);
 			String[] espSumm = { "*VENTAS:\nUSTED NO VENDIÓ NADA" + System.lineSeparator(), // 0
@@ -2309,38 +2311,39 @@ public class Pesos extends JFrame {
 		gastosFrame.setLayout(null);
 		gastosFrame.getContentPane().setBackground(First.redC);
 		gastosFrame.setIconImage(notasI.getImage());
-
-		for (int i = 0; i < 8; i++) {
-			// Autocomplete
-			AutoComplete autoComplete = new AutoComplete(gTable[i], keywords);
-			gTable[i].getDocument().addDocumentListener(autoComplete);
-			gTable[i].setBounds(2, 2 + 45 * i, 140, 45);
+		for (int i = 0; i < 16; i++) {
 			textFieldStyle(gTable[i]);
+			if (i < 8) {
+				gTable[i].setBounds(2, 2 + 45 * i, 140, 45);
+				gTable[i].setBackground(First.redD);
+			} else {
+				gTable[i].setBounds(142, 2 + 45 * (i - 8), 140, 45);
+				gTable[i].setBackground(First.redC);
+			}
 			gTable[i].removeFocusListener(textFocus);
-			gTable[i].setBackground(First.redD);
 			gTable[i].setForeground(Color.white);
 			gTable[i].addKeyListener(new KeyAdapter() {// Escape to close
 				@SuppressWarnings("static-access")
 				public void keyPressed(KeyEvent ke) {
 					if (ke.getKeyCode() == ke.VK_ESCAPE) {
+						for (int i = 0; i < 16; i++)
+							gastosTable[i].setText(gTable[i].getText());
+						sumF();
 						gastosFrame.dispose();
 					}
 				}
 			});
-			gastosFrame.add(gTable[i]);
-		}
-		for (int i = 8; i < 16; i++) {
-			gTable[i].setBounds(142, 2 + 45 * (i - 8), 140, 45);
-			textFieldStyle(gTable[i]);
-			gTable[i].removeFocusListener(textFocus);
-			gTable[i].setBackground(First.redC);
-			gTable[i].setForeground(Color.white);
-			gTable[i].addKeyListener(new KeyAdapter() {// Escape to close
-				@SuppressWarnings("static-access")
-				public void keyPressed(KeyEvent ke) {
-					if (ke.getKeyCode() == ke.VK_ESCAPE) {
-						gastosFrame.dispose();
-					}
+			gTable[i].addFocusListener(new FocusListener() {
+
+				@Override
+				public void focusLost(FocusEvent e) {
+					for (int i = 0; i < 16; i++) // TitleCase gastos and agg
+						gTable[i].setText(First.capitalizeString(gTable[i].getText()));
+				}
+
+				@Override
+				public void focusGained(FocusEvent e) {
+					((JTextField) e.getSource()).selectAll();
 				}
 			});
 			gastosFrame.add(gTable[i]);
@@ -2369,38 +2372,39 @@ public class Pesos extends JFrame {
 		aggFrame.setLayout(null);
 		aggFrame.getContentPane().setBackground(First.greenC);
 		aggFrame.setIconImage(notasI.getImage());
-
-		for (int i = 0; i < 8; i++) {
-			// Autocomplete
-			AutoComplete autoComplete = new AutoComplete(aTable[i], keywords);
-			aTable[i].getDocument().addDocumentListener(autoComplete);
+		for (int i = 0; i < 16; i++) {
 			textFieldStyle(aTable[i]);
+			if (i < 8) {
+				aTable[i].setBounds(2, 2 + 45 * i, 140, 45);
+				aTable[i].setBackground(First.greenD);
+			} else {
+				aTable[i].setBounds(142, 2 + 45 * (i - 8), 140, 45); // Add focus listener
+				aTable[i].setBackground(First.greenC);
+			}
 			aTable[i].removeFocusListener(textFocus);
-			aTable[i].setBounds(2, 2 + 45 * i, 140, 45);
-			aTable[i].setBackground(First.greenD);
 			aTable[i].setForeground(Color.white);
 			aTable[i].addKeyListener(new KeyAdapter() {// Escape to close
 				@SuppressWarnings("static-access")
 				public void keyPressed(KeyEvent ke) {
 					if (ke.getKeyCode() == ke.VK_ESCAPE) {
+						for (int i = 0; i < 16; i++)
+							agregadoTable[i].setText(aTable[i].getText());
+						sumF();
 						aggFrame.dispose();
 					}
 				}
 			});
-			aggFrame.add(aTable[i]);
-		}
-		for (int i = 8; i < 16; i++) {
-			textFieldStyle(aTable[i]);
-			aTable[i].removeFocusListener(textFocus);
-			aTable[i].setBounds(142, 2 + 45 * (i - 8), 140, 45);
-			aTable[i].setBackground(First.greenC);
-			aTable[i].setForeground(Color.white);
-			aTable[i].addKeyListener(new KeyAdapter() {// Escape to close
-				@SuppressWarnings("static-access")
-				public void keyPressed(KeyEvent ke) {
-					if (ke.getKeyCode() == ke.VK_ESCAPE) {
-						aggFrame.dispose();
-					}
+			aTable[i].addFocusListener(new FocusListener() {
+
+				@Override
+				public void focusLost(FocusEvent e) {
+					for (int i = 0; i < 16; i++) // TitleCase gastos and agg
+						aTable[i].setText(First.capitalizeString(aTable[i].getText()));
+				}
+
+				@Override
+				public void focusGained(FocusEvent e) {
+					((JTextField) e.getSource()).selectAll();
 				}
 			});
 			aggFrame.add(aTable[i]);
@@ -2453,7 +2457,6 @@ public class Pesos extends JFrame {
 		op1C.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				Pesos.this.setIconImage(iconImages[op1C.getSelectedIndex()].getImage());
 				op1C.setSelectedIndex(op1C.getSelectedIndex());
 			}
 		});
@@ -2673,7 +2676,7 @@ public class Pesos extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				try {
-					FileWriter savedF = new FileWriter("conf.txt");
+					FileWriter savedF = new FileWriter(newFile);
 					savedF.write(op1C.getSelectedIndex() + System.lineSeparator());// icon
 					savedF.write((conf[1].equals("null") ? 0 : conf[1]) + System.lineSeparator());// btn hide
 					savedF.write(btnsHideShow2.isSelected() + System.lineSeparator());// key shortcut
@@ -2775,7 +2778,11 @@ public class Pesos extends JFrame {
 	// saveProgress
 	private static void saveProgress() {
 		try {
-			FileWriter savedF = new FileWriter("cedrosP.txt");
+			String currentpath = System.getProperty("user.dir");
+			File tempFile0 = new File(currentpath + "\\data");
+			tempFile0.mkdir();
+			File newFile = new File(tempFile0, "cedrosP.txt");
+			FileWriter savedF = new FileWriter(newFile);
 			for (int i = 0; i < 6; i++)
 				for (int j = 0; j < 20; j++)
 					savedF.write(details[i][j].getText() + System.lineSeparator());
@@ -2797,8 +2804,10 @@ public class Pesos extends JFrame {
 		String line = "";
 		int z = 0;
 		String numbers[] = new String[165];
+		tempFile0.mkdir();
+		File newFile = new File(tempFile0, "cedrosP.txt");
 		try {
-			dataOpened = new BufferedReader(new FileReader(new File("cedrosP.txt")));
+			dataOpened = new BufferedReader(new FileReader(newFile));
 			while ((line = dataOpened.readLine()) != null) {
 				numbers[z] = line.toString();
 				z++;
@@ -4339,8 +4348,7 @@ public class Pesos extends JFrame {
 	private void screenShooter() {
 		BufferedImage img = new BufferedImage(this.getWidth(), this.getHeight(), BufferedImage.TYPE_INT_RGB);
 		this.paint(img.getGraphics());
-		String currentpath = System.getProperty("user.dir");
-		File tempFile1 = new File(currentpath + "\\" + yearS);
+		File tempFile1 = new File(tempFile0 + "\\" + yearS);
 		tempFile1.mkdir();
 		File tempFile2 = new File(tempFile1 + "\\" + monthS);
 		tempFile2.mkdir();

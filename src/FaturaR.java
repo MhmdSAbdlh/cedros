@@ -122,19 +122,21 @@ public class FaturaR extends JFrame {
 	JLabel caja = new JLabel();
 	static int totalFatura = 0, totalCV = 0, trocoV = 0, language = 0;
 	private MouseListener m1, m2, m3;
+	String currentpath = System.getProperty("user.dir");
+	File tempFile0 = new File(currentpath + "\\data");
+	File newFile = new File(tempFile0, "conf.txt");
 
 	FaturaR() {
 		// Notification when its time to end the day
 		First.timeToClose();
 
 		// Open Conf
-		URL url;
 		BufferedReader dataOpened = null;
 		String line = "";
 		int tempC = 0;
 		String conf[] = new String[10];
 		try {
-			dataOpened = new BufferedReader(new FileReader(new File("conf.txt")));
+			dataOpened = new BufferedReader(new FileReader(newFile));
 			while ((line = dataOpened.readLine()) != null) {
 				conf[tempC] = line.toString();
 				tempC++;
@@ -149,17 +151,11 @@ public class FaturaR extends JFrame {
 			language = 1;
 		else
 			language = 2;
-		// Icon
-		if (conf[0] == null || conf[0].equals("0")) {
-			url = getClass().getResource("images/icon/cedros0.png");
-		} else if (conf[0].equals("1")) {
-			url = getClass().getResource("images/icon/cedros1.png");
-		} else if (conf[0].equals("2")) {
-			url = getClass().getResource("images/icon/cedros2.png");
-		} else {
-			url = getClass().getResource("images/icon/narjes.png");
-		}
-		this.setIconImage(new ImageIcon(url).getImage());
+		// icon
+		if (conf[0] == null || !conf[0].equals("3"))
+			this.setIconImage(new ImageIcon(getClass().getResource("images/icon/cedrosI.png")).getImage());
+		else
+			this.setIconImage(new ImageIcon(getClass().getResource("images/icon/narjesI.png")).getImage());
 
 		// Btns
 		JButton cambioN = new JButton(idiomaString(language)[22]);
@@ -205,8 +201,10 @@ public class FaturaR extends JFrame {
 		dataOpened = null;
 		line = "";
 		int z = 0;
+		tempFile0.mkdir();
+		File newFile2 = new File(tempFile0, "cedros.txt");
 		try {
-			dataOpened = new BufferedReader(new FileReader(new File("cedros.txt")));
+			dataOpened = new BufferedReader(new FileReader(newFile2));
 			while ((line = dataOpened.readLine()) != null) {
 				numbers[z] = line.toString();
 				z++;
@@ -241,6 +239,18 @@ public class FaturaR extends JFrame {
 			// Autocomplete
 			AutoComplete autoComplete = new AutoComplete(details[i][1], keywords);
 			details[i][1].getDocument().addDocumentListener(autoComplete);
+			details[i][1].addFocusListener(new FocusListener() {
+
+				@Override
+				public void focusLost(FocusEvent e) {
+					for (int i = 0; i < 10; i++) // TitleCase gastos and agg
+						details[i][1].setText(First.capitalizeString(details[i][1].getText()));
+				}
+
+				@Override
+				public void focusGained(FocusEvent e) {
+				}
+			});
 		}
 		InitialFocusSetter.setInitialFocus(this, details[0][0]);
 		for (int i = 0; i < 10; i++) {
@@ -585,7 +595,7 @@ public class FaturaR extends JFrame {
 			conf[3] = "0";
 			opResolution(mainF, clearB, resoD, reso4, reso3, reso2, reso1, cambioN, cambioN2, cambioN3);
 			try {
-				FileWriter savedF = new FileWriter("conf.txt");
+				FileWriter savedF = new FileWriter(newFile);
 				savedF.write((conf[0].equals("null") ? 0 : conf[0]) + System.lineSeparator());
 				savedF.write((conf[1].equals("null") ? 0 : conf[1]) + System.lineSeparator());
 				savedF.write((conf[2].equals("null") ? "false" : conf[2]) + System.lineSeparator());
@@ -604,7 +614,7 @@ public class FaturaR extends JFrame {
 			conf[3] = "4";
 			resG(resoD, reso4, reso3, reso2, reso1, cambioN, cambioN2, mainF, cambioN3, clearB);
 			try {
-				FileWriter savedF = new FileWriter("conf.txt");
+				FileWriter savedF = new FileWriter(newFile);
 				savedF.write((conf[0].equals("null") ? 0 : conf[0]) + System.lineSeparator());
 				savedF.write((conf[1].equals("null") ? 0 : conf[1]) + System.lineSeparator());
 				savedF.write((conf[2].equals("null") ? "false" : conf[2]) + System.lineSeparator());
@@ -623,7 +633,7 @@ public class FaturaR extends JFrame {
 			conf[3] = "3";
 			resM(resoD, reso4, reso3, reso2, reso1, cambioN, cambioN2, mainF, cambioN3, clearB);
 			try {
-				FileWriter savedF = new FileWriter("conf.txt");
+				FileWriter savedF = new FileWriter(newFile);
 				savedF.write((conf[0].equals("null") ? 0 : conf[0]) + System.lineSeparator());
 				savedF.write((conf[1].equals("null") ? 0 : conf[1]) + System.lineSeparator());
 				savedF.write((conf[2].equals("null") ? "false" : conf[2]) + System.lineSeparator());
@@ -642,7 +652,7 @@ public class FaturaR extends JFrame {
 			conf[3] = "2";
 			resP(resoD, reso4, reso3, reso2, reso1, cambioN, cambioN2, mainF, cambioN3, clearB);
 			try {
-				FileWriter savedF = new FileWriter("conf.txt");
+				FileWriter savedF = new FileWriter(newFile);
 				savedF.write((conf[0].equals("null") ? 0 : conf[0]) + System.lineSeparator());
 				savedF.write((conf[1].equals("null") ? 0 : conf[1]) + System.lineSeparator());
 				savedF.write((conf[2].equals("null") ? "false" : conf[2]) + System.lineSeparator());
@@ -661,7 +671,7 @@ public class FaturaR extends JFrame {
 			conf[3] = "1";
 			resXP(resoD, reso4, reso3, reso2, reso1, cambioN, cambioN2, mainF, cambioN3, clearB);
 			try {
-				FileWriter savedF = new FileWriter("conf.txt");
+				FileWriter savedF = new FileWriter(newFile);
 				savedF.write((conf[0].equals("null") ? 0 : conf[0]) + System.lineSeparator());
 				savedF.write((conf[1].equals("null") ? 0 : conf[1]) + System.lineSeparator());
 				savedF.write((conf[2].equals("null") ? "false" : conf[2]) + System.lineSeparator());
@@ -776,7 +786,6 @@ public class FaturaR extends JFrame {
 		op1C.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				FaturaR.this.setIconImage(iconImages[op1C.getSelectedIndex()].getImage());
 				op1C.setSelectedIndex(op1C.getSelectedIndex());
 			}
 		});
@@ -995,7 +1004,7 @@ public class FaturaR extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				try {
-					FileWriter savedF = new FileWriter("conf.txt");
+					FileWriter savedF = new FileWriter(newFile);
 					savedF.write(op1C.getSelectedIndex() + System.lineSeparator());// icon
 					savedF.write((conf[1].equals("null") ? 0 : conf[1]) + System.lineSeparator());// btn hide
 					savedF.write(btnsHideShow2.isSelected() + System.lineSeparator());// key shortcut
@@ -1805,8 +1814,12 @@ public class FaturaR extends JFrame {
 			nbOf20 -= nbOf100 * 5;
 		} else
 			nbOf100 = 0;
+		String currentpath = System.getProperty("user.dir");
+		File tempFile0 = new File(currentpath + "\\data");
+		tempFile0.mkdir();
+		File newFile = new File(tempFile0, "cedros.txt");
 		try {
-			FileWriter savedF = new FileWriter("cedros.txt");
+			FileWriter savedF = new FileWriter(newFile);
 			int i = 0;
 			while (i < 120) {// Ventas + total
 				if ((numbers[i].isBlank() || Integer.valueOf(numbers[i]) == 0 || !First.isNumeric(numbers[i]))

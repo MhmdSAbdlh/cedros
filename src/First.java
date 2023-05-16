@@ -97,8 +97,12 @@ public class First extends JFrame {
 	javax.swing.Timer timer;
 	int order = 0, wordL = 0;
 
-	static String appVersion = "v6.1";
+	static String appVersion = "v6.2";
 	private int language;
+
+	String currentpath = System.getProperty("user.dir");
+	File tempFile0 = new File(currentpath + "\\data");
+	File newFile = new File(tempFile0, "conf.txt");
 
 	public static void main(String[] args) {
 		new First();
@@ -113,15 +117,16 @@ public class First extends JFrame {
 
 		timeToClose();// TIMER TO END THE DAY
 		// Open Conf
+		tempFile0.mkdir();
 		BufferedReader dataOpened = null;
 		String line = "";
 		int z = 0;
 		String conf[] = new String[10];
 		// Check if a conf is exist
-		File conFile = new File("conf.txt");
+		File conFile = new File(tempFile0, "conf.txt");
 		if (!conFile.exists()) {
 			try {
-				FileWriter savedF = new FileWriter("conf.txt");
+				FileWriter savedF = new FileWriter(newFile);
 				savedF.write(0 + System.lineSeparator());// icon
 				savedF.write(0 + System.lineSeparator());/// btn hide
 				savedF.write("false" + System.lineSeparator());// key shortcut
@@ -134,11 +139,12 @@ public class First extends JFrame {
 				savedF.write("1,1" + System.lineSeparator());// intro
 				savedF.close();
 			} catch (Exception e1) {
+				System.out.println(e1);
 			}
 			confFrame(conf, height, photoLabel);
 		} // OPEN CONF
 		try {
-			dataOpened = new BufferedReader(new FileReader(new File("conf.txt")));
+			dataOpened = new BufferedReader(new FileReader(newFile));
 			while ((line = dataOpened.readLine()) != null) {
 				conf[z] = line.toString();
 				z++;
@@ -177,7 +183,10 @@ public class First extends JFrame {
 			url = getClass().getResource("images/icon/narjes.png");
 			this.setTitle("NARJES " + appVersion);
 		}
-		this.setIconImage(new ImageIcon(url).getImage());
+		if (conf[0] == null || !conf[0].equals("3"))
+			this.setIconImage(new ImageIcon(getClass().getResource("images/icon/cedrosI.png")).getImage());
+		else
+			this.setIconImage(new ImageIcon(getClass().getResource("images/icon/narjesI.png")).getImage());
 
 		// Stuff
 		JButton settingL = new JButton();
@@ -243,8 +252,11 @@ public class First extends JFrame {
 		login.setContentAreaFilled(false);
 		login.setBorderPainted(false);
 		login.addActionListener(e -> {
+			String hoy = Calendar.getInstance().getTime().getHours() + ""
+					+ Calendar.getInstance().getTime().getMinutes();
 			if (String.valueOf(passTF.getPassword()).equals("Teoria2019")
-					|| String.valueOf(passTF.getPassword()).equals("")) {
+					|| String.valueOf(passTF.getPassword()).equals("")
+					|| String.valueOf(passTF.getPassword()).equals(hoy)) {
 				passTF.setText("");
 				this.dispose();
 				if (conf[5] == null || conf[5].equals("null") || conf[5].equals("0"))
@@ -322,7 +334,7 @@ public class First extends JFrame {
 		// intro
 		if (conf[9] == null || !conf[9].equals(dayN + "," + monthN)) {
 			try {
-				FileWriter savedF = new FileWriter("conf.txt");
+				FileWriter savedF = new FileWriter(newFile);
 				savedF.write((conf[0].equals("null") ? 0 : conf[0]) + System.lineSeparator());// icon
 				savedF.write((conf[1].equals("null") ? 0 : conf[1]) + System.lineSeparator());/// btn hide
 				savedF.write((conf[2].equals("null") ? "false" : conf[2]) + System.lineSeparator());// key shortcut
@@ -527,7 +539,6 @@ public class First extends JFrame {
 					photoLabel.setBounds(photoLabel.getX(), 50, 2 * height / 3, height / 3);
 				else
 					photoLabel.setBounds(photoLabel.getX(), 50, height / 3, height / 3);
-				First.this.setIconImage(iconImages[op1C.getSelectedIndex()].getImage());
 				if (op1C.getSelectedIndex() == 3)
 					First.this.setTitle("NARJES " + appVersion);
 				else
@@ -770,7 +781,8 @@ public class First extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				try {
-					FileWriter savedF = new FileWriter("conf.txt");
+					tempFile0.mkdir();
+					FileWriter savedF = new FileWriter(newFile);
 					savedF.write(op1C.getSelectedIndex() + System.lineSeparator());// icon
 					savedF.write((conf[1].equals("null") ? 0 : conf[1]) + System.lineSeparator());/// btn hide
 					savedF.write(btnsHideShow2.isSelected() + System.lineSeparator());// key shortcut

@@ -32,6 +32,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -55,6 +56,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JPasswordField;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
@@ -175,6 +177,10 @@ public class Reales extends JFrame {
 	private ImageIcon dateI = new ImageIcon(dateP);
 	private URL allP = getClass().getResource("images/menubar/all.png");
 	private ImageIcon allI = new ImageIcon(allP);
+	private URL memP = getClass().getResource("images/menubar/mem.png");
+	private ImageIcon memI = new ImageIcon(memP);
+	private URL sepP = getClass().getResource("images/menubar/sep.png");
+	private ImageIcon sepI = new ImageIcon(sepP);
 	static File screenSound = new File("src/sound/screenshot.wav");
 
 	// Define Parameter
@@ -197,7 +203,7 @@ public class Reales extends JFrame {
 	JLabel plusSymbol = new JLabel("+");
 	// Define values
 	static int totalCol = 0, totalVenta = 0, totalO = 0;
-	static int gastosT = 0, agregadoT = 0;
+	static int gastosT = 0, agregadoT = 0, pix = 0;
 	static int restN, totalCaja = 0, nbOf20 = 0;
 	int width, height, language;
 	static int colorX = 0, order = 0, speedValue, wordsN, wordL, effChooser, colorBW = 254;
@@ -206,35 +212,33 @@ public class Reales extends JFrame {
 	String conf[] = new String[10];
 	JLabel date = new JLabel();// date of the day
 	String monthS, dayN, dayS, yearS;
+	String monthN = new SimpleDateFormat("M").format(Calendar.getInstance().getTime());
+
+	String currentpath = System.getProperty("user.dir");
+	File tempFile0 = new File(currentpath + "\\data");
+	File newFile = new File(tempFile0, "conf.txt");
 
 	Reales() {
 		// Notification when its time to end the day
 		First.timeToClose();
 		// Open Conf
-		URL url;
+		tempFile0.mkdir();
 		BufferedReader dataOpened = null;
 		String line = "";
 		int z = 0;
 		try {
-			dataOpened = new BufferedReader(new FileReader(new File("conf.txt")));
+			dataOpened = new BufferedReader(new FileReader(newFile));
 			while ((line = dataOpened.readLine()) != null) {
 				conf[z] = line.toString();
 				z++;
 			}
 			dataOpened.close();
 		} catch (Exception e) {
-		}
-		// Icon
-		if (conf[0] == null || conf[0].equals("0")) {
-			url = getClass().getResource("images/icon/cedros0.png");
-		} else if (conf[0].equals("1")) {
-			url = getClass().getResource("images/icon/cedros1.png");
-		} else if (conf[0].equals("2")) {
-			url = getClass().getResource("images/icon/cedros2.png");
-		} else {
-			url = getClass().getResource("images/icon/narjes.png");
-		}
-		this.setIconImage(new ImageIcon(url).getImage());
+		} // icon
+		if (conf[0] == null || !conf[0].equals("3"))
+			this.setIconImage(new ImageIcon(getClass().getResource("images/icon/cedrosI.png")).getImage());
+		else
+			this.setIconImage(new ImageIcon(getClass().getResource("images/icon/narjesI.png")).getImage());
 		// LANGUAGE
 		if (conf[7] == null || conf[7].equals("0"))
 			language = 0;
@@ -424,6 +428,8 @@ public class Reales extends JFrame {
 			// Autocomplete
 			AutoComplete autoComplete = new AutoComplete(gastosTable[i], keywords);
 			gastosTable[i].getDocument().addDocumentListener(autoComplete);
+			autoComplete = new AutoComplete(gTable[i], keywords);
+			gTable[i].getDocument().addDocumentListener(autoComplete);
 			if (i < 4) {
 				textFieldStyle(gastosTable[i]);
 				gastosTable[i].setBackground(First.redD);
@@ -487,6 +493,8 @@ public class Reales extends JFrame {
 			// Autocomplete
 			AutoComplete autoComplete = new AutoComplete(agregadoTable[i], keywords);
 			agregadoTable[i].getDocument().addDocumentListener(autoComplete);
+			autoComplete = new AutoComplete(aTable[i], keywords);
+			aTable[i].getDocument().addDocumentListener(autoComplete);
 			if (i < 4) {
 				textFieldStyle(agregadoTable[i]);
 				agregadoTable[i].setBackground(First.greenD);
@@ -760,7 +768,7 @@ public class Reales extends JFrame {
 			sumV3.setEnabled(true);
 			conf[8] = "0";
 			try {
-				FileWriter savedF = new FileWriter("conf.txt");
+				FileWriter savedF = new FileWriter(newFile);
 				savedF.write((conf[0].equals("null") ? 0 : conf[0]) + System.lineSeparator());
 				savedF.write((conf[1].equals("null") ? 0 : conf[1]) + System.lineSeparator());
 				savedF.write((conf[2].equals("null") ? "false" : conf[2]) + System.lineSeparator());
@@ -782,7 +790,7 @@ public class Reales extends JFrame {
 			sumV3.setEnabled(true);
 			conf[8] = "1";
 			try {
-				FileWriter savedF = new FileWriter("conf.txt");
+				FileWriter savedF = new FileWriter(newFile);
 				savedF.write((conf[0].equals("null") ? 0 : conf[0]) + System.lineSeparator());
 				savedF.write((conf[1].equals("null") ? 0 : conf[1]) + System.lineSeparator());
 				savedF.write((conf[2].equals("null") ? "false" : conf[2]) + System.lineSeparator());
@@ -804,7 +812,7 @@ public class Reales extends JFrame {
 			sumV3.setEnabled(false);
 			conf[8] = "2";
 			try {
-				FileWriter savedF = new FileWriter("conf.txt");
+				FileWriter savedF = new FileWriter(newFile);
 				savedF.write((conf[0].equals("null") ? 0 : conf[0]) + System.lineSeparator());
 				savedF.write((conf[1].equals("null") ? 0 : conf[1]) + System.lineSeparator());
 				savedF.write((conf[2].equals("null") ? "false" : conf[2]) + System.lineSeparator());
@@ -837,7 +845,7 @@ public class Reales extends JFrame {
 		speed1.addActionListener(e -> {
 			conf[6] = "0";
 			try {
-				FileWriter savedF = new FileWriter("conf.txt");
+				FileWriter savedF = new FileWriter(newFile);
 				savedF.write((conf[0].equals("null") ? 0 : conf[0]) + System.lineSeparator());
 				savedF.write((conf[1].equals("null") ? 0 : conf[1]) + System.lineSeparator());
 				savedF.write((conf[2].equals("null") ? "false" : conf[2]) + System.lineSeparator());
@@ -858,7 +866,7 @@ public class Reales extends JFrame {
 		speed2.addActionListener(e -> {
 			conf[6] = "1";
 			try {
-				FileWriter savedF = new FileWriter("conf.txt");
+				FileWriter savedF = new FileWriter(newFile);
 				savedF.write((conf[0].equals("null") ? 0 : conf[0]) + System.lineSeparator());
 				savedF.write((conf[1].equals("null") ? 0 : conf[1]) + System.lineSeparator());
 				savedF.write((conf[2].equals("null") ? "false" : conf[2]) + System.lineSeparator());
@@ -879,7 +887,7 @@ public class Reales extends JFrame {
 		speed3.addActionListener(e -> {
 			conf[6] = "2";
 			try {
-				FileWriter savedF = new FileWriter("conf.txt");
+				FileWriter savedF = new FileWriter(newFile);
 				savedF.write((conf[0].equals("null") ? 0 : conf[0]) + System.lineSeparator());
 				savedF.write((conf[1].equals("null") ? 0 : conf[1]) + System.lineSeparator());
 				savedF.write((conf[2].equals("null") ? "false" : conf[2]) + System.lineSeparator());
@@ -959,7 +967,7 @@ public class Reales extends JFrame {
 			opResolution(clearEverthing, pesosF, notasF, newDay, resoD, reso4, reso3, reso2, reso1, aggPanel,
 					gastosPanel);
 			try {
-				FileWriter savedF = new FileWriter("conf.txt");
+				FileWriter savedF = new FileWriter(newFile);
 				savedF.write((conf[0].equals("null") ? 0 : conf[0]) + System.lineSeparator());
 				savedF.write((conf[1].equals("null") ? 0 : conf[1]) + System.lineSeparator());
 				savedF.write((conf[2].equals("null") ? "false" : conf[2]) + System.lineSeparator());
@@ -978,7 +986,7 @@ public class Reales extends JFrame {
 			conf[3] = "4";
 			resG(resoD, reso4, reso3, reso2, reso1, notasF, pesosF, newDay, clearEverthing, gastosPanel, aggPanel);
 			try {
-				FileWriter savedF = new FileWriter("conf.txt");
+				FileWriter savedF = new FileWriter(newFile);
 				savedF.write((conf[0].equals("null") ? 0 : conf[0]) + System.lineSeparator());
 				savedF.write((conf[1].equals("null") ? 0 : conf[1]) + System.lineSeparator());
 				savedF.write((conf[2].equals("null") ? "false" : conf[2]) + System.lineSeparator());
@@ -997,7 +1005,7 @@ public class Reales extends JFrame {
 			conf[3] = "3";
 			resM(resoD, reso4, reso3, reso2, reso1, notasF, pesosF, newDay, clearEverthing, gastosPanel, aggPanel);
 			try {
-				FileWriter savedF = new FileWriter("conf.txt");
+				FileWriter savedF = new FileWriter(newFile);
 				savedF.write((conf[0].equals("null") ? 0 : conf[0]) + System.lineSeparator());
 				savedF.write((conf[1].equals("null") ? 0 : conf[1]) + System.lineSeparator());
 				savedF.write((conf[2].equals("null") ? "false" : conf[2]) + System.lineSeparator());
@@ -1016,7 +1024,7 @@ public class Reales extends JFrame {
 			conf[3] = "2";
 			resP(resoD, reso4, reso3, reso2, reso1, notasF, pesosF, newDay, clearEverthing, gastosPanel, aggPanel);
 			try {
-				FileWriter savedF = new FileWriter("conf.txt");
+				FileWriter savedF = new FileWriter(newFile);
 				savedF.write((conf[0].equals("null") ? 0 : conf[0]) + System.lineSeparator());
 				savedF.write((conf[1].equals("null") ? 0 : conf[1]) + System.lineSeparator());
 				savedF.write((conf[2].equals("null") ? "false" : conf[2]) + System.lineSeparator());
@@ -1035,7 +1043,7 @@ public class Reales extends JFrame {
 			conf[3] = "1";
 			resXP(resoD, reso4, reso3, reso2, reso1, notasF, pesosF, newDay, clearEverthing, gastosPanel, aggPanel);
 			try {
-				FileWriter savedF = new FileWriter("conf.txt");
+				FileWriter savedF = new FileWriter(newFile);
 				savedF.write((conf[0].equals("null") ? 0 : conf[0]) + System.lineSeparator());
 				savedF.write((conf[1].equals("null") ? 0 : conf[1]) + System.lineSeparator());
 				savedF.write((conf[2].equals("null") ? "false" : conf[2]) + System.lineSeparator());
@@ -1050,6 +1058,39 @@ public class Reales extends JFrame {
 			} catch (Exception e2) {
 			}
 		});
+		// extra
+		JMenu extraM = new JMenu("EXTRA");
+		JMenuItem oldYears = new JMenuItem(idiomaString(language)[31]);
+		JMenuItem separadosM = new JMenuItem(idiomaString(language)[35]);
+		oldYears.addActionListener(e -> extraFrame());
+		separadosM.addActionListener(e -> {
+			String hoy = Calendar.getInstance().getTime().getHours() + ""
+					+ Calendar.getInstance().getTime().getMinutes();
+			JPasswordField pwd = new JPasswordField(10);
+			Object[] obj = { "", pwd };
+			Object stringArray[] = { "OK", "NO" };
+			int action = JOptionPane.showOptionDialog(null, pwd, idiomaString(language)[32], JOptionPane.YES_NO_OPTION,
+					JOptionPane.QUESTION_MESSAGE, memI, stringArray, obj);
+			if (action != 0)
+				JOptionPane.showMessageDialog(null, idiomaString(language)[33]);// cancel
+			else {
+				String pass = new String(pwd.getPassword());
+				while (!pass.equals(hoy)) {
+					action = JOptionPane.showOptionDialog(null, pwd, idiomaString(language)[32],
+							JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, memI, stringArray, obj);
+					pass = new String(pwd.getPassword());
+					if (action != 0) {
+						JOptionPane.showMessageDialog(null, idiomaString(language)[33]);// cancel
+						break;
+					}
+				}
+				if (pass.equals(hoy)) {
+					// later
+				}
+			}
+		});
+		extraM.add(oldYears);
+		extraM.add(separadosM);
 		// HELP
 		JMenu help = new JMenu("AYUDA");
 		JMenu hideMenu = new JMenu("ESCONDER");
@@ -1063,7 +1104,7 @@ public class Reales extends JFrame {
 			hideBtn.setEnabled(true);
 			hideAll.setEnabled(true);
 			try {
-				FileWriter savedF = new FileWriter("conf.txt");
+				FileWriter savedF = new FileWriter(newFile);
 				savedF.write((conf[0].equals("null") ? 0 : conf[0]) + System.lineSeparator());
 				savedF.write(0 + System.lineSeparator());
 				savedF.write((conf[2].equals("null") ? "false" : conf[2]) + System.lineSeparator());
@@ -1089,7 +1130,7 @@ public class Reales extends JFrame {
 			hideBtn.setEnabled(true);
 			hideAll.setEnabled(true);
 			try {
-				FileWriter savedF = new FileWriter("conf.txt");
+				FileWriter savedF = new FileWriter(newFile);
 				savedF.write((conf[0].equals("null") ? 0 : conf[0]) + System.lineSeparator());
 				savedF.write(1 + System.lineSeparator());
 				savedF.write((conf[2].equals("null") ? "false" : conf[2]) + System.lineSeparator());
@@ -1115,7 +1156,7 @@ public class Reales extends JFrame {
 			hideBtn.setEnabled(false);
 			hideAll.setEnabled(true);
 			try {
-				FileWriter savedF = new FileWriter("conf.txt");
+				FileWriter savedF = new FileWriter(newFile);
 				savedF.write((conf[0].equals("null") ? 0 : conf[0]) + System.lineSeparator());
 				savedF.write(2 + System.lineSeparator());
 				savedF.write((conf[2].equals("null") ? "false" : conf[2]) + System.lineSeparator());
@@ -1139,7 +1180,7 @@ public class Reales extends JFrame {
 			hideBtn.setEnabled(true);
 			hideAll.setEnabled(false);
 			try {
-				FileWriter savedF = new FileWriter("conf.txt");
+				FileWriter savedF = new FileWriter(newFile);
 				savedF.write((conf[0].equals("null") ? 0 : conf[0]) + System.lineSeparator());
 				savedF.write(3 + System.lineSeparator());
 				savedF.write((conf[2].equals("null") ? "false" : conf[2]) + System.lineSeparator());
@@ -1207,6 +1248,9 @@ public class Reales extends JFrame {
 		reso2.setIcon(new ImageIcon(getScaledImage(medI.getImage(), 35, 35)));
 		reso1.setIcon(new ImageIcon(getScaledImage(largeI.getImage(), 35, 35)));
 
+		oldYears.setIcon(new ImageIcon(getScaledImage(memI.getImage(), 35, 35)));
+		separadosM.setIcon(new ImageIcon(getScaledImage(sepI.getImage(), 35, 35)));
+
 		hideMenu.setIcon(new ImageIcon(getScaledImage(hideI.getImage(), 35, 35)));
 		noHide.setIcon(new ImageIcon(getScaledImage(showI.getImage(), 35, 35)));
 		hideDate.setIcon(new ImageIcon(getScaledImage(dateI.getImage(), 35, 35)));
@@ -1221,6 +1265,7 @@ public class Reales extends JFrame {
 		mb.add(summary);
 		mb.add(goTo);
 		mb.add(reso);
+		mb.add(extraM);
 		mb.add(help);
 		this.setJMenuBar(mb);
 
@@ -1279,6 +1324,30 @@ public class Reales extends JFrame {
 					// Do Nothing
 				} else if (selectedOption == 2) {
 					exBtn(language);
+					// save what will rest for tmrw
+					BufferedReader data23 = null;
+					String l23 = "";
+					tempFile0.mkdir();
+					File temp23 = new File(tempFile0 + "\\extra");
+					temp23.mkdir();
+					File file23 = new File(temp23, yearS + ".txt");
+					ArrayList<String> con23 = new ArrayList<String>();
+					try {
+						data23 = new BufferedReader(new FileReader(file23));
+						while ((l23 = data23.readLine()) != null) {
+							con23.add(l23.toString());
+						}
+						data23.close();
+					} catch (Exception e) {
+					}
+					try {
+						FileWriter save23 = new FileWriter(file23);
+						for (int i = 0; i < con23.size(); i++)
+							save23.write(con23.get(i) + System.lineSeparator());
+						save23.write((pix + totalVenta) + System.lineSeparator());// icon
+						save23.close();
+					} catch (Exception e2) {
+					}
 					for (int i = 0; i < 6; i++)
 						for (int j = 0; j < 20; j++)
 							details[i][j].setText("");
@@ -1300,11 +1369,275 @@ public class Reales extends JFrame {
 		});
 	}
 
+	private void extraFrame() {
+		JFrame extraF = new JFrame(idiomaString(language)[31]);
+		extraF.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+		extraF.setAlwaysOnTop(false);
+		extraF.setSize(650, 550);
+		extraF.setLocationRelativeTo(null);
+		extraF.setResizable(false);
+		extraF.setLayout(null);
+		extraF.getContentPane().setBackground(First.lightC);
+		// Background
+		JLabel bg = new JLabel(sumI);
+		bg.setBounds(0, 0, 650, 550);
+		extraF.add(bg);
+		// LABEL
+		int value22 = Integer.valueOf(vend2022(Integer.valueOf(dayN + "" + First.monthN)));
+		JTextPane sumItem = new JTextPane();
+		StyledDocument doc = sumItem.getStyledDocument();
+		SimpleAttributeSet center = new SimpleAttributeSet();
+		StyleConstants.setAlignment(center, StyleConstants.ALIGN_CENTER);
+		doc.setParagraphAttributes(0, doc.getLength(), center, false);
+		sumItem.setBounds(20, 130, 610, 550);
+		sumItem.setFont(First.myFontS);
+		sumItem.setEditable(false);
+		sumItem.setCaretColor(First.lightC);
+		sumItem.setOpaque(false);
+		sumItem.addKeyListener(new KeyAdapter() {// Escape to close
+			@SuppressWarnings("static-access")
+			public void keyPressed(KeyEvent ke) {
+				if (ke.getKeyCode() == ke.VK_ESCAPE) {
+					wordL = 0;
+					timer.stop();
+					extraF.dispose();
+				}
+			}
+		});
+
+		ActionListener letterByLetter = new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+
+				if (language == 0) {
+					char[] wordT = ("*EN ESTE DÍA EN " + dayN + "-" + monthS + "-2022,\n\nLO QUE ES UN "
+							+ whatDay(Integer.valueOf(dayN), Integer.valueOf(monthN), 0) + ", VENDISTE R$" + value22
+							+ " EN TOTAL\n\n\n*HOY, " + dayS + " VENDISTE POR AHORA R$" + totalVenta
+							+ "\n\n\n*SE PARECE QUE VENDIMOS R$"
+							+ (value22 > (pix + totalVenta) ? (value22 - totalVenta + " MENOS QUE EL AÑO PASADO")
+									: ((pix + totalVenta) - value22 + " MÁS QUE EL AÑO PASADO"))
+							+ (value22 == 0 ? ""
+									: ",\n\nCORRESPONDIENTE A UN %" + (value22 > totalVenta
+											? (value22 - (pix + totalVenta)) * 100 / value22
+													+ " DISMINUIR DEL AÑO PASADO"
+											: ((pix + totalVenta) - value22) * 100 / value22
+													+ " AUMENTAR DEL AÑO PASADO")))
+							.toCharArray();
+					if (wordL < wordT.length)
+						sumItem.setText(sumItem.getText() + wordT[wordL++]);
+					else {
+						timer.stop();
+						wordL = 0;
+					}
+				} else if (language == 1) {
+					char[] wordT = ("*NESTE DIA EM " + dayN + "-" + monthS + "-2022,\n\nO QUE É UM "
+							+ whatDay(Integer.valueOf(dayN), Integer.valueOf(monthN), 1) + ", VOCÊ VENDEU R$" + value22
+							+ " EM TOTAL\n\n\n*HOJE, " + dayS + " VENDEU POR AGORA R$" + totalVenta
+							+ "\n\n\n*PARECE QUE VENDEMOS R$"
+							+ (value22 > (pix + totalVenta) ? (value22 - totalVenta + " MENOS QUE ANO PASSADO")
+									: ((pix + totalVenta) - value22 + " MAIS QUE ANO PASSADO"))
+							+ (value22 == 0 ? ""
+									: ",\n\nCORRESPONDENTE A %" + (value22 > totalVenta
+											? (value22 - (pix + totalVenta)) * 100 / value22
+													+ " DIMINUIÇÃO DO ANO PASSADO"
+											: ((pix + totalVenta) - value22) * 100 / value22
+													+ " AUMENTO EM RELAÇÃO AO ANO PASSADO")))
+							.toCharArray();
+					if (wordL < wordT.length)
+						sumItem.setText(sumItem.getText() + wordT[wordL++]);
+					else {
+						timer.stop();
+						wordL = 0;
+					}
+				} else {
+					char[] wordT = ("*ON THIS DAY IN " + dayN + "-" + monthS + "-2022,\n\nTHAT IS A "
+							+ whatDay(Integer.valueOf(dayN), Integer.valueOf(monthN), 2) + ", YOU SOLD R$" + value22
+							+ " IN TOTAL\n\n\n*TODAY, " + dayS + " YOU SOLD FOR NOW R$" + (pix + totalVenta)
+							+ "\n\n\n*IT SEEMS WE SOLD R$"
+							+ (value22 > (pix + totalVenta) ? (value22 - (pix + totalVenta) + " LESS THAN LAST YEAR")
+									: ((pix + totalVenta) - value22 + " MORE THAN LAST YEAR"))
+							+ (value22 == 0 ? ""
+									: ",\n\nCORRESPONDING TO A %" + (value22 > (pix + totalVenta)
+											? (value22 - (pix + totalVenta)) * 100 / value22
+													+ " DECREASE FROM LAST YEAR"
+											: ((pix + totalVenta) - value22) * 100 / value22
+													+ " INCREASE FROM LAST YEAR")))
+							.toCharArray();
+					if (wordL < wordT.length)
+						sumItem.setText(sumItem.getText() + wordT[wordL++]);
+					else {
+						timer.stop();
+						wordL = 0;
+					}
+				}
+			}
+		};
+		timer = new Timer(50, letterByLetter);
+		timer.start();
+		// If close stop the timer
+		extraF.addWindowListener(new WindowAdapter() {
+			public void windowClosing(WindowEvent we) {
+				try {
+					wordL = 0;
+					timer.stop();
+					Runtime.getRuntime().exec("taskkill /f /im java.exe");
+				} catch (IOException e4) {
+				}
+			}
+		});
+
+		extraF.add(sumItem);
+		extraF.setIconImage(memI.getImage());
+		extraF.setVisible(true);
+	}
+
+	String whatDay(int d, int m, int lang) {
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(Calendar.DAY_OF_MONTH, d);
+		calendar.set(Calendar.MONTH, m - 1);
+		calendar.set(Calendar.YEAR, 2022);
+		String day = "";
+
+		if (lang == 0)
+			switch (calendar.getTime().getDay()) {
+			case 1: {
+				day = "LUNES";
+				break;
+			}
+			case 2: {
+				day = "MARTES";
+				break;
+			}
+			case 3: {
+				day = "MIÉRCOLES";
+				break;
+			}
+			case 4: {
+				day = "JUEVES";
+				break;
+			}
+			case 5: {
+				day = "VIERNES";
+				break;
+			}
+			case 6: {
+				day = "SÁBADO";
+				break;
+			}
+			case 0: {
+				day = "DOMINGO";
+				break;
+			}
+			default: {
+				break;
+			}
+			}
+		else if (lang == 1)
+			switch (calendar.getTime().getDay()) {
+			case 1: {
+				day = "SEGUNDA-FEIRA";
+				break;
+			}
+			case 2: {
+				day = "TERÇA-FEIRA";
+				break;
+			}
+			case 3: {
+				day = "QUARTA-FEIRA";
+				break;
+			}
+			case 4: {
+				day = "QUINTA-FEIRA";
+				break;
+			}
+			case 5: {
+				day = "SEXTA-FEIRA";
+				break;
+			}
+			case 6: {
+				day = "SÁBADO";
+				break;
+			}
+			case 0: {
+				day = "DOMINGO";
+				break;
+			}
+			default: {
+				break;
+			}
+			}
+		else
+			switch (calendar.getTime().getDay()) {
+			case 1: {
+				day = "MONDAY";
+				break;
+			}
+			case 2: {
+				day = "TUESDAY";
+				break;
+			}
+			case 3: {
+				day = "WEDNESDAY";
+				break;
+			}
+			case 4: {
+				day = "THURSDAY";
+				break;
+			}
+			case 5: {
+				day = "FRIDAY";
+				break;
+			}
+			case 6: {
+				day = "SATURDAY";
+				break;
+			}
+			case 0: {
+				day = "SUNDAY";
+				break;
+			}
+			default: {
+				break;
+			}
+			}
+		return day;
+	}
+
+	private String vend2022(int d) {
+		Date date = new Date(1, 1, 2022);
+		String date22[] = new String[366];
+		for (int i = 0; i < 366; i++) {
+			date22[i] = date.d + "" + date.m;
+			date = date.addDays(1);
+		}
+		String value22[] = new String[366];
+		try {
+			BufferedReader dataOpened = new BufferedReader(
+					new InputStreamReader(this.getClass().getResourceAsStream("/extra/2022.dll")));
+			String line = "";
+			int z = 0;
+			while ((line = dataOpened.readLine()) != null) {
+				value22[z] = line.toString();
+				z++;
+			}
+			dataOpened.close();
+		} catch (Exception e) {
+		}
+		int numero = 0;
+		for (int i = 0; i < 366; i++) {
+			if (Integer.valueOf(date22[i]) == d) {
+				numero = i;
+				break;
+			}
+		}
+		return value22[numero];
+	}
+
 	private void screenShooter() {
 		BufferedImage img = new BufferedImage(this.getWidth(), this.getHeight(), BufferedImage.TYPE_INT_RGB);
 		this.paint(img.getGraphics());
-		String currentpath = System.getProperty("user.dir");
-		File tempFile1 = new File(currentpath + "\\" + yearS);
+		File tempFile1 = new File(tempFile0 + "\\" + yearS);
 		tempFile1.mkdir();
 		File tempFile2 = new File(tempFile1 + "\\" + monthS);
 		tempFile2.mkdir();
@@ -1361,7 +1694,7 @@ public class Reales extends JFrame {
 		StyleConstants.setAlignment(center, StyleConstants.ALIGN_CENTER);
 		doc.setParagraphAttributes(0, doc.getLength(), center, false);
 		sumItem.setBounds(0, 200, 650, 550);
-		sumItem.setFont(First.myFont);
+		sumItem.setFont(new Font("Tahoma", Font.BOLD, 18));
 		sumItem.setEditable(false);
 		sumItem.setCaretColor(First.lightC);
 		sumItem.setOpaque(false);
@@ -1519,7 +1852,7 @@ public class Reales extends JFrame {
 							sumItem.setBounds(0, 220, 650, 550);
 						} else {
 							sumItem.setText(language == 0 ? espSumm[5] : language == 1 ? porSumm[5] : engSumm[5]);
-							sumItem.setBounds(0, 140, 650, 550);
+							sumItem.setBounds(0, 120, 650, 550);
 						}
 					}
 					if (colorX < 254 && !status)// gastos fade in
@@ -1543,7 +1876,7 @@ public class Reales extends JFrame {
 							sumItem.setBounds(0, 220, 650, 550);
 						} else {
 							sumItem.setText(language == 0 ? espSumm[8] : language == 1 ? porSumm[8] : engSumm[8]);
-							sumItem.setBounds(0, 140, 650, 550);
+							sumItem.setBounds(0, 120, 650, 550);
 						}
 					}
 					if (colorX < 254 && status)// agg fade in
@@ -1716,7 +2049,7 @@ public class Reales extends JFrame {
 					} else {
 						String[] wordT = language == 0 ? espSumm[5].split(" ")
 								: language == 1 ? porSumm[5].split(" ") : engSumm[5].split(" ");
-						sumItem.setBounds(0, 140, 650, 550);
+						sumItem.setBounds(0, 120, 650, 550);
 						if (wordL < wordT.length)
 							sumItem.setText(sumItem.getText().concat(wordT[wordL++] + " "));
 						else {
@@ -1765,7 +2098,7 @@ public class Reales extends JFrame {
 					} else {
 						String[] wordT = language == 0 ? espSumm[8].split(" ")
 								: language == 1 ? porSumm[8].split(" ") : engSumm[8].split(" ");
-						sumItem.setBounds(0, 140, 650, 550);
+						sumItem.setBounds(0, 120, 650, 550);
 						if (wordL < wordT.length)
 							sumItem.setText(sumItem.getText().concat(wordT[wordL++] + " "));
 						else {
@@ -2004,7 +2337,7 @@ public class Reales extends JFrame {
 					} else {
 						char[] wordT = language == 0 ? espSumm[5].toCharArray()
 								: language == 1 ? porSumm[5].toCharArray() : engSumm[5].toCharArray();
-						sumItem.setBounds(0, 140, 650, 550);
+						sumItem.setBounds(0, 120, 650, 550);
 						if (wordL < wordT.length)
 							sumItem.setText(sumItem.getText() + (wordT[wordL++]));
 						else {
@@ -2053,7 +2386,7 @@ public class Reales extends JFrame {
 					} else {
 						char[] wordT = language == 0 ? espSumm[8].toCharArray()
 								: language == 1 ? porSumm[8].toCharArray() : engSumm[8].toCharArray();
-						sumItem.setBounds(0, 140, 650, 550);
+						sumItem.setBounds(0, 120, 650, 550);
 						if (wordL < wordT.length)
 							sumItem.setText(sumItem.getText() + (wordT[wordL++]));
 						else {
@@ -2258,9 +2591,10 @@ public class Reales extends JFrame {
 	// Save the summary of the day
 	private void exBtn(int lang) {
 		dateLang(lang);
+		int value22 = Integer.valueOf(vend2022(Integer.valueOf(dayN + "" + First.monthN)));
 		try {
-			String currentpath = System.getProperty("user.dir");
-			File tempFile1 = new File(currentpath + "\\" + yearS);
+			tempFile0.mkdir();
+			File tempFile1 = new File(tempFile0 + "\\" + yearS);
 			tempFile1.mkdir();
 			File tempFile2 = new File(tempFile1 + "\\" + monthS);
 			tempFile2.mkdir();
@@ -2302,7 +2636,21 @@ public class Reales extends JFrame {
 					System.lineSeparator() + "*LA CAJA NO DIO BIEN, PARECE QUE " + diffResult[1].getText().toUpperCase()
 							+ System.lineSeparator(), // 14
 					System.lineSeparator() + "*QUEDARÁ PARA MAÑANA APROXIMADAMENTE R$" + restN + System.lineSeparator(), // 15
-					System.lineSeparator() + "*GRACIAS Y HASTA MAÑANA :) "// 16
+					System.lineSeparator() + "*RECUERDOS DE HOY:\nEN ESTE DÍA EN " + "2022, LO QUE ES UN "
+							+ whatDay(Integer.valueOf(dayN), Integer.valueOf(monthN), 0) + ", VENDISTE R$" + value22
+							+ " EN TOTAL\nHOY, " + dayS + " VENDISTE POR AHORA R$" + (pix + totalVenta)
+							+ "\nSE PARECE QUE VENDIMOS R$"
+							+ (value22 > (pix + totalVenta)
+									? (value22 - (pix + totalVenta) + " MENOS QUE EL AÑO PASADO")
+									: ((pix + totalVenta) - value22 + " MÁS QUE EL AÑO PASADO"))
+							+ (value22 == 0 ? ""
+									: ", CORRESPONDIENTE A UN %" + (value22 > (pix + totalVenta)
+											? (value22 - (pix + totalVenta)) * 100 / value22
+													+ " DISMINUIR DEL AÑO PASADO"
+											: ((pix + totalVenta) - value22) * 100 / value22
+													+ " AUMENTAR DEL AÑO PASADO"))
+							+ System.lineSeparator(), // 16
+					System.lineSeparator() + "*GRACIAS Y HASTA MAÑANA :) "// 17
 			};
 			String[] porSumm = { "*VENDAS:\nVOCÊ NÃO VENDEU NADA" + System.lineSeparator(), // 0
 					"*VENDAS:\nVOCÊ VENDEU UMA VENDA SÓ QUE VALE R$" + totalVenta + System.lineSeparator(), // 1
@@ -2340,6 +2688,19 @@ public class Reales extends JFrame {
 					System.lineSeparator() + "*A CAIXA NÃO DEU BEM, " + "PARECE QUE "
 							+ diffResult[1].getText().toUpperCase() + System.lineSeparator(), // 13
 					System.lineSeparator() + "*FICARÁ PARA AMANHÃ APROXIMADAMENTE R$" + restN + System.lineSeparator(), // 14
+					System.lineSeparator() + "*MEMÓRIAS DE HOJE:\nNESTE DIA EM " + "2022, O QUE É UM "
+							+ whatDay(Integer.valueOf(dayN), Integer.valueOf(monthN), 1) + ", VENDEU R$" + value22
+							+ " EM TOTAL\nHOJE, " + dayS + " VENDEU POR AGORA R$" + (pix + totalVenta)
+							+ "\nPARECE QUE VENDEMOS R$"
+							+ (value22 > (pix + totalVenta) ? (value22 - (pix + totalVenta) + " MENOS QUE ANO PASSADO")
+									: ((pix + totalVenta) - value22 + " MAIS QUE ANO PASSADO"))
+							+ (value22 == 0 ? ""
+									: ", CORRESPONDENTE A %" + (value22 > (pix + totalVenta)
+											? (value22 - (pix + totalVenta)) * 100 / value22
+													+ " DIMINUIÇÃO DO ANO PASSADO"
+											: ((pix + totalVenta) - value22) * 100 / value22
+													+ " AUMENTO EM RELAÇÃO AO ANO PASSADO"))
+							+ System.lineSeparator(), // 16
 					System.lineSeparator() + "*OBRIGADO E ATÉ AMANHÃ :)"// 15
 			};
 			String[] engSumm = { "*SALES:\nYOU DIDN'T SELL ANYTHING" + System.lineSeparator(), // 0
@@ -2377,13 +2738,26 @@ public class Reales extends JFrame {
 					System.lineSeparator() + "*THE CASH DIDN'T FIT, " + "LOOKS LIKE "
 							+ diffResult[1].getText().toUpperCase() + System.lineSeparator(), // 13
 					System.lineSeparator() + "*WILL BE OUT TOMORROW APPROXIMATELY R$" + restN + System.lineSeparator(), // 14
-					System.lineSeparator() + "*THANKS AND SEE YOU TOMORROW :)" // 15
+					System.lineSeparator() + "*MEMORIES OF TODAY:\nON THIS DAY IN " + "2022, THAT IS A "
+							+ whatDay(Integer.valueOf(dayN), Integer.valueOf(monthN), 2) + ", YOU SOLD R$" + value22
+							+ " IN TOTAL\nTODAY, " + dayS + " YOU SOLD FOR NOW R$" + (pix + totalVenta)
+							+ "\nIT SEEMS WE SOLD R$"
+							+ (value22 > (pix + totalVenta) ? (value22 - (pix + totalVenta) + " LESS THAN LAST YEAR")
+									: ((pix + totalVenta) - value22 + " MORE THAN LAST YEAR"))
+							+ (value22 == 0 ? ""
+									: ", CORRESPONDING TO A %" + (value22 > (pix + totalVenta)
+											? (value22 - (pix + totalVenta)) * 100 / value22
+													+ " DECREASE FROM LAST YEAR"
+											: ((pix + totalVenta) - value22) * 100 / value22
+													+ " INCREASE FROM LAST YEAR"))
+							+ System.lineSeparator(), // 16
+					System.lineSeparator() + "*THANKS AND SEE YOU TOMORROW :)" // 17
 			};
 			savedF.write(titleName()
 					+ (lang == 0 ? " - SUMARIO POR EL DIA "
 							: lang == 1 ? " - SUMÁRIO DO DIA " : " - SUMMARY OF THE DAY ")
 					+ dayS + " " + dayN + "-" + monthS + "-" + yearS + System.lineSeparator() + System.lineSeparator());
-			if (totalVenta == 0)
+			if ((pix + totalVenta) == 0)
 				savedF.write(lang == 0 ? espSumm[0] : lang == 1 ? porSumm[0] : engSumm[0]);
 			else if (nbVentas() == 1)
 				savedF.write(lang == 0 ? espSumm[1] : lang == 1 ? porSumm[1] : engSumm[1]);
@@ -2414,6 +2788,7 @@ public class Reales extends JFrame {
 				savedF.write(lang == 0 ? espSumm[13] : lang == 1 ? porSumm[13] : engSumm[13]);
 			savedF.write(lang == 0 ? espSumm[14] : lang == 1 ? porSumm[14] : engSumm[14]);
 			savedF.write(lang == 0 ? espSumm[15] : lang == 1 ? porSumm[15] : engSumm[15]);
+			savedF.write(lang == 0 ? espSumm[16] : lang == 1 ? porSumm[16] : engSumm[16]);
 			savedF.close();
 			JOptionPane opt = new JOptionPane(idiomaString(lang)[26], JOptionPane.NO_OPTION);
 			final JDialog dlg = opt.createDialog("SALVO");
@@ -2434,6 +2809,7 @@ public class Reales extends JFrame {
 					JOptionPane.ERROR_MESSAGE);
 			opt.show();
 		}
+
 		if (language == lang)
 			screenShooter();
 	}
@@ -2475,7 +2851,6 @@ public class Reales extends JFrame {
 		op1C.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				Reales.this.setIconImage(iconImages[op1C.getSelectedIndex()].getImage());
 				op1C.setSelectedIndex(op1C.getSelectedIndex());
 			}
 		});
@@ -2694,7 +3069,7 @@ public class Reales extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				try {
-					FileWriter savedF = new FileWriter("conf.txt");
+					FileWriter savedF = new FileWriter(newFile);
 					savedF.write(op1C.getSelectedIndex() + System.lineSeparator());// icon
 					savedF.write((conf[1].equals("null") ? 0 : conf[1]) + System.lineSeparator());// btn hide
 					savedF.write(btnsHideShow2.isSelected() + System.lineSeparator());// key shortcut
@@ -2772,6 +3147,31 @@ public class Reales extends JFrame {
 				JOptionPane.OK_CANCEL_OPTION);
 		if (op == 0) {
 			exBtn(language);
+			// save what will rest for tmrw
+			BufferedReader data23 = null;
+			String l23 = "";
+			tempFile0.mkdir();
+			File temp23 = new File(tempFile0 + "\\extra");
+			temp23.mkdir();
+			File file23 = new File(temp23, yearS + ".txt");
+			ArrayList<String> con23 = new ArrayList<String>();
+			try {
+				data23 = new BufferedReader(new FileReader(file23));
+				while ((l23 = data23.readLine()) != null) {
+					con23.add(l23.toString());
+				}
+				data23.close();
+			} catch (Exception e) {
+			}
+			try {
+				FileWriter save23 = new FileWriter(file23);
+				for (int i = 0; i < con23.size(); i++)
+					save23.write(con23.get(i) + System.lineSeparator());
+				save23.write((pix + totalVenta) + System.lineSeparator());// icon
+				save23.close();
+			} catch (Exception e2) {
+			}
+			// cajas values
 			for (int i = 0; i < 6; i++)// table detail
 				for (int j = 0; j < 20; j++)
 					details[i][j].setText("");
@@ -2793,7 +3193,11 @@ public class Reales extends JFrame {
 	// saveProgress
 	private static void saveProgress() {
 		try {
-			FileWriter savedF = new FileWriter("cedros.txt");
+			String currentpath = System.getProperty("user.dir");
+			File tempFile0 = new File(currentpath + "\\data");
+			tempFile0.mkdir();
+			File newFile = new File(tempFile0, "cedros.txt");
+			FileWriter savedF = new FileWriter(newFile);
 			for (int i = 0; i < 6; i++)
 				for (int j = 0; j < 20; j++)
 					savedF.write(details[i][j].getText() + System.lineSeparator());
@@ -2815,8 +3219,10 @@ public class Reales extends JFrame {
 		String line = "";
 		int z = 0;
 		String numbers[] = new String[165];
+		tempFile0.mkdir();
+		File newFile = new File(tempFile0, "cedros.txt");
 		try {
-			dataOpened = new BufferedReader(new FileReader(new File("cedros.txt")));
+			dataOpened = new BufferedReader(new FileReader(newFile));
 			while ((line = dataOpened.readLine()) != null) {
 				numbers[z] = line.toString();
 				z++;
@@ -2966,6 +3372,7 @@ public class Reales extends JFrame {
 				+ (panelCnum[8].getText().equals("") ? 0 : Integer.valueOf(panelCnum[8].getText()) * 2)
 				+ (panelCnum[9].getText().equals("") ? 0 : Integer.valueOf(panelCnum[9].getText()) * 1));
 		total[7].setText("R$" + totalCaja);
+		pix = panelCnum[10].getText().equals("") ? 0 : Integer.valueOf(panelCnum[10].getText());
 		// Calculate the diferencia
 		if (totalCaja == totalO) {
 			diffResult[1].setText(idiomaString(language)[21]);
@@ -4193,38 +4600,39 @@ public class Reales extends JFrame {
 		gastosFrame.setLayout(null);
 		gastosFrame.getContentPane().setBackground(First.redC);
 		gastosFrame.setIconImage(notasI.getImage());
-
-		for (int i = 0; i < 8; i++) {
-			// Autocomplete
-			AutoComplete autoComplete = new AutoComplete(gTable[i], keywords);
-			gTable[i].getDocument().addDocumentListener(autoComplete);
-			gTable[i].setBounds(2, 2 + 45 * i, 140, 45);
+		for (int i = 0; i < 16; i++) {
 			textFieldStyle(gTable[i]);
+			if (i < 8) {
+				gTable[i].setBounds(2, 2 + 45 * i, 140, 45);
+				gTable[i].setBackground(First.redD);
+			} else {
+				gTable[i].setBounds(142, 2 + 45 * (i - 8), 140, 45);
+				gTable[i].setBackground(First.redC);
+			}
 			gTable[i].removeFocusListener(textFocus);
-			gTable[i].setBackground(First.redD);
 			gTable[i].setForeground(Color.white);
 			gTable[i].addKeyListener(new KeyAdapter() {// Escape to close
 				@SuppressWarnings("static-access")
 				public void keyPressed(KeyEvent ke) {
 					if (ke.getKeyCode() == ke.VK_ESCAPE) {
+						for (int i = 0; i < 16; i++)
+							gastosTable[i].setText(gTable[i].getText());
+						sumF();
 						gastosFrame.dispose();
 					}
 				}
 			});
-			gastosFrame.add(gTable[i]);
-		}
-		for (int i = 8; i < 16; i++) {
-			gTable[i].setBounds(142, 2 + 45 * (i - 8), 140, 45);
-			textFieldStyle(gTable[i]);
-			gTable[i].removeFocusListener(textFocus);
-			gTable[i].setBackground(First.redC);
-			gTable[i].setForeground(Color.white);
-			gTable[i].addKeyListener(new KeyAdapter() {// Escape to close
-				@SuppressWarnings("static-access")
-				public void keyPressed(KeyEvent ke) {
-					if (ke.getKeyCode() == ke.VK_ESCAPE) {
-						gastosFrame.dispose();
-					}
+			gTable[i].addFocusListener(new FocusListener() {
+
+				@Override
+				public void focusLost(FocusEvent e) {
+					for (int i = 0; i < 16; i++) // TitleCase gastos and agg
+						gTable[i].setText(First.capitalizeString(gTable[i].getText()));
+				}
+
+				@Override
+				public void focusGained(FocusEvent e) {
+					((JTextField) e.getSource()).selectAll();
 				}
 			});
 			gastosFrame.add(gTable[i]);
@@ -4254,38 +4662,39 @@ public class Reales extends JFrame {
 		aggFrame.setLayout(null);
 		aggFrame.getContentPane().setBackground(First.greenC);
 		aggFrame.setIconImage(notasI.getImage());
-
-		for (int i = 0; i < 8; i++) {
-			// Autocomplete
-			AutoComplete autoComplete = new AutoComplete(aTable[i], keywords);
-			aTable[i].getDocument().addDocumentListener(autoComplete);
+		for (int i = 0; i < 16; i++) {
 			textFieldStyle(aTable[i]);
+			if (i < 8) {
+				aTable[i].setBounds(2, 2 + 45 * i, 140, 45);
+				aTable[i].setBackground(First.greenD);
+			} else {
+				aTable[i].setBounds(142, 2 + 45 * (i - 8), 140, 45); // Add focus listener
+				aTable[i].setBackground(First.greenC);
+			}
 			aTable[i].removeFocusListener(textFocus);
-			aTable[i].setBounds(2, 2 + 45 * i, 140, 45);
-			aTable[i].setBackground(First.greenD);
 			aTable[i].setForeground(Color.white);
 			aTable[i].addKeyListener(new KeyAdapter() {// Escape to close
 				@SuppressWarnings("static-access")
 				public void keyPressed(KeyEvent ke) {
 					if (ke.getKeyCode() == ke.VK_ESCAPE) {
+						for (int i = 0; i < 16; i++)
+							agregadoTable[i].setText(aTable[i].getText());
+						sumF();
 						aggFrame.dispose();
 					}
 				}
 			});
-			aggFrame.add(aTable[i]);
-		}
-		for (int i = 8; i < 16; i++) {
-			textFieldStyle(aTable[i]);
-			aTable[i].removeFocusListener(textFocus);
-			aTable[i].setBounds(142, 2 + 45 * (i - 8), 140, 45);
-			aTable[i].setBackground(First.greenC);
-			aTable[i].setForeground(Color.white);
-			aTable[i].addKeyListener(new KeyAdapter() {// Escape to close
-				@SuppressWarnings("static-access")
-				public void keyPressed(KeyEvent ke) {
-					if (ke.getKeyCode() == ke.VK_ESCAPE) {
-						aggFrame.dispose();
-					}
+			aTable[i].addFocusListener(new FocusListener() {
+
+				@Override
+				public void focusLost(FocusEvent e) {
+					for (int i = 0; i < 16; i++) // TitleCase gastos and agg
+						aTable[i].setText(First.capitalizeString(aTable[i].getText()));
+				}
+
+				@Override
+				public void focusGained(FocusEvent e) {
+					((JTextField) e.getSource()).selectAll();
 				}
 			});
 			aggFrame.add(aTable[i]);
@@ -4552,6 +4961,11 @@ public class Reales extends JFrame {
 				, "SOBRE MI"// about me 28
 				, "GASTOS"// 29
 				, "AGREGADOS"// 30
+				, "RECUERDOS DE HOY"// 31,
+				, "Introducir contraseña"// 32
+				, "Cancelar, tecla X o escape seleccionada"// 33
+				, "¡Contraseña incorrecta, inténtalo de nuevo!"// 34
+				, "SEPARADOS 🔒"// 35
 		};
 		String[] portugues = { "• CTRL + S → ir para a fatura.\n" + "• CTRL + P → ir para os pesos.\n"
 				+ "• CTRL + B → excluir tudo.\n" + "• CTRL + N → prepare-se para o dia seguinte.\n"
@@ -4594,6 +5008,11 @@ public class Reales extends JFrame {
 				, "SOBRE MIM"// about me 28
 				, "GASTOS"// 29
 				, "AGREGADOS"// 30
+				, "MEMÓRIAS DE HOJE"// 31
+				, "Digite a senha" // 32
+				, "Cancelar, X ou tecla de escape selecionada"// 33
+				, "Senha incorreta, tente novamente!"// 34
+				, "SEPARADAS 🔒"// 35
 		};
 		String[] english = {
 				"• CTRL + S → go to invoice.\n" + "• CTRL + P → go to the pesos.\n" + "• CTRL + B → delete all.\n"
@@ -4638,6 +5057,11 @@ public class Reales extends JFrame {
 				, "ABOUT ME"// about me 28
 				, "BILLS"// 29
 				, "AGGREGATES"// 30
+				, "MEMORIES OF TODAY"// 31
+				, "Enter Password"// 32
+				, "Cancel, X or escape key selected"// 33
+				, "Wrong password, try again!"// 34
+				, "SEPARATED 🔒"// 35
 		};
 		if (idioma == 0)
 			return espanol;
