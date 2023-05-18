@@ -97,7 +97,7 @@ public class First extends JFrame {
 	javax.swing.Timer timer;
 	int order = 0, wordL = 0;
 
-	static String appVersion = "v6.2.1";
+	static String appVersion = "v6.3";
 	private int language;
 
 	String currentpath = System.getProperty("user.dir");
@@ -139,6 +139,10 @@ public class First extends JFrame {
 				savedF.write("1,1" + System.lineSeparator());// intro
 				savedF.close();
 			} catch (Exception e1) {
+				JOptionPane opt = new JOptionPane(
+						language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
+						JOptionPane.ERROR_MESSAGE);
+				opt.show();
 			}
 			confFrame(conf, height, photoLabel);
 		} // OPEN CONF
@@ -150,6 +154,10 @@ public class First extends JFrame {
 			}
 			dataOpened.close();
 		} catch (Exception e) {
+			JOptionPane opt = new JOptionPane(
+					language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
+					JOptionPane.ERROR_MESSAGE);
+			opt.show();
 		}
 		// LANGUAGE
 		if (conf[7] == null || conf[7].equals("0"))
@@ -346,6 +354,10 @@ public class First extends JFrame {
 				savedF.write(dayN + "," + monthN + System.lineSeparator());// intro
 				savedF.close();
 			} catch (Exception e) {
+				JOptionPane opt = new JOptionPane(
+						language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
+						JOptionPane.ERROR_MESSAGE);
+				opt.show();
 			}
 			introFrame();
 		}
@@ -794,6 +806,10 @@ public class First extends JFrame {
 					savedF.write((conf[9].equals("null") ? "1,1" : conf[9]) + System.lineSeparator());// intro
 					savedF.close();
 				} catch (Exception e2) {
+					JOptionPane opt = new JOptionPane(
+							language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
+							JOptionPane.ERROR_MESSAGE);
+					opt.show();
 				}
 				temp.dispose();
 
@@ -1027,6 +1043,10 @@ public class First extends JFrame {
 					Runtime.getRuntime().exec("taskkill /f /im java.exe");
 
 				} catch (IOException e4) {
+					JOptionPane opt = new JOptionPane(
+							language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
+							JOptionPane.ERROR_MESSAGE);
+					opt.show();
 				}
 			}
 		});

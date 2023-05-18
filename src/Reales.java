@@ -141,6 +141,8 @@ public class Reales extends JFrame {
 	private ImageIcon smallI = new ImageIcon(smallP);
 	private URL speedP = getClass().getResource("images/menubar/speed.png");
 	private ImageIcon speedI = new ImageIcon(speedP);
+	private URL summaryP = getClass().getResource("images/menubar/summary.png");
+	private ImageIcon summaryI = new ImageIcon(summaryP);
 	private URL summP = getClass().getResource("images/menubar/sum.png");
 	private ImageIcon summI = new ImageIcon(summP);
 	private URL themeP = getClass().getResource("images/menubar/theme.png");
@@ -181,6 +183,13 @@ public class Reales extends JFrame {
 	private ImageIcon memI = new ImageIcon(memP);
 	private URL sepP = getClass().getResource("images/menubar/sep.png");
 	private ImageIcon sepI = new ImageIcon(sepP);
+	private URL avgP = getClass().getResource("images/menubar/avg.png");
+	private ImageIcon avgI = new ImageIcon(avgP);
+	// months
+	private URL monthP[] = new URL[12];
+	private ImageIcon monthI[] = new ImageIcon[12];
+	private URL monthPI = getClass().getResource("images/menubar/month/month.png");
+	private ImageIcon monthIM = new ImageIcon(monthPI);
 	static File screenSound = new File("src/sound/screenshot.wav");
 
 	// Define Parameter
@@ -211,16 +220,18 @@ public class Reales extends JFrame {
 	Timer timer;
 	String conf[] = new String[10];
 	JLabel date = new JLabel();// date of the day
+	Date currentDate;
 	String monthS, dayN, dayS, yearS;
-	String monthN = new SimpleDateFormat("M").format(Calendar.getInstance().getTime());
 
 	String currentpath = System.getProperty("user.dir");
 	File tempFile0 = new File(currentpath + "\\data");
 	File newFile = new File(tempFile0, "conf.dll");
 
 	Reales() {
-		// Notification when its time to end the day
-		First.timeToClose();
+		for (int i = 0; i < 12; i++) {
+			monthP[i] = getClass().getResource("images/menubar/month/" + (i + 1) + ".png");
+			monthI[i] = new ImageIcon(monthP[i]);
+		}
 		// Open Conf
 		tempFile0.mkdir();
 		BufferedReader dataOpened = null;
@@ -234,6 +245,10 @@ public class Reales extends JFrame {
 			}
 			dataOpened.close();
 		} catch (Exception e) {
+			JOptionPane opt = new JOptionPane(
+					language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
+					JOptionPane.ERROR_MESSAGE);
+			opt.show();
 		} // icon
 		if (conf[0] == null || !conf[0].equals("3"))
 			this.setIconImage(new ImageIcon(getClass().getResource("images/icon/cedrosI.png")).getImage());
@@ -704,6 +719,10 @@ public class Reales extends JFrame {
 						Thread.sleep(1000);
 						dlg.dispose();
 					} catch (Throwable th) {
+						JOptionPane opt = new JOptionPane(
+								language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
+								JOptionPane.ERROR_MESSAGE);
+						opt.show();
 					}
 				}
 			}).start();
@@ -714,6 +733,10 @@ public class Reales extends JFrame {
 				clip.open(audioStream);
 				clip.start();
 			} catch (UnsupportedAudioFileException | IOException | LineUnavailableException e1) {
+				JOptionPane opt2 = new JOptionPane(
+						language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
+						JOptionPane.ERROR_MESSAGE);
+				opt2.show();
 			}
 		});
 		option.addActionListener(
@@ -726,205 +749,6 @@ public class Reales extends JFrame {
 		file.add(screenShot);
 		file.add(option);
 		file.add(exit);
-		// SUMMARY
-		JMenu summary = new JMenu("SUMARIO");
-		JMenuItem sumV = new JMenuItem("VISTA PREVIA DEL RESUMEN");
-		JMenu effectChooser = new JMenu("ELIGE TU EFECTO");
-		JMenuItem sumV1 = new JMenuItem("FUNDIDO ENTRADA/FUERA");
-		JMenuItem sumV2 = new JMenuItem("APARECE PALABRA POR PALABRA");
-		JMenuItem sumV3 = new JMenuItem("APARECE LETRA POR LETRA");
-		JMenu exMenu = new JMenu("GUARDAR RESUMEN");
-		JSeparator sep3 = new JSeparator();
-		JMenuItem exMenuS = new JMenuItem("SPANISH");
-		JMenuItem exMenuP = new JMenuItem("PORTUGUES");
-		JMenuItem exMenuE = new JMenuItem("ENGLISH");
-		JMenuItem exMenuD = new JMenuItem("DEFAULT");
-		JMenu speedChooser = new JMenu("VELOCIDAD DE ANIMACIÓN");
-		JMenuItem speed1 = new JMenuItem("LENTO");
-		JMenuItem speed2 = new JMenuItem("MEDIANO");
-		JMenuItem speed3 = new JMenuItem("RÁPIDO");
-		sumV.addActionListener(e -> summaryFrame());
-		/* effect choose default conf */
-		if (conf[8] == null || conf[8].equals("0")) {
-			effChooser = 0;
-			sumV1.setEnabled(false);
-			sumV2.setEnabled(true);
-			sumV3.setEnabled(true);
-		} else if (conf[8].equals("1")) {
-			effChooser = 1;
-			sumV1.setEnabled(true);
-			sumV2.setEnabled(false);
-			sumV3.setEnabled(true);
-		} else {
-			effChooser = 2;
-			sumV1.setEnabled(true);
-			sumV2.setEnabled(true);
-			sumV3.setEnabled(false);
-		}
-		sumV1.addActionListener(e -> {
-			effChooser = 0;
-			sumV1.setEnabled(false);
-			sumV2.setEnabled(true);
-			sumV3.setEnabled(true);
-			conf[8] = "0";
-			try {
-				FileWriter savedF = new FileWriter(newFile);
-				savedF.write((conf[0].equals("null") ? 0 : conf[0]) + System.lineSeparator());
-				savedF.write((conf[1].equals("null") ? 0 : conf[1]) + System.lineSeparator());
-				savedF.write((conf[2].equals("null") ? "false" : conf[2]) + System.lineSeparator());
-				savedF.write((conf[3].equals("null") ? 0 : conf[3]) + System.lineSeparator());
-				savedF.write((conf[4].equals("null") ? "false" : conf[4]) + System.lineSeparator());
-				savedF.write((conf[5].equals("null") ? 0 : conf[5]) + System.lineSeparator());
-				savedF.write((conf[6].equals("null") ? 0 : conf[6]) + System.lineSeparator());// speed
-				savedF.write((conf[7].equals("null") ? 0 : conf[7]) + System.lineSeparator());// lan
-				savedF.write(0 + System.lineSeparator());// effect chooser
-				savedF.write((conf[9].equals("null") ? "1,1" : conf[9]) + System.lineSeparator());// intro
-				savedF.close();
-			} catch (Exception e2) {
-			}
-		});
-		sumV2.addActionListener(e -> {
-			effChooser = 1;
-			sumV1.setEnabled(true);
-			sumV2.setEnabled(false);
-			sumV3.setEnabled(true);
-			conf[8] = "1";
-			try {
-				FileWriter savedF = new FileWriter(newFile);
-				savedF.write((conf[0].equals("null") ? 0 : conf[0]) + System.lineSeparator());
-				savedF.write((conf[1].equals("null") ? 0 : conf[1]) + System.lineSeparator());
-				savedF.write((conf[2].equals("null") ? "false" : conf[2]) + System.lineSeparator());
-				savedF.write((conf[3].equals("null") ? 0 : conf[3]) + System.lineSeparator());
-				savedF.write((conf[4].equals("null") ? "false" : conf[4]) + System.lineSeparator());
-				savedF.write((conf[5].equals("null") ? 0 : conf[5]) + System.lineSeparator());
-				savedF.write((conf[6].equals("null") ? 0 : conf[6]) + System.lineSeparator());// speed
-				savedF.write((conf[7].equals("null") ? 0 : conf[7]) + System.lineSeparator());// lan
-				savedF.write(1 + System.lineSeparator());// effect chooser
-				savedF.write((conf[9].equals("null") ? "1,1" : conf[9]) + System.lineSeparator());// intro
-				savedF.close();
-			} catch (Exception e2) {
-			}
-		});
-		sumV3.addActionListener(e -> {
-			effChooser = 2;
-			sumV1.setEnabled(true);
-			sumV2.setEnabled(true);
-			sumV3.setEnabled(false);
-			conf[8] = "2";
-			try {
-				FileWriter savedF = new FileWriter(newFile);
-				savedF.write((conf[0].equals("null") ? 0 : conf[0]) + System.lineSeparator());
-				savedF.write((conf[1].equals("null") ? 0 : conf[1]) + System.lineSeparator());
-				savedF.write((conf[2].equals("null") ? "false" : conf[2]) + System.lineSeparator());
-				savedF.write((conf[3].equals("null") ? 0 : conf[3]) + System.lineSeparator());
-				savedF.write((conf[4].equals("null") ? "false" : conf[4]) + System.lineSeparator());
-				savedF.write((conf[5].equals("null") ? 0 : conf[5]) + System.lineSeparator());
-				savedF.write((conf[6].equals("null") ? 0 : conf[6]) + System.lineSeparator());// speed
-				savedF.write((conf[7].equals("null") ? 0 : conf[7]) + System.lineSeparator());// lan
-				savedF.write(2 + System.lineSeparator());// effect chooser
-				savedF.write((conf[9].equals("null") ? "1,1" : conf[9]) + System.lineSeparator());// intro
-				savedF.close();
-			} catch (Exception e2) {
-			}
-		});
-		/* effect choose default conf */
-		/* speed default conf */
-		if (conf[6] == null || conf[6].equals("1")) {
-			speed1.setEnabled(true);
-			speed2.setEnabled(false);
-			speed3.setEnabled(true);
-		} else if (conf[6].equals("0")) {
-			speed1.setEnabled(false);
-			speed2.setEnabled(true);
-			speed3.setEnabled(true);
-		} else {
-			speed1.setEnabled(true);
-			speed2.setEnabled(true);
-			speed3.setEnabled(false);
-		}
-		speed1.addActionListener(e -> {
-			conf[6] = "0";
-			try {
-				FileWriter savedF = new FileWriter(newFile);
-				savedF.write((conf[0].equals("null") ? 0 : conf[0]) + System.lineSeparator());
-				savedF.write((conf[1].equals("null") ? 0 : conf[1]) + System.lineSeparator());
-				savedF.write((conf[2].equals("null") ? "false" : conf[2]) + System.lineSeparator());
-				savedF.write((conf[3].equals("null") ? 0 : conf[3]) + System.lineSeparator());
-				savedF.write((conf[4].equals("null") ? "false" : conf[4]) + System.lineSeparator());
-				savedF.write((conf[5].equals("null") ? 0 : conf[5]) + System.lineSeparator());
-				savedF.write(0 + System.lineSeparator());// speed
-				savedF.write((conf[7].equals("null") ? 0 : conf[7]) + System.lineSeparator());// lan
-				savedF.write((conf[8].equals("null") ? 0 : conf[8]) + System.lineSeparator());// effchooser
-				savedF.write((conf[9].equals("null") ? "1,1" : conf[9]) + System.lineSeparator());// intro
-				savedF.close();
-			} catch (Exception e2) {
-			}
-			speed1.setEnabled(false);
-			speed2.setEnabled(true);
-			speed3.setEnabled(true);
-		});
-		speed2.addActionListener(e -> {
-			conf[6] = "1";
-			try {
-				FileWriter savedF = new FileWriter(newFile);
-				savedF.write((conf[0].equals("null") ? 0 : conf[0]) + System.lineSeparator());
-				savedF.write((conf[1].equals("null") ? 0 : conf[1]) + System.lineSeparator());
-				savedF.write((conf[2].equals("null") ? "false" : conf[2]) + System.lineSeparator());
-				savedF.write((conf[3].equals("null") ? 0 : conf[3]) + System.lineSeparator());
-				savedF.write((conf[4].equals("null") ? "false" : conf[4]) + System.lineSeparator());
-				savedF.write((conf[5].equals("null") ? 0 : conf[5]) + System.lineSeparator());
-				savedF.write(1 + System.lineSeparator());
-				savedF.write((conf[7].equals("null") ? 0 : conf[7]) + System.lineSeparator());// lan
-				savedF.write((conf[8].equals("null") ? 0 : conf[8]) + System.lineSeparator());// effchooser
-				savedF.write((conf[9].equals("null") ? "1,1" : conf[9]) + System.lineSeparator());// intro
-				savedF.close();
-			} catch (Exception e2) {
-			}
-			speed1.setEnabled(true);
-			speed2.setEnabled(false);
-			speed3.setEnabled(true);
-		});
-		speed3.addActionListener(e -> {
-			conf[6] = "2";
-			try {
-				FileWriter savedF = new FileWriter(newFile);
-				savedF.write((conf[0].equals("null") ? 0 : conf[0]) + System.lineSeparator());
-				savedF.write((conf[1].equals("null") ? 0 : conf[1]) + System.lineSeparator());
-				savedF.write((conf[2].equals("null") ? "false" : conf[2]) + System.lineSeparator());
-				savedF.write((conf[3].equals("null") ? 0 : conf[3]) + System.lineSeparator());
-				savedF.write((conf[4].equals("null") ? "false" : conf[4]) + System.lineSeparator());
-				savedF.write((conf[5].equals("null") ? 0 : conf[5]) + System.lineSeparator());
-				savedF.write(2 + System.lineSeparator());
-				savedF.write((conf[7].equals("null") ? 0 : conf[7]) + System.lineSeparator());// lan
-				savedF.write((conf[8].equals("null") ? 0 : conf[8]) + System.lineSeparator());// effchooser
-				savedF.write((conf[9].equals("null") ? "1,1" : conf[9]) + System.lineSeparator());// intro
-				savedF.close();
-			} catch (Exception e2) {
-			}
-			speed1.setEnabled(true);
-			speed2.setEnabled(true);
-			speed3.setEnabled(false);
-		});
-		/* speed default conf */
-		exMenuD.addActionListener(e -> exBtn(language));
-		exMenuS.addActionListener(e -> exBtn(0));
-		exMenuP.addActionListener(e -> exBtn(1));
-		exMenuE.addActionListener(e -> exBtn(2));
-		exMenu.add(exMenuD);
-		exMenu.add(sep3);
-		exMenu.add(exMenuS);
-		exMenu.add(exMenuP);
-		exMenu.add(exMenuE);
-		speedChooser.add(speed1);
-		speedChooser.add(speed2);
-		speedChooser.add(speed3);
-		effectChooser.add(sumV1);
-		effectChooser.add(sumV2);
-		effectChooser.add(sumV3);
-		summary.add(sumV);
-		summary.add(effectChooser);
-		summary.add(speedChooser);
-		summary.add(exMenu);
 		// GO TO
 		JMenu goTo = new JMenu("IR A");
 		JMenuItem pesos = new JMenuItem("PESOS");
@@ -962,107 +786,55 @@ public class Reales extends JFrame {
 		reso.add(reso3);
 		reso.add(reso2);
 		reso.add(reso1);
-		resoD.addActionListener(e -> {
-			conf[3] = "0";
-			opResolution(clearEverthing, pesosF, notasF, newDay, resoD, reso4, reso3, reso2, reso1, aggPanel,
-					gastosPanel);
-			try {
-				FileWriter savedF = new FileWriter(newFile);
-				savedF.write((conf[0].equals("null") ? 0 : conf[0]) + System.lineSeparator());
-				savedF.write((conf[1].equals("null") ? 0 : conf[1]) + System.lineSeparator());
-				savedF.write((conf[2].equals("null") ? "false" : conf[2]) + System.lineSeparator());
-				savedF.write(0 + System.lineSeparator());
-				savedF.write((conf[4].equals("null") ? "false" : conf[4]) + System.lineSeparator());
-				savedF.write((conf[5].equals("null") ? 0 : conf[5]) + System.lineSeparator());
-				savedF.write((conf[6].equals("null") ? 0 : conf[6]) + System.lineSeparator());
-				savedF.write((conf[7].equals("null") ? 0 : conf[7]) + System.lineSeparator());// lan
-				savedF.write((conf[8].equals("null") ? 0 : conf[8]) + System.lineSeparator());// effchooser
-				savedF.write((conf[9].equals("null") ? "1,1" : conf[9]) + System.lineSeparator());// intro
-				savedF.close();
-			} catch (Exception e2) {
-			}
-		});
-		reso1.addActionListener(e -> {
-			conf[3] = "4";
-			resG(resoD, reso4, reso3, reso2, reso1, notasF, pesosF, newDay, clearEverthing, gastosPanel, aggPanel);
-			try {
-				FileWriter savedF = new FileWriter(newFile);
-				savedF.write((conf[0].equals("null") ? 0 : conf[0]) + System.lineSeparator());
-				savedF.write((conf[1].equals("null") ? 0 : conf[1]) + System.lineSeparator());
-				savedF.write((conf[2].equals("null") ? "false" : conf[2]) + System.lineSeparator());
-				savedF.write(4 + System.lineSeparator());
-				savedF.write((conf[4].equals("null") ? "false" : conf[4]) + System.lineSeparator());
-				savedF.write((conf[5].equals("null") ? 0 : conf[5]) + System.lineSeparator());
-				savedF.write((conf[6].equals("null") ? 0 : conf[6]) + System.lineSeparator());
-				savedF.write((conf[7].equals("null") ? 0 : conf[7]) + System.lineSeparator());// lan
-				savedF.write((conf[8].equals("null") ? 0 : conf[8]) + System.lineSeparator());// effchooser
-				savedF.write((conf[9].equals("null") ? "1,1" : conf[9]) + System.lineSeparator());// intro
-				savedF.close();
-			} catch (Exception e2) {
-			}
-		});
-		reso2.addActionListener(e -> {
-			conf[3] = "3";
-			resM(resoD, reso4, reso3, reso2, reso1, notasF, pesosF, newDay, clearEverthing, gastosPanel, aggPanel);
-			try {
-				FileWriter savedF = new FileWriter(newFile);
-				savedF.write((conf[0].equals("null") ? 0 : conf[0]) + System.lineSeparator());
-				savedF.write((conf[1].equals("null") ? 0 : conf[1]) + System.lineSeparator());
-				savedF.write((conf[2].equals("null") ? "false" : conf[2]) + System.lineSeparator());
-				savedF.write(3 + System.lineSeparator());
-				savedF.write((conf[4].equals("null") ? "false" : conf[4]) + System.lineSeparator());
-				savedF.write((conf[5].equals("null") ? 0 : conf[5]) + System.lineSeparator());
-				savedF.write((conf[6].equals("null") ? 0 : conf[6]) + System.lineSeparator());
-				savedF.write((conf[7].equals("null") ? 0 : conf[7]) + System.lineSeparator());// lan
-				savedF.write((conf[8].equals("null") ? 0 : conf[8]) + System.lineSeparator());// effchooser
-				savedF.write((conf[9].equals("null") ? "1,1" : conf[9]) + System.lineSeparator());// intro
-				savedF.close();
-			} catch (Exception e2) {
-			}
-		});
-		reso3.addActionListener(e -> {
-			conf[3] = "2";
-			resP(resoD, reso4, reso3, reso2, reso1, notasF, pesosF, newDay, clearEverthing, gastosPanel, aggPanel);
-			try {
-				FileWriter savedF = new FileWriter(newFile);
-				savedF.write((conf[0].equals("null") ? 0 : conf[0]) + System.lineSeparator());
-				savedF.write((conf[1].equals("null") ? 0 : conf[1]) + System.lineSeparator());
-				savedF.write((conf[2].equals("null") ? "false" : conf[2]) + System.lineSeparator());
-				savedF.write(2 + System.lineSeparator());
-				savedF.write((conf[4].equals("null") ? "false" : conf[4]) + System.lineSeparator());
-				savedF.write((conf[5].equals("null") ? 0 : conf[5]) + System.lineSeparator());
-				savedF.write((conf[6].equals("null") ? 0 : conf[6]) + System.lineSeparator());
-				savedF.write((conf[7].equals("null") ? 0 : conf[7]) + System.lineSeparator());// lan
-				savedF.write((conf[8].equals("null") ? 0 : conf[8]) + System.lineSeparator());// effchooser
-				savedF.write((conf[9].equals("null") ? "1,1" : conf[9]) + System.lineSeparator());// intro
-				savedF.close();
-			} catch (Exception e2) {
-			}
-		});
-		reso4.addActionListener(e -> {
-			conf[3] = "1";
-			resXP(resoD, reso4, reso3, reso2, reso1, notasF, pesosF, newDay, clearEverthing, gastosPanel, aggPanel);
-			try {
-				FileWriter savedF = new FileWriter(newFile);
-				savedF.write((conf[0].equals("null") ? 0 : conf[0]) + System.lineSeparator());
-				savedF.write((conf[1].equals("null") ? 0 : conf[1]) + System.lineSeparator());
-				savedF.write((conf[2].equals("null") ? "false" : conf[2]) + System.lineSeparator());
-				savedF.write(1 + System.lineSeparator());
-				savedF.write((conf[4].equals("null") ? "false" : conf[4]) + System.lineSeparator());
-				savedF.write((conf[5].equals("null") ? 0 : conf[5]) + System.lineSeparator());
-				savedF.write((conf[6].equals("null") ? 0 : conf[6]) + System.lineSeparator());
-				savedF.write((conf[7].equals("null") ? 0 : conf[7]) + System.lineSeparator());// lan
-				savedF.write((conf[8].equals("null") ? 0 : conf[8]) + System.lineSeparator());// effchooser
-				savedF.write((conf[9].equals("null") ? "1,1" : conf[9]) + System.lineSeparator());// intro
-				savedF.close();
-			} catch (Exception e2) {
-			}
-		});
+		resolutionActionListener(clearEverthing, pesosF, notasF, newDay, resoD, aggPanel, gastosPanel, reso1, reso2,
+				reso3, reso4);
 		// extra
 		JMenu extraM = new JMenu("EXTRA");
 		JMenuItem oldYears = new JMenuItem(idiomaString(language)[31]);
+		JMenu monthAvg = new JMenu(idiomaString(language)[36]);
+		JMenu monthOtherLang = new JMenu(idiomaString(language)[37]);
+		JMenuItem monthSelected[] = new JMenuItem[13];
+		JSeparator monthSeparator = new JSeparator();
 		JMenuItem separadosM = new JMenuItem(idiomaString(language)[35]);
-		oldYears.addActionListener(e -> extraFrame());
+		// SUMMARY
+		JMenu summary = new JMenu();
+		JMenuItem sumV = new JMenuItem();
+		JMenu effectChooser = new JMenu();
+		JMenuItem sumV1 = new JMenuItem();
+		JMenuItem sumV2 = new JMenuItem();
+		JMenuItem sumV3 = new JMenuItem();
+		JMenu exMenu = new JMenu();
+		JSeparator sep3 = new JSeparator();
+		JMenu exMenuD = new JMenu(idiomaString(language)[37]);
+		JMenuItem exMenuR = new JMenuItem(language == 0 ? "ESPAÑOL" : language == 1 ? "PORTUGUÊS" : "ENGLISH");
+		JMenuItem exMenuS = new JMenuItem("ESPAÑOL");
+		JMenuItem exMenuP = new JMenuItem("PORTUGUÊS");
+		JMenuItem exMenuE = new JMenuItem("ENGLISH");
+		JMenu speedChooser = new JMenu();
+		JMenuItem speed1 = new JMenuItem();
+		JMenuItem speed2 = new JMenuItem();
+		JMenuItem speed3 = new JMenuItem();
+		oldYears.addActionListener(e -> memoryFrame());
+		// month selected
+		monthSelected[0] = new JMenuItem(getMonthForInt(Integer.valueOf(First.monthN) - 1));
+		monthSelected[0].addActionListener(e -> monthAvgFrame(Integer.valueOf(First.monthN)));
+		for (int i = 1; i < 13; i++)
+			monthSelected[i] = new JMenuItem(getMonthForInt(i - 1));
+		monthSelected[1].addActionListener(e -> monthAvgFrame(1));
+		monthSelected[2].addActionListener(e -> monthAvgFrame(2));
+		monthSelected[3].addActionListener(e -> monthAvgFrame(3));
+		monthSelected[4].addActionListener(e -> monthAvgFrame(4));
+		monthSelected[5].addActionListener(e -> monthAvgFrame(5));
+		monthSelected[6].addActionListener(e -> monthAvgFrame(6));
+		monthSelected[7].addActionListener(e -> monthAvgFrame(7));
+		monthSelected[8].addActionListener(e -> monthAvgFrame(8));
+		monthSelected[9].addActionListener(e -> monthAvgFrame(9));
+		monthSelected[10].addActionListener(e -> monthAvgFrame(10));
+		monthSelected[11].addActionListener(e -> monthAvgFrame(11));
+		monthSelected[12].addActionListener(e -> monthAvgFrame(12));
+		for (int i = 1; i < 13; i++)
+			if (i > Integer.valueOf(First.monthN) - 1)
+				monthSelected[i].hide();
 		separadosM.addActionListener(e -> {
 			String hoy = Calendar.getInstance().getTime().getHours() + ""
 					+ Calendar.getInstance().getTime().getMinutes();
@@ -1085,10 +857,80 @@ public class Reales extends JFrame {
 					}
 				}
 				if (pass.equals(hoy)) {
-					// later
+					separadosFrame();
 				}
 			}
 		});
+		sumV.addActionListener(e -> summaryFrame());
+		/* effect choose default conf */
+		if (conf[8] == null || conf[8].equals("0")) {
+			effChooser = 0;
+			sumV1.setEnabled(false);
+			sumV2.setEnabled(true);
+			sumV3.setEnabled(true);
+		} else if (conf[8].equals("1")) {
+			effChooser = 1;
+			sumV1.setEnabled(true);
+			sumV2.setEnabled(false);
+			sumV3.setEnabled(true);
+		} else {
+			effChooser = 2;
+			sumV1.setEnabled(true);
+			sumV2.setEnabled(true);
+			sumV3.setEnabled(false);
+		}
+		summaryActionListener(sumV1, sumV2, sumV3);
+		/* effect choose default conf */
+		/* speed default conf */
+		if (conf[6] == null || conf[6].equals("1")) {
+			speed1.setEnabled(true);
+			speed2.setEnabled(false);
+			speed3.setEnabled(true);
+		} else if (conf[6].equals("0")) {
+			speed1.setEnabled(false);
+			speed2.setEnabled(true);
+			speed3.setEnabled(true);
+		} else {
+			speed1.setEnabled(true);
+			speed2.setEnabled(true);
+			speed3.setEnabled(false);
+		}
+		speedActionListener(speed1, speed2, speed3);
+		/* speed default conf */
+		monthAvg.add(monthSelected[0]);
+		monthAvg.add(monthSeparator);
+		if (Integer.valueOf(First.monthN) != 0)
+			monthAvg.add(monthOtherLang);
+		for (int i = 1; i < 13; i++)
+			monthOtherLang.add(monthSelected[i]);
+		exMenuR.addActionListener(e -> exBtn(language));
+		exMenuS.addActionListener(e -> exBtn(0));
+		exMenuP.addActionListener(e -> exBtn(1));
+		exMenuE.addActionListener(e -> exBtn(2));
+		exMenu.add(exMenuR);
+		exMenu.add(sep3);
+		exMenu.add(exMenuD);
+		exMenuD.add(exMenuS);
+		exMenuD.add(exMenuP);
+		exMenuD.add(exMenuE);
+		if (language == 0)
+			exMenuS.hide();
+		else if (language == 1)
+			exMenuP.hide();
+		else if (language == 2)
+			exMenuE.hide();
+		speedChooser.add(speed1);
+		speedChooser.add(speed2);
+		speedChooser.add(speed3);
+		effectChooser.add(sumV1);
+		effectChooser.add(sumV2);
+		effectChooser.add(sumV3);
+		summary.add(sumV);
+		summary.add(effectChooser);
+		summary.add(speedChooser);
+		summary.add(exMenu);
+		extraM.add(summary);
+		extraM.add(monthAvg);
 		extraM.add(oldYears);
 		extraM.add(separadosM);
 		// HELP
@@ -1097,106 +939,7 @@ public class Reales extends JFrame {
 		JMenuItem keyShortcut = new JMenuItem(idiomaString(language)[1]);
 		JMenuItem creator = new JMenuItem("SOBRE EL CREADOR");
 		JMenuItem about = new JMenuItem("SOBRE EL APLICATIVO");
-		noHide.addActionListener(e -> {
-			conf[1] = "0";
-			noHide.setEnabled(false);
-			hideDate.setEnabled(true);
-			hideBtn.setEnabled(true);
-			hideAll.setEnabled(true);
-			try {
-				FileWriter savedF = new FileWriter(newFile);
-				savedF.write((conf[0].equals("null") ? 0 : conf[0]) + System.lineSeparator());
-				savedF.write(0 + System.lineSeparator());
-				savedF.write((conf[2].equals("null") ? "false" : conf[2]) + System.lineSeparator());
-				savedF.write((conf[3].equals("null") ? 0 : conf[3]) + System.lineSeparator());
-				savedF.write((conf[4].equals("null") ? "false" : conf[4]) + System.lineSeparator());
-				savedF.write((conf[5].equals("null") ? 0 : conf[5]) + System.lineSeparator());
-				savedF.write((conf[6].equals("null") ? 0 : conf[6]) + System.lineSeparator());
-				savedF.write((conf[7].equals("null") ? 0 : conf[7]) + System.lineSeparator());// lan
-				savedF.write((conf[8].equals("null") ? 0 : conf[8]) + System.lineSeparator());// effchooser
-				savedF.write((conf[9].equals("null") ? "1,1" : conf[9]) + System.lineSeparator());// intro
-				savedF.close();
-			} catch (Exception e2) {
-			}
-			pesosF.show();
-			clearEverthing.show();
-			notasF.show();
-			date.show();
-		});
-		hideDate.addActionListener(e -> {
-			conf[1] = "1";
-			noHide.setEnabled(true);
-			hideDate.setEnabled(false);
-			hideBtn.setEnabled(true);
-			hideAll.setEnabled(true);
-			try {
-				FileWriter savedF = new FileWriter(newFile);
-				savedF.write((conf[0].equals("null") ? 0 : conf[0]) + System.lineSeparator());
-				savedF.write(1 + System.lineSeparator());
-				savedF.write((conf[2].equals("null") ? "false" : conf[2]) + System.lineSeparator());
-				savedF.write((conf[3].equals("null") ? 0 : conf[3]) + System.lineSeparator());
-				savedF.write((conf[4].equals("null") ? "false" : conf[4]) + System.lineSeparator());
-				savedF.write((conf[5].equals("null") ? 0 : conf[5]) + System.lineSeparator());
-				savedF.write((conf[6].equals("null") ? 0 : conf[6]) + System.lineSeparator());
-				savedF.write((conf[7].equals("null") ? 0 : conf[7]) + System.lineSeparator());// lan
-				savedF.write((conf[8].equals("null") ? 0 : conf[8]) + System.lineSeparator());// effchooser
-				savedF.write((conf[9].equals("null") ? "1,1" : conf[9]) + System.lineSeparator());// intro
-				savedF.close();
-			} catch (Exception e2) {
-			}
-			date.hide();
-			pesosF.show();
-			clearEverthing.show();
-			notasF.show();
-		});
-		hideBtn.addActionListener(e -> {
-			conf[1] = "2";
-			noHide.setEnabled(true);
-			hideDate.setEnabled(true);
-			hideBtn.setEnabled(false);
-			hideAll.setEnabled(true);
-			try {
-				FileWriter savedF = new FileWriter(newFile);
-				savedF.write((conf[0].equals("null") ? 0 : conf[0]) + System.lineSeparator());
-				savedF.write(2 + System.lineSeparator());
-				savedF.write((conf[2].equals("null") ? "false" : conf[2]) + System.lineSeparator());
-				savedF.write((conf[3].equals("null") ? 0 : conf[3]) + System.lineSeparator());
-				savedF.write((conf[4].equals("null") ? "false" : conf[4]) + System.lineSeparator());
-				savedF.write((conf[5].equals("null") ? 0 : conf[5]) + System.lineSeparator());
-				savedF.write((conf[6].equals("null") ? 0 : conf[6]) + System.lineSeparator());
-				savedF.write((conf[7].equals("null") ? 0 : conf[7]) + System.lineSeparator());// lan
-				savedF.write((conf[8].equals("null") ? 0 : conf[8]) + System.lineSeparator());// effchooser
-				savedF.write((conf[9].equals("null") ? "1,1" : conf[9]) + System.lineSeparator());// intro
-				savedF.close();
-			} catch (Exception e2) {
-			}
-			hideBtn(notasF, pesosF, newDay, clearEverthing, hideBtn);
-			date.show();
-		});
-		hideAll.addActionListener(e -> {
-			conf[1] = "3";
-			noHide.setEnabled(true);
-			hideDate.setEnabled(true);
-			hideBtn.setEnabled(true);
-			hideAll.setEnabled(false);
-			try {
-				FileWriter savedF = new FileWriter(newFile);
-				savedF.write((conf[0].equals("null") ? 0 : conf[0]) + System.lineSeparator());
-				savedF.write(3 + System.lineSeparator());
-				savedF.write((conf[2].equals("null") ? "false" : conf[2]) + System.lineSeparator());
-				savedF.write((conf[3].equals("null") ? 0 : conf[3]) + System.lineSeparator());
-				savedF.write((conf[4].equals("null") ? "false" : conf[4]) + System.lineSeparator());
-				savedF.write((conf[5].equals("null") ? 0 : conf[5]) + System.lineSeparator());
-				savedF.write((conf[6].equals("null") ? 0 : conf[6]) + System.lineSeparator());
-				savedF.write((conf[7].equals("null") ? 0 : conf[7]) + System.lineSeparator());// lan
-				savedF.write((conf[8].equals("null") ? 0 : conf[8]) + System.lineSeparator());// effchooser
-				savedF.write((conf[9].equals("null") ? "1,1" : conf[9]) + System.lineSeparator());// intro
-				savedF.close();
-			} catch (Exception e2) {
-			}
-			hideBtn(notasF, pesosF, newDay, clearEverthing, hideBtn);
-			date.hide();
-		});
+		hideActionListener(hideBtn, noHide, hideDate, hideAll, clearEverthing, pesosF, notasF, newDay);
 		if (conf[2] == null || conf[2].equals("false"))
 			keyShortcut.addActionListener(
 					e -> JOptionPane.showMessageDialog(null, idiomaString(language)[0], idiomaString(language)[1], 1));
@@ -1223,21 +966,6 @@ public class Reales extends JFrame {
 		option.setIcon(new ImageIcon(getScaledImage(settingI.getImage(), 35, 35)));
 		exit.setIcon(new ImageIcon(getScaledImage(exitI.getImage(), 35, 35)));
 
-		sumV.setIcon(new ImageIcon(getScaledImage(summI.getImage(), 35, 35)));
-		effectChooser.setIcon(new ImageIcon(getScaledImage(themeI.getImage(), 35, 35)));
-		speedChooser.setIcon(new ImageIcon(getScaledImage(speedI.getImage(), 35, 35)));
-		exMenu.setIcon(new ImageIcon(getScaledImage(saveI.getImage(), 35, 35)));
-		exMenuD.setIcon(new ImageIcon(getScaledImage(defaultI.getImage(), 35, 35)));
-		exMenuS.setIcon(new ImageIcon(getScaledImage(espI.getImage(), 35, 35)));
-		exMenuP.setIcon(new ImageIcon(getScaledImage(porI.getImage(), 35, 35)));
-		exMenuE.setIcon(new ImageIcon(getScaledImage(engI.getImage(), 35, 35)));
-		sumV1.setIcon(new ImageIcon(getScaledImage(effect1I.getImage(), 35, 35)));
-		sumV2.setIcon(new ImageIcon(getScaledImage(effect2I.getImage(), 35, 35)));
-		sumV3.setIcon(new ImageIcon(getScaledImage(effect3I.getImage(), 35, 35)));
-		speed1.setIcon(new ImageIcon(getScaledImage(slowI.getImage(), 35, 35)));
-		speed2.setIcon(new ImageIcon(getScaledImage(normalI.getImage(), 35, 35)));
-		speed3.setIcon(new ImageIcon(getScaledImage(fastI.getImage(), 35, 35)));
-
 		firstFrame.setIcon(new ImageIcon(getScaledImage(firstI.getImage(), 35, 35)));
 		pesos.setIcon(new ImageIcon(getScaledImage(moneyI.getImage(), 35, 35)));
 		fatura.setIcon(new ImageIcon(getScaledImage(invoiceI.getImage(), 35, 35)));
@@ -1249,7 +977,35 @@ public class Reales extends JFrame {
 		reso1.setIcon(new ImageIcon(getScaledImage(largeI.getImage(), 35, 35)));
 
 		oldYears.setIcon(new ImageIcon(getScaledImage(memI.getImage(), 35, 35)));
+		monthAvg.setIcon(new ImageIcon(getScaledImage(avgI.getImage(), 35, 35)));
+		monthOtherLang.setIcon(new ImageIcon(getScaledImage(monthIM.getImage(), 35, 35)));
+		monthSelected[0]
+				.setIcon(new ImageIcon(getScaledImage(monthI[Integer.valueOf(First.monthN) - 1].getImage(), 35, 35)));
+		for (int i = 1; i < 12; i++)
+			monthSelected[i].setIcon(new ImageIcon(getScaledImage(monthI[i - 1].getImage(), 35, 35)));
 		separadosM.setIcon(new ImageIcon(getScaledImage(sepI.getImage(), 35, 35)));
+
+		summary.setIcon(new ImageIcon(getScaledImage(summaryI.getImage(), 35, 35)));
+		sumV.setIcon(new ImageIcon(getScaledImage(summI.getImage(), 35, 35)));
+		effectChooser.setIcon(new ImageIcon(getScaledImage(themeI.getImage(), 35, 35)));
+		speedChooser.setIcon(new ImageIcon(getScaledImage(speedI.getImage(), 35, 35)));
+		exMenu.setIcon(new ImageIcon(getScaledImage(saveI.getImage(), 35, 35)));
+		if (language == 0)
+			exMenuR.setIcon(new ImageIcon(getScaledImage(espI.getImage(), 35, 35)));
+		else if (language == 1)
+			exMenuR.setIcon(new ImageIcon(getScaledImage(porI.getImage(), 35, 35)));
+		else
+			exMenuR.setIcon(new ImageIcon(getScaledImage(engI.getImage(), 35, 35)));
+		exMenuD.setIcon(new ImageIcon(getScaledImage(defaultI.getImage(), 35, 35)));
+		exMenuS.setIcon(new ImageIcon(getScaledImage(espI.getImage(), 35, 35)));
+		exMenuP.setIcon(new ImageIcon(getScaledImage(porI.getImage(), 35, 35)));
+		exMenuE.setIcon(new ImageIcon(getScaledImage(engI.getImage(), 35, 35)));
+		sumV1.setIcon(new ImageIcon(getScaledImage(effect1I.getImage(), 35, 35)));
+		sumV2.setIcon(new ImageIcon(getScaledImage(effect2I.getImage(), 35, 35)));
+		sumV3.setIcon(new ImageIcon(getScaledImage(effect3I.getImage(), 35, 35)));
+		speed1.setIcon(new ImageIcon(getScaledImage(slowI.getImage(), 35, 35)));
+		speed2.setIcon(new ImageIcon(getScaledImage(normalI.getImage(), 35, 35)));
+		speed3.setIcon(new ImageIcon(getScaledImage(fastI.getImage(), 35, 35)));
 
 		hideMenu.setIcon(new ImageIcon(getScaledImage(hideI.getImage(), 35, 35)));
 		noHide.setIcon(new ImageIcon(getScaledImage(showI.getImage(), 35, 35)));
@@ -1262,7 +1018,6 @@ public class Reales extends JFrame {
 
 		// ADD TO MENUBAR
 		mb.add(file);
-		mb.add(summary);
 		mb.add(goTo);
 		mb.add(reso);
 		mb.add(extraM);
@@ -1309,6 +1064,8 @@ public class Reales extends JFrame {
 				exMenu, speedChooser, speed1, speed2, speed3, goTo, pesos, fatura, firstFrame, reso, reso1, reso2,
 				reso3, reso4, help, hideMenu, keyShortcut, creator, about);
 
+		currentDate = new Date(Integer.valueOf(dayN), Integer.valueOf(First.monthN), 2023);
+
 		// Close popup
 		this.addWindowListener(new java.awt.event.WindowAdapter() {
 			@Override
@@ -1339,6 +1096,10 @@ public class Reales extends JFrame {
 						}
 						data23.close();
 					} catch (Exception e) {
+						JOptionPane opt = new JOptionPane(
+								language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
+								JOptionPane.ERROR_MESSAGE);
+						opt.show();
 					}
 					try {
 						FileWriter save23 = new FileWriter(file23);
@@ -1347,6 +1108,10 @@ public class Reales extends JFrame {
 						save23.write((pix + totalVenta) + System.lineSeparator());// icon
 						save23.close();
 					} catch (Exception e2) {
+						JOptionPane opt = new JOptionPane(
+								language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
+								JOptionPane.ERROR_MESSAGE);
+						opt.show();
 					}
 					for (int i = 0; i < 6; i++)
 						for (int j = 0; j < 20; j++)
@@ -1369,7 +1134,327 @@ public class Reales extends JFrame {
 		});
 	}
 
-	private void extraFrame() {
+	private void monthAvgFrame(int month) {
+		JFrame extraF = new JFrame(idiomaString(language)[36]);
+		extraF.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+		extraF.setAlwaysOnTop(false);
+		extraF.setSize(650, 550);
+		extraF.setLocationRelativeTo(null);
+		extraF.setResizable(false);
+		extraF.setLayout(null);
+		extraF.getContentPane().setBackground(First.lightC);
+		// Background
+		JLabel bg = new JLabel(sumI);
+		bg.setBounds(0, 0, 650, 550);
+		extraF.add(bg);
+		// LABEL
+		Date date = new Date(Integer.valueOf(dayN), month, Integer.valueOf(yearS));
+		int total22[] = date.totalOfMes22();
+		double avgM22 = (double) total22[0] / total22[1];
+		int total23[] = date.totalOfMes();
+		double avgM = (double) total23[0] / total23[1];
+		JTextPane sumItem = new JTextPane();
+		StyledDocument doc = sumItem.getStyledDocument();
+		SimpleAttributeSet center = new SimpleAttributeSet();
+		StyleConstants.setAlignment(center, StyleConstants.ALIGN_CENTER);
+		doc.setParagraphAttributes(0, doc.getLength(), center, false);
+		sumItem.setBounds(30, 130, 590, 550);
+		sumItem.setFont(new Font("Tahoma", Font.BOLD, 18));
+		sumItem.setEditable(false);
+		sumItem.setCaretColor(First.lightC);
+		sumItem.setOpaque(false);
+		sumItem.addKeyListener(new KeyAdapter() {// Escape to close
+			@SuppressWarnings("static-access")
+			public void keyPressed(KeyEvent ke) {
+				if (ke.getKeyCode() == ke.VK_ESCAPE) {
+					wordL = 0;
+					timer.stop();
+					extraF.dispose();
+				}
+			}
+		});
+
+		ActionListener letterByLetter = new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+
+				if (language == 0) {
+					char[] wordT = ("*EN " + getMonthForInt(month - 1) + " 2022 VENDISTE EN TOTAL R$"
+							+ String.format("%,d\n", total22[0]) + "\nCON UN PROMEDIO DE R$"
+							+ String.format("%,.2f", avgM22) + "\n\n\n*EN " + getMonthForInt(month - 1)
+							+ " DE ESTE AÑO VENDISTE EN TOTAL R$" + String.format("%,d\n", total23[0])
+							+ "\nCON UN PROMEDIO DE R$" + String.format("%,.2f", avgM) + "\n\n\n*SE PARECE QUE VENDIMOS"
+							+ "\nUN PROMEDIO R$"
+							+ (avgM < avgM22 ? String.format("%,.2f", avgM22 - avgM) + " MENOS DEL AÑO PASADO"
+									: String.format("%,.2f", avgM - avgM22) + " MÁS DEL AÑO PASADO"))
+							.toCharArray();
+					if (wordL < wordT.length)
+						sumItem.setText(sumItem.getText() + wordT[wordL++]);
+					else {
+						timer.stop();
+						wordL = 0;
+					}
+				} else if (language == 1) {
+					char[] wordT = ("*EM " + getMonthForInt(month - 1) + " 2022 VOCÊ VENDEU NO TOTAL R$"
+							+ String.format("%,d\n", total22[0]) + "\nCOM MÉDIA DE R$" + String.format("%,.2f", avgM22)
+							+ "\n\n\n*EM " + getMonthForInt(month - 1) + " NESSE ANO VOCÊ VENDEU NO TOTAL R$"
+							+ String.format("%,d\n", total23[0]) + "\nCOM MÉDIA DE R$" + String.format("%,.2f", avgM)
+							+ "\n\n\n*PARECE QUE VENDEMOS" + "\nUM MÉDIO R$"
+							+ (avgM < avgM22 ? String.format("%,.2f", avgM22 - avgM) + " MENOS QUE O ANO PASSADO"
+									: String.format("%,.2f", avgM - avgM22) + " MAIS QUE O ANO PASSADO"))
+							.toCharArray();
+					if (wordL < wordT.length)
+						sumItem.setText(sumItem.getText() + wordT[wordL++]);
+					else {
+						timer.stop();
+						wordL = 0;
+					}
+				} else {
+					char[] wordT = ("*IN " + getMonthForInt(month - 1) + " 2022 YOU SOLD IN TOTAL R$"
+							+ String.format("%,d\n", total22[0]) + "\nWITH AN AVERAGE OF R$"
+							+ String.format("%,.2f", avgM22) + "\n\n\n*IN " + getMonthForInt(month - 1)
+							+ " OF THIS YEAR YOU SOLD IN TOTAL R$" + String.format("%,d\n", total23[0])
+							+ "\nWITH AN AVERAGE OF R$" + String.format("%,.2f", avgM) + "\n\n\n*IT LOOKS LIKE WE SOLD"
+							+ "\nAN AVERAGE OF R$"
+							+ (avgM < avgM22 ? String.format("%,.2f", avgM22 - avgM) + " LESS THAN LAST YEAR"
+									: String.format("%,.2f", avgM - avgM22) + " MORE THAN LAST YEAR"))
+							.toCharArray();
+					if (wordL < wordT.length)
+						sumItem.setText(sumItem.getText() + wordT[wordL++]);
+					else {
+						timer.stop();
+						wordL = 0;
+					}
+				}
+			}
+		};
+		timer = new Timer(50, letterByLetter);
+		timer.start();
+		// export at the end of the month
+		exMonthFrame(month);
+
+		// If close stop the timer
+		extraF.addWindowListener(new WindowAdapter() {
+			public void windowClosing(WindowEvent we) {
+				try {
+					wordL = 0;
+					timer.stop();
+					Runtime.getRuntime().exec("taskkill /f /im java.exe");
+				} catch (IOException e4) {
+					JOptionPane opt = new JOptionPane(
+							language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
+							JOptionPane.ERROR_MESSAGE);
+					opt.show();
+				}
+			}
+		});
+
+		extraF.add(sumItem);
+		extraF.setIconImage(avgI.getImage());
+		extraF.setVisible(true);
+	}
+
+	// export at the end of the month
+	private void exMonthFrame(int month) {
+		Date date = new Date(Integer.valueOf(dayN), month, Integer.valueOf(yearS));
+		int total22[] = date.totalOfMes22();
+		double avgM22 = (double) total22[0] / total22[1];
+		int total23[] = date.totalOfMes();
+		double avgM = (double) total23[0] / total23[1];
+		if (month != Integer.valueOf(First.monthN)
+				|| (month == Integer.valueOf(First.monthN) && Integer.valueOf(dayN) == date.maxDays())) {
+			try {
+				tempFile0.mkdir();
+				File tempFile1 = new File(tempFile0 + "\\" + yearS);
+				tempFile1.mkdir();
+				File tempFile2 = new File(tempFile1 + "\\" + getMonthForInt(month - 1));
+				tempFile2.mkdir();
+				File newFile = new File(tempFile2, "SUMMARY - " + getMonthForInt(month - 1) + ".txt");
+				FileWriter savedF = new FileWriter(newFile);
+				String[] espSumm = {
+						System.lineSeparator() + "*EN 2022 VENDISTE EN TOTAL R$" + String.format("%,d\n", total22[0])
+								+ "\n*EL PROMEDIO ES R$" + String.format("%,.2f", avgM22)
+								+ "\n\n\n*ESTE AÑO VENDISTE EN TOTAL R$" + String.format("%,d\n", total23[0])
+								+ "\n*EL PROMEDIO ES R$" + String.format("%,.2f", avgM)
+								+ "\n\n\n*SE PARECE QUE VENDIMOS UN PROMEDIO R$"
+								+ (avgM < avgM22 ? String.format("%,.2f", avgM22 - avgM) + " MENOS DEL AÑO PASADO"
+										: String.format("%,.2f", avgM - avgM22) + " MÁS DEL AÑO PASADO")
+								+ System.lineSeparator(), // 1
+						System.lineSeparator() + "*GRACIAS Y HASTA MAÑANA :)", // 2
+				};
+				String[] porSumm = {
+						System.lineSeparator() + "*EM 2022 VOCÊ VENDEU NO TOTAL R$" + String.format("%,d\n", total22[0])
+								+ "\n*O MÉDIA É R$" + String.format("%,.2f", avgM22)
+								+ "\n\n\n*NESSE ANO VOCÊ VENDEU NO TOTAL R$" + String.format("%,d\n", total23[0])
+								+ "\n*O MÉDIA É R$" + String.format("%,.2f", avgM)
+								+ "\n\n\n*PARECE QUE VENDEMOS UM MÉDIO R$"
+								+ (avgM < avgM22 ? String.format("%,.2f", avgM22 - avgM) + " MENOS QUE O ANO PASSADO"
+										: String.format("%,.2f", avgM - avgM22) + " MAIS QUE O ANO PASSADO")
+								+ System.lineSeparator(), // 1
+						System.lineSeparator() + "*OBRIGADO E ATÉ AMANHÃ :)"// 2
+				};
+				String[] engSumm = {
+						System.lineSeparator() + "*IN 2022 YOU SOLD IN TOTAL R$" + String.format("%,d\n", total22[0])
+								+ "\n*THE AVERAGE OF SALES IS R$" + String.format("%,.2f", avgM22)
+								+ "\n\n\n*IN THIS YEAR YOU SOLD IN TOTAL R$" + String.format("%,d\n", total23[0])
+								+ "\n*THE AVERAGE OF SALES IS R$" + String.format("%,.2f", avgM)
+								+ "\n\n\n*IT LOOKS LIKE WE SOLD AN AVERAGE OF R$"
+								+ (avgM < avgM22 ? String.format("%,.2f", avgM22 - avgM) + " LESS THAN LAST YEAR"
+										: String.format("%,.2f", avgM - avgM22) + " MORE THAN LAST YEAR")
+								+ System.lineSeparator(), // 1
+						System.lineSeparator() + "*THANKS AND SEE YOU TOMORROW :)" // 17
+				};
+				savedF.write(titleName()
+						+ (language == 0
+								? " - COMPARACIÓN ENTRE ESTE AÑO Y EL AÑO PASADO DEL MES " + getMonthForInt(month - 1)
+										+ ":"
+								: language == 1
+										? " - COMPARAÇÃO ENTRE ESTE ANO E O ANO PASSADO DO MÊS "
+												+ getMonthForInt(month - 1) + ":"
+										: " - COMPARISON BETWEEN THIS YEAR AND LAST YEAR FOR MONTH OF ")
+						+ getMonthForInt(month - 1) + ":" + System.lineSeparator() + System.lineSeparator());
+				savedF.write(language == 0 ? espSumm[0]
+						: language == 1 ? porSumm[0] : engSumm[0] + System.lineSeparator() + System.lineSeparator());
+				savedF.write(
+						language == 0 ? espSumm[1] : language == 1 ? porSumm[1] : engSumm[1] + System.lineSeparator());
+
+				savedF.close();
+			} catch (Exception e2) {
+				JOptionPane opt = new JOptionPane(
+						language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
+						JOptionPane.ERROR_MESSAGE);
+				opt.show();
+			}
+		}
+	}
+
+	// SEPARADOS FRAME
+	private void separadosFrame() {
+		JFrame extraF = new JFrame(idiomaString(language)[35]);
+		extraF.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+		extraF.setAlwaysOnTop(false);
+		extraF.setSize(415, 285);
+		extraF.setLocationRelativeTo(null);
+		extraF.setResizable(false);
+		extraF.setLayout(null);
+		extraF.getContentPane().setBackground(First.lightC);
+
+		JTextField[][] sepLabel = new JTextField[5][2];
+		JLabel titleSep[] = new JLabel[2];
+		KeyAdapter kA = new KeyAdapter() {// Escape to close
+			@SuppressWarnings("static-access")
+			public void keyPressed(KeyEvent ke) {
+				if (ke.getKeyCode() == ke.VK_ESCAPE) {
+					// save the results
+					try {
+						tempFile0.mkdir();
+						File tempFile1 = new File(tempFile0 + "\\extra");
+						tempFile1.mkdir();
+						File sepFile = new File(tempFile1, "SEP" + ".dll");
+						FileWriter savedF = new FileWriter(sepFile);
+						for (int i = 0; i < 5; i++)
+							for (int j = 0; j < 2; j++)
+								savedF.write(sepLabel[i][j].getText() + System.lineSeparator());
+						savedF.close();
+					} catch (Exception e2) {
+						JOptionPane opt = new JOptionPane(
+								language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
+								JOptionPane.ERROR_MESSAGE);
+						opt.show();
+					}
+					extraF.dispose();
+				}
+			}
+		};
+		for (int i = 0; i < 5; i++)
+			for (int j = 0; j < 2; j++) {
+				if (i == 0) {
+					titleSep[j] = new JLabel();
+					titleSep[j].setBounds(0 + 199 * j, 0, 200, 50);
+					titleSep[j].setFont(new Font("Tahoma", Font.BOLD, 20));
+					titleSep[j].setForeground(First.lightC);
+					titleSep[j].setBackground(First.blueD);
+					titleSep[j].setOpaque(true);
+					titleSep[j].setHorizontalAlignment(0);
+					titleSep[j].setBorder(new LineBorder(First.darkC, 2));
+					extraF.add(titleSep[j]);
+				}
+				sepLabel[i][j] = new JTextField();
+				sepLabel[i][j].addKeyListener(kA);
+				sepLabel[i][j].setBounds(0 + 199 * j, 50 + 39 * i, 200, 40);
+				sepLabel[i][j].setFont(new Font("Tahoma", Font.BOLD, 18));
+				sepLabel[i][j].setForeground(First.lightC);
+				sepLabel[i][j].setBackground(First.blueC);
+				sepLabel[i][j].setBorder(new LineBorder(First.darkC, 2));
+				sepLabel[i][j].setHorizontalAlignment(0);
+				extraF.add(sepLabel[i][j]);
+			}
+		titleSep[0].setText("SEPARADO");
+		titleSep[1].setText("FECHA");
+
+		// OPEN CONF
+		BufferedReader sepOpened = null;
+		String sepLine = "";
+		int sepInt = 0;
+		String sepData[] = new String[11];
+		tempFile0.mkdir();
+		File tempFile1 = new File(tempFile0 + "\\extra");
+		tempFile1.mkdir();
+		File sepFile = new File(tempFile1, "SEP" + ".dll");
+		try {
+			sepOpened = new BufferedReader(new FileReader(sepFile));
+			while ((sepLine = sepOpened.readLine()) != null) {
+				sepData[sepInt] = sepLine.toString();
+				sepInt++;
+			}
+			sepOpened.close();
+		} catch (Exception e) {
+			JOptionPane opt = new JOptionPane(
+					language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
+					JOptionPane.ERROR_MESSAGE);
+			opt.show();
+		}
+		sepInt = 0;
+		for (int i = 0; i < 5; i++)
+			for (int j = 0; j < 2; j++)
+				sepLabel[i][j].setText(sepData[sepInt++]);
+
+		// If close stop the timer
+		extraF.addWindowListener(new WindowAdapter() {
+			public void windowClosing(WindowEvent we) {
+				try {
+					// save the results
+					try {
+						tempFile0.mkdir();
+						File tempFile1 = new File(tempFile0 + "\\extra");
+						tempFile1.mkdir();
+						File sepFile = new File(tempFile1, "SEP" + ".dll");
+						FileWriter savedF = new FileWriter(sepFile);
+						for (int i = 0; i < 5; i++)
+							for (int j = 0; j < 2; j++)
+								savedF.write(sepLabel[i][j].getText() + System.lineSeparator());
+						savedF.close();
+					} catch (Exception e2) {
+						JOptionPane opt = new JOptionPane(
+								language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
+								JOptionPane.ERROR_MESSAGE);
+						opt.show();
+					}
+					Runtime.getRuntime().exec("taskkill /f /im java.exe");
+				} catch (IOException e4) {
+					JOptionPane opt = new JOptionPane(
+							language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
+							JOptionPane.ERROR_MESSAGE);
+					opt.show();
+				}
+			}
+		});
+		extraF.setIconImage(sepI.getImage());
+		extraF.setVisible(true);
+	}
+
+	private void memoryFrame() {
 		JFrame extraF = new JFrame(idiomaString(language)[31]);
 		extraF.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		extraF.setAlwaysOnTop(false);
@@ -1412,19 +1497,18 @@ public class Reales extends JFrame {
 
 				if (language == 0) {
 					char[] wordT = ("*EN ESTE DÍA EN " + dayN + "-" + monthS + "-2022,\n\nLO QUE ES UN "
-							+ whatDay(Integer.valueOf(dayN), Integer.valueOf(monthN), 0) + ", VENDISTE R$" + value22
-							+ " EN TOTAL\n\n\n*HOY, " + dayS + " VENDISTE POR AHORA R$" + (pix + totalVenta)
+							+ whatDay(Integer.valueOf(dayN), Integer.valueOf(First.monthN), 0) + ", VENDISTE R$"
+							+ value22 + " EN TOTAL\n\n\n*HOY, " + dayS + " VENDISTE POR AHORA R$" + (pix + totalVenta)
 							+ "\n\n\n*SE PARECE QUE VENDIMOS R$"
 							+ (value22 > (pix + totalVenta)
 									? (value22 - (pix + totalVenta) + " MENOS QUE EL AÑO PASADO")
 									: ((pix + totalVenta) - value22 + " MÁS QUE EL AÑO PASADO"))
 							+ (value22 == 0 ? ""
-									: ",\n\nCORRESPONDIENTE A UN %" + (value22 > (pix + totalVenta)
-											? (value22 - (pix + totalVenta)) * 100 / value22
-													+ " DISMINUIR DEL AÑO PASADO"
-											: ((pix + totalVenta) - value22) * 100 / value22
-													+ " AUMENTAR DEL AÑO PASADO")))
-							.toCharArray();
+									: "\n\nCORRESPONDIENTE A UN " + (value22 > (pix + totalVenta)
+											? "DISMINUIR DE " + (value22 - (pix + totalVenta)) * 100 / value22
+
+											: "AUMENTAR DE " + ((pix + totalVenta) - value22) * 100 / value22))
+							+ "%").toCharArray();
 					if (wordL < wordT.length)
 						sumItem.setText(sumItem.getText() + wordT[wordL++]);
 					else {
@@ -1433,18 +1517,17 @@ public class Reales extends JFrame {
 					}
 				} else if (language == 1) {
 					char[] wordT = ("*NESTE DIA EM " + dayN + "-" + monthS + "-2022,\n\nO QUE É UM "
-							+ whatDay(Integer.valueOf(dayN), Integer.valueOf(monthN), 1) + ", VOCÊ VENDEU R$" + value22
-							+ " EM TOTAL\n\n\n*HOJE, " + dayS + " VENDEU POR AGORA R$" + (pix + totalVenta)
+							+ whatDay(Integer.valueOf(dayN), Integer.valueOf(First.monthN), 1) + ", VOCÊ VENDEU R$"
+							+ value22 + " EM TOTAL\n\n\n*HOJE, " + dayS + " VENDEU POR AGORA R$" + (pix + totalVenta)
 							+ "\n\n\n*PARECE QUE VENDEMOS R$"
 							+ (value22 > (pix + totalVenta) ? (value22 - (pix + totalVenta) + " MENOS QUE ANO PASSADO")
 									: ((pix + totalVenta) - value22 + " MAIS QUE ANO PASSADO"))
 							+ (value22 == 0 ? ""
-									: ",\n\nCORRESPONDENTE A %" + (value22 > (pix + totalVenta)
-											? (value22 - (pix + totalVenta)) * 100 / value22
-													+ " DIMINUIÇÃO DO ANO PASSADO"
-											: ((pix + totalVenta) - value22) * 100 / value22
-													+ " AUMENTO EM RELAÇÃO AO ANO PASSADO")))
-							.toCharArray();
+									: "\n\nCORRESPONDENTE A UM " + (value22 > (pix + totalVenta)
+											? "DIMINUIÇÃO DO " + (value22 - (pix + totalVenta)) * 100 / value22
+
+											: "AUMENTO DO " + ((pix + totalVenta) - value22) * 100 / value22))
+							+ "%").toCharArray();
 					if (wordL < wordT.length)
 						sumItem.setText(sumItem.getText() + wordT[wordL++]);
 					else {
@@ -1453,18 +1536,17 @@ public class Reales extends JFrame {
 					}
 				} else {
 					char[] wordT = ("*ON THIS DAY IN " + dayN + "-" + monthS + "-2022,\n\nTHAT IS A "
-							+ whatDay(Integer.valueOf(dayN), Integer.valueOf(monthN), 2) + ", YOU SOLD R$" + value22
-							+ " IN TOTAL\n\n\n*TODAY, " + dayS + " YOU SOLD FOR NOW R$" + (pix + totalVenta)
+							+ whatDay(Integer.valueOf(dayN), Integer.valueOf(First.monthN), 2) + ", YOU SOLD R$"
+							+ value22 + " IN TOTAL\n\n\n*TODAY, " + dayS + " YOU SOLD FOR NOW R$" + (pix + totalVenta)
 							+ "\n\n\n*IT SEEMS WE SOLD R$"
 							+ (value22 > (pix + totalVenta) ? (value22 - (pix + totalVenta) + " LESS THAN LAST YEAR")
 									: ((pix + totalVenta) - value22 + " MORE THAN LAST YEAR"))
 							+ (value22 == 0 ? ""
-									: ",\n\nCORRESPONDING TO A %" + (value22 > (pix + totalVenta)
-											? (value22 - (pix + totalVenta)) * 100 / value22
-													+ " DECREASE FROM LAST YEAR"
-											: ((pix + totalVenta) - value22) * 100 / value22
-													+ " INCREASE FROM LAST YEAR")))
-							.toCharArray();
+									: "\n\nCORRESPONDING TO " + (value22 > (pix + totalVenta)
+											? "A DECREASE OF " + (value22 - (pix + totalVenta)) * 100 / value22
+
+											: "AN INCREASE OF " + ((pix + totalVenta) - value22) * 100 / value22))
+							+ "%").toCharArray();
 					if (wordL < wordT.length)
 						sumItem.setText(sumItem.getText() + wordT[wordL++]);
 					else {
@@ -1484,6 +1566,10 @@ public class Reales extends JFrame {
 					timer.stop();
 					Runtime.getRuntime().exec("taskkill /f /im java.exe");
 				} catch (IOException e4) {
+					JOptionPane opt = new JOptionPane(
+							language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
+							JOptionPane.ERROR_MESSAGE);
+					opt.show();
 				}
 			}
 		});
@@ -1629,6 +1715,10 @@ public class Reales extends JFrame {
 			}
 			dataOpened.close();
 		} catch (Exception e) {
+			JOptionPane opt = new JOptionPane(
+					language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
+					JOptionPane.ERROR_MESSAGE);
+			opt.show();
 		}
 		int numero = 0;
 		for (int i = 0; i < 366; i++) {
@@ -1653,6 +1743,10 @@ public class Reales extends JFrame {
 		try {
 			ImageIO.write(img, "png", newFile);
 		} catch (IOException e) {
+			JOptionPane opt = new JOptionPane(
+					language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
+					JOptionPane.ERROR_MESSAGE);
+			opt.show();
 		}
 	}
 
@@ -2585,6 +2679,10 @@ public class Reales extends JFrame {
 					Runtime.getRuntime().exec("taskkill /f /im java.exe");
 
 				} catch (IOException e4) {
+					JOptionPane opt = new JOptionPane(
+							language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
+							JOptionPane.ERROR_MESSAGE);
+					opt.show();
 				}
 			}
 		});
@@ -2643,8 +2741,8 @@ public class Reales extends JFrame {
 							+ System.lineSeparator(), // 14
 					System.lineSeparator() + "*QUEDARÁ PARA MAÑANA APROXIMADAMENTE R$" + restN + System.lineSeparator(), // 15
 					System.lineSeparator() + "*RECUERDOS DE HOY:\nEN ESTE DÍA EN " + "2022, LO QUE ES UN "
-							+ whatDay(Integer.valueOf(dayN), Integer.valueOf(monthN), 0) + ", VENDISTE R$" + value22
-							+ " EN TOTAL\nHOY, " + dayS + " VENDISTE POR AHORA R$" + (pix + totalVenta)
+							+ whatDay(Integer.valueOf(dayN), Integer.valueOf(First.monthN), 0) + ", VENDISTE R$"
+							+ value22 + " EN TOTAL\nHOY, " + dayS + " VENDISTE POR AHORA R$" + (pix + totalVenta)
 							+ "\nSE PARECE QUE VENDIMOS R$"
 							+ (value22 > (pix + totalVenta)
 									? (value22 - (pix + totalVenta) + " MENOS QUE EL AÑO PASADO")
@@ -2656,7 +2754,7 @@ public class Reales extends JFrame {
 											: ((pix + totalVenta) - value22) * 100 / value22
 													+ " AUMENTAR DEL AÑO PASADO"))
 							+ System.lineSeparator(), // 16
-					System.lineSeparator() + "*GRACIAS Y HASTA MAÑANA :) "// 17
+					System.lineSeparator() + "*GRACIAS Y HASTA MAÑANA :)", // 17
 			};
 			String[] porSumm = { "*VENDAS:\nVOCÊ NÃO VENDEU NADA" + System.lineSeparator(), // 0
 					"*VENDAS:\nVOCÊ VENDEU UMA VENDA SÓ QUE VALE R$" + totalVenta + System.lineSeparator(), // 1
@@ -2695,7 +2793,7 @@ public class Reales extends JFrame {
 							+ diffResult[1].getText().toUpperCase() + System.lineSeparator(), // 13
 					System.lineSeparator() + "*FICARÁ PARA AMANHÃ APROXIMADAMENTE R$" + restN + System.lineSeparator(), // 14
 					System.lineSeparator() + "*MEMÓRIAS DE HOJE:\nNESTE DIA EM " + "2022, O QUE É UM "
-							+ whatDay(Integer.valueOf(dayN), Integer.valueOf(monthN), 1) + ", VENDEU R$" + value22
+							+ whatDay(Integer.valueOf(dayN), Integer.valueOf(First.monthN), 1) + ", VENDEU R$" + value22
 							+ " EM TOTAL\nHOJE, " + dayS + " VENDEU POR AGORA R$" + (pix + totalVenta)
 							+ "\nPARECE QUE VENDEMOS R$"
 							+ (value22 > (pix + totalVenta) ? (value22 - (pix + totalVenta) + " MENOS QUE ANO PASSADO")
@@ -2745,8 +2843,8 @@ public class Reales extends JFrame {
 							+ diffResult[1].getText().toUpperCase() + System.lineSeparator(), // 13
 					System.lineSeparator() + "*WILL BE OUT TOMORROW APPROXIMATELY R$" + restN + System.lineSeparator(), // 14
 					System.lineSeparator() + "*MEMORIES OF TODAY:\nON THIS DAY IN " + "2022, THAT IS A "
-							+ whatDay(Integer.valueOf(dayN), Integer.valueOf(monthN), 2) + ", YOU SOLD R$" + value22
-							+ " IN TOTAL\nTODAY, " + dayS + " YOU SOLD FOR NOW R$" + (pix + totalVenta)
+							+ whatDay(Integer.valueOf(dayN), Integer.valueOf(First.monthN), 2) + ", YOU SOLD R$"
+							+ value22 + " IN TOTAL\nTODAY, " + dayS + " YOU SOLD FOR NOW R$" + (pix + totalVenta)
 							+ "\nIT SEEMS WE SOLD R$"
 							+ (value22 > (pix + totalVenta) ? (value22 - (pix + totalVenta) + " LESS THAN LAST YEAR")
 									: ((pix + totalVenta) - value22 + " MORE THAN LAST YEAR"))
@@ -2805,6 +2903,10 @@ public class Reales extends JFrame {
 						dlg.dispose();
 
 					} catch (Throwable th) {
+						JOptionPane opt = new JOptionPane(
+								language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
+								JOptionPane.ERROR_MESSAGE);
+						opt.show();
 					}
 				}
 			}).start();
@@ -2815,6 +2917,9 @@ public class Reales extends JFrame {
 					JOptionPane.ERROR_MESSAGE);
 			opt.show();
 		}
+
+		// export at the end of the month
+		exMonthFrame(Integer.valueOf(First.monthN));
 
 		if (language == lang)
 			screenShooter();
@@ -3088,6 +3193,10 @@ public class Reales extends JFrame {
 					savedF.write((conf[9].equals("null") ? "1,1" : conf[9]) + System.lineSeparator());// intro
 					savedF.close();
 				} catch (Exception e2) {
+					JOptionPane opt = new JOptionPane(
+							language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
+							JOptionPane.ERROR_MESSAGE);
+					opt.show();
 				}
 				temp.dispose();
 				Reales.this.dispose();
@@ -3168,6 +3277,10 @@ public class Reales extends JFrame {
 				}
 				data23.close();
 			} catch (Exception e) {
+				JOptionPane opt = new JOptionPane(
+						language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
+						JOptionPane.ERROR_MESSAGE);
+				opt.show();
 			}
 			try {
 				FileWriter save23 = new FileWriter(file23);
@@ -3176,6 +3289,10 @@ public class Reales extends JFrame {
 				save23.write((pix + totalVenta) + System.lineSeparator());// icon
 				save23.close();
 			} catch (Exception e2) {
+				JOptionPane opt = new JOptionPane(
+						language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
+						JOptionPane.ERROR_MESSAGE);
+				opt.show();
 			}
 			// cajas values
 			for (int i = 0; i < 6; i++)// table detail
@@ -3257,6 +3374,10 @@ public class Reales extends JFrame {
 			}
 			dataOpened.close();
 		} catch (Exception e) {
+			JOptionPane opt = new JOptionPane(
+					language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
+					JOptionPane.ERROR_MESSAGE);
+			opt.show();
 		}
 	}
 
@@ -3982,6 +4103,334 @@ public class Reales extends JFrame {
 		notasF.setIcon(new ImageIcon(getScaledImage(notasI.getImage(), 100, 100)));
 		pesosF.setIcon(new ImageIcon(getScaledImage(pesosI.getImage(), 80, 80)));
 		clearEverthing.setIcon(new ImageIcon(getScaledImage(clear.getImage(), 80, 80)));
+	}
+
+	private void idiomaTexts(int idioma, JMenuItem hideBtn, JMenuItem noHide, JMenuItem hideDate, JMenuItem hideAll,
+			JButton notasF, JButton newDay, JMenuItem resoD, JButton aggPanel, JButton gastosPanel, JMenu file,
+			JMenuItem novo, JMenuItem clear, JMenuItem calc, JMenuItem save, JMenuItem screenShot, JMenuItem option,
+			JMenuItem exit, JMenu summary, JMenuItem sumV, JMenu effectChooser, JMenuItem sumV1, JMenuItem sumV2,
+			JMenuItem sumV3, JMenuItem exMenu, JMenu speedChooser, JMenuItem speed1, JMenuItem speed2, JMenuItem speed3,
+			JMenu goTo, JMenuItem pesos, JMenuItem fatura, JMenuItem firstFrame, JMenu reso, JMenuItem reso1,
+			JMenuItem reso2, JMenuItem reso3, JMenuItem reso4, JMenu help, JMenu hideMenu, JMenuItem keyShortcut,
+			JMenuItem creator, JMenuItem about) {
+		if (idioma == 0) {
+			gastos.setText("G A S T O S");// Spend of the day TITLE
+			agregado.setText("A G R E G A D O");// Added to cash title
+			hideBtn.setText("LOS BOTONES");
+			noHide.setText("NADA");
+			hideDate.setText("LA FECHA");
+			hideAll.setText("TODO");
+			newDay.setText("<html><center>Se Quedará<br>Para Mañana</center></html>");// REST
+			resoD.setText("ÓPTIMO");
+			aggPanel.setText("↑MÁS↓");
+			gastosPanel.setText("↑MÁS↓");
+			summaryT[0].setText("Inicio");
+			summaryT[1].setText("Gastos");
+			summaryT[2].setText("Agregado");
+			summaryT[3].setText("Ventas");
+			summaryT[4].setText("Total");
+
+			diffResult[0].setText("Diferencia");
+			file.setText("ARCHIVO");
+			novo.setText("NUEVO DÍA");
+			clear.setText("BORRAR TODO");
+			calc.setText("ASUMAR");
+			save.setText("SALVAR");
+			screenShot.setText("CAPTURA DE PANTALLA");
+			option.setText("CONFIGURACIÓN");
+			exit.setText("SALIR");
+
+			summary.setText("SUMARIO");
+			sumV.setText("VISTA PREVIA DEL RESUMEN");
+			effectChooser.setText("ELIGE TU EFECTO");
+			sumV1.setText("APARIENCIA GRADUAL");
+			sumV2.setText("APARECE PALABRA POR PALABRA");
+			sumV3.setText("APARECE LETRA POR LETRA");
+			exMenu.setText("GUARDAR RESUMEN");
+			speedChooser.setText("VELOCIDAD DE ANIMACIÓN");
+			speed1.setText("LENTO");
+			speed2.setText("MEDIANO");
+			speed3.setText("RÁPIDO");
+
+			goTo.setText("IR A");
+			pesos.setText("PESOS");
+			fatura.setText("FACTURA");
+			firstFrame.setText("PRIMER CUADRO");
+			reso.setText("RESOLUCIÓN");
+			reso1.setText("GRANDE");
+			reso2.setText("MEDIO");
+			reso3.setText("PEQUENA");
+			reso4.setText("X-PEQUENA");
+			help.setText("AYUDA");
+			hideMenu.setText("ESCONDER");
+			keyShortcut.setText("ATAJOS DE TECLADO");
+			creator.setText("SOBRE EL CREADOR");
+			about.setText("SOBRE EL APLICATIVO");
+		} else if (idioma == 1) {
+			gastos.setText("G A S T O S");// Spend of the day TITLE
+			agregado.setText("A G R E G A D O");// Added to cash title
+			hideBtn.setText("OS BOTÕES");
+			noHide.setText("NADA");
+			hideDate.setText("DATA");
+			hideAll.setText("TUDO");
+			newDay.setText("<html><center>Vai Ficar<br>Para Amanhã</center></html>");// REST
+			resoD.setText("ÓTIMO");
+			aggPanel.setText("↑MAIS↓");
+			gastosPanel.setText("↑MAIS↓");
+			summaryT[0].setText("Início");
+			summaryT[1].setText("Gastos");
+			summaryT[2].setText("Agregado");
+			summaryT[3].setText("Vendas");
+			summaryT[4].setText("Total");
+
+			diffResult[0].setText("Diferença");
+			file.setText("ARQUIVO");
+			novo.setText("NOVO DIA");
+			clear.setText("LIMPAR TUDO");
+			calc.setText("ASSUMIR");
+			save.setText("SALVAR");
+			screenShot.setText("CAPTURA DE TELA");
+			option.setText("CONFIGURAÇÃO");
+			exit.setText("SAIR");
+
+			summary.setText("SUMÁRIO");
+			sumV.setText("VISUALIZAÇÃO DO RESUMO");
+			effectChooser.setText("ESCOLHA SEU EFEITO");
+			sumV1.setText("APARECIMENTO GRADUAL");
+			sumV2.setText("APARECE PALAVRA POR PALAVRA");
+			sumV3.setText("APARECE LETRA POR LETRA");
+			exMenu.setText("SALVAR RESUMO");
+			speedChooser.setText("VELOCIDADE DA ANIMAÇÃO");
+			speed1.setText("LENTO");
+			speed2.setText("MÉDIO");
+			speed3.setText("RÁPIDO");
+
+			goTo.setText("VAI");
+			pesos.setText("PESOS");
+			fatura.setText("FATURA");
+			firstFrame.setText("PRIMEIRA TELA");
+			reso.setText("RESOLUÇÃO");
+			reso1.setText("GRANDE");
+			reso2.setText("MEDIO");
+			reso3.setText("PEQUENA");
+			reso4.setText("X-PEQUENA");
+			help.setText("AJUDA");
+			hideMenu.setText("ESCONDER");
+			keyShortcut.setText("ATALHOS DO TECLADO");
+			creator.setText("SOBRE O CRIADOR");
+			about.setText("SOBRE O APLICATIVO");
+		} else {
+			gastos.setText("B I L L S");// Spend of the day TITLE
+			agregado.setText("A G G R E G A T E S");// Added to cash title
+			hideBtn.setText("BUTTONS");
+			noHide.setText("NOTHING");
+			hideDate.setText("DATE");
+			hideAll.setText("ALL");
+			newDay.setText("<html><center>Will stay<br>For tomorrow</center></html>");// REST
+			resoD.setText("OPTIMAL");
+			aggPanel.setText("↑MORE↓");
+			gastosPanel.setText("↑MORE↓");
+			summaryT[0].setText("Initial");
+			summaryT[1].setText("Bills");
+			summaryT[2].setText("Aggregates");
+			summaryT[3].setText("Sales");
+			summaryT[4].setText("Total");
+
+			diffResult[0].setText("Difference");
+			file.setText("FILE");
+			novo.setText("NEW DAY");
+			clear.setText("CLEAN ALL");
+			calc.setText("ASSUME");
+			save.setText("SAVE");
+			screenShot.setText("SCREENSHOT");
+			option.setText("SETTINGS");
+			exit.setText("EXIT");
+
+			summary.setText("SUMMARY");
+			sumV.setText("SUMMARY VIEWING");
+			effectChooser.setText("CHOOSE YOUR EFFECT");
+			sumV1.setText("FADING");
+			sumV2.setText("APPEAR WORD BY WORD");
+			sumV3.setText("APPEAR LETTER BY LETTER");
+			exMenu.setText("SAVE SUMMARY");
+			speedChooser.setText("ANIMATION SPEED");
+			speed1.setText("SLOW");
+			speed2.setText("MEDIUM");
+			speed3.setText("FAST");
+
+			goTo.setText("GO");
+			pesos.setText("PESOS");
+			fatura.setText("INVOICE");
+			firstFrame.setText("FIRST FRAME");
+			reso.setText("RESOLUTION");
+			reso1.setText("LARGE");
+			reso2.setText("MEDIUM");
+			reso3.setText("SMALL");
+			reso4.setText("X-SMALL");
+			help.setText("HELP");
+			hideMenu.setText("HIDE");
+			keyShortcut.setText("KEY SHORTCUT");
+			creator.setText("ABOUT THE CREATOR");
+			about.setText("ABOUT THE APP");
+		}
+	}
+
+	private String[] idiomaString(int idioma) {
+		String[] espanol = { "• CTRL + S → ir la fatura.\n" + "• CTRL + P → ir al pesos.\n"
+				+ "• CTRL + B → borrar todo.\n" + "• CTRL + N → prepárate para el día siguiente.\n"
+				+ "• FLECHAS → subir, abajo, derecha e izquierda.\n" + "• CTRL + D → ir al detalles.\n"
+				+ "• CTRL + I → ir al inicio.\n" + "• CTRL + G → ir al gastos.\n" + "• CTRL + A → ir al agregado.\n"
+				+ "• CTRL + T → ir a la caja.\n" + "• CTRL + E → ir al ultimo numero.\n"
+				+ "• CTRL + M → mas un 100 o de 1000 si posible.\n" + "• CTRL + C → abrir el configuración."// 0
+				, "ATAJOS DE TECLADO" // key shortcut 1
+				, "Crédito y Diseñado por MhmdSAbdlh ©"// creator 2
+				,
+				"ESTA APLICACIÓN ESTÁ DISEÑADA PARA CEDROS Y NARJES FREE SHOP.\r\n"
+						+ "TIENE MARCO PARA CERRAR LA CAJA TANTO EN REALES COMO PESOS.\r\n"
+						+ "TIENE UN MARCO PARA CALCULAR EL TROCO DE UNA VENTA TANTO EN REALES COMO PESOS.\r\n"
+						+ "SABE CÓMO QUEDARÁ PARA EL PRÓXIMO DÍA.\r\n" + "3 MÉTODOS PARA DAR EL CAMBIO.\r\n"
+						+ "CAMBIARÁ TODO SEGÚN EL ICONO SELECCIONADO.\r\n" + "\r\n" + "MOHAMAD ABDALLAH ABBASS ©"// about4
+				, "CONFIGURACIÓN"// conf title 4
+				, "ICONO"// icon 5
+				, "IDIOMA"// LANGUAGE 6
+				, "xxx"// 7
+				, "AUTOGUARDAR"// AUTO SAVE 8
+				, "POR DEFECTO"// DEFAULT 9
+				, "GUARDAR"// SAVE 10
+				, "SI"// YES 11
+				, "NO"// NO 12
+				, "¿Seguro que quieres salir?"// exit 13
+				, "SALIR"// exit 14
+				, "Si /Nuevo Dia"// new day 15
+				, "¿QUIERES EMPEZAR NUEVO DIA?"// new day 16
+				, "NUEVO DIA" // new day 17
+				, "¿QUIERES BORRAR TODO?"// clear 18
+				, "BORRAR TODO" // clear 19
+				, "Más "// mas 20
+				, "<html><center>No Hay Diferencia</html>"// diif 21
+				, "Sobró R$" // sobro 22
+				, "Faltó R$" // falta 23
+				, "NO HAY NADA PARA ARMAR!"// nada mas 24
+				, "LA CAPTURA DE PANTALLA SE TOMA CON ÉXITO", // SCREENSJOT 25
+				"SALVADO CON ÉXITO, GRACIAS" // SAVE 26
+				, "CIERRE DE CAJA - R$" // TITLE 27
+				, "SOBRE MI"// about me 28
+				, "GASTOS"// 29
+				, "AGREGADOS"// 30
+				, "RECUERDOS DE HOY"// 31,
+				, "Introducir contraseña"// 32
+				, "Cancelar, tecla X o escape seleccionada"// 33
+				, "¡Contraseña incorrecta, inténtalo de nuevo!"// 34
+				, "SEPARADOS 🔒"// 35
+				, "PROMEDIO DEL MES"// 36
+				, "OTROS"// 37
+		};
+		String[] portugues = { "• CTRL + S → ir para a fatura.\n" + "• CTRL + P → ir para os pesos.\n"
+				+ "• CTRL + B → excluir tudo.\n" + "• CTRL + N → prepare-se para o dia seguinte.\n"
+				+ "• SETAS → cima, baixo, esquerda e direita.\n" + "• CTRL + D → ir para detalhes.\n"
+				+ "• CTRL + I → ir para o início.\n" + "• CTRL + G → ir para as despesas.\n"
+				+ "• CTRL + A → ir para agregar.\n" + "• CTRL + T → ir para finalizar a compra.\n"
+				+ "• CTRL + E → ir para o último número.\n" + "• CTRL + M → mais 100 ou 1000 se possível.\n"
+				+ "• CTRL + C → abrir configurações."// atalho de tecla 1
+				, "ATALHOS DE TECLAS" // tecla de atalho 2
+				, "Crédito e Desenhado por MhmdSAbdlh ©"// creator 3
+				,
+				"ESTE APLICATIVO FOI DESENVOLVIDO PARA O FREE SHOP DE CEDROS E NARJES.\r\n"
+						+ "TEM MOLDURA PARA FECHAR A CAIXA TANTO EM REAIS QUANTO EM PESOS.\r\n"
+						+ "TEM UM QUADRO PARA CALCULAR O TROCO DE UMA VENDA TANTO EM REAIS QUANTO EM PESOS.\r\n"
+						+ "SAIBA COMO SERÁ PARA O DIA SEGUINTE.\r\n" + "3 MÉTODOS PARA FAZER A MUDANÇA.\r\n"
+						+ "MUDARÁ TUDO DE ACORDO COM O ÍCONE SELECIONADO.\r\n" + "\r\n" + "MOHAMAD ABDALLAH ABBASS ©" // 4
+				, "CONFIGURAÇÃO"// conf title 5
+				, "ÍCONE"// icon 6
+				, "LINGUAGEM"// LANGUAGE 7
+				, "xxx"// xxx 8
+				, "AUTO-SALVAR"// AUTO SAVE 9
+				, "POR PADRÃO"// DEFAULT 10
+				, "SALVAR"// SAVE 11
+				, "SIM"// YES 12
+				, "NÃO"// NO 13
+				, "Tem certeza que quer sair?"// exit 14
+				, "SAIR"// exit15
+				, "Sim / Novo Dia"// new day 16
+				, "VOCÊ QUER COMEÇAR UM NOVO DIA?"// new day 17
+				, "NOVO DIA" // new day 18
+				, "VOCÊ QUER APAGAR TUDO?"// clear 19
+				, "LIMPAR TUDO" // clear20
+				, "Mais "// mas 21
+				, "<html><center>Não há diferença</html>"// diif 22
+				, "Sobra R$" // sobro 23
+				, "Faltou R$" // falta 24
+				, "NÃO HÁ NADA PARA MONTAR!"// nada mas 25
+				, "A CAPTURA DE TELA FOI REALIZADA COM SUCESSO", "SALVO COM SUCESSO, OBRIGADO"// SCREENSJOT 25
+				, "FECHAMENTO DE CAIXA - R$" // SAVE 26
+				, "SOBRE MIM"// about me 28
+				, "GASTOS"// 29
+				, "AGREGADOS"// 30
+				, "MEMÓRIAS DE HOJE"// 31
+				, "Digite a senha" // 32
+				, "Cancelar, X ou tecla de escape selecionada"// 33
+				, "Senha incorreta, tente novamente!"// 34
+				, "SEPARADAS 🔒"// 35
+				, "MÉDIA DO MÊS"// 36
+				, "OUTROS"// 37
+		};
+		String[] english = {
+				"• CTRL + S → go to invoice.\n" + "• CTRL + P → go to the pesos.\n" + "• CTRL + B → delete all.\n"
+						+ "• CTRL + N → get ready for the next day.\n" + "• arrows → up, down, left and right.\n"
+						+ "• CTRL + D → go to details.\n" + "• CTRL + I → go to the beginning.\n"
+						+ "• CTRL + G → go to expenses.\n" + "• CTRL + A → go to aggregate.\n"
+						+ "• CTRL + T → go to checkout.\n" + "• CTRL + E → go to the last number.\n"
+						+ "• CTRL + M → add set of 100 or 1000 if possible.\n" + "• CTRL + C → open settings."// 0
+				, "KEY SHORTCUTS" // tecla de atalho 1
+				, "Credit and Designed by MhmdSAbdlh ©"// creator 2
+				,
+				"THIS APP IS DESIGNED FOR CEDROS AND NARJES FREE SHOP.\r\n"
+						+ "HAS A FRAME TO CLOSE THE BOX IN REALS AND PESOS.\r\n"
+						+ "THERE IS A FRAME TO CALCULATE THE CHANGE FOR A SALE, BOTH IN BRL AND IN PESOS.\r\n"
+						+ "KNOW HOW MUCH IT WILL BE FOR THE NEXT DAY.\r\n" + "3 METHODS OF GIVING CHANGE.\r\n"
+						+ "WILL CHANGE EVERYTHING ACCORDING TO THE SELECTED ICON.\r\n" + "\r\n"
+						+ "MOHAMAD ABDALLAH ABBASS ©"// about3
+				, "CONFIGURATION"// conf title4
+				, "ICON"// icon5
+				, "LANGUAGE"// FIRST FRAME6
+				, "KEY SHORTCUT"// KEY SHORTCUT7
+				, "AUTO SAVE"// AUTO SAVE8
+				, "DEFAULT"// DEFAULT 9
+				, "SAVE"// SAVE 11
+				, "YES"// YES 12
+				, "NO"// NO 13
+				, "Are you sure you want to leave?"// exit 14
+				, "EXIT"// exit15
+				, "YES /NEW DAY"// new day 16
+				, "DO YOU WANT TO START A NEW DAY?"// new day 17
+				, "NEW DAY" // new day 18
+				, "DO YOU WANT TO DELETE EVERYTHING?"// clear 19
+				, "DELETE EVERYTHING" // clear20
+				, "MORE "// mas 21
+				, "<html><center>There is no difference</html>"// diif 22
+				, "More R$" // sobro 23
+				, "Missed R$" // falta 24
+				, "THERE IS NOTHING TO ASSEMBLE!"// nada mas 25
+				, "THE SCREENSHOT IS TAKING SUCCESSFULY"// SCREENSJOT 25
+				, "SUCCESSFULLY SAVED, THANK YOU" // SAVE 26
+				, "CASH CLOSING - R$"// TITLE 27
+				, "ABOUT ME"// about me 28
+				, "BILLS"// 29
+				, "AGGREGATES"// 30
+				, "MEMORIES OF TODAY"// 31
+				, "Enter Password"// 32
+				, "Cancel, X or escape key selected"// 33
+				, "Wrong password, try again!"// 34
+				, "SEPARATED 🔒"// 35
+				, "AVERAGE OF THE MONTH"// 36
+				, "OTHERS"// 37
+		};
+		if (idioma == 0)
+			return espanol;
+		else if (idioma == 1)
+			return portugues;
+		else
+			return english;
 	}
 
 	// Add a set of 1000
@@ -4736,6 +5185,10 @@ public class Reales extends JFrame {
 						dlg.dispose();
 
 					} catch (Throwable th) {
+						JOptionPane opt = new JOptionPane(
+								language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
+								JOptionPane.ERROR_MESSAGE);
+						opt.show();
 					}
 				}
 			}).start();
@@ -4755,326 +5208,19 @@ public class Reales extends JFrame {
 		return resizedImg;
 	}
 
-	private void idiomaTexts(int idioma, JMenuItem hideBtn, JMenuItem noHide, JMenuItem hideDate, JMenuItem hideAll,
-			JButton notasF, JButton newDay, JMenuItem resoD, JButton aggPanel, JButton gastosPanel, JMenu file,
-			JMenuItem novo, JMenuItem clear, JMenuItem calc, JMenuItem save, JMenuItem screenShot, JMenuItem option,
-			JMenuItem exit, JMenu summary, JMenuItem sumV, JMenu effectChooser, JMenuItem sumV1, JMenuItem sumV2,
-			JMenuItem sumV3, JMenuItem exMenu, JMenu speedChooser, JMenuItem speed1, JMenuItem speed2, JMenuItem speed3,
-			JMenu goTo, JMenuItem pesos, JMenuItem fatura, JMenuItem firstFrame, JMenu reso, JMenuItem reso1,
-			JMenuItem reso2, JMenuItem reso3, JMenuItem reso4, JMenu help, JMenu hideMenu, JMenuItem keyShortcut,
-			JMenuItem creator, JMenuItem about) {
-		if (idioma == 0) {
-			gastos.setText("G A S T O S");// Spend of the day TITLE
-			agregado.setText("A G R E G A D O");// Added to cash title
-			hideBtn.setText("LOS BOTONES");
-			noHide.setText("NADA");
-			hideDate.setText("LA FECHA");
-			hideAll.setText("TODO");
-			newDay.setText("<html><center>Se Quedará<br>Para Mañana</center></html>");// REST
-			resoD.setText("ÓPTIMO");
-			aggPanel.setText("↑MÁS↓");
-			gastosPanel.setText("↑MÁS↓");
-			summaryT[0].setText("Inicio");
-			summaryT[1].setText("Gastos");
-			summaryT[2].setText("Agregado");
-			summaryT[3].setText("Ventas");
-			summaryT[4].setText("Total");
-
-			diffResult[0].setText("Diferencia");
-			file.setText("ARCHIVO");
-			novo.setText("NUEVO DÍA");
-			clear.setText("BORRAR TODO");
-			calc.setText("ASUMAR");
-			save.setText("SALVAR");
-			screenShot.setText("CAPTURA DE PANTALLA");
-			option.setText("CONFIGURACIÓN");
-			exit.setText("SALIR");
-
-			summary.setText("SUMARIO");
-			sumV.setText("VISTA PREVIA DEL RESUMEN");
-			effectChooser.setText("ELIGE TU EFECTO");
-			sumV1.setText("APARIENCIA GRADUAL");
-			sumV2.setText("APARECE PALABRA POR PALABRA");
-			sumV3.setText("APARECE LETRA POR LETRA");
-			exMenu.setText("GUARDAR RESUMEN");
-			speedChooser.setText("VELOCIDAD DE ANIMACIÓN");
-			speed1.setText("LENTO");
-			speed2.setText("MEDIANO");
-			speed3.setText("RÁPIDO");
-
-			goTo.setText("IR A");
-			pesos.setText("PESOS");
-			fatura.setText("FACTURA");
-			firstFrame.setText("PRIMER CUADRO");
-			reso.setText("RESOLUCIÓN");
-			reso1.setText("GRANDE");
-			reso2.setText("MEDIO");
-			reso3.setText("PEQUENA");
-			reso4.setText("X-PEQUENA");
-			help.setText("AYUDA");
-			hideMenu.setText("ESCONDER");
-			keyShortcut.setText("ATAJOS DE TECLADO");
-			creator.setText("SOBRE EL CREADOR");
-			about.setText("SOBRE EL APLICATIVO");
-		} else if (idioma == 1) {
-			gastos.setText("G A S T O S");// Spend of the day TITLE
-			agregado.setText("A G R E G A D O");// Added to cash title
-			hideBtn.setText("OS BOTÕES");
-			noHide.setText("NADA");
-			hideDate.setText("DATA");
-			hideAll.setText("TUDO");
-			newDay.setText("<html><center>Vai Ficar<br>Para Amanhã</center></html>");// REST
-			resoD.setText("ÓTIMO");
-			aggPanel.setText("↑MAIS↓");
-			gastosPanel.setText("↑MAIS↓");
-			summaryT[0].setText("Início");
-			summaryT[1].setText("Gastos");
-			summaryT[2].setText("Agregado");
-			summaryT[3].setText("Vendas");
-			summaryT[4].setText("Total");
-
-			diffResult[0].setText("Diferença");
-			file.setText("ARQUIVO");
-			novo.setText("NOVO DIA");
-			clear.setText("LIMPAR TUDO");
-			calc.setText("ASSUMIR");
-			save.setText("SALVAR");
-			screenShot.setText("CAPTURA DE TELA");
-			option.setText("CONFIGURAÇÃO");
-			exit.setText("SAIR");
-
-			summary.setText("SUMÁRIO");
-			sumV.setText("VISUALIZAÇÃO DO RESUMO");
-			effectChooser.setText("ESCOLHA SEU EFEITO");
-			sumV1.setText("APARECIMENTO GRADUAL");
-			sumV2.setText("APARECE PALAVRA POR PALAVRA");
-			sumV3.setText("APARECE LETRA POR LETRA");
-			exMenu.setText("SALVAR RESUMO");
-			speedChooser.setText("VELOCIDADE DA ANIMAÇÃO");
-			speed1.setText("LENTO");
-			speed2.setText("MÉDIO");
-			speed3.setText("RÁPIDO");
-
-			goTo.setText("VAI");
-			pesos.setText("PESOS");
-			fatura.setText("FATURA");
-			firstFrame.setText("PRIMEIRA TELA");
-			reso.setText("RESOLUÇÃO");
-			reso1.setText("GRANDE");
-			reso2.setText("MEDIO");
-			reso3.setText("PEQUENA");
-			reso4.setText("X-PEQUENA");
-			help.setText("AJUDA");
-			hideMenu.setText("ESCONDER");
-			keyShortcut.setText("ATALHOS DO TECLADO");
-			creator.setText("SOBRE O CRIADOR");
-			about.setText("SOBRE O APLICATIVO");
-		} else {
-			gastos.setText("B I L L S");// Spend of the day TITLE
-			agregado.setText("A G G R E G A T E S");// Added to cash title
-			hideBtn.setText("BUTTONS");
-			noHide.setText("NOTHING");
-			hideDate.setText("DATE");
-			hideAll.setText("ALL");
-			newDay.setText("<html><center>Will stay<br>For tomorrow</center></html>");// REST
-			resoD.setText("OPTIMAL");
-			aggPanel.setText("↑MORE↓");
-			gastosPanel.setText("↑MORE↓");
-			summaryT[0].setText("Initial");
-			summaryT[1].setText("Bills");
-			summaryT[2].setText("Aggregates");
-			summaryT[3].setText("Sales");
-			summaryT[4].setText("Total");
-
-			diffResult[0].setText("Difference");
-			file.setText("FILE");
-			novo.setText("NEW DAY");
-			clear.setText("CLEAN ALL");
-			calc.setText("ASSUME");
-			save.setText("SAVE");
-			screenShot.setText("SCREENSHOT");
-			option.setText("SETTINGS");
-			exit.setText("EXIT");
-
-			summary.setText("SUMMARY");
-			sumV.setText("SUMMARY VIEWING");
-			effectChooser.setText("CHOOSE YOUR EFFECT");
-			sumV1.setText("FADING");
-			sumV2.setText("APPEAR WORD BY WORD");
-			sumV3.setText("APPEAR LETTER BY LETTER");
-			exMenu.setText("SAVE SUMMARY");
-			speedChooser.setText("ANIMATION SPEED");
-			speed1.setText("SLOW");
-			speed2.setText("MEDIUM");
-			speed3.setText("FAST");
-
-			goTo.setText("GO");
-			pesos.setText("PESOS");
-			fatura.setText("INVOICE");
-			firstFrame.setText("FIRST FRAME");
-			reso.setText("RESOLUTION");
-			reso1.setText("LARGE");
-			reso2.setText("MEDIUM");
-			reso3.setText("SMALL");
-			reso4.setText("X-SMALL");
-			help.setText("HELP");
-			hideMenu.setText("HIDE");
-			keyShortcut.setText("KEY SHORTCUT");
-			creator.setText("ABOUT THE CREATOR");
-			about.setText("ABOUT THE APP");
-		}
-	}
-
-	private String[] idiomaString(int idioma) {
-		String[] espanol = { "• CTRL + S → ir la fatura.\n" + "• CTRL + P → ir al pesos.\n"
-				+ "• CTRL + B → borrar todo.\n" + "• CTRL + N → prepárate para el día siguiente.\n"
-				+ "• FLECHAS → subir, abajo, derecha e izquierda.\n" + "• CTRL + D → ir al detalles.\n"
-				+ "• CTRL + I → ir al inicio.\n" + "• CTRL + G → ir al gastos.\n" + "• CTRL + A → ir al agregado.\n"
-				+ "• CTRL + T → ir a la caja.\n" + "• CTRL + E → ir al ultimo numero.\n"
-				+ "• CTRL + M → mas un 100 o de 1000 si posible.\n" + "• CTRL + C → abrir el configuración."// 0
-				, "ATAJOS DE TECLADO" // key shortcut 1
-				, "Crédito y Diseñado por MhmdSAbdlh ©"// creator 2
-				,
-				"ESTA APLICACIÓN ESTÁ DISEÑADA PARA CEDROS Y NARJES FREE SHOP.\r\n"
-						+ "TIENE MARCO PARA CERRAR LA CAJA TANTO EN REALES COMO PESOS.\r\n"
-						+ "TIENE UN MARCO PARA CALCULAR EL TROCO DE UNA VENTA TANTO EN REALES COMO PESOS.\r\n"
-						+ "SABE CÓMO QUEDARÁ PARA EL PRÓXIMO DÍA.\r\n" + "3 MÉTODOS PARA DAR EL CAMBIO.\r\n"
-						+ "CAMBIARÁ TODO SEGÚN EL ICONO SELECCIONADO.\r\n" + "\r\n" + "MOHAMAD ABDALLAH ABBASS ©"// about4
-				, "CONFIGURACIÓN"// conf title 4
-				, "ICONO"// icon 5
-				, "IDIOMA"// LANGUAGE 6
-				, "xxx"// 7
-				, "AUTOGUARDAR"// AUTO SAVE 8
-				, "POR DEFECTO"// DEFAULT 9
-				, "GUARDAR"// SAVE 10
-				, "SI"// YES 11
-				, "NO"// NO 12
-				, "¿Seguro que quieres salir?"// exit 13
-				, "SALIR"// exit 14
-				, "Si /Nuevo Dia"// new day 15
-				, "¿QUIERES EMPEZAR NUEVO DIA?"// new day 16
-				, "NUEVO DIA" // new day 17
-				, "¿QUIERES BORRAR TODO?"// clear 18
-				, "BORRAR TODO" // clear 19
-				, "Más "// mas 20
-				, "<html><center>No Hay Diferencia</html>"// diif 21
-				, "Sobró R$" // sobro 22
-				, "Faltó R$" // falta 23
-				, "NO HAY NADA PARA ARMAR!"// nada mas 24
-				, "LA CAPTURA DE PANTALLA SE TOMA CON ÉXITO", // SCREENSJOT 25
-				"SALVADO CON ÉXITO, GRACIAS" // SAVE 26
-				, "CIERRE DE CAJA - R$" // TITLE 27
-				, "SOBRE MI"// about me 28
-				, "GASTOS"// 29
-				, "AGREGADOS"// 30
-				, "RECUERDOS DE HOY"// 31,
-				, "Introducir contraseña"// 32
-				, "Cancelar, tecla X o escape seleccionada"// 33
-				, "¡Contraseña incorrecta, inténtalo de nuevo!"// 34
-				, "SEPARADOS 🔒"// 35
-		};
-		String[] portugues = { "• CTRL + S → ir para a fatura.\n" + "• CTRL + P → ir para os pesos.\n"
-				+ "• CTRL + B → excluir tudo.\n" + "• CTRL + N → prepare-se para o dia seguinte.\n"
-				+ "• SETAS → cima, baixo, esquerda e direita.\n" + "• CTRL + D → ir para detalhes.\n"
-				+ "• CTRL + I → ir para o início.\n" + "• CTRL + G → ir para as despesas.\n"
-				+ "• CTRL + A → ir para agregar.\n" + "• CTRL + T → ir para finalizar a compra.\n"
-				+ "• CTRL + E → ir para o último número.\n" + "• CTRL + M → mais 100 ou 1000 se possível.\n"
-				+ "• CTRL + C → abrir configurações."// atalho de tecla 1
-				, "ATALHOS DE TECLAS" // tecla de atalho 2
-				, "Crédito e Desenhado por MhmdSAbdlh ©"// creator 3
-				,
-				"ESTE APLICATIVO FOI DESENVOLVIDO PARA O FREE SHOP DE CEDROS E NARJES.\r\n"
-						+ "TEM MOLDURA PARA FECHAR A CAIXA TANTO EM REAIS QUANTO EM PESOS.\r\n"
-						+ "TEM UM QUADRO PARA CALCULAR O TROCO DE UMA VENDA TANTO EM REAIS QUANTO EM PESOS.\r\n"
-						+ "SAIBA COMO SERÁ PARA O DIA SEGUINTE.\r\n" + "3 MÉTODOS PARA FAZER A MUDANÇA.\r\n"
-						+ "MUDARÁ TUDO DE ACORDO COM O ÍCONE SELECIONADO.\r\n" + "\r\n" + "MOHAMAD ABDALLAH ABBASS ©" // 4
-				, "CONFIGURAÇÃO"// conf title 5
-				, "ÍCONE"// icon 6
-				, "LINGUAGEM"// LANGUAGE 7
-				, "xxx"// xxx 8
-				, "AUTO-SALVAR"// AUTO SAVE 9
-				, "POR PADRÃO"// DEFAULT 10
-				, "SALVAR"// SAVE 11
-				, "SIM"// YES 12
-				, "NÃO"// NO 13
-				, "Tem certeza que quer sair?"// exit 14
-				, "SAIR"// exit15
-				, "Sim / Novo Dia"// new day 16
-				, "VOCÊ QUER COMEÇAR UM NOVO DIA?"// new day 17
-				, "NOVO DIA" // new day 18
-				, "VOCÊ QUER APAGAR TUDO?"// clear 19
-				, "LIMPAR TUDO" // clear20
-				, "Mais "// mas 21
-				, "<html><center>Não há diferença</html>"// diif 22
-				, "Sobra R$" // sobro 23
-				, "Faltou R$" // falta 24
-				, "NÃO HÁ NADA PARA MONTAR!"// nada mas 25
-				, "A CAPTURA DE TELA FOI REALIZADA COM SUCESSO", "SALVO COM SUCESSO, OBRIGADO"// SCREENSJOT 25
-				, "FECHAMENTO DE CAIXA - R$" // SAVE 26
-				, "SOBRE MIM"// about me 28
-				, "GASTOS"// 29
-				, "AGREGADOS"// 30
-				, "MEMÓRIAS DE HOJE"// 31
-				, "Digite a senha" // 32
-				, "Cancelar, X ou tecla de escape selecionada"// 33
-				, "Senha incorreta, tente novamente!"// 34
-				, "SEPARADAS 🔒"// 35
-		};
-		String[] english = {
-				"• CTRL + S → go to invoice.\n" + "• CTRL + P → go to the pesos.\n" + "• CTRL + B → delete all.\n"
-						+ "• CTRL + N → get ready for the next day.\n" + "• arrows → up, down, left and right.\n"
-						+ "• CTRL + D → go to details.\n" + "• CTRL + I → go to the beginning.\n"
-						+ "• CTRL + G → go to expenses.\n" + "• CTRL + A → go to aggregate.\n"
-						+ "• CTRL + T → go to checkout.\n" + "• CTRL + E → go to the last number.\n"
-						+ "• CTRL + M → add set of 100 or 1000 if possible.\n" + "• CTRL + C → open settings."// 0
-				, "KEY SHORTCUTS" // tecla de atalho 2
-				, "Credit and Designed by MhmdSAbdlh ©"// creator 3
-				,
-				"THIS APP IS DESIGNED FOR CEDROS AND NARJES FREE SHOP.\r\n"
-						+ "HAS A FRAME TO CLOSE THE BOX IN REALS AND PESOS.\r\n"
-						+ "THERE IS A FRAME TO CALCULATE THE CHANGE FOR A SALE, BOTH IN BRL AND IN PESOS.\r\n"
-						+ "KNOW HOW MUCH IT WILL BE FOR THE NEXT DAY.\r\n" + "3 METHODS OF GIVING CHANGE.\r\n"
-						+ "WILL CHANGE EVERYTHING ACCORDING TO THE SELECTED ICON.\r\n" + "\r\n"
-						+ "MOHAMAD ABDALLAH ABBASS ©"// about
-				, "CONFIGURATION"// conf title
-				, "ICON"// icon
-				, "LANGUAGE"// FIRST FRAME
-				, "KEY SHORTCUT"// KEY SHORTCUT
-				, "AUTO SAVE"// AUTO SAVE
-				, "DEFAULT"// DEFAULT 10
-				, "SAVE"// SAVE 11
-				, "YES"// YES 12
-				, "NO"// NO 13
-				, "Are you sure you want to leave?"// exit 14
-				, "EXIT"// exit15
-				, "YES /NEW DAY"// new day 16
-				, "DO YOU WANT TO START A NEW DAY?"// new day 17
-				, "NEW DAY" // new day 18
-				, "DO YOU WANT TO DELETE EVERYTHING?"// clear 19
-				, "DELETE EVERYTHING" // clear20
-				, "MORE "// mas 21
-				, "<html><center>There is no difference</html>"// diif 22
-				, "More R$" // sobro 23
-				, "Missed R$" // falta 24
-				, "THERE IS NOTHING TO ASSEMBLE!"// nada mas 25
-				, "THE SCREENSHOT IS TAKING SUCCESSFULY"// SCREENSJOT 25
-				, "SUCCESSFULLY SAVED, THANK YOU" // SAVE 26
-				, "CASH CLOSING - R$"// TITLE 27
-				, "ABOUT ME"// about me 28
-				, "BILLS"// 29
-				, "AGGREGATES"// 30
-				, "MEMORIES OF TODAY"// 31
-				, "Enter Password"// 32
-				, "Cancel, X or escape key selected"// 33
-				, "Wrong password, try again!"// 34
-				, "SEPARATED 🔒"// 35
-		};
-		if (idioma == 0)
-			return espanol;
-		else if (idioma == 1)
-			return portugues;
+	private String getMonthForInt(int num) {
+		String[] eng = { "January", "February", "March", "April", "May", "June", "July", "August", "September",
+				"October", "November", "December" };
+		String[] esp = { "enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre",
+				"octubre", "noviembre", "diciembre" };
+		String[] por = { "janeiro", "fevereiro", "março", "abril", "maio", "junho", "julho", "agosto", "setembro",
+				"Outubro", "Novembro", "Dezembro" };
+		if (language == 0)
+			return esp[num].toUpperCase();
+		else if (language == 1)
+			return por[num].toUpperCase();
 		else
-			return english;
+			return eng[num].toUpperCase();
 	}
 
 	private void dateLang(int lang) {
@@ -5100,6 +5246,406 @@ public class Reales extends JFrame {
 					.toUpperCase();
 			yearS = new SimpleDateFormat("YYYY", new Locale("en")).format(Calendar.getInstance().getTime());
 		}
+	}
+
+	private void resolutionActionListener(JButton clearEverthing, JButton pesosF, JButton notasF, JButton newDay,
+			JMenuItem resoD, JButton aggPanel, JButton gastosPanel, JMenuItem reso1, JMenuItem reso2, JMenuItem reso3,
+			JMenuItem reso4) {
+		resoD.addActionListener(e -> {
+			conf[3] = "0";
+			opResolution(clearEverthing, pesosF, notasF, newDay, resoD, reso4, reso3, reso2, reso1, aggPanel,
+					gastosPanel);
+			try {
+				FileWriter savedF = new FileWriter(newFile);
+				savedF.write((conf[0].equals("null") ? 0 : conf[0]) + System.lineSeparator());
+				savedF.write((conf[1].equals("null") ? 0 : conf[1]) + System.lineSeparator());
+				savedF.write((conf[2].equals("null") ? "false" : conf[2]) + System.lineSeparator());
+				savedF.write(0 + System.lineSeparator());
+				savedF.write((conf[4].equals("null") ? "false" : conf[4]) + System.lineSeparator());
+				savedF.write((conf[5].equals("null") ? 0 : conf[5]) + System.lineSeparator());
+				savedF.write((conf[6].equals("null") ? 0 : conf[6]) + System.lineSeparator());
+				savedF.write((conf[7].equals("null") ? 0 : conf[7]) + System.lineSeparator());// lan
+				savedF.write((conf[8].equals("null") ? 0 : conf[8]) + System.lineSeparator());// effchooser
+				savedF.write((conf[9].equals("null") ? "1,1" : conf[9]) + System.lineSeparator());// intro
+				savedF.close();
+			} catch (Exception e2) {
+				JOptionPane opt = new JOptionPane(
+						language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
+						JOptionPane.ERROR_MESSAGE);
+				opt.show();
+			}
+		});
+		reso1.addActionListener(e -> {
+			conf[3] = "4";
+			resG(resoD, reso4, reso3, reso2, reso1, notasF, pesosF, newDay, clearEverthing, gastosPanel, aggPanel);
+			try {
+				FileWriter savedF = new FileWriter(newFile);
+				savedF.write((conf[0].equals("null") ? 0 : conf[0]) + System.lineSeparator());
+				savedF.write((conf[1].equals("null") ? 0 : conf[1]) + System.lineSeparator());
+				savedF.write((conf[2].equals("null") ? "false" : conf[2]) + System.lineSeparator());
+				savedF.write(4 + System.lineSeparator());
+				savedF.write((conf[4].equals("null") ? "false" : conf[4]) + System.lineSeparator());
+				savedF.write((conf[5].equals("null") ? 0 : conf[5]) + System.lineSeparator());
+				savedF.write((conf[6].equals("null") ? 0 : conf[6]) + System.lineSeparator());
+				savedF.write((conf[7].equals("null") ? 0 : conf[7]) + System.lineSeparator());// lan
+				savedF.write((conf[8].equals("null") ? 0 : conf[8]) + System.lineSeparator());// effchooser
+				savedF.write((conf[9].equals("null") ? "1,1" : conf[9]) + System.lineSeparator());// intro
+				savedF.close();
+			} catch (Exception e2) {
+				JOptionPane opt = new JOptionPane(
+						language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
+						JOptionPane.ERROR_MESSAGE);
+				opt.show();
+			}
+		});
+		reso2.addActionListener(e -> {
+			conf[3] = "3";
+			resM(resoD, reso4, reso3, reso2, reso1, notasF, pesosF, newDay, clearEverthing, gastosPanel, aggPanel);
+			try {
+				FileWriter savedF = new FileWriter(newFile);
+				savedF.write((conf[0].equals("null") ? 0 : conf[0]) + System.lineSeparator());
+				savedF.write((conf[1].equals("null") ? 0 : conf[1]) + System.lineSeparator());
+				savedF.write((conf[2].equals("null") ? "false" : conf[2]) + System.lineSeparator());
+				savedF.write(3 + System.lineSeparator());
+				savedF.write((conf[4].equals("null") ? "false" : conf[4]) + System.lineSeparator());
+				savedF.write((conf[5].equals("null") ? 0 : conf[5]) + System.lineSeparator());
+				savedF.write((conf[6].equals("null") ? 0 : conf[6]) + System.lineSeparator());
+				savedF.write((conf[7].equals("null") ? 0 : conf[7]) + System.lineSeparator());// lan
+				savedF.write((conf[8].equals("null") ? 0 : conf[8]) + System.lineSeparator());// effchooser
+				savedF.write((conf[9].equals("null") ? "1,1" : conf[9]) + System.lineSeparator());// intro
+				savedF.close();
+			} catch (Exception e2) {
+				JOptionPane opt = new JOptionPane(
+						language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
+						JOptionPane.ERROR_MESSAGE);
+				opt.show();
+			}
+		});
+		reso3.addActionListener(e -> {
+			conf[3] = "2";
+			resP(resoD, reso4, reso3, reso2, reso1, notasF, pesosF, newDay, clearEverthing, gastosPanel, aggPanel);
+			try {
+				FileWriter savedF = new FileWriter(newFile);
+				savedF.write((conf[0].equals("null") ? 0 : conf[0]) + System.lineSeparator());
+				savedF.write((conf[1].equals("null") ? 0 : conf[1]) + System.lineSeparator());
+				savedF.write((conf[2].equals("null") ? "false" : conf[2]) + System.lineSeparator());
+				savedF.write(2 + System.lineSeparator());
+				savedF.write((conf[4].equals("null") ? "false" : conf[4]) + System.lineSeparator());
+				savedF.write((conf[5].equals("null") ? 0 : conf[5]) + System.lineSeparator());
+				savedF.write((conf[6].equals("null") ? 0 : conf[6]) + System.lineSeparator());
+				savedF.write((conf[7].equals("null") ? 0 : conf[7]) + System.lineSeparator());// lan
+				savedF.write((conf[8].equals("null") ? 0 : conf[8]) + System.lineSeparator());// effchooser
+				savedF.write((conf[9].equals("null") ? "1,1" : conf[9]) + System.lineSeparator());// intro
+				savedF.close();
+			} catch (Exception e2) {
+				JOptionPane opt = new JOptionPane(
+						language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
+						JOptionPane.ERROR_MESSAGE);
+				opt.show();
+			}
+		});
+		reso4.addActionListener(e -> {
+			conf[3] = "1";
+			resXP(resoD, reso4, reso3, reso2, reso1, notasF, pesosF, newDay, clearEverthing, gastosPanel, aggPanel);
+			try {
+				FileWriter savedF = new FileWriter(newFile);
+				savedF.write((conf[0].equals("null") ? 0 : conf[0]) + System.lineSeparator());
+				savedF.write((conf[1].equals("null") ? 0 : conf[1]) + System.lineSeparator());
+				savedF.write((conf[2].equals("null") ? "false" : conf[2]) + System.lineSeparator());
+				savedF.write(1 + System.lineSeparator());
+				savedF.write((conf[4].equals("null") ? "false" : conf[4]) + System.lineSeparator());
+				savedF.write((conf[5].equals("null") ? 0 : conf[5]) + System.lineSeparator());
+				savedF.write((conf[6].equals("null") ? 0 : conf[6]) + System.lineSeparator());
+				savedF.write((conf[7].equals("null") ? 0 : conf[7]) + System.lineSeparator());// lan
+				savedF.write((conf[8].equals("null") ? 0 : conf[8]) + System.lineSeparator());// effchooser
+				savedF.write((conf[9].equals("null") ? "1,1" : conf[9]) + System.lineSeparator());// intro
+				savedF.close();
+			} catch (Exception e2) {
+				JOptionPane opt = new JOptionPane(
+						language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
+						JOptionPane.ERROR_MESSAGE);
+				opt.show();
+			}
+		});
+	}
+
+	private void summaryActionListener(JMenuItem sumV1, JMenuItem sumV2, JMenuItem sumV3) {
+		sumV1.addActionListener(e -> {
+			effChooser = 0;
+			sumV1.setEnabled(false);
+			sumV2.setEnabled(true);
+			sumV3.setEnabled(true);
+			conf[8] = "0";
+			try {
+				FileWriter savedF = new FileWriter(newFile);
+				savedF.write((conf[0].equals("null") ? 0 : conf[0]) + System.lineSeparator());
+				savedF.write((conf[1].equals("null") ? 0 : conf[1]) + System.lineSeparator());
+				savedF.write((conf[2].equals("null") ? "false" : conf[2]) + System.lineSeparator());
+				savedF.write((conf[3].equals("null") ? 0 : conf[3]) + System.lineSeparator());
+				savedF.write((conf[4].equals("null") ? "false" : conf[4]) + System.lineSeparator());
+				savedF.write((conf[5].equals("null") ? 0 : conf[5]) + System.lineSeparator());
+				savedF.write((conf[6].equals("null") ? 0 : conf[6]) + System.lineSeparator());// speed
+				savedF.write((conf[7].equals("null") ? 0 : conf[7]) + System.lineSeparator());// lan
+				savedF.write(0 + System.lineSeparator());// effect chooser
+				savedF.write((conf[9].equals("null") ? "1,1" : conf[9]) + System.lineSeparator());// intro
+				savedF.close();
+			} catch (Exception e2) {
+				JOptionPane opt = new JOptionPane(
+						language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
+						JOptionPane.ERROR_MESSAGE);
+				opt.show();
+			}
+		});
+		sumV2.addActionListener(e -> {
+			effChooser = 1;
+			sumV1.setEnabled(true);
+			sumV2.setEnabled(false);
+			sumV3.setEnabled(true);
+			conf[8] = "1";
+			try {
+				FileWriter savedF = new FileWriter(newFile);
+				savedF.write((conf[0].equals("null") ? 0 : conf[0]) + System.lineSeparator());
+				savedF.write((conf[1].equals("null") ? 0 : conf[1]) + System.lineSeparator());
+				savedF.write((conf[2].equals("null") ? "false" : conf[2]) + System.lineSeparator());
+				savedF.write((conf[3].equals("null") ? 0 : conf[3]) + System.lineSeparator());
+				savedF.write((conf[4].equals("null") ? "false" : conf[4]) + System.lineSeparator());
+				savedF.write((conf[5].equals("null") ? 0 : conf[5]) + System.lineSeparator());
+				savedF.write((conf[6].equals("null") ? 0 : conf[6]) + System.lineSeparator());// speed
+				savedF.write((conf[7].equals("null") ? 0 : conf[7]) + System.lineSeparator());// lan
+				savedF.write(1 + System.lineSeparator());// effect chooser
+				savedF.write((conf[9].equals("null") ? "1,1" : conf[9]) + System.lineSeparator());// intro
+				savedF.close();
+			} catch (Exception e2) {
+				JOptionPane opt = new JOptionPane(
+						language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
+						JOptionPane.ERROR_MESSAGE);
+				opt.show();
+			}
+		});
+		sumV3.addActionListener(e -> {
+			effChooser = 2;
+			sumV1.setEnabled(true);
+			sumV2.setEnabled(true);
+			sumV3.setEnabled(false);
+			conf[8] = "2";
+			try {
+				FileWriter savedF = new FileWriter(newFile);
+				savedF.write((conf[0].equals("null") ? 0 : conf[0]) + System.lineSeparator());
+				savedF.write((conf[1].equals("null") ? 0 : conf[1]) + System.lineSeparator());
+				savedF.write((conf[2].equals("null") ? "false" : conf[2]) + System.lineSeparator());
+				savedF.write((conf[3].equals("null") ? 0 : conf[3]) + System.lineSeparator());
+				savedF.write((conf[4].equals("null") ? "false" : conf[4]) + System.lineSeparator());
+				savedF.write((conf[5].equals("null") ? 0 : conf[5]) + System.lineSeparator());
+				savedF.write((conf[6].equals("null") ? 0 : conf[6]) + System.lineSeparator());// speed
+				savedF.write((conf[7].equals("null") ? 0 : conf[7]) + System.lineSeparator());// lan
+				savedF.write(2 + System.lineSeparator());// effect chooser
+				savedF.write((conf[9].equals("null") ? "1,1" : conf[9]) + System.lineSeparator());// intro
+				savedF.close();
+			} catch (Exception e2) {
+				JOptionPane opt = new JOptionPane(
+						language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
+						JOptionPane.ERROR_MESSAGE);
+				opt.show();
+			}
+		});
+	}
+
+	private void speedActionListener(JMenuItem speed1, JMenuItem speed2, JMenuItem speed3) {
+		speed1.addActionListener(e -> {
+			conf[6] = "0";
+			try {
+				FileWriter savedF = new FileWriter(newFile);
+				savedF.write((conf[0].equals("null") ? 0 : conf[0]) + System.lineSeparator());
+				savedF.write((conf[1].equals("null") ? 0 : conf[1]) + System.lineSeparator());
+				savedF.write((conf[2].equals("null") ? "false" : conf[2]) + System.lineSeparator());
+				savedF.write((conf[3].equals("null") ? 0 : conf[3]) + System.lineSeparator());
+				savedF.write((conf[4].equals("null") ? "false" : conf[4]) + System.lineSeparator());
+				savedF.write((conf[5].equals("null") ? 0 : conf[5]) + System.lineSeparator());
+				savedF.write(0 + System.lineSeparator());// speed
+				savedF.write((conf[7].equals("null") ? 0 : conf[7]) + System.lineSeparator());// lan
+				savedF.write((conf[8].equals("null") ? 0 : conf[8]) + System.lineSeparator());// effchooser
+				savedF.write((conf[9].equals("null") ? "1,1" : conf[9]) + System.lineSeparator());// intro
+				savedF.close();
+			} catch (Exception e2) {
+				JOptionPane opt = new JOptionPane(
+						language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
+						JOptionPane.ERROR_MESSAGE);
+				opt.show();
+			}
+			speed1.setEnabled(false);
+			speed2.setEnabled(true);
+			speed3.setEnabled(true);
+		});
+		speed2.addActionListener(e -> {
+			conf[6] = "1";
+			try {
+				FileWriter savedF = new FileWriter(newFile);
+				savedF.write((conf[0].equals("null") ? 0 : conf[0]) + System.lineSeparator());
+				savedF.write((conf[1].equals("null") ? 0 : conf[1]) + System.lineSeparator());
+				savedF.write((conf[2].equals("null") ? "false" : conf[2]) + System.lineSeparator());
+				savedF.write((conf[3].equals("null") ? 0 : conf[3]) + System.lineSeparator());
+				savedF.write((conf[4].equals("null") ? "false" : conf[4]) + System.lineSeparator());
+				savedF.write((conf[5].equals("null") ? 0 : conf[5]) + System.lineSeparator());
+				savedF.write(1 + System.lineSeparator());
+				savedF.write((conf[7].equals("null") ? 0 : conf[7]) + System.lineSeparator());// lan
+				savedF.write((conf[8].equals("null") ? 0 : conf[8]) + System.lineSeparator());// effchooser
+				savedF.write((conf[9].equals("null") ? "1,1" : conf[9]) + System.lineSeparator());// intro
+				savedF.close();
+			} catch (Exception e2) {
+				JOptionPane opt = new JOptionPane(
+						language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
+						JOptionPane.ERROR_MESSAGE);
+				opt.show();
+			}
+			speed1.setEnabled(true);
+			speed2.setEnabled(false);
+			speed3.setEnabled(true);
+		});
+		speed3.addActionListener(e -> {
+			conf[6] = "2";
+			try {
+				FileWriter savedF = new FileWriter(newFile);
+				savedF.write((conf[0].equals("null") ? 0 : conf[0]) + System.lineSeparator());
+				savedF.write((conf[1].equals("null") ? 0 : conf[1]) + System.lineSeparator());
+				savedF.write((conf[2].equals("null") ? "false" : conf[2]) + System.lineSeparator());
+				savedF.write((conf[3].equals("null") ? 0 : conf[3]) + System.lineSeparator());
+				savedF.write((conf[4].equals("null") ? "false" : conf[4]) + System.lineSeparator());
+				savedF.write((conf[5].equals("null") ? 0 : conf[5]) + System.lineSeparator());
+				savedF.write(2 + System.lineSeparator());
+				savedF.write((conf[7].equals("null") ? 0 : conf[7]) + System.lineSeparator());// lan
+				savedF.write((conf[8].equals("null") ? 0 : conf[8]) + System.lineSeparator());// effchooser
+				savedF.write((conf[9].equals("null") ? "1,1" : conf[9]) + System.lineSeparator());// intro
+				savedF.close();
+			} catch (Exception e2) {
+				JOptionPane opt = new JOptionPane(
+						language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
+						JOptionPane.ERROR_MESSAGE);
+				opt.show();
+			}
+			speed1.setEnabled(true);
+			speed2.setEnabled(true);
+			speed3.setEnabled(false);
+		});
+	}
+
+	private void hideActionListener(JMenuItem hideBtn, JMenuItem noHide, JMenuItem hideDate, JMenuItem hideAll,
+			JButton clearEverthing, JButton pesosF, JButton notasF, JButton newDay) {
+		noHide.addActionListener(e -> {
+			conf[1] = "0";
+			noHide.setEnabled(false);
+			hideDate.setEnabled(true);
+			hideBtn.setEnabled(true);
+			hideAll.setEnabled(true);
+			try {
+				FileWriter savedF = new FileWriter(newFile);
+				savedF.write((conf[0].equals("null") ? 0 : conf[0]) + System.lineSeparator());
+				savedF.write(0 + System.lineSeparator());
+				savedF.write((conf[2].equals("null") ? "false" : conf[2]) + System.lineSeparator());
+				savedF.write((conf[3].equals("null") ? 0 : conf[3]) + System.lineSeparator());
+				savedF.write((conf[4].equals("null") ? "false" : conf[4]) + System.lineSeparator());
+				savedF.write((conf[5].equals("null") ? 0 : conf[5]) + System.lineSeparator());
+				savedF.write((conf[6].equals("null") ? 0 : conf[6]) + System.lineSeparator());
+				savedF.write((conf[7].equals("null") ? 0 : conf[7]) + System.lineSeparator());// lan
+				savedF.write((conf[8].equals("null") ? 0 : conf[8]) + System.lineSeparator());// effchooser
+				savedF.write((conf[9].equals("null") ? "1,1" : conf[9]) + System.lineSeparator());// intro
+				savedF.close();
+			} catch (Exception e2) {
+				JOptionPane opt = new JOptionPane(
+						language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
+						JOptionPane.ERROR_MESSAGE);
+				opt.show();
+			}
+			pesosF.show();
+			clearEverthing.show();
+			notasF.show();
+			date.show();
+		});
+		hideDate.addActionListener(e -> {
+			conf[1] = "1";
+			noHide.setEnabled(true);
+			hideDate.setEnabled(false);
+			hideBtn.setEnabled(true);
+			hideAll.setEnabled(true);
+			try {
+				FileWriter savedF = new FileWriter(newFile);
+				savedF.write((conf[0].equals("null") ? 0 : conf[0]) + System.lineSeparator());
+				savedF.write(1 + System.lineSeparator());
+				savedF.write((conf[2].equals("null") ? "false" : conf[2]) + System.lineSeparator());
+				savedF.write((conf[3].equals("null") ? 0 : conf[3]) + System.lineSeparator());
+				savedF.write((conf[4].equals("null") ? "false" : conf[4]) + System.lineSeparator());
+				savedF.write((conf[5].equals("null") ? 0 : conf[5]) + System.lineSeparator());
+				savedF.write((conf[6].equals("null") ? 0 : conf[6]) + System.lineSeparator());
+				savedF.write((conf[7].equals("null") ? 0 : conf[7]) + System.lineSeparator());// lan
+				savedF.write((conf[8].equals("null") ? 0 : conf[8]) + System.lineSeparator());// effchooser
+				savedF.write((conf[9].equals("null") ? "1,1" : conf[9]) + System.lineSeparator());// intro
+				savedF.close();
+			} catch (Exception e2) {
+				JOptionPane opt = new JOptionPane(
+						language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
+						JOptionPane.ERROR_MESSAGE);
+				opt.show();
+			}
+			date.hide();
+			pesosF.show();
+			clearEverthing.show();
+			notasF.show();
+		});
+		hideBtn.addActionListener(e -> {
+			conf[1] = "2";
+			noHide.setEnabled(true);
+			hideDate.setEnabled(true);
+			hideBtn.setEnabled(false);
+			hideAll.setEnabled(true);
+			try {
+				FileWriter savedF = new FileWriter(newFile);
+				savedF.write((conf[0].equals("null") ? 0 : conf[0]) + System.lineSeparator());
+				savedF.write(2 + System.lineSeparator());
+				savedF.write((conf[2].equals("null") ? "false" : conf[2]) + System.lineSeparator());
+				savedF.write((conf[3].equals("null") ? 0 : conf[3]) + System.lineSeparator());
+				savedF.write((conf[4].equals("null") ? "false" : conf[4]) + System.lineSeparator());
+				savedF.write((conf[5].equals("null") ? 0 : conf[5]) + System.lineSeparator());
+				savedF.write((conf[6].equals("null") ? 0 : conf[6]) + System.lineSeparator());
+				savedF.write((conf[7].equals("null") ? 0 : conf[7]) + System.lineSeparator());// lan
+				savedF.write((conf[8].equals("null") ? 0 : conf[8]) + System.lineSeparator());// effchooser
+				savedF.write((conf[9].equals("null") ? "1,1" : conf[9]) + System.lineSeparator());// intro
+				savedF.close();
+			} catch (Exception e2) {
+				JOptionPane opt = new JOptionPane(
+						language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
+						JOptionPane.ERROR_MESSAGE);
+				opt.show();
+			}
+			hideBtn(notasF, pesosF, newDay, clearEverthing, hideBtn);
+			date.show();
+		});
+		hideAll.addActionListener(e -> {
+			conf[1] = "3";
+			noHide.setEnabled(true);
+			hideDate.setEnabled(true);
+			hideBtn.setEnabled(true);
+			hideAll.setEnabled(false);
+			try {
+				FileWriter savedF = new FileWriter(newFile);
+				savedF.write((conf[0].equals("null") ? 0 : conf[0]) + System.lineSeparator());
+				savedF.write(3 + System.lineSeparator());
+				savedF.write((conf[2].equals("null") ? "false" : conf[2]) + System.lineSeparator());
+				savedF.write((conf[3].equals("null") ? 0 : conf[3]) + System.lineSeparator());
+				savedF.write((conf[4].equals("null") ? "false" : conf[4]) + System.lineSeparator());
+				savedF.write((conf[5].equals("null") ? 0 : conf[5]) + System.lineSeparator());
+				savedF.write((conf[6].equals("null") ? 0 : conf[6]) + System.lineSeparator());
+				savedF.write((conf[7].equals("null") ? 0 : conf[7]) + System.lineSeparator());// lan
+				savedF.write((conf[8].equals("null") ? 0 : conf[8]) + System.lineSeparator());// effchooser
+				savedF.write((conf[9].equals("null") ? "1,1" : conf[9]) + System.lineSeparator());// intro
+				savedF.close();
+			} catch (Exception e2) {
+				JOptionPane opt = new JOptionPane(
+						language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
+						JOptionPane.ERROR_MESSAGE);
+				opt.show();
+			}
+			hideBtn(notasF, pesosF, newDay, clearEverthing, hideBtn);
+			date.hide();
+		});
 	}
 
 	// Auto-complete words for gastos and agregados

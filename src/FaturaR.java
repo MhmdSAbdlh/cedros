@@ -127,9 +127,6 @@ public class FaturaR extends JFrame {
 	File newFile = new File(tempFile0, "conf.dll");
 
 	FaturaR() {
-		// Notification when its time to end the day
-		First.timeToClose();
-
 		// Open Conf
 		BufferedReader dataOpened = null;
 		String line = "";
@@ -143,6 +140,10 @@ public class FaturaR extends JFrame {
 			}
 			dataOpened.close();
 		} catch (Exception e) {
+			JOptionPane opt = new JOptionPane(
+					language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
+					JOptionPane.ERROR_MESSAGE);
+			opt.show();
 		}
 		// LANGUAGE
 		if (conf[7] == null || conf[7].equals("0"))
@@ -211,6 +212,10 @@ public class FaturaR extends JFrame {
 			}
 			dataOpened.close();
 		} catch (Exception e) {
+			JOptionPane opt = new JOptionPane(
+					language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
+					JOptionPane.ERROR_MESSAGE);
+			opt.show();
 		}
 
 		// Invoice detailed
@@ -608,6 +613,10 @@ public class FaturaR extends JFrame {
 				savedF.write((conf[9].equals("null") ? "1,1" : conf[9]) + System.lineSeparator());// intro
 				savedF.close();
 			} catch (Exception e2) {
+				JOptionPane opt = new JOptionPane(
+						language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
+						JOptionPane.ERROR_MESSAGE);
+				opt.show();
 			}
 		});
 		reso1.addActionListener(e -> {
@@ -627,6 +636,10 @@ public class FaturaR extends JFrame {
 				savedF.write((conf[9].equals("null") ? "1,1" : conf[9]) + System.lineSeparator());// intro
 				savedF.close();
 			} catch (Exception e2) {
+				JOptionPane opt = new JOptionPane(
+						language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
+						JOptionPane.ERROR_MESSAGE);
+				opt.show();
 			}
 		});
 		reso2.addActionListener(e -> {
@@ -646,6 +659,10 @@ public class FaturaR extends JFrame {
 				savedF.write((conf[9].equals("null") ? "1,1" : conf[9]) + System.lineSeparator());// intro
 				savedF.close();
 			} catch (Exception e2) {
+				JOptionPane opt = new JOptionPane(
+						language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
+						JOptionPane.ERROR_MESSAGE);
+				opt.show();
 			}
 		});
 		reso3.addActionListener(e -> {
@@ -665,6 +682,10 @@ public class FaturaR extends JFrame {
 				savedF.write((conf[9].equals("null") ? "1,1" : conf[9]) + System.lineSeparator());// intro
 				savedF.close();
 			} catch (Exception e2) {
+				JOptionPane opt = new JOptionPane(
+						language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
+						JOptionPane.ERROR_MESSAGE);
+				opt.show();
 			}
 		});
 		reso4.addActionListener(e -> {
@@ -684,6 +705,10 @@ public class FaturaR extends JFrame {
 				savedF.write((conf[9].equals("null") ? "1,1" : conf[9]) + System.lineSeparator());// intro
 				savedF.close();
 			} catch (Exception e2) {
+				JOptionPane opt = new JOptionPane(
+						language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
+						JOptionPane.ERROR_MESSAGE);
+				opt.show();
 			}
 		});
 		file.add(calc);
@@ -1017,6 +1042,10 @@ public class FaturaR extends JFrame {
 					savedF.write((conf[9].equals("null") ? "1,1" : conf[9]) + System.lineSeparator());// intro
 					savedF.close();
 				} catch (Exception e2) {
+					JOptionPane opt = new JOptionPane(
+							language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
+							JOptionPane.ERROR_MESSAGE);
+					opt.show();
 				}
 				temp.dispose();
 				FaturaR.this.dispose();
@@ -1864,6 +1893,10 @@ public class FaturaR extends JFrame {
 			savedF.write(numbers[i]);// pix save
 			savedF.close();
 		} catch (Exception e) {
+			JOptionPane opt = new JOptionPane(
+					language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
+					JOptionPane.ERROR_MESSAGE);
+			opt.show();
 		}
 	}
 

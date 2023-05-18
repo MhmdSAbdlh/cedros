@@ -133,9 +133,6 @@ public class FaturaP extends JFrame {
 	File newFile = new File(tempFile0, "conf.dll");
 
 	FaturaP() {
-		// Notification when its time to end the day
-		First.timeToClose();
-
 		// Open Conf
 		BufferedReader dataOpened = null;
 		String line = "";
@@ -149,6 +146,10 @@ public class FaturaP extends JFrame {
 			}
 			dataOpened.close();
 		} catch (Exception e) {
+			JOptionPane opt = new JOptionPane(
+					language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
+					JOptionPane.ERROR_MESSAGE);
+			opt.show();
 		} // icon
 		if (conf[0] == null || !conf[0].equals("3"))
 			this.setIconImage(new ImageIcon(getClass().getResource("images/icon/cedrosI.png")).getImage());
@@ -216,6 +217,10 @@ public class FaturaP extends JFrame {
 			}
 			dataOpened.close();
 		} catch (Exception e) {
+			JOptionPane opt = new JOptionPane(
+					language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
+					JOptionPane.ERROR_MESSAGE);
+			opt.show();
 		}
 
 		// Window1
@@ -611,6 +616,10 @@ public class FaturaP extends JFrame {
 				savedF.write((conf[9].equals("null") ? "1,1" : conf[9]) + System.lineSeparator());// intro
 				savedF.close();
 			} catch (Exception e2) {
+				JOptionPane opt = new JOptionPane(
+						language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
+						JOptionPane.ERROR_MESSAGE);
+				opt.show();
 			}
 		});
 		reso1.addActionListener(e -> {
@@ -630,6 +639,10 @@ public class FaturaP extends JFrame {
 				savedF.write((conf[9].equals("null") ? "1,1" : conf[9]) + System.lineSeparator());// intro
 				savedF.close();
 			} catch (Exception e2) {
+				JOptionPane opt = new JOptionPane(
+						language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
+						JOptionPane.ERROR_MESSAGE);
+				opt.show();
 			}
 		});
 		reso2.addActionListener(e -> {
@@ -649,6 +662,10 @@ public class FaturaP extends JFrame {
 				savedF.write((conf[9].equals("null") ? "1,1" : conf[9]) + System.lineSeparator());// intro
 				savedF.close();
 			} catch (Exception e2) {
+				JOptionPane opt = new JOptionPane(
+						language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
+						JOptionPane.ERROR_MESSAGE);
+				opt.show();
 			}
 		});
 		reso3.addActionListener(e -> {
@@ -668,6 +685,10 @@ public class FaturaP extends JFrame {
 				savedF.write((conf[9].equals("null") ? "1,1" : conf[9]) + System.lineSeparator());// intro
 				savedF.close();
 			} catch (Exception e2) {
+				JOptionPane opt = new JOptionPane(
+						language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
+						JOptionPane.ERROR_MESSAGE);
+				opt.show();
 			}
 		});
 		reso4.addActionListener(e -> {
@@ -687,6 +708,10 @@ public class FaturaP extends JFrame {
 				savedF.write((conf[9].equals("null") ? "1,1" : conf[9]) + System.lineSeparator());// intro
 				savedF.close();
 			} catch (Exception e2) {
+				JOptionPane opt = new JOptionPane(
+						language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
+						JOptionPane.ERROR_MESSAGE);
+				opt.show();
 			}
 		});
 		file.add(calc);
@@ -1033,6 +1058,10 @@ public class FaturaP extends JFrame {
 					savedF.write((conf[9].equals("null") ? "1,1" : conf[9]) + System.lineSeparator());// intro
 					savedF.close();
 				} catch (Exception e2) {
+					JOptionPane opt = new JOptionPane(
+							language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
+							JOptionPane.ERROR_MESSAGE);
+					opt.show();
 				}
 				temp.dispose();
 				FaturaP.this.dispose();
@@ -2080,6 +2109,10 @@ public class FaturaP extends JFrame {
 
 			savedF.close();
 		} catch (Exception e) {
+			JOptionPane opt = new JOptionPane(
+					language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
+					JOptionPane.ERROR_MESSAGE);
+			opt.show();
 		}
 	}
 

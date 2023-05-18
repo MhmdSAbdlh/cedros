@@ -222,9 +222,6 @@ public class Pesos extends JFrame {
 	};
 
 	Pesos() {
-		// Notification when its time to end the day
-		First.timeToClose();
-
 		// Open Conf
 		tempFile0.mkdir();
 		BufferedReader dataOpened = null;
@@ -238,6 +235,10 @@ public class Pesos extends JFrame {
 			}
 			dataOpened.close();
 		} catch (Exception e) {
+			JOptionPane opt = new JOptionPane(
+					language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
+					JOptionPane.ERROR_MESSAGE);
+			opt.show();
 		} // icon
 		if (conf[0] == null || !conf[0].equals("3")) {
 			this.setIconImage(new ImageIcon(getClass().getResource("images/icon/cedrosI.png")).getImage());
@@ -699,6 +700,10 @@ public class Pesos extends JFrame {
 						Thread.sleep(1000);
 						dlg.dispose();
 					} catch (Throwable th) {
+						JOptionPane opt = new JOptionPane(
+								language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
+								JOptionPane.ERROR_MESSAGE);
+						opt.show();
 					}
 				}
 			}).start();
@@ -709,6 +714,10 @@ public class Pesos extends JFrame {
 				clip.open(audioStream);
 				clip.start();
 			} catch (UnsupportedAudioFileException | IOException | LineUnavailableException e1) {
+				JOptionPane opt2 = new JOptionPane(
+						language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
+						JOptionPane.ERROR_MESSAGE);
+				opt2.show();
 			}
 		});
 		option.addActionListener(e -> confFrame(conf, faturaBtn, realesF, newDay, clearEverthing, hideBtn, resoD,
@@ -776,6 +785,10 @@ public class Pesos extends JFrame {
 				savedF.write((conf[9].equals("null") ? "1,1" : conf[9]) + System.lineSeparator());// intro
 				savedF.close();
 			} catch (Exception e2) {
+				JOptionPane opt = new JOptionPane(
+						language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
+						JOptionPane.ERROR_MESSAGE);
+				opt.show();
 			}
 		});
 		sumV2.addActionListener(e -> {
@@ -798,6 +811,10 @@ public class Pesos extends JFrame {
 				savedF.write((conf[9].equals("null") ? "1,1" : conf[9]) + System.lineSeparator());// intro
 				savedF.close();
 			} catch (Exception e2) {
+				JOptionPane opt = new JOptionPane(
+						language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
+						JOptionPane.ERROR_MESSAGE);
+				opt.show();
 			}
 		});
 		sumV3.addActionListener(e -> {
@@ -820,6 +837,10 @@ public class Pesos extends JFrame {
 				savedF.write((conf[9].equals("null") ? "1,1" : conf[9]) + System.lineSeparator());// intro
 				savedF.close();
 			} catch (Exception e2) {
+				JOptionPane opt = new JOptionPane(
+						language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
+						JOptionPane.ERROR_MESSAGE);
+				opt.show();
 			}
 		});
 		/* effect choose default conf */
@@ -853,6 +874,10 @@ public class Pesos extends JFrame {
 				savedF.write((conf[9].equals("null") ? "1,1" : conf[9]) + System.lineSeparator());// intro
 				savedF.close();
 			} catch (Exception e2) {
+				JOptionPane opt = new JOptionPane(
+						language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
+						JOptionPane.ERROR_MESSAGE);
+				opt.show();
 			}
 			speed1.setEnabled(false);
 			speed2.setEnabled(true);
@@ -874,6 +899,10 @@ public class Pesos extends JFrame {
 				savedF.write((conf[9].equals("null") ? "1,1" : conf[9]) + System.lineSeparator());// intro
 				savedF.close();
 			} catch (Exception e2) {
+				JOptionPane opt = new JOptionPane(
+						language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
+						JOptionPane.ERROR_MESSAGE);
+				opt.show();
 			}
 			speed1.setEnabled(true);
 			speed2.setEnabled(false);
@@ -895,6 +924,10 @@ public class Pesos extends JFrame {
 				savedF.write((conf[9].equals("null") ? "1,1" : conf[9]) + System.lineSeparator());// intro
 				savedF.close();
 			} catch (Exception e2) {
+				JOptionPane opt = new JOptionPane(
+						language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
+						JOptionPane.ERROR_MESSAGE);
+				opt.show();
 			}
 			speed1.setEnabled(true);
 			speed2.setEnabled(true);
@@ -969,6 +1002,10 @@ public class Pesos extends JFrame {
 				savedF.write((conf[9].equals("null") ? "1,1" : conf[9]) + System.lineSeparator());// intro
 				savedF.close();
 			} catch (Exception e2) {
+				JOptionPane opt = new JOptionPane(
+						language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
+						JOptionPane.ERROR_MESSAGE);
+				opt.show();
 			}
 		});
 		reso1.addActionListener(e -> {
@@ -988,6 +1025,10 @@ public class Pesos extends JFrame {
 				savedF.write((conf[9].equals("null") ? "1,1" : conf[9]) + System.lineSeparator());// intro
 				savedF.close();
 			} catch (Exception e2) {
+				JOptionPane opt = new JOptionPane(
+						language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
+						JOptionPane.ERROR_MESSAGE);
+				opt.show();
 			}
 		});
 		reso2.addActionListener(e -> {
@@ -1007,6 +1048,10 @@ public class Pesos extends JFrame {
 				savedF.write((conf[9].equals("null") ? "1,1" : conf[9]) + System.lineSeparator());// intro
 				savedF.close();
 			} catch (Exception e2) {
+				JOptionPane opt = new JOptionPane(
+						language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
+						JOptionPane.ERROR_MESSAGE);
+				opt.show();
 			}
 		});
 		reso3.addActionListener(e -> {
@@ -1026,6 +1071,10 @@ public class Pesos extends JFrame {
 				savedF.write((conf[9].equals("null") ? "1,1" : conf[9]) + System.lineSeparator());// intro
 				savedF.close();
 			} catch (Exception e2) {
+				JOptionPane opt = new JOptionPane(
+						language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
+						JOptionPane.ERROR_MESSAGE);
+				opt.show();
 			}
 		});
 		reso4.addActionListener(e -> {
@@ -1045,6 +1094,10 @@ public class Pesos extends JFrame {
 				savedF.write((conf[9].equals("null") ? "1,1" : conf[9]) + System.lineSeparator());// intro
 				savedF.close();
 			} catch (Exception e2) {
+				JOptionPane opt = new JOptionPane(
+						language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
+						JOptionPane.ERROR_MESSAGE);
+				opt.show();
 			}
 		});
 		reso.add(resoD);
@@ -1079,6 +1132,10 @@ public class Pesos extends JFrame {
 				savedF.write((conf[9].equals("null") ? "1,1" : conf[9]) + System.lineSeparator());// intro
 				savedF.close();
 			} catch (Exception e2) {
+				JOptionPane opt = new JOptionPane(
+						language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
+						JOptionPane.ERROR_MESSAGE);
+				opt.show();
 			}
 			realesF.show();
 			clearEverthing.show();
@@ -1107,6 +1164,10 @@ public class Pesos extends JFrame {
 				savedF.write((conf[9].equals("null") ? "1,1" : conf[9]) + System.lineSeparator());// intro
 				savedF.close();
 			} catch (Exception e2) {
+				JOptionPane opt = new JOptionPane(
+						language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
+						JOptionPane.ERROR_MESSAGE);
+				opt.show();
 			}
 			date.hide();
 			realesF.show();
@@ -1135,6 +1196,10 @@ public class Pesos extends JFrame {
 				savedF.write((conf[9].equals("null") ? "1,1" : conf[9]) + System.lineSeparator());// intro
 				savedF.close();
 			} catch (Exception e2) {
+				JOptionPane opt = new JOptionPane(
+						language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
+						JOptionPane.ERROR_MESSAGE);
+				opt.show();
 			}
 			hideBtn(faturaBtn, realesF, newDay, clearEverthing, hideBtn);
 			date.show();
@@ -1159,6 +1224,10 @@ public class Pesos extends JFrame {
 				savedF.write((conf[9].equals("null") ? "1,1" : conf[9]) + System.lineSeparator());// intro
 				savedF.close();
 			} catch (Exception e2) {
+				JOptionPane opt = new JOptionPane(
+						language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
+						JOptionPane.ERROR_MESSAGE);
+				opt.show();
 			}
 			hideBtn(faturaBtn, realesF, newDay, clearEverthing, hideBtn);
 			date.hide();
@@ -2139,6 +2208,10 @@ public class Pesos extends JFrame {
 					Runtime.getRuntime().exec("taskkill /f /im java.exe");
 
 				} catch (IOException e4) {
+					JOptionPane opt = new JOptionPane(
+							language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
+							JOptionPane.ERROR_MESSAGE);
+					opt.show();
 				}
 			}
 		});
@@ -2286,6 +2359,10 @@ public class Pesos extends JFrame {
 						dlg.dispose();
 
 					} catch (Throwable th) {
+						JOptionPane opt = new JOptionPane(
+								language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
+								JOptionPane.ERROR_MESSAGE);
+						opt.show();
 					}
 				}
 			}).start();
@@ -2689,6 +2766,10 @@ public class Pesos extends JFrame {
 					savedF.write((conf[9].equals("null") ? "1,1" : conf[9]) + System.lineSeparator());// intro
 					savedF.close();
 				} catch (Exception e2) {
+					JOptionPane opt = new JOptionPane(
+							language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
+							JOptionPane.ERROR_MESSAGE);
+					opt.show();
 				}
 				temp.dispose();
 				Pesos.this.dispose();
@@ -2836,6 +2917,10 @@ public class Pesos extends JFrame {
 			}
 			dataOpened.close();
 		} catch (Exception e) {
+			JOptionPane opt = new JOptionPane(
+					language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
+					JOptionPane.ERROR_MESSAGE);
+			opt.show();
 		}
 	}
 
@@ -4358,6 +4443,10 @@ public class Pesos extends JFrame {
 		try {
 			ImageIO.write(img, "png", newFile);
 		} catch (IOException e) {
+			JOptionPane opt = new JOptionPane(
+					language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
+					JOptionPane.ERROR_MESSAGE);
+			opt.show();
 		}
 	}
 
