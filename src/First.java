@@ -97,7 +97,7 @@ public class First extends JFrame {
 	javax.swing.Timer timer;
 	int order = 0, wordL = 0;
 
-	static String appVersion = "v6.3";
+	static String appVersion = "v6.4";
 	private int language;
 
 	String currentpath = System.getProperty("user.dir");
@@ -383,7 +383,7 @@ public class First extends JFrame {
 		date.set(Calendar.MINUTE, 29);
 		date.set(Calendar.SECOND, 59);
 		date.set(Calendar.MILLISECOND, 0);
-		if ((date1.getTime().getHours() == 17 && date1.getTime().getMinutes() > 29) || date1.getTime().getHours() > 17)
+		if ((date1.getTime().getHours() == 17 && date1.getTime().getMinutes() > 58) || date1.getTime().getHours() > 17)
 			timer.cancel();
 		else
 			timer.schedule(task, date.getTime());
@@ -511,7 +511,7 @@ public class First extends JFrame {
 		temp.setResizable(false);
 		temp.setLayout(null);
 		temp.getContentPane().setBackground(grisD);
-		//
+		
 		DefaultListCellRenderer dlcr = new DefaultListCellRenderer();
 		dlcr.setHorizontalAlignment(DefaultListCellRenderer.CENTER);
 		// Op1 icon

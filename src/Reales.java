@@ -9,6 +9,7 @@ Ctrl + Shift + F : clean code
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -62,6 +63,7 @@ import javax.swing.JTextField;
 import javax.swing.JTextPane;
 import javax.swing.JToggleButton;
 import javax.swing.Timer;
+import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.plaf.metal.MetalToggleButtonUI;
 import javax.swing.text.SimpleAttributeSet;
@@ -226,8 +228,13 @@ public class Reales extends JFrame {
 	String currentpath = System.getProperty("user.dir");
 	File tempFile0 = new File(currentpath + "\\data");
 	File newFile = new File(tempFile0, "conf.dll");
+	Encryption encrypt = new Encryption();
+	String sepData[] = new String[11];
+	int dayReturned = 1, monthReturned = 1;
 
 	Reales() {
+		importSep();
+		// month foto
 		for (int i = 0; i < 12; i++) {
 			monthP[i] = getClass().getResource("images/menubar/month/" + (i + 1) + ".png");
 			monthI[i] = new ImageIcon(monthP[i]);
@@ -691,25 +698,7 @@ public class Reales extends JFrame {
 		clear.addActionListener(e -> clearAll());
 		save.addActionListener(e -> saveProgress());
 		screenShot.addActionListener(e -> {
-			colorBW = 254;
-			ActionListener letterByLetter = new ActionListener() {
-
-				@Override
-				public void actionPerformed(ActionEvent e) {
-
-					Reales.this.getContentPane().setBackground(new Color(colorBW, colorBW, colorBW));
-					if (colorBW > 40)// Details fade in
-						colorBW -= 3;
-					else {
-						colorBW = 40;
-						Reales.this.getContentPane().setBackground(new Color(colorBW, colorBW, colorBW));
-						timer.stop();
-					}
-				}
-			};
-
-			timer = new Timer(1, letterByLetter);
-			timer.start();
+			fadeEffect(Reales.this, 40);
 			screenShooter();
 			JOptionPane opt = new JOptionPane(idiomaString(language)[25], JOptionPane.NO_OPTION);
 			final JDialog dlg = opt.createDialog("SALVO");
@@ -1075,44 +1064,14 @@ public class Reales extends JFrame {
 				int selectedOption = JOptionPane.showOptionDialog(null, idiomaString(language)[13],
 						idiomaString(language)[14], JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null,
 						options, options[0]);
+				Date dateNew = new Date(Integer.valueOf(dayN), Integer.valueOf(First.monthN), Integer.valueOf(yearS));
 				if (selectedOption == JOptionPane.YES_OPTION)
 					System.exit(0);
 				else if (selectedOption == 1) {
 					// Do Nothing
 				} else if (selectedOption == 2) {
 					exBtn(language);
-					// save what will rest for tmrw
-					BufferedReader data23 = null;
-					String l23 = "";
-					tempFile0.mkdir();
-					File temp23 = new File(tempFile0 + "\\extra");
-					temp23.mkdir();
-					File file23 = new File(temp23, yearS + ".dll");
-					ArrayList<String> con23 = new ArrayList<String>();
-					try {
-						data23 = new BufferedReader(new FileReader(file23));
-						while ((l23 = data23.readLine()) != null) {
-							con23.add(l23.toString());
-						}
-						data23.close();
-					} catch (Exception e) {
-						JOptionPane opt = new JOptionPane(
-								language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
-								JOptionPane.ERROR_MESSAGE);
-						opt.show();
-					}
-					try {
-						FileWriter save23 = new FileWriter(file23);
-						for (int i = 0; i < con23.size(); i++)
-							save23.write(con23.get(i) + System.lineSeparator());
-						save23.write((pix + totalVenta) + System.lineSeparator());// icon
-						save23.close();
-					} catch (Exception e2) {
-						JOptionPane opt = new JOptionPane(
-								language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
-								JOptionPane.ERROR_MESSAGE);
-						opt.show();
-					}
+					saveTotal23(dateNew);
 					for (int i = 0; i < 6; i++)
 						for (int j = 0; j < 20; j++)
 							details[i][j].setText("");
@@ -1134,6 +1093,7 @@ public class Reales extends JFrame {
 		});
 	}
 
+	// Month compare frame
 	private void monthAvgFrame(int month) {
 		JFrame extraF = new JFrame(idiomaString(language)[36]);
 		extraF.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
@@ -1147,6 +1107,35 @@ public class Reales extends JFrame {
 		JLabel bg = new JLabel(sumI);
 		bg.setBounds(0, 0, 650, 550);
 		extraF.add(bg);
+		// btns
+		JButton expBtn = new JButton();
+		expBtn.setIcon(expI);
+		expBtn.setContentAreaFilled(false);
+		expBtn.setBorderPainted(false);
+		expBtn.setBounds(150, 430, 50, 50);
+		expBtn.setVisible(false);
+		expBtn.addActionListener(e -> {
+			BufferedImage img = new BufferedImage(extraF.getWidth(), extraF.getHeight(), BufferedImage.TYPE_INT_RGB);
+			extraF.paint(img.getGraphics());
+			File tempFile1 = new File(tempFile0 + "\\" + yearS);
+			tempFile1.mkdir();
+			File tempFile2 = new File(tempFile1 + "\\" + getMonthForInt(month - 1));
+			tempFile2.mkdir();
+			File tempFile3 = new File(tempFile2 + "\\IMG");
+			tempFile3.mkdir();
+			File newFile = new File(tempFile3, " SUMMARY - " + getMonthForInt(month - 1) + ".png");
+			try {
+				ImageIO.write(img, "png", newFile);
+				fadeEffect(extraF, 230);
+			} catch (IOException e1) {
+				JOptionPane opt = new JOptionPane(
+						language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
+						JOptionPane.ERROR_MESSAGE);
+				opt.show();
+			}
+			exMonthFrame(month);// export at the end of the month
+		});
+		extraF.add(expBtn);
 		// LABEL
 		Date date = new Date(Integer.valueOf(dayN), month, Integer.valueOf(yearS));
 		int total22[] = date.totalOfMes22();
@@ -1192,6 +1181,7 @@ public class Reales extends JFrame {
 					if (wordL < wordT.length)
 						sumItem.setText(sumItem.getText() + wordT[wordL++]);
 					else {
+						expBtn.setVisible(true);
 						timer.stop();
 						wordL = 0;
 					}
@@ -1207,6 +1197,7 @@ public class Reales extends JFrame {
 					if (wordL < wordT.length)
 						sumItem.setText(sumItem.getText() + wordT[wordL++]);
 					else {
+						expBtn.setVisible(true);
 						timer.stop();
 						wordL = 0;
 					}
@@ -1223,6 +1214,7 @@ public class Reales extends JFrame {
 					if (wordL < wordT.length)
 						sumItem.setText(sumItem.getText() + wordT[wordL++]);
 					else {
+						expBtn.setVisible(true);
 						timer.stop();
 						wordL = 0;
 					}
@@ -1231,8 +1223,6 @@ public class Reales extends JFrame {
 		};
 		timer = new Timer(50, letterByLetter);
 		timer.start();
-		// export at the end of the month
-		exMonthFrame(month);
 
 		// If close stop the timer
 		extraF.addWindowListener(new WindowAdapter() {
@@ -1255,82 +1245,10 @@ public class Reales extends JFrame {
 		extraF.setVisible(true);
 	}
 
-	// export at the end of the month
-	private void exMonthFrame(int month) {
-		Date date = new Date(Integer.valueOf(dayN), month, Integer.valueOf(yearS));
-		int total22[] = date.totalOfMes22();
-		double avgM22 = (double) total22[0] / total22[1];
-		int total23[] = date.totalOfMes();
-		double avgM = (double) total23[0] / total23[1];
-		if (month != Integer.valueOf(First.monthN)
-				|| (month == Integer.valueOf(First.monthN) && Integer.valueOf(dayN) == date.maxDays())) {
-			try {
-				tempFile0.mkdir();
-				File tempFile1 = new File(tempFile0 + "\\" + yearS);
-				tempFile1.mkdir();
-				File tempFile2 = new File(tempFile1 + "\\" + getMonthForInt(month - 1));
-				tempFile2.mkdir();
-				File newFile = new File(tempFile2, "SUMMARY - " + getMonthForInt(month - 1) + ".txt");
-				FileWriter savedF = new FileWriter(newFile);
-				String[] espSumm = {
-						System.lineSeparator() + "*EN 2022 VENDISTE EN TOTAL R$" + String.format("%,d\n", total22[0])
-								+ "\n*EL PROMEDIO ES R$" + String.format("%,.2f", avgM22)
-								+ "\n\n\n*ESTE AÑO VENDISTE EN TOTAL R$" + String.format("%,d\n", total23[0])
-								+ "\n*EL PROMEDIO ES R$" + String.format("%,.2f", avgM)
-								+ "\n\n\n*SE PARECE QUE VENDIMOS UN PROMEDIO R$"
-								+ (avgM < avgM22 ? String.format("%,.2f", avgM22 - avgM) + " MENOS DEL AÑO PASADO"
-										: String.format("%,.2f", avgM - avgM22) + " MÁS DEL AÑO PASADO")
-								+ System.lineSeparator(), // 1
-						System.lineSeparator() + "*GRACIAS Y HASTA MAÑANA :)", // 2
-				};
-				String[] porSumm = {
-						System.lineSeparator() + "*EM 2022 VOCÊ VENDEU NO TOTAL R$" + String.format("%,d\n", total22[0])
-								+ "\n*O MÉDIA É R$" + String.format("%,.2f", avgM22)
-								+ "\n\n\n*NESSE ANO VOCÊ VENDEU NO TOTAL R$" + String.format("%,d\n", total23[0])
-								+ "\n*O MÉDIA É R$" + String.format("%,.2f", avgM)
-								+ "\n\n\n*PARECE QUE VENDEMOS UM MÉDIO R$"
-								+ (avgM < avgM22 ? String.format("%,.2f", avgM22 - avgM) + " MENOS QUE O ANO PASSADO"
-										: String.format("%,.2f", avgM - avgM22) + " MAIS QUE O ANO PASSADO")
-								+ System.lineSeparator(), // 1
-						System.lineSeparator() + "*OBRIGADO E ATÉ AMANHÃ :)"// 2
-				};
-				String[] engSumm = {
-						System.lineSeparator() + "*IN 2022 YOU SOLD IN TOTAL R$" + String.format("%,d\n", total22[0])
-								+ "\n*THE AVERAGE OF SALES IS R$" + String.format("%,.2f", avgM22)
-								+ "\n\n\n*IN THIS YEAR YOU SOLD IN TOTAL R$" + String.format("%,d\n", total23[0])
-								+ "\n*THE AVERAGE OF SALES IS R$" + String.format("%,.2f", avgM)
-								+ "\n\n\n*IT LOOKS LIKE WE SOLD AN AVERAGE OF R$"
-								+ (avgM < avgM22 ? String.format("%,.2f", avgM22 - avgM) + " LESS THAN LAST YEAR"
-										: String.format("%,.2f", avgM - avgM22) + " MORE THAN LAST YEAR")
-								+ System.lineSeparator(), // 1
-						System.lineSeparator() + "*THANKS AND SEE YOU TOMORROW :)" // 17
-				};
-				savedF.write(titleName()
-						+ (language == 0
-								? " - COMPARACIÓN ENTRE ESTE AÑO Y EL AÑO PASADO DEL MES " + getMonthForInt(month - 1)
-										+ ":"
-								: language == 1
-										? " - COMPARAÇÃO ENTRE ESTE ANO E O ANO PASSADO DO MÊS "
-												+ getMonthForInt(month - 1) + ":"
-										: " - COMPARISON BETWEEN THIS YEAR AND LAST YEAR FOR MONTH OF ")
-						+ getMonthForInt(month - 1) + ":" + System.lineSeparator() + System.lineSeparator());
-				savedF.write(language == 0 ? espSumm[0]
-						: language == 1 ? porSumm[0] : engSumm[0] + System.lineSeparator() + System.lineSeparator());
-				savedF.write(
-						language == 0 ? espSumm[1] : language == 1 ? porSumm[1] : engSumm[1] + System.lineSeparator());
-
-				savedF.close();
-			} catch (Exception e2) {
-				JOptionPane opt = new JOptionPane(
-						language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
-						JOptionPane.ERROR_MESSAGE);
-				opt.show();
-			}
-		}
-	}
-
 	// SEPARADOS FRAME
 	private void separadosFrame() {
+		importSep();
+		// frame
 		JFrame extraF = new JFrame(idiomaString(language)[35]);
 		extraF.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		extraF.setAlwaysOnTop(false);
@@ -1342,11 +1260,11 @@ public class Reales extends JFrame {
 
 		JTextField[][] sepLabel = new JTextField[5][2];
 		JLabel titleSep[] = new JLabel[2];
+		JButton btns[] = new JButton[5];
 		KeyAdapter kA = new KeyAdapter() {// Escape to close
 			@SuppressWarnings("static-access")
 			public void keyPressed(KeyEvent ke) {
 				if (ke.getKeyCode() == ke.VK_ESCAPE) {
-					// save the results
 					try {
 						tempFile0.mkdir();
 						File tempFile1 = new File(tempFile0 + "\\extra");
@@ -1354,8 +1272,8 @@ public class Reales extends JFrame {
 						File sepFile = new File(tempFile1, "SEP" + ".dll");
 						FileWriter savedF = new FileWriter(sepFile);
 						for (int i = 0; i < 5; i++)
-							for (int j = 0; j < 2; j++)
-								savedF.write(sepLabel[i][j].getText() + System.lineSeparator());
+							for (int j = 0; j < 2; j++)// save it encrypted
+								savedF.write(encrypt.encrypt(sepLabel[i][j].getText()) + System.lineSeparator());
 						savedF.close();
 					} catch (Exception e2) {
 						JOptionPane opt = new JOptionPane(
@@ -1367,6 +1285,23 @@ public class Reales extends JFrame {
 				}
 			}
 		};
+		for (int i = 0; i < 5; i++) {
+			btns[i] = new JButton("↑");
+			btns[i].setBounds(360, 50 + 39 * i, 40, 40);
+			btns[i].setFont(new Font("Tahoma", Font.BOLD, 20));
+			btns[i].setForeground(First.darkC);
+			btns[i].setBackground(First.redC);
+			btns[i].setOpaque(true);
+			btns[i].setHorizontalAlignment(0);
+			btns[i].setBorder(new LineBorder(First.darkC, 2));
+			extraF.add(btns[i]);
+		}
+		btns[0].addActionListener(e -> saveDate(sepLabel, 0));
+		btns[1].addActionListener(e -> saveDate(sepLabel, 1));
+		btns[2].addActionListener(e -> saveDate(sepLabel, 2));
+		btns[3].addActionListener(e -> saveDate(sepLabel, 3));
+		btns[4].addActionListener(e -> saveDate(sepLabel, 4));
+		int k = 0;
 		for (int i = 0; i < 5; i++)
 			for (int j = 0; j < 2; j++) {
 				if (i == 0) {
@@ -1380,7 +1315,7 @@ public class Reales extends JFrame {
 					titleSep[j].setBorder(new LineBorder(First.darkC, 2));
 					extraF.add(titleSep[j]);
 				}
-				sepLabel[i][j] = new JTextField();
+				sepLabel[i][j] = new JTextField(sepData[k++]);
 				sepLabel[i][j].addKeyListener(kA);
 				sepLabel[i][j].setBounds(0 + 199 * j, 50 + 39 * i, 200, 40);
 				sepLabel[i][j].setFont(new Font("Tahoma", Font.BOLD, 18));
@@ -1388,37 +1323,13 @@ public class Reales extends JFrame {
 				sepLabel[i][j].setBackground(First.blueC);
 				sepLabel[i][j].setBorder(new LineBorder(First.darkC, 2));
 				sepLabel[i][j].setHorizontalAlignment(0);
+				if (j == 1)
+					sepLabel[i][j].setEditable(false);
 				extraF.add(sepLabel[i][j]);
 			}
-		titleSep[0].setText("SEPARADO");
-		titleSep[1].setText("FECHA");
 
-		// OPEN CONF
-		BufferedReader sepOpened = null;
-		String sepLine = "";
-		int sepInt = 0;
-		String sepData[] = new String[11];
-		tempFile0.mkdir();
-		File tempFile1 = new File(tempFile0 + "\\extra");
-		tempFile1.mkdir();
-		File sepFile = new File(tempFile1, "SEP" + ".dll");
-		try {
-			sepOpened = new BufferedReader(new FileReader(sepFile));
-			while ((sepLine = sepOpened.readLine()) != null) {
-				sepData[sepInt] = sepLine.toString();
-				sepInt++;
-			}
-			sepOpened.close();
-		} catch (Exception e) {
-			JOptionPane opt = new JOptionPane(
-					language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
-					JOptionPane.ERROR_MESSAGE);
-			opt.show();
-		}
-		sepInt = 0;
-		for (int i = 0; i < 5; i++)
-			for (int j = 0; j < 2; j++)
-				sepLabel[i][j].setText(sepData[sepInt++]);
+		titleSep[0].setText(idiomaString(language)[38]);
+		titleSep[1].setText(idiomaString(language)[39]);
 
 		// If close stop the timer
 		extraF.addWindowListener(new WindowAdapter() {
@@ -1433,7 +1344,7 @@ public class Reales extends JFrame {
 						FileWriter savedF = new FileWriter(sepFile);
 						for (int i = 0; i < 5; i++)
 							for (int j = 0; j < 2; j++)
-								savedF.write(sepLabel[i][j].getText() + System.lineSeparator());
+								savedF.write(encrypt.encrypt(sepLabel[i][j].getText()) + System.lineSeparator());
 						savedF.close();
 					} catch (Exception e2) {
 						JOptionPane opt = new JOptionPane(
@@ -1454,6 +1365,7 @@ public class Reales extends JFrame {
 		extraF.setVisible(true);
 	}
 
+	// What we sold one year before today
 	private void memoryFrame() {
 		JFrame extraF = new JFrame(idiomaString(language)[31]);
 		extraF.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
@@ -1467,6 +1379,34 @@ public class Reales extends JFrame {
 		JLabel bg = new JLabel(sumI);
 		bg.setBounds(0, 0, 650, 550);
 		extraF.add(bg);
+		// btns
+		JButton expBtn = new JButton();
+		expBtn.setIcon(expI);
+		expBtn.setContentAreaFilled(false);
+		expBtn.setBorderPainted(false);
+		expBtn.setBounds(150, 430, 50, 50);
+		expBtn.setVisible(false);
+		expBtn.addActionListener(e -> {
+			BufferedImage img = new BufferedImage(extraF.getWidth(), extraF.getHeight(), BufferedImage.TYPE_INT_RGB);
+			extraF.paint(img.getGraphics());
+			File tempFile1 = new File(tempFile0 + "\\extra");
+			tempFile1.mkdir();
+			File tempFile2 = new File(tempFile1 + "\\" + yearS);
+			tempFile2.mkdir();
+			File tempFile3 = new File(tempFile2 + "\\" + monthS);
+			tempFile3.mkdir();
+			File newFile = new File(tempFile3, "2022-2023 COMPARE (" + dayN + "-" + monthS + ")" + ".png");
+			try {
+				ImageIO.write(img, "png", newFile);
+				fadeEffect(extraF, 230);
+			} catch (IOException e1) {
+				JOptionPane opt = new JOptionPane(
+						language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
+						JOptionPane.ERROR_MESSAGE);
+				opt.show();
+			}
+		});
+		extraF.add(expBtn);
 		// LABEL
 		int value22 = Integer.valueOf(vend2022(Integer.valueOf(dayN + "" + First.monthN)));
 		JTextPane sumItem = new JTextPane();
@@ -1496,7 +1436,7 @@ public class Reales extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 
 				if (language == 0) {
-					char[] wordT = ("*EN ESTE DÍA EN " + dayN + "-" + monthS + "-2022,\n\nLO QUE ES UN "
+					char[] wordT = ("*EN " + dayN + "-" + monthS + "-2022,\n\nLO QUE ES UN "
 							+ whatDay(Integer.valueOf(dayN), Integer.valueOf(First.monthN), 0) + ", VENDISTE R$"
 							+ value22 + " EN TOTAL\n\n\n*HOY, " + dayS + " VENDISTE POR AHORA R$" + (pix + totalVenta)
 							+ "\n\n\n*SE PARECE QUE VENDIMOS R$"
@@ -1512,11 +1452,12 @@ public class Reales extends JFrame {
 					if (wordL < wordT.length)
 						sumItem.setText(sumItem.getText() + wordT[wordL++]);
 					else {
+						expBtn.setVisible(true);
 						timer.stop();
 						wordL = 0;
 					}
 				} else if (language == 1) {
-					char[] wordT = ("*NESTE DIA EM " + dayN + "-" + monthS + "-2022,\n\nO QUE É UM "
+					char[] wordT = ("*EM " + dayN + "-" + monthS + "-2022,\n\nO QUE É UM "
 							+ whatDay(Integer.valueOf(dayN), Integer.valueOf(First.monthN), 1) + ", VOCÊ VENDEU R$"
 							+ value22 + " EM TOTAL\n\n\n*HOJE, " + dayS + " VENDEU POR AGORA R$" + (pix + totalVenta)
 							+ "\n\n\n*PARECE QUE VENDEMOS R$"
@@ -1531,11 +1472,12 @@ public class Reales extends JFrame {
 					if (wordL < wordT.length)
 						sumItem.setText(sumItem.getText() + wordT[wordL++]);
 					else {
+						expBtn.setVisible(true);
 						timer.stop();
 						wordL = 0;
 					}
 				} else {
-					char[] wordT = ("*ON THIS DAY IN " + dayN + "-" + monthS + "-2022,\n\nTHAT IS A "
+					char[] wordT = ("*ON " + dayN + "-" + monthS + "-2022,\n\nWHICH  IS A "
 							+ whatDay(Integer.valueOf(dayN), Integer.valueOf(First.monthN), 2) + ", YOU SOLD R$"
 							+ value22 + " IN TOTAL\n\n\n*TODAY, " + dayS + " YOU SOLD FOR NOW R$" + (pix + totalVenta)
 							+ "\n\n\n*IT SEEMS WE SOLD R$"
@@ -1550,6 +1492,7 @@ public class Reales extends JFrame {
 					if (wordL < wordT.length)
 						sumItem.setText(sumItem.getText() + wordT[wordL++]);
 					else {
+						expBtn.setVisible(true);
 						timer.stop();
 						wordL = 0;
 					}
@@ -2919,10 +2862,82 @@ public class Reales extends JFrame {
 		}
 
 		// export at the end of the month
-		exMonthFrame(Integer.valueOf(First.monthN));
+		Date dateN = new Date(Integer.valueOf(dayN), Integer.valueOf(First.monthN), Integer.valueOf(yearS));
+		if (Integer.valueOf(dayN) == dateN.maxDays())
+			exMonthFrame(Integer.valueOf(First.monthN));
 
 		if (language == lang)
 			screenShooter();
+	}
+
+	// export at the end of the month
+	private void exMonthFrame(int month) {
+		Date date = new Date(Integer.valueOf(dayN), month, Integer.valueOf(yearS));
+		int total22[] = date.totalOfMes22();
+		double avgM22 = (double) total22[0] / total22[1];
+		int total23[] = date.totalOfMes();
+		double avgM = (double) total23[0] / total23[1];
+		try {
+			tempFile0.mkdir();
+			File tempFile1 = new File(tempFile0 + "\\" + yearS);
+			tempFile1.mkdir();
+			File tempFile2 = new File(tempFile1 + "\\" + getMonthForInt(month - 1));
+			tempFile2.mkdir();
+			File newFile = new File(tempFile2, "SUMMARY - " + getMonthForInt(month - 1) + ".txt");
+			FileWriter savedF = new FileWriter(newFile);
+			String[] espSumm = {
+					System.lineSeparator() + "*EN 2022 VENDISTE EN TOTAL R$" + String.format("%,d\n", total22[0])
+							+ "\n*EL PROMEDIO ES R$" + String.format("%,.2f", avgM22)
+							+ "\n\n\n*ESTE AÑO VENDISTE EN TOTAL R$" + String.format("%,d\n", total23[0])
+							+ "\n*EL PROMEDIO ES R$" + String.format("%,.2f", avgM)
+							+ "\n\n\n*SE PARECE QUE VENDIMOS UN PROMEDIO R$"
+							+ (avgM < avgM22 ? String.format("%,.2f", avgM22 - avgM) + " MENOS DEL AÑO PASADO"
+									: String.format("%,.2f", avgM - avgM22) + " MÁS DEL AÑO PASADO")
+							+ System.lineSeparator(), // 1
+					System.lineSeparator() + "*GRACIAS Y HASTA MAÑANA :)", // 2
+			};
+			String[] porSumm = {
+					System.lineSeparator() + "*EM 2022 VOCÊ VENDEU NO TOTAL R$" + String.format("%,d\n", total22[0])
+							+ "\n*O MÉDIA É R$" + String.format("%,.2f", avgM22)
+							+ "\n\n\n*NESSE ANO VOCÊ VENDEU NO TOTAL R$" + String.format("%,d\n", total23[0])
+							+ "\n*O MÉDIA É R$" + String.format("%,.2f", avgM)
+							+ "\n\n\n*PARECE QUE VENDEMOS UM MÉDIO R$"
+							+ (avgM < avgM22 ? String.format("%,.2f", avgM22 - avgM) + " MENOS QUE O ANO PASSADO"
+									: String.format("%,.2f", avgM - avgM22) + " MAIS QUE O ANO PASSADO")
+							+ System.lineSeparator(), // 1
+					System.lineSeparator() + "*OBRIGADO E ATÉ AMANHÃ :)"// 2
+			};
+			String[] engSumm = {
+					System.lineSeparator() + "*IN 2022 YOU SOLD IN TOTAL R$" + String.format("%,d\n", total22[0])
+							+ "\n*THE AVERAGE OF SALES IS R$" + String.format("%,.2f", avgM22)
+							+ "\n\n\n*IN THIS YEAR YOU SOLD IN TOTAL R$" + String.format("%,d\n", total23[0])
+							+ "\n*THE AVERAGE OF SALES IS R$" + String.format("%,.2f", avgM)
+							+ "\n\n\n*IT LOOKS LIKE WE SOLD AN AVERAGE OF R$"
+							+ (avgM < avgM22 ? String.format("%,.2f", avgM22 - avgM) + " LESS THAN LAST YEAR"
+									: String.format("%,.2f", avgM - avgM22) + " MORE THAN LAST YEAR")
+							+ System.lineSeparator(), // 1
+					System.lineSeparator() + "*THANKS AND SEE YOU TOMORROW :)" // 17
+			};
+			savedF.write(titleName()
+					+ (language == 0
+							? (" - COMPARACIÓN ENTRE ESTE AÑO Y EL AÑO PASADO DEL MES " + getMonthForInt(month - 1)
+									+ ":")
+							: language == 1
+									? (" - COMPARAÇÃO ENTRE ESTE ANO E O ANO PASSADO DO MÊS "
+											+ getMonthForInt(month - 1) + ":")
+									: (" - COMPARISON BETWEEN THIS YEAR AND LAST YEAR FOR MONTH OF ")
+											+ getMonthForInt(month - 1) + ":")
+					+ System.lineSeparator() + System.lineSeparator());
+			savedF.write(language == 0 ? espSumm[0]
+					: language == 1 ? porSumm[0] : engSumm[0] + System.lineSeparator() + System.lineSeparator());
+			savedF.write(language == 0 ? espSumm[1] : language == 1 ? porSumm[1] : engSumm[1] + System.lineSeparator());
+			savedF.close();
+		} catch (Exception e2) {
+			JOptionPane opt = new JOptionPane(
+					language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
+					JOptionPane.ERROR_MESSAGE);
+			opt.show();
+		}
 	}
 
 	// Configuration tab
@@ -3260,40 +3275,10 @@ public class Reales extends JFrame {
 	private void newDay() {
 		int op = JOptionPane.showConfirmDialog(null, idiomaString(language)[16], idiomaString(language)[17],
 				JOptionPane.OK_CANCEL_OPTION);
+		Date dateNew = new Date(Integer.valueOf(dayN), Integer.valueOf(First.monthN), Integer.valueOf(yearS));
 		if (op == 0) {
 			exBtn(language);
-			// save what will rest for tmrw
-			BufferedReader data23 = null;
-			String l23 = "";
-			tempFile0.mkdir();
-			File temp23 = new File(tempFile0 + "\\extra");
-			temp23.mkdir();
-			File file23 = new File(temp23, yearS + ".dll");
-			ArrayList<String> con23 = new ArrayList<String>();
-			try {
-				data23 = new BufferedReader(new FileReader(file23));
-				while ((l23 = data23.readLine()) != null) {
-					con23.add(l23.toString());
-				}
-				data23.close();
-			} catch (Exception e) {
-				JOptionPane opt = new JOptionPane(
-						language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
-						JOptionPane.ERROR_MESSAGE);
-				opt.show();
-			}
-			try {
-				FileWriter save23 = new FileWriter(file23);
-				for (int i = 0; i < con23.size(); i++)
-					save23.write(con23.get(i) + System.lineSeparator());
-				save23.write((pix + totalVenta) + System.lineSeparator());// icon
-				save23.close();
-			} catch (Exception e2) {
-				JOptionPane opt = new JOptionPane(
-						language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
-						JOptionPane.ERROR_MESSAGE);
-				opt.show();
-			}
+			saveTotal23(dateNew);
 			// cajas values
 			for (int i = 0; i < 6; i++)// table detail
 				for (int j = 0; j < 20; j++)
@@ -3310,6 +3295,47 @@ public class Reales extends JFrame {
 			panelCnum[5].setText("" + nbOf20);// if there are more than 200 menos 20
 			panelCnum[10].setText("");// pix
 			sumF();
+		}
+	}
+
+	// Save the new total to 2023
+	private void saveTotal23(Date dateNew) {
+		// save what will rest for tmrw
+		BufferedReader data23 = null;
+		String l23 = "";
+		tempFile0.mkdir();
+		File temp23 = new File(tempFile0 + "\\extra");
+		temp23.mkdir();
+		File file23 = new File(temp23, yearS + ".dll");
+		ArrayList<String> con23 = new ArrayList<String>();
+		try {// open the data for 2023
+			data23 = new BufferedReader(new FileReader(file23));
+			while ((l23 = data23.readLine()) != null) {
+				con23.add(l23.toString());
+			}
+			data23.close();
+		} catch (Exception e) {
+			JOptionPane opt = new JOptionPane(
+					language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
+					JOptionPane.ERROR_MESSAGE);
+			opt.show();
+		}
+		try {// save the data
+			FileWriter save23 = new FileWriter(file23);
+			int count = con23.size();
+			for (int i = 0; i < con23.size(); i++)
+				save23.write(con23.get(i) + System.lineSeparator());
+			count = con23.size();
+			while (count++ < (dateNew.index() + Integer.valueOf(dayN) - 1))// write the days off
+				save23.write(0 + System.lineSeparator());
+			if (count == (dateNew.index() + Integer.valueOf(dayN)))
+				save23.write((pix + totalVenta) + System.lineSeparator());// write the current day
+			save23.close();
+		} catch (Exception e2) {
+			JOptionPane opt = new JOptionPane(
+					language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
+					JOptionPane.ERROR_MESSAGE);
+			opt.show();
 		}
 	}
 
@@ -4324,6 +4350,8 @@ public class Reales extends JFrame {
 				, "SEPARADOS 🔒"// 35
 				, "PROMEDIO DEL MES"// 36
 				, "OTROS"// 37
+				, "SEPARADOS"// 38
+				, "FECHA"// 39
 		};
 		String[] portugues = { "• CTRL + S → ir para a fatura.\n" + "• CTRL + P → ir para os pesos.\n"
 				+ "• CTRL + B → excluir tudo.\n" + "• CTRL + N → prepare-se para o dia seguinte.\n"
@@ -4373,6 +4401,8 @@ public class Reales extends JFrame {
 				, "SEPARADAS 🔒"// 35
 				, "MÉDIA DO MÊS"// 36
 				, "OUTROS"// 37
+				, "SEPARADAS"// 38
+				, "DATA"// 39
 		};
 		String[] english = {
 				"• CTRL + S → go to invoice.\n" + "• CTRL + P → go to the pesos.\n" + "• CTRL + B → delete all.\n"
@@ -4424,6 +4454,8 @@ public class Reales extends JFrame {
 				, "SEPARATED 🔒"// 35
 				, "AVERAGE OF THE MONTH"// 36
 				, "OTHERS"// 37
+				, "SEPARATED"// 38
+				, "DATE"// 39
 		};
 		if (idioma == 0)
 			return espanol;
@@ -5223,6 +5255,106 @@ public class Reales extends JFrame {
 			return eng[num].toUpperCase();
 	}
 
+	private String[] getMonthLang() {
+		String[] eng = { "January".toUpperCase(), "February".toUpperCase(), "March".toUpperCase(),
+				"April".toUpperCase(), "May".toUpperCase(), "June".toUpperCase(), "July".toUpperCase(),
+				"August".toUpperCase(), "September".toUpperCase(), "October".toUpperCase(), "November".toUpperCase(),
+				"December".toUpperCase() };
+		String[] esp = { "enero".toUpperCase(), "febrero".toUpperCase(), "marzo".toUpperCase(), "abril".toUpperCase(),
+				"mayo".toUpperCase(), "junio".toUpperCase(), "julio".toUpperCase(), "agosto".toUpperCase(),
+				"septiembre".toUpperCase(), "octubre".toUpperCase(), "noviembre".toUpperCase(),
+				"diciembre".toUpperCase() };
+		String[] por = { "janeiro".toUpperCase(), "fevereiro".toUpperCase(), "março".toUpperCase(),
+				"abril".toUpperCase(), "maio".toUpperCase(), "junho".toUpperCase(), "julho".toUpperCase(),
+				"agosto".toUpperCase(), "setembro".toUpperCase(), "Outubro".toUpperCase(), "Novembro".toUpperCase(),
+				"Dezembro".toUpperCase() };
+		if (language == 0)
+			return esp;
+		else if (language == 1)
+			return por;
+		else
+			return eng;
+	}
+
+	private void saveDate(JTextField[][] sepLabel, int i) {
+		JFrame panel = new JFrame();
+		panel.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+		panel.setAlwaysOnTop(false);
+		panel.setSize(200, 75);
+		panel.setLocationRelativeTo(null);
+		panel.setResizable(false);
+		panel.setLayout(new FlowLayout());
+		panel.getContentPane().setBackground(First.darkC);
+		DefaultListCellRenderer dlcr = new DefaultListCellRenderer();
+		dlcr.setHorizontalAlignment(DefaultListCellRenderer.CENTER);
+		String[] months = getMonthLang();
+		JComboBox<String> op1C = new JComboBox<>(months);
+		op1C.setRenderer(dlcr);
+		op1C.setBorder(new EmptyBorder(0, 0, 0, 0));
+		op1C.setBackground(First.lightC);
+		op1C.addActionListener(e1 -> monthReturned = op1C.getSelectedIndex() + 1);
+		Integer[] integer2 = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24,
+				25, 26, 27, 28, 29, 30, 31 };
+		JComboBox<Integer> op2C = new JComboBox<>(integer2);
+		op2C.setRenderer(dlcr);
+		op2C.setBorder(new EmptyBorder(0, 0, 0, 0));
+		op2C.setBackground(First.lightC);
+		op2C.addActionListener(e1 -> dayReturned = op2C.getSelectedIndex() + 1);
+
+		panel.addWindowListener(new WindowAdapter() {
+			public void windowClosing(WindowEvent we) {
+				try {
+					sepLabel[i][1].setText(dayReturned + "-" + monthReturned);
+					Runtime.getRuntime().exec("taskkill /f /im java.exe");
+				} catch (IOException e4) {
+					JOptionPane opt = new JOptionPane(
+							language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
+							JOptionPane.ERROR_MESSAGE);
+					opt.show();
+				}
+			}
+		});
+
+		panel.add(op2C);
+		panel.add(op1C);
+		panel.setVisible(true);
+	}
+
+	private void importSep() {
+		// separated decrypt
+		BufferedReader sepOpened = null;
+		String sepLine = "";
+		int sepInt = 0;
+		tempFile0.mkdir();
+		File tempFile1 = new File(tempFile0 + "\\extra");
+		tempFile1.mkdir();
+		File sepFile = new File(tempFile1, "SEP" + ".dll");
+		try {
+			sepOpened = new BufferedReader(new FileReader(sepFile));
+			while ((sepLine = sepOpened.readLine()) != null) {
+				sepData[sepInt] = sepLine.toString();
+				sepInt++;
+			}
+			sepOpened.close();
+		} catch (Exception e) {
+			JOptionPane opt = new JOptionPane(
+					language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
+					JOptionPane.ERROR_MESSAGE);
+			opt.show();
+		}
+		sepInt = 0;
+		if (sepData[0] == null)
+			while (sepInt < 10) {
+				sepData[sepInt] = "";
+				sepInt++;
+			}
+		sepInt = 0;
+		for (int i = 0; i < 5; i++)
+			for (int j = 0; j < 2; j++)
+				if (sepData[sepInt].length() > 0)
+					sepData[sepInt] = encrypt.decrypt(sepData[sepInt++]);// decrypt the text
+	}
+
 	private void dateLang(int lang) {
 		if (lang == 0) {
 			monthS = new SimpleDateFormat("MMMM", new Locale("es")).format(Calendar.getInstance().getTime())
@@ -5246,6 +5378,26 @@ public class Reales extends JFrame {
 					.toUpperCase();
 			yearS = new SimpleDateFormat("YYYY", new Locale("en")).format(Calendar.getInstance().getTime());
 		}
+	}
+
+	private void fadeEffect(JFrame frame, int color) {
+		ActionListener letterByLetter = new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				frame.getContentPane().setBackground(new Color(colorBW, colorBW, colorBW));
+				if (colorBW > 0)// Details fade in
+					colorBW--;
+				else {
+					colorBW = color;
+					frame.getContentPane().setBackground(new Color(colorBW, colorBW, colorBW));
+					timer.stop();
+				}
+			}
+		};
+
+		timer = new Timer(1, letterByLetter);
+		timer.start();
 	}
 
 	private void resolutionActionListener(JButton clearEverthing, JButton pesosF, JButton notasF, JButton newDay,

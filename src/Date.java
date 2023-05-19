@@ -28,7 +28,7 @@ public class Date {
 			}
 			dataOpened.close();
 		} catch (Exception e) {
-		} 
+		}
 	}
 
 	Date(int d, int m, int y) {
@@ -65,7 +65,7 @@ public class Date {
 		}
 		return new Date(d, m, y);
 	}
-	
+
 	int[] totalOfMes22() {
 		Date date = new Date(d, m, y);
 		int index = date.index();
