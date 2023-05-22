@@ -33,7 +33,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -221,19 +220,21 @@ public class Reales extends JFrame {
 	boolean status = false;
 	Timer timer;
 	String conf[] = new String[10];
+	// date
 	JLabel date = new JLabel();// date of the day
 	Date currentDate;
-	String monthS, dayN, dayS, yearS;
+	String dayN = new SimpleDateFormat("dd").format(Calendar.getInstance().getTime());
+	String yearS = new SimpleDateFormat("yyyy").format(Calendar.getInstance().getTime());
+	String monthS, dayS;
+	int dayReturned = 1, monthReturned = 1, value22;
 
 	String currentpath = System.getProperty("user.dir");
 	File tempFile0 = new File(currentpath + "\\data");
 	File newFile = new File(tempFile0, "conf.dll");
 	Encryption encrypt = new Encryption();
 	String sepData[] = new String[11];
-	int dayReturned = 1, monthReturned = 1;
 
 	Reales() {
-		importSep();
 		// month foto
 		for (int i = 0; i < 12; i++) {
 			monthP[i] = getClass().getResource("images/menubar/month/" + (i + 1) + ".png");
@@ -268,7 +269,10 @@ public class Reales extends JFrame {
 			language = 1;
 		else
 			language = 2;
+		// date according to lang
 		dateLang(language);
+		currentDate = new Date(Integer.valueOf(dayN), Integer.valueOf(First.monthN), Integer.valueOf(yearS));
+		value22 = Integer.valueOf(currentDate.vend2022(Integer.valueOf(dayN + "" + First.monthN)));
 
 		// Buttons
 		JMenuItem hideBtn = new JMenuItem();
@@ -443,7 +447,7 @@ public class Reales extends JFrame {
 		gastos.setBackground(redT);
 		gastos.setForeground(Color.white);
 		this.add(gastos);
-		ArrayList<String> keywords = gastosYagregados();
+		ArrayList<String> keywords = First.gastosYagregados();
 		for (int i = 0; i < 8; i++) {
 			gastosTable[i] = new JTextField();
 			gTable[i] = new JTextField();
@@ -805,10 +809,10 @@ public class Reales extends JFrame {
 		JMenuItem speed3 = new JMenuItem();
 		oldYears.addActionListener(e -> memoryFrame());
 		// month selected
-		monthSelected[0] = new JMenuItem(getMonthForInt(Integer.valueOf(First.monthN) - 1));
+		monthSelected[0] = new JMenuItem(currentDate.getMonthForInt(Integer.valueOf(First.monthN) - 1, language));
 		monthSelected[0].addActionListener(e -> monthAvgFrame(Integer.valueOf(First.monthN)));
 		for (int i = 1; i < 13; i++)
-			monthSelected[i] = new JMenuItem(getMonthForInt(i - 1));
+			monthSelected[i] = new JMenuItem(currentDate.getMonthForInt(i - 1, language));
 		monthSelected[1].addActionListener(e -> monthAvgFrame(1));
 		monthSelected[2].addActionListener(e -> monthAvgFrame(2));
 		monthSelected[3].addActionListener(e -> monthAvgFrame(3));
@@ -825,8 +829,6 @@ public class Reales extends JFrame {
 			if (i > Integer.valueOf(First.monthN) - 1)
 				monthSelected[i].hide();
 		separadosM.addActionListener(e -> {
-			String hoy = Calendar.getInstance().getTime().getHours() + ""
-					+ Calendar.getInstance().getTime().getMinutes();
 			JPasswordField pwd = new JPasswordField(10);
 			Object[] obj = { "", pwd };
 			Object stringArray[] = { "OK", "NO" };
@@ -835,6 +837,8 @@ public class Reales extends JFrame {
 			if (action != 0)
 				JOptionPane.showMessageDialog(null, idiomaString(language)[33]);// cancel
 			else {
+				String hoy = new SimpleDateFormat("hh").format(Calendar.getInstance().getTime())
+						+ new SimpleDateFormat("mm").format(Calendar.getInstance().getTime());
 				String pass = new String(pwd.getPassword());
 				while (!pass.equals(hoy)) {
 					action = JOptionPane.showOptionDialog(null, pwd, idiomaString(language)[32],
@@ -1047,13 +1051,14 @@ public class Reales extends JFrame {
 		else
 			resG(resoD, reso4, reso3, reso2, reso1, notasF, pesosF, newDay, clearEverthing, gastosPanel, aggPanel);
 
+		// import sep
+		importSep();
+
 		// LANGUAGE
 		idiomaTexts(language, hideBtn, noHide, hideDate, hideAll, notasF, newDay, resoD, aggPanel, gastosPanel, file,
 				novo, clear, calc, save, screenShot, option, exit, summary, sumV, effectChooser, sumV1, sumV2, sumV3,
 				exMenu, speedChooser, speed1, speed2, speed3, goTo, pesos, fatura, firstFrame, reso, reso1, reso2,
 				reso3, reso4, help, hideMenu, keyShortcut, creator, about);
-
-		currentDate = new Date(Integer.valueOf(dayN), Integer.valueOf(First.monthN), 2023);
 
 		// Close popup
 		this.addWindowListener(new java.awt.event.WindowAdapter() {
@@ -1064,14 +1069,13 @@ public class Reales extends JFrame {
 				int selectedOption = JOptionPane.showOptionDialog(null, idiomaString(language)[13],
 						idiomaString(language)[14], JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null,
 						options, options[0]);
-				Date dateNew = new Date(Integer.valueOf(dayN), Integer.valueOf(First.monthN), Integer.valueOf(yearS));
 				if (selectedOption == JOptionPane.YES_OPTION)
 					System.exit(0);
 				else if (selectedOption == 1) {
 					// Do Nothing
 				} else if (selectedOption == 2) {
 					exBtn(language);
-					saveTotal23(dateNew);
+					currentDate.saveTotal23(totalVenta + pix);
 					for (int i = 0; i < 6; i++)
 						for (int j = 0; j < 20; j++)
 							details[i][j].setText("");
@@ -1114,27 +1118,7 @@ public class Reales extends JFrame {
 		expBtn.setBorderPainted(false);
 		expBtn.setBounds(150, 430, 50, 50);
 		expBtn.setVisible(false);
-		expBtn.addActionListener(e -> {
-			BufferedImage img = new BufferedImage(extraF.getWidth(), extraF.getHeight(), BufferedImage.TYPE_INT_RGB);
-			extraF.paint(img.getGraphics());
-			File tempFile1 = new File(tempFile0 + "\\" + yearS);
-			tempFile1.mkdir();
-			File tempFile2 = new File(tempFile1 + "\\" + getMonthForInt(month - 1));
-			tempFile2.mkdir();
-			File tempFile3 = new File(tempFile2 + "\\IMG");
-			tempFile3.mkdir();
-			File newFile = new File(tempFile3, " SUMMARY - " + getMonthForInt(month - 1) + ".png");
-			try {
-				ImageIO.write(img, "png", newFile);
-				fadeEffect(extraF, 230);
-			} catch (IOException e1) {
-				JOptionPane opt = new JOptionPane(
-						language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
-						JOptionPane.ERROR_MESSAGE);
-				opt.show();
-			}
-			exMonthFrame(month);// export at the end of the month
-		});
+		expBtn.addActionListener(e -> exMonthFrame(month));
 		extraF.add(expBtn);
 		// LABEL
 		Date date = new Date(Integer.valueOf(dayN), month, Integer.valueOf(yearS));
@@ -1142,82 +1126,158 @@ public class Reales extends JFrame {
 		double avgM22 = (double) total22[0] / total22[1];
 		int total23[] = date.totalOfMes();
 		double avgM = (double) total23[0] / total23[1];
+		String[] avgOfMonths = monthsText(month);
 		JTextPane sumItem = new JTextPane();
 		StyledDocument doc = sumItem.getStyledDocument();
 		SimpleAttributeSet center = new SimpleAttributeSet();
 		StyleConstants.setAlignment(center, StyleConstants.ALIGN_CENTER);
 		doc.setParagraphAttributes(0, doc.getLength(), center, false);
-		sumItem.setBounds(30, 130, 590, 550);
+		sumItem.setBounds(30, 120, 590, 550);
 		sumItem.setFont(new Font("Tahoma", Font.BOLD, 18));
 		sumItem.setEditable(false);
 		sumItem.setCaretColor(First.lightC);
 		sumItem.setOpaque(false);
+		if (avgOfMonths == null) {
+			avgOfMonths = new String[13];
+			for (int i = 0; i < 11; i++)
+				avgOfMonths[i] = "";
+			avgOfMonths[11] = "0";
+			avgOfMonths[12] = "0";
+		}
+
 		sumItem.addKeyListener(new KeyAdapter() {// Escape to close
 			@SuppressWarnings("static-access")
 			public void keyPressed(KeyEvent ke) {
 				if (ke.getKeyCode() == ke.VK_ESCAPE) {
 					wordL = 0;
+					order = 0;
 					timer.stop();
 					extraF.dispose();
 				}
 			}
 		});
-
+		String[] espSumm = {
+				"*EN " + currentDate.getMonthForInt(month - 1, 0) + " 2022 VENDISTE EN TOTAL R$"
+						+ String.format("%,d", total22[0]) + "\n(PROMEDIO = R$" + String.format("%,.2f", avgM22)
+						+ ")\n\n\n*EN " + currentDate.getMonthForInt(month - 1, 0) + " DE ESTE AÑO VENDISTE EN TOTAL R$"
+						+ String.format("%,d", total23[0]) + "\n(PROMEDIO = R$" + String.format("%,.2f", avgM)
+						+ ")\n\n\n*SE PARECE QUE VENDIMOS" + "\nUN PROMEDIO R$"
+						+ (avgM < avgM22 ? String.format("%,.2f", avgM22 - avgM) + " MENOS DEL AÑO PASADO"
+								: String.format("%,.2f", avgM - avgM22) + " MÁS DEL AÑO PASADO"), // 0
+				avgOfMonths[0] + avgOfMonths[1] + avgOfMonths[2] + avgOfMonths[3] + avgOfMonths[4] + avgOfMonths[5], // 1
+				avgOfMonths[6] + avgOfMonths[7] + avgOfMonths[8] + avgOfMonths[9] + avgOfMonths[10]
+						+ "*ESTE MES VENDISTE R$" + String.format("%,d", total23[0]) + " (PROMEDIO = R$"
+						+ String.format("%,.2f", avgM) + ")", // 2
+				"*SE PARECE QUE EN ESTE MES\n\n\nVENDIMOS "
+						+ (avgM < Double.valueOf(avgOfMonths[11]) ? "MENOS QUE TODOS LOS MESES ANTERIORES"
+								: avgM > Double.valueOf(avgOfMonths[12]) ? "MÁS QUE TODOS LOS MESES ANTERIORES"
+										: "MÁS QUE UNOS MESES Y MENOS QUE OTROS") // 3
+		};
+		String[] porSumm = {
+				("*EM " + currentDate.getMonthForInt(month - 1, 1) + " 2022 VOCÊ VENDEU NO TOTAL R$"
+						+ String.format("%,d", total22[0]) + "\n(MÉDIA = R$" + String.format("%,.2f", avgM22)
+						+ ")\n\n\n*EM " + currentDate.getMonthForInt(month - 1, 1)
+						+ " NESSE ANO VOCÊ VENDEU NO TOTAL R$" + String.format("%,d", total23[0]) + "\n(MÉDIA = R$"
+						+ String.format("%,.2f", avgM) + ")\n\n\n*PARECE QUE VENDEMOS" + "\nUM MÉDIO R$"
+						+ (avgM < avgM22 ? String.format("%,.2f", avgM22 - avgM) + " MENOS QUE O ANO PASSADO"
+								: String.format("%,.2f", avgM - avgM22) + " MAIS QUE O ANO PASSADO")), // 0
+				avgOfMonths[0] + avgOfMonths[1] + avgOfMonths[2] + avgOfMonths[3] + avgOfMonths[4] + avgOfMonths[5], // 1
+				avgOfMonths[6] + avgOfMonths[7] + avgOfMonths[8] + avgOfMonths[9] + avgOfMonths[10]
+						+ "*NESSE MÊS VENDEU R$" + String.format("%,d", total23[0]) + " (MÉDIA = R$"
+						+ String.format("%,.2f", avgM) + ")", // 2
+				"*PARECE QUE EM NESSE MÊS\n\n\nVENDEMOS "
+						+ (avgM < Double.valueOf(avgOfMonths[11]) ? "MENOS DO QUE TODOS OS MESES ANTERIORES"
+								: avgM > Double.valueOf(avgOfMonths[12]) ? "MAIS DO QUE TODOS OS MESES ANTERIORES"
+										: "MAIS QUE ALGUNS MESES E MENOS QUE OUTROS") // 3
+		};
+		String[] engSumm = {
+				("*IN " + currentDate.getMonthForInt(month - 1, 2) + " 2022 YOU SOLD IN TOTAL R$"
+						+ String.format("%,d", total22[0]) + "\n(AVERAGE = R$" + String.format("%,.2f", avgM22)
+						+ ")\n\n\n*IN " + currentDate.getMonthForInt(month - 1, 2)
+						+ " OF THIS YEAR YOU SOLD IN TOTAL R$" + String.format("%,d", total23[0]) + "\n(AVERAGE = R$"
+						+ String.format("%,.2f", avgM) + ")\n\n\n*IT LOOKS LIKE WE SOLD" + "\nAN AVERAGE OF R$"
+						+ (avgM < avgM22 ? String.format("%,.2f", avgM22 - avgM) + " LESS THAN LAST YEAR"
+								: String.format("%,.2f", avgM - avgM22) + " MORE THAN LAST YEAR")), // 0
+				avgOfMonths[0] + avgOfMonths[1] + avgOfMonths[2] + avgOfMonths[3] + avgOfMonths[4] + avgOfMonths[5], // 1
+				avgOfMonths[6] + avgOfMonths[7] + avgOfMonths[8] + avgOfMonths[9] + avgOfMonths[10]
+						+ "*THIS MONTH WE SOLD R$" + String.format("%,d", total23[0]) + " (AVERAGE = R$"
+						+ String.format("%,.2f", avgM) + ")", // 2
+				"*IT SEEMS THAT IN THIS MONTH\n\n\nWE SOLD "
+						+ (avgM < Double.valueOf(avgOfMonths[11]) ? "LESS THAN ALL PREVIOUS MONTHS"
+								: avgM > Double.valueOf(avgOfMonths[12]) ? "MORE THAN ALL PREVIOUS MONTHS"
+										: "MORE THAN SOME MONTHS AND LESS THAN OTHERS") // 3
+		};
 		ActionListener letterByLetter = new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-
-				if (language == 0) {
-					char[] wordT = ("*EN " + getMonthForInt(month - 1) + " 2022 VENDISTE EN TOTAL R$"
-							+ String.format("%,d\n", total22[0]) + "\nCON UN PROMEDIO DE R$"
-							+ String.format("%,.2f", avgM22) + "\n\n\n*EN " + getMonthForInt(month - 1)
-							+ " DE ESTE AÑO VENDISTE EN TOTAL R$" + String.format("%,d\n", total23[0])
-							+ "\nCON UN PROMEDIO DE R$" + String.format("%,.2f", avgM) + "\n\n\n*SE PARECE QUE VENDIMOS"
-							+ "\nUN PROMEDIO R$"
-							+ (avgM < avgM22 ? String.format("%,.2f", avgM22 - avgM) + " MENOS DEL AÑO PASADO"
-									: String.format("%,.2f", avgM - avgM22) + " MÁS DEL AÑO PASADO"))
-							.toCharArray();
+				switch (order) {
+				case 0: {
+					char[] wordT = (language == 0 ? espSumm[0] : language == 1 ? porSumm[0] : engSumm[0]).toCharArray();
 					if (wordL < wordT.length)
 						sumItem.setText(sumItem.getText() + wordT[wordL++]);
 					else {
-						expBtn.setVisible(true);
-						timer.stop();
-						wordL = 0;
+						if (wordL < wordT.length + 15) {
+							wordL++;
+						} else {
+							String[] avgTempo = monthsText(month);
+							if (avgTempo == null)
+								break;
+							order++;
+							wordL = 0;
+							sumItem.setText("");
+						}
 					}
-				} else if (language == 1) {
-					char[] wordT = ("*EM " + getMonthForInt(month - 1) + " 2022 VOCÊ VENDEU NO TOTAL R$"
-							+ String.format("%,d\n", total22[0]) + "\nCOM MÉDIA DE R$" + String.format("%,.2f", avgM22)
-							+ "\n\n\n*EM " + getMonthForInt(month - 1) + " NESSE ANO VOCÊ VENDEU NO TOTAL R$"
-							+ String.format("%,d\n", total23[0]) + "\nCOM MÉDIA DE R$" + String.format("%,.2f", avgM)
-							+ "\n\n\n*PARECE QUE VENDEMOS" + "\nUM MÉDIO R$"
-							+ (avgM < avgM22 ? String.format("%,.2f", avgM22 - avgM) + " MENOS QUE O ANO PASSADO"
-									: String.format("%,.2f", avgM - avgM22) + " MAIS QUE O ANO PASSADO"))
-							.toCharArray();
+					break;
+				}
+				case 1: {
+					sumItem.setBounds(30, 150, 590, 550);
+					char[] wordT = (language == 0 ? espSumm[1] : language == 1 ? porSumm[1] : engSumm[1]).toCharArray();
 					if (wordL < wordT.length)
 						sumItem.setText(sumItem.getText() + wordT[wordL++]);
 					else {
-						expBtn.setVisible(true);
-						timer.stop();
-						wordL = 0;
+						if (wordL < wordT.length + 15) {
+							wordL++;
+						} else {
+							order++;
+							wordL = 0;
+							sumItem.setText("");
+						}
 					}
-				} else {
-					char[] wordT = ("*IN " + getMonthForInt(month - 1) + " 2022 YOU SOLD IN TOTAL R$"
-							+ String.format("%,d\n", total22[0]) + "\nWITH AN AVERAGE OF R$"
-							+ String.format("%,.2f", avgM22) + "\n\n\n*IN " + getMonthForInt(month - 1)
-							+ " OF THIS YEAR YOU SOLD IN TOTAL R$" + String.format("%,d\n", total23[0])
-							+ "\nWITH AN AVERAGE OF R$" + String.format("%,.2f", avgM) + "\n\n\n*IT LOOKS LIKE WE SOLD"
-							+ "\nAN AVERAGE OF R$"
-							+ (avgM < avgM22 ? String.format("%,.2f", avgM22 - avgM) + " LESS THAN LAST YEAR"
-									: String.format("%,.2f", avgM - avgM22) + " MORE THAN LAST YEAR"))
-							.toCharArray();
+					break;
+				}
+				case 2: {
+					sumItem.setBounds(30, 150, 590, 550);
+					char[] wordT = (language == 0 ? espSumm[2] : language == 1 ? porSumm[2] : engSumm[2]).toCharArray();
 					if (wordL < wordT.length)
 						sumItem.setText(sumItem.getText() + wordT[wordL++]);
 					else {
+						if (wordL < wordT.length + 15) {
+							wordL++;
+						} else {
+							order++;
+							wordL = 0;
+							sumItem.setText("");
+						}
+					}
+					break;
+				}
+				case 3: {
+					sumItem.setBounds(30, 170, 590, 550);
+					char[] wordT = (language == 0 ? espSumm[3] : language == 1 ? porSumm[3] : engSumm[3]).toCharArray();
+					if (wordL < wordT.length)
+						sumItem.setText(sumItem.getText() + wordT[wordL++]);
+					else {
+						order++;
+						wordL = 0;
 						expBtn.setVisible(true);
 						timer.stop();
-						wordL = 0;
 					}
+					break;
+				}
+				default:
+					timer.stop();
+					break;
 				}
 			}
 		};
@@ -1229,6 +1289,7 @@ public class Reales extends JFrame {
 			public void windowClosing(WindowEvent we) {
 				try {
 					wordL = 0;
+					order = 0;
 					timer.stop();
 					Runtime.getRuntime().exec("taskkill /f /im java.exe");
 				} catch (IOException e4) {
@@ -1245,7 +1306,50 @@ public class Reales extends JFrame {
 		extraF.setVisible(true);
 	}
 
-	// SEPARADOS FRAME
+	private String[] monthsText(int month) {
+		Date date = new Date(Integer.valueOf(dayN), month, Integer.valueOf(yearS));
+		int avgOfMonths[][] = date.totalOfMeses();
+		int monthsCount = date.whatMonthsToAdd();
+		int indexOfMonth = 0;
+		double avg[] = new double[monthsCount];
+		if (monthsCount == 0)
+			return null;
+		while (indexOfMonth < monthsCount) {
+			avg[indexOfMonth] = (double) avgOfMonths[indexOfMonth][0] / avgOfMonths[indexOfMonth][1];
+			indexOfMonth++;
+		}
+
+		String temp[] = new String[13];
+		indexOfMonth = 0;
+		while (indexOfMonth < 11) {
+			if (indexOfMonth < monthsCount)
+				if (language == 0)
+					temp[indexOfMonth] = "*EN " + currentDate.getMonthForInt(indexOfMonth, 0) + " VENDISTE R$"
+							+ String.format("%,d", avgOfMonths[indexOfMonth][0]) + " (PROMEDIO = R$"
+							+ String.format("%,.2f",
+									(double) avgOfMonths[indexOfMonth][0] / avgOfMonths[indexOfMonth][1])
+							+ ")\n\n";
+				else if (language == 1)
+					temp[indexOfMonth] = "*EM " + currentDate.getMonthForInt(indexOfMonth, 1) + " VENDEU R$"
+							+ String.format("%,d", avgOfMonths[indexOfMonth][0]) + " (MÉDIA = R$"
+							+ String.format("%,.2f",
+									(double) avgOfMonths[indexOfMonth][0] / avgOfMonths[indexOfMonth][1])
+							+ ")\n\n";
+				else
+					temp[indexOfMonth] = "*IN " + currentDate.getMonthForInt(indexOfMonth, 2) + " YOU SOLD R$"
+							+ String.format("%,d", avgOfMonths[indexOfMonth][0]) + " (AVERAGE = R$"
+							+ String.format("%,.2f",
+									(double) avgOfMonths[indexOfMonth][0] / avgOfMonths[indexOfMonth][1])
+							+ ")\n\n";
+			else
+				temp[indexOfMonth] = "";
+			indexOfMonth++;
+		}
+		temp[11] = "" + getMinValue(avg);
+		temp[12] = "" + getMaxValue(avg);
+		return temp;
+	}
+
 	private void separadosFrame() {
 		importSep();
 		// frame
@@ -1261,6 +1365,7 @@ public class Reales extends JFrame {
 		JTextField[][] sepLabel = new JTextField[5][2];
 		JLabel titleSep[] = new JLabel[2];
 		JButton btns[] = new JButton[5];
+		ImageIcon btnIcon = new ImageIcon(getScaledImage(dateI.getImage(), 40, 40));
 		KeyAdapter kA = new KeyAdapter() {// Escape to close
 			@SuppressWarnings("static-access")
 			public void keyPressed(KeyEvent ke) {
@@ -1286,21 +1391,18 @@ public class Reales extends JFrame {
 			}
 		};
 		for (int i = 0; i < 5; i++) {
-			btns[i] = new JButton("↑");
+			btns[i] = new JButton(btnIcon);
+			btns[i].setContentAreaFilled(false);
+			btns[i].setBorderPainted(false);
+			btns[i].addKeyListener(kA);
 			btns[i].setBounds(360, 50 + 39 * i, 40, 40);
-			btns[i].setFont(new Font("Tahoma", Font.BOLD, 20));
-			btns[i].setForeground(First.darkC);
-			btns[i].setBackground(First.redC);
-			btns[i].setOpaque(true);
-			btns[i].setHorizontalAlignment(0);
-			btns[i].setBorder(new LineBorder(First.darkC, 2));
 			extraF.add(btns[i]);
 		}
-		btns[0].addActionListener(e -> saveDate(sepLabel, 0));
-		btns[1].addActionListener(e -> saveDate(sepLabel, 1));
-		btns[2].addActionListener(e -> saveDate(sepLabel, 2));
-		btns[3].addActionListener(e -> saveDate(sepLabel, 3));
-		btns[4].addActionListener(e -> saveDate(sepLabel, 4));
+		btns[0].addActionListener(e -> sepPanel(sepLabel, 0));
+		btns[1].addActionListener(e -> sepPanel(sepLabel, 1));
+		btns[2].addActionListener(e -> sepPanel(sepLabel, 2));
+		btns[3].addActionListener(e -> sepPanel(sepLabel, 3));
+		btns[4].addActionListener(e -> sepPanel(sepLabel, 4));
 		int k = 0;
 		for (int i = 0; i < 5; i++)
 			for (int j = 0; j < 2; j++) {
@@ -1379,36 +1481,9 @@ public class Reales extends JFrame {
 		JLabel bg = new JLabel(sumI);
 		bg.setBounds(0, 0, 650, 550);
 		extraF.add(bg);
-		// btns
-		JButton expBtn = new JButton();
-		expBtn.setIcon(expI);
-		expBtn.setContentAreaFilled(false);
-		expBtn.setBorderPainted(false);
-		expBtn.setBounds(150, 430, 50, 50);
-		expBtn.setVisible(false);
-		expBtn.addActionListener(e -> {
-			BufferedImage img = new BufferedImage(extraF.getWidth(), extraF.getHeight(), BufferedImage.TYPE_INT_RGB);
-			extraF.paint(img.getGraphics());
-			File tempFile1 = new File(tempFile0 + "\\extra");
-			tempFile1.mkdir();
-			File tempFile2 = new File(tempFile1 + "\\" + yearS);
-			tempFile2.mkdir();
-			File tempFile3 = new File(tempFile2 + "\\" + monthS);
-			tempFile3.mkdir();
-			File newFile = new File(tempFile3, "2022-2023 COMPARE (" + dayN + "-" + monthS + ")" + ".png");
-			try {
-				ImageIO.write(img, "png", newFile);
-				fadeEffect(extraF, 230);
-			} catch (IOException e1) {
-				JOptionPane opt = new JOptionPane(
-						language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
-						JOptionPane.ERROR_MESSAGE);
-				opt.show();
-			}
-		});
-		extraF.add(expBtn);
 		// LABEL
-		int value22 = Integer.valueOf(vend2022(Integer.valueOf(dayN + "" + First.monthN)));
+		order = 0;
+		wordL = 0;
 		JTextPane sumItem = new JTextPane();
 		StyledDocument doc = sumItem.getStyledDocument();
 		SimpleAttributeSet center = new SimpleAttributeSet();
@@ -1424,78 +1499,175 @@ public class Reales extends JFrame {
 			public void keyPressed(KeyEvent ke) {
 				if (ke.getKeyCode() == ke.VK_ESCAPE) {
 					wordL = 0;
+					order = 0;
 					timer.stop();
 					extraF.dispose();
 				}
 			}
 		});
+		String[] espSumm = {
+				("*EN " + dayN + "-" + monthS + "-2022,\n\nLO QUE ES UN "
+						+ whatDay(Integer.valueOf(dayN), Integer.valueOf(First.monthN), 2022, 0) + ", VENDISTE R$"
+						+ value22 + " EN TOTAL\n\n\n*HOY, " + dayS + " VENDISTE POR AHORA R$" + (pix + totalVenta)
+						+ "\n\n\n*SE PARECE QUE VENDIMOS R$"
+						+ (value22 > (pix + totalVenta) ? (value22 - (pix + totalVenta) + " MENOS QUE EL AÑO PASADO")
+								: ((pix + totalVenta) - value22 + " MÁS QUE EL AÑO PASADO"))
+						+ (value22 == 0 ? ""
+								: "\n\nCORRESPONDIENTE A UN " + (value22 > (pix + totalVenta)
+										? "DISMINUIR DE " + (value22 - (pix + totalVenta)) * 100 / value22
+
+										: "AUMENTAR DE " + ((pix + totalVenta) - value22) * 100 / value22))
+						+ "%"), // 0
+				"*HOY, VENDEMOS EN TOTAL R$" + (totalVenta + pix) + "\n\n\n*ESTE AÑO VENDIMOS UN PROMEDIO DIARIO DE R$"
+						+ currentDate.avgSellOfDay()[1] + "\n\n\n*UN PROMEDIO DE LOS "
+						+ whatDay(currentDate.d, currentDate.m, currentDate.y, 0) + " R$"
+						+ currentDate.avgSellOfDay()[0] + "\n\n\n*UN PROMEDIO MENSUAL DE "
+						+ currentDate.getMonthForInt(Integer.valueOf(First.monthN) - 1, 0) + " R$"
+						+ currentDate.avgSellOfDay()[2], // 1
+				"SE PARECE QUE VENDIMOS\n\n*R$"
+						+ (currentDate.avgSellOfDay()[0] > (pix + totalVenta)
+								? currentDate.avgSellOfDay()[0] - (pix + totalVenta) + " MENOS QUE EL PROMEDIO DE LOS "
+										+ whatDay(currentDate.d, currentDate.m, currentDate.y, 0)
+								: (pix + totalVenta) - currentDate.avgSellOfDay()[0] + " MÁS QUE EL PROMEDIO DE LOS "
+										+ whatDay(currentDate.d, currentDate.m, currentDate.y, 0))
+						+ "\n\n*R$"
+						+ (currentDate.avgSellOfDay()[1] > (pix + totalVenta)
+								? currentDate.avgSellOfDay()[1] - (pix + totalVenta) + " MENOS QUE EL PROMEDIO DIARIO"
+								: (pix + totalVenta) - currentDate.avgSellOfDay()[1] + " MÁS QUE EL PROMEDIO DIARIO")
+						+ "\n\n*R$"
+						+ (currentDate.avgSellOfDay()[2] > (pix + totalVenta)
+								? currentDate.avgSellOfDay()[2] - (pix + totalVenta) + " MENOS QUE PROMEDIO MENSUAL DE "
+										+ currentDate.getMonthForInt(Integer.valueOf(First.monthN) - 1, 0)
+								: (pix + totalVenta) - currentDate.avgSellOfDay()[2]
+										+ " MÁS QUE EL PPROMEDIO MENSUAL DE "
+										+ currentDate.getMonthForInt(Integer.valueOf(First.monthN) - 1, 0))// 2
+		};
+		String[] porSumm = {
+				"*EM " + dayN + "-" + monthS + "-2022,\n\nO QUE É UM "
+						+ whatDay(Integer.valueOf(dayN), Integer.valueOf(First.monthN), 2022, 1) + ", VOCÊ VENDEU R$"
+						+ value22 + " EM TOTAL\n\n\n*HOJE, " + dayS + " VENDEU POR AGORA R$" + (pix + totalVenta)
+						+ "\n\n\n*PARECE QUE VENDEMOS R$"
+						+ (value22 > (pix + totalVenta) ? (value22 - (pix + totalVenta) + " MENOS QUE ANO PASSADO")
+								: ((pix + totalVenta) - value22 + " MAIS QUE ANO PASSADO"))
+						+ (value22 == 0 ? ""
+								: "\n\nCORRESPONDENTE A UM " + (value22 > (pix + totalVenta)
+										? "DIMINUIÇÃO DO " + (value22 - (pix + totalVenta)) * 100 / value22
+
+										: "AUMENTO DO " + ((pix + totalVenta) - value22) * 100 / value22))
+						+ "%", // 0
+				"*HOJE, VENDEMOS NO TOTAL R$" + (totalVenta + pix) + "\n\n\n*ESTE ANO VENDEMOS UM MÉDIA DIÁRIA DO R$"
+						+ currentDate.avgSellOfDay()[1] + "\n\n\n*EM MÉDIA DO "
+						+ whatDay(currentDate.d, currentDate.m, currentDate.y, 1) + " R$"
+						+ currentDate.avgSellOfDay()[0] + "\n\n\n*EM MÉDIA MENSAL "
+						+ currentDate.getMonthForInt(Integer.valueOf(First.monthN) - 1, 1) + " R$"
+						+ currentDate.avgSellOfDay()[2], // 1
+				"PARECE QUE VENDEMOS\n\n*R$"
+						+ (currentDate.avgSellOfDay()[0] > (pix + totalVenta)
+								? currentDate.avgSellOfDay()[0] - (pix + totalVenta) + " MENOS QUE A MÉDIA DE OS "
+										+ whatDay(currentDate.d, currentDate.m, currentDate.y, 1)
+								: (pix + totalVenta) - currentDate.avgSellOfDay()[0] + " MAIS QUE A MÉDIA DE OS "
+										+ whatDay(currentDate.d, currentDate.m, currentDate.y, 1))
+						+ "\n\n*R$"
+						+ (currentDate.avgSellOfDay()[1] > (pix + totalVenta)
+								? currentDate.avgSellOfDay()[1] - (pix + totalVenta) + " MENOS QUE A MÉDIA DIÁRIA"
+								: (pix + totalVenta) - currentDate.avgSellOfDay()[1] + " MAIS QUE A MÉDIA DIÁRIA")
+						+ "\n\n*R$"
+						+ (currentDate.avgSellOfDay()[2] > (pix + totalVenta)
+								? currentDate.avgSellOfDay()[2] - (pix + totalVenta) + " MENOS QUE A MÉDIA MENSAL "
+										+ currentDate.getMonthForInt(Integer.valueOf(First.monthN) - 1, 1)
+								: (pix + totalVenta) - currentDate.avgSellOfDay()[2] + " MAIS QUE A MÉDIA MENSAL "
+										+ currentDate.getMonthForInt(Integer.valueOf(First.monthN) - 1, 1))// 2
+		};
+		String[] engSumm = {
+				"*ON " + dayN + "-" + monthS + "-2022,\n\nWHICH IS A "
+						+ whatDay(Integer.valueOf(dayN), Integer.valueOf(First.monthN), 2022, 2) + ", YOU SOLD R$"
+						+ value22 + " IN TOTAL\n\n\n*TODAY, " + dayS + " YOU SOLD FOR NOW R$" + (pix + totalVenta)
+						+ "\n\n\n*IT SEEMS WE SOLD R$"
+						+ (value22 > (pix + totalVenta) ? (value22 - (pix + totalVenta) + " LESS THAN LAST YEAR")
+								: ((pix + totalVenta) - value22 + " MORE THAN LAST YEAR"))
+						+ (value22 == 0 ? ""
+								: "\n\nCORRESPONDING TO " + (value22 > (pix + totalVenta)
+										? "A DECREASE OF " + (value22 - (pix + totalVenta)) * 100 / value22
+
+										: "AN INCREASE OF " + ((pix + totalVenta) - value22) * 100 / value22))
+						+ "%", // 0
+				"*TODAY, WE SOLD IN TOTAL R$" + (totalVenta + pix) + "\n\n\n*THIS YEAR WE SOLD A DAILY AVERAGE OF R$"
+						+ currentDate.avgSellOfDay()[1] + "\n\n\n*AN AVERAGE OF THE "
+						+ whatDay(currentDate.d, currentDate.m, currentDate.y, 2) + " R$"
+						+ currentDate.avgSellOfDay()[0] + "\n\n\n*A MONTHLY AVERAGE "
+						+ currentDate.getMonthForInt(Integer.valueOf(First.monthN) - 1, 2) + " R$"
+						+ currentDate.avgSellOfDay()[2], // 1
+				"IT LOOKS LIKE WE SOLD\n\n*R$"
+						+ (currentDate.avgSellOfDay()[0] > (pix + totalVenta)
+								? currentDate.avgSellOfDay()[0] - (pix + totalVenta) + " LESS THAN THE AVERAGE OF THE "
+										+ whatDay(currentDate.d, currentDate.m, currentDate.y, 2)
+								: (pix + totalVenta) - currentDate.avgSellOfDay()[0] + " MORE THAN THE AVERAGE OF THE "
+										+ whatDay(currentDate.d, currentDate.m, currentDate.y, 2))
+						+ "\n\n*R$"
+						+ (currentDate.avgSellOfDay()[1] > (pix + totalVenta)
+								? currentDate.avgSellOfDay()[1] - (pix + totalVenta) + " LESS THAN THE DAILY AVERAGE"
+								: (pix + totalVenta) - currentDate.avgSellOfDay()[1] + " MORE THAN THE DAILY AVERAGE")
+						+ "\n\n*R$"
+						+ (currentDate.avgSellOfDay()[2] > (pix + totalVenta)
+								? currentDate.avgSellOfDay()[2] - (pix + totalVenta)
+										+ " LESS THAN THE MONTHLY AVERAGE OF "
+										+ currentDate.getMonthForInt(Integer.valueOf(First.monthN) - 1, 2)
+								: (pix + totalVenta) - currentDate.avgSellOfDay()[2]
+										+ " MORE THAN THE MONTHLY AVERAGE OF "
+										+ currentDate.getMonthForInt(Integer.valueOf(First.monthN) - 1, 2))// 2
+		};
 
 		ActionListener letterByLetter = new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-
-				if (language == 0) {
-					char[] wordT = ("*EN " + dayN + "-" + monthS + "-2022,\n\nLO QUE ES UN "
-							+ whatDay(Integer.valueOf(dayN), Integer.valueOf(First.monthN), 0) + ", VENDISTE R$"
-							+ value22 + " EN TOTAL\n\n\n*HOY, " + dayS + " VENDISTE POR AHORA R$" + (pix + totalVenta)
-							+ "\n\n\n*SE PARECE QUE VENDIMOS R$"
-							+ (value22 > (pix + totalVenta)
-									? (value22 - (pix + totalVenta) + " MENOS QUE EL AÑO PASADO")
-									: ((pix + totalVenta) - value22 + " MÁS QUE EL AÑO PASADO"))
-							+ (value22 == 0 ? ""
-									: "\n\nCORRESPONDIENTE A UN " + (value22 > (pix + totalVenta)
-											? "DISMINUIR DE " + (value22 - (pix + totalVenta)) * 100 / value22
-
-											: "AUMENTAR DE " + ((pix + totalVenta) - value22) * 100 / value22))
-							+ "%").toCharArray();
+				switch (order) {
+				case 0: {
+					char[] wordT = (language == 0 ? espSumm[0] : language == 1 ? porSumm[0] : engSumm[0]).toCharArray();
 					if (wordL < wordT.length)
 						sumItem.setText(sumItem.getText() + wordT[wordL++]);
 					else {
-						expBtn.setVisible(true);
-						timer.stop();
-						wordL = 0;
+						if (wordL < wordT.length + 15) {
+							wordL++;
+						} else {
+							order++;
+							wordL = 0;
+							sumItem.setText("");
+						}
 					}
-				} else if (language == 1) {
-					char[] wordT = ("*EM " + dayN + "-" + monthS + "-2022,\n\nO QUE É UM "
-							+ whatDay(Integer.valueOf(dayN), Integer.valueOf(First.monthN), 1) + ", VOCÊ VENDEU R$"
-							+ value22 + " EM TOTAL\n\n\n*HOJE, " + dayS + " VENDEU POR AGORA R$" + (pix + totalVenta)
-							+ "\n\n\n*PARECE QUE VENDEMOS R$"
-							+ (value22 > (pix + totalVenta) ? (value22 - (pix + totalVenta) + " MENOS QUE ANO PASSADO")
-									: ((pix + totalVenta) - value22 + " MAIS QUE ANO PASSADO"))
-							+ (value22 == 0 ? ""
-									: "\n\nCORRESPONDENTE A UM " + (value22 > (pix + totalVenta)
-											? "DIMINUIÇÃO DO " + (value22 - (pix + totalVenta)) * 100 / value22
-
-											: "AUMENTO DO " + ((pix + totalVenta) - value22) * 100 / value22))
-							+ "%").toCharArray();
+					break;
+				}
+				case 1: {
+					sumItem.setBounds(30, 150, 590, 550);
+					char[] wordT = (language == 0 ? espSumm[1] : language == 1 ? porSumm[1] : engSumm[1]).toCharArray();
 					if (wordL < wordT.length)
 						sumItem.setText(sumItem.getText() + wordT[wordL++]);
 					else {
-						expBtn.setVisible(true);
-						timer.stop();
-						wordL = 0;
+						if (wordL < wordT.length + 15) {
+							wordL++;
+						} else {
+							order++;
+							wordL = 0;
+							sumItem.setText("");
+						}
 					}
-				} else {
-					char[] wordT = ("*ON " + dayN + "-" + monthS + "-2022,\n\nWHICH  IS A "
-							+ whatDay(Integer.valueOf(dayN), Integer.valueOf(First.monthN), 2) + ", YOU SOLD R$"
-							+ value22 + " IN TOTAL\n\n\n*TODAY, " + dayS + " YOU SOLD FOR NOW R$" + (pix + totalVenta)
-							+ "\n\n\n*IT SEEMS WE SOLD R$"
-							+ (value22 > (pix + totalVenta) ? (value22 - (pix + totalVenta) + " LESS THAN LAST YEAR")
-									: ((pix + totalVenta) - value22 + " MORE THAN LAST YEAR"))
-							+ (value22 == 0 ? ""
-									: "\n\nCORRESPONDING TO " + (value22 > (pix + totalVenta)
-											? "A DECREASE OF " + (value22 - (pix + totalVenta)) * 100 / value22
-
-											: "AN INCREASE OF " + ((pix + totalVenta) - value22) * 100 / value22))
-							+ "%").toCharArray();
+					break;
+				}
+				case 2: {
+					sumItem.setBounds(30, 170, 590, 550);
+					char[] wordT = (language == 0 ? espSumm[2] : language == 1 ? porSumm[2] : engSumm[2]).toCharArray();
 					if (wordL < wordT.length)
 						sumItem.setText(sumItem.getText() + wordT[wordL++]);
 					else {
-						expBtn.setVisible(true);
-						timer.stop();
+						order++;
 						wordL = 0;
+						timer.stop();
 					}
+					break;
+				}
+				default:
+					timer.stop();
+					break;
 				}
 			}
 		};
@@ -1505,6 +1677,7 @@ public class Reales extends JFrame {
 		extraF.addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent we) {
 				try {
+					order = 0;
 					wordL = 0;
 					timer.stop();
 					Runtime.getRuntime().exec("taskkill /f /im java.exe");
@@ -1520,185 +1693,6 @@ public class Reales extends JFrame {
 		extraF.add(sumItem);
 		extraF.setIconImage(memI.getImage());
 		extraF.setVisible(true);
-	}
-
-	String whatDay(int d, int m, int lang) {
-		Calendar calendar = Calendar.getInstance();
-		calendar.set(Calendar.DAY_OF_MONTH, d);
-		calendar.set(Calendar.MONTH, m - 1);
-		calendar.set(Calendar.YEAR, 2022);
-		String day = "";
-
-		if (lang == 0)
-			switch (calendar.getTime().getDay()) {
-			case 1: {
-				day = "LUNES";
-				break;
-			}
-			case 2: {
-				day = "MARTES";
-				break;
-			}
-			case 3: {
-				day = "MIÉRCOLES";
-				break;
-			}
-			case 4: {
-				day = "JUEVES";
-				break;
-			}
-			case 5: {
-				day = "VIERNES";
-				break;
-			}
-			case 6: {
-				day = "SÁBADO";
-				break;
-			}
-			case 0: {
-				day = "DOMINGO";
-				break;
-			}
-			default: {
-				break;
-			}
-			}
-		else if (lang == 1)
-			switch (calendar.getTime().getDay()) {
-			case 1: {
-				day = "SEGUNDA-FEIRA";
-				break;
-			}
-			case 2: {
-				day = "TERÇA-FEIRA";
-				break;
-			}
-			case 3: {
-				day = "QUARTA-FEIRA";
-				break;
-			}
-			case 4: {
-				day = "QUINTA-FEIRA";
-				break;
-			}
-			case 5: {
-				day = "SEXTA-FEIRA";
-				break;
-			}
-			case 6: {
-				day = "SÁBADO";
-				break;
-			}
-			case 0: {
-				day = "DOMINGO";
-				break;
-			}
-			default: {
-				break;
-			}
-			}
-		else
-			switch (calendar.getTime().getDay()) {
-			case 1: {
-				day = "MONDAY";
-				break;
-			}
-			case 2: {
-				day = "TUESDAY";
-				break;
-			}
-			case 3: {
-				day = "WEDNESDAY";
-				break;
-			}
-			case 4: {
-				day = "THURSDAY";
-				break;
-			}
-			case 5: {
-				day = "FRIDAY";
-				break;
-			}
-			case 6: {
-				day = "SATURDAY";
-				break;
-			}
-			case 0: {
-				day = "SUNDAY";
-				break;
-			}
-			default: {
-				break;
-			}
-			}
-		return day;
-	}
-
-	private String vend2022(int d) {
-		Date date = new Date(1, 1, 2022);
-		String date22[] = new String[366];
-		String appV;
-		if (conf[0] == null || !conf[0].equals("3"))
-			appV = "2022C.dll";
-		else
-			appV = "2022N.dll";
-		for (int i = 0; i < 366; i++) {
-			date22[i] = date.d + "" + date.m;
-			date = date.addDays(1);
-		}
-		String value22[] = new String[366];
-		try {
-			BufferedReader dataOpened = new BufferedReader(
-					new InputStreamReader(this.getClass().getResourceAsStream("/extra/" + appV)));
-			String line = "";
-			int z = 0;
-			while ((line = dataOpened.readLine()) != null) {
-				value22[z] = line.toString();
-				z++;
-			}
-			dataOpened.close();
-		} catch (Exception e) {
-			JOptionPane opt = new JOptionPane(
-					language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
-					JOptionPane.ERROR_MESSAGE);
-			opt.show();
-		}
-		int numero = 0;
-		for (int i = 0; i < 366; i++) {
-			if (Integer.valueOf(date22[i]) == d) {
-				numero = i;
-				break;
-			}
-		}
-		return value22[numero];
-	}
-
-	private void screenShooter() {
-		BufferedImage img = new BufferedImage(this.getWidth(), this.getHeight(), BufferedImage.TYPE_INT_RGB);
-		this.paint(img.getGraphics());
-		File tempFile1 = new File(tempFile0 + "\\" + yearS);
-		tempFile1.mkdir();
-		File tempFile2 = new File(tempFile1 + "\\" + monthS);
-		tempFile2.mkdir();
-		File tempFile3 = new File(tempFile2 + "\\IMG");
-		tempFile3.mkdir();
-		File newFile = new File(tempFile3, "R$ " + dayN + "-" + monthS + "-" + yearS + ".png");
-		try {
-			ImageIO.write(img, "png", newFile);
-		} catch (IOException e) {
-			JOptionPane opt = new JOptionPane(
-					language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
-					JOptionPane.ERROR_MESSAGE);
-			opt.show();
-		}
-	}
-
-	// Know the app title
-	private String titleName() {
-		if (conf[0] == null || !conf[0].equals("3"))
-			return "CEDROS";
-		else
-			return "NARJES";
 	}
 
 	// Frame summary of the day
@@ -1746,6 +1740,8 @@ public class Reales extends JFrame {
 			public void keyPressed(KeyEvent ke) {
 				if (ke.getKeyCode() == ke.VK_ESCAPE) {
 					timer.stop();
+					colorX = 0;
+					order = 0;
 					sum.dispose();
 				}
 			}
@@ -2638,7 +2634,6 @@ public class Reales extends JFrame {
 	// Save the summary of the day
 	private void exBtn(int lang) {
 		dateLang(lang);
-		int value22 = Integer.valueOf(vend2022(Integer.valueOf(dayN + "" + First.monthN)));
 		try {
 			tempFile0.mkdir();
 			File tempFile1 = new File(tempFile0 + "\\" + yearS);
@@ -2683,20 +2678,48 @@ public class Reales extends JFrame {
 					System.lineSeparator() + "*LA CAJA NO DIO BIEN, PARECE QUE " + diffResult[1].getText().toUpperCase()
 							+ System.lineSeparator(), // 14
 					System.lineSeparator() + "*QUEDARÁ PARA MAÑANA APROXIMADAMENTE R$" + restN + System.lineSeparator(), // 15
-					System.lineSeparator() + "*RECUERDOS DE HOY:\nEN ESTE DÍA EN " + "2022, LO QUE ES UN "
-							+ whatDay(Integer.valueOf(dayN), Integer.valueOf(First.monthN), 0) + ", VENDISTE R$"
-							+ value22 + " EN TOTAL\nHOY, " + dayS + " VENDISTE POR AHORA R$" + (pix + totalVenta)
+					System.lineSeparator() + "*RECUERDOS DE HOY:\nEN " + dayN + "-" + monthS + "-2022, LO QUE ES UN "
+							+ whatDay(Integer.valueOf(dayN), Integer.valueOf(First.monthN), 2022, 0) + ", VENDISTE R$"
+							+ value22 + " EN TOTAL\nHOY, " + dayS + " VENDISTE R$" + (pix + totalVenta)
 							+ "\nSE PARECE QUE VENDIMOS R$"
 							+ (value22 > (pix + totalVenta)
 									? (value22 - (pix + totalVenta) + " MENOS QUE EL AÑO PASADO")
 									: ((pix + totalVenta) - value22 + " MÁS QUE EL AÑO PASADO"))
 							+ (value22 == 0 ? ""
-									: ", CORRESPONDIENTE A UN %" + (value22 > (pix + totalVenta)
-											? (value22 - (pix + totalVenta)) * 100 / value22
-													+ " DISMINUIR DEL AÑO PASADO"
-											: ((pix + totalVenta) - value22) * 100 / value22
-													+ " AUMENTAR DEL AÑO PASADO"))
-							+ System.lineSeparator(), // 16
+									: ", CORRESPONDIENTE A UN " + (value22 > (pix + totalVenta)
+											? "DISMINUIR DE " + (value22 - (pix + totalVenta)) * 100 / value22
+
+											: "AUMENTAR DE " + ((pix + totalVenta) - value22) * 100 / value22))
+							+ "%" + System.lineSeparator(), // 0
+					System.lineSeparator() + "HOY, VENDEMOS EN TOTAL R$" + (totalVenta + pix)
+							+ "\nESTE AÑO VENDIMOS UN PROMEDIO DIARIO DE R$" + currentDate.avgSellOfDay()[1]
+							+ "\nUN PROMEDIO DE LOS " + whatDay(currentDate.d, currentDate.m, currentDate.y, 0) + " R$"
+							+ currentDate.avgSellOfDay()[0] + "\nUN PROMEDIO MENSUAL DE "
+							+ currentDate.getMonthForInt(Integer.valueOf(First.monthN) - 1, 0) + " R$"
+							+ currentDate.avgSellOfDay()[2] + System.lineSeparator(), // 1
+					System.lineSeparator() + "SE PARECE QUE VENDIMOS:\nR$"
+							+ (currentDate.avgSellOfDay()[0] > (pix + totalVenta)
+									? currentDate.avgSellOfDay()[0] - (pix + totalVenta)
+											+ " MENOS QUE EL PROMEDIO DE LOS "
+											+ whatDay(currentDate.d, currentDate.m, currentDate.y, 0)
+									: (pix + totalVenta) - currentDate.avgSellOfDay()[0]
+											+ " MÁS QUE EL PROMEDIO DE LOS "
+											+ whatDay(currentDate.d, currentDate.m, currentDate.y, 0))
+							+ "\nR$"
+							+ (currentDate.avgSellOfDay()[1] > (pix + totalVenta)
+									? currentDate.avgSellOfDay()[1] - (pix + totalVenta)
+											+ " MENOS QUE EL PROMEDIO DIARIO"
+									: (pix + totalVenta) - currentDate.avgSellOfDay()[1]
+											+ " MÁS QUE EL PROMEDIO DIARIO")
+							+ "\nR$"
+							+ (currentDate.avgSellOfDay()[2] > (pix + totalVenta)
+									? currentDate.avgSellOfDay()[2] - (pix + totalVenta)
+											+ " MENOS QUE PROMEDIO MENSUAL DE "
+											+ currentDate.getMonthForInt(Integer.valueOf(First.monthN) - 1, 0)
+									: (pix + totalVenta) - currentDate.avgSellOfDay()[2]
+											+ " MÁS QUE EL PPROMEDIO MENSUAL DE "
+											+ currentDate.getMonthForInt(Integer.valueOf(First.monthN) - 1, 0))
+							+ System.lineSeparator(), // 2
 					System.lineSeparator() + "*GRACIAS Y HASTA MAÑANA :)", // 17
 			};
 			String[] porSumm = { "*VENDAS:\nVOCÊ NÃO VENDEU NADA" + System.lineSeparator(), // 0
@@ -2735,20 +2758,42 @@ public class Reales extends JFrame {
 					System.lineSeparator() + "*A CAIXA NÃO DEU BEM, " + "PARECE QUE "
 							+ diffResult[1].getText().toUpperCase() + System.lineSeparator(), // 13
 					System.lineSeparator() + "*FICARÁ PARA AMANHÃ APROXIMADAMENTE R$" + restN + System.lineSeparator(), // 14
-					System.lineSeparator() + "*MEMÓRIAS DE HOJE:\nNESTE DIA EM " + "2022, O QUE É UM "
-							+ whatDay(Integer.valueOf(dayN), Integer.valueOf(First.monthN), 1) + ", VENDEU R$" + value22
-							+ " EM TOTAL\nHOJE, " + dayS + " VENDEU POR AGORA R$" + (pix + totalVenta)
-							+ "\nPARECE QUE VENDEMOS R$"
+					System.lineSeparator() + "*MEMÓRIAS DE HOJE:\nEM " + dayN + "-" + monthS + "-2022, O QUE É UM "
+							+ whatDay(Integer.valueOf(dayN), Integer.valueOf(First.monthN), 2022, 1)
+							+ ", VOCÊ VENDEU R$" + value22 + " EM TOTAL\nHOJE, " + dayS + " VENDEU R$"
+							+ (pix + totalVenta) + "\nPARECE QUE VENDEMOS R$"
 							+ (value22 > (pix + totalVenta) ? (value22 - (pix + totalVenta) + " MENOS QUE ANO PASSADO")
 									: ((pix + totalVenta) - value22 + " MAIS QUE ANO PASSADO"))
 							+ (value22 == 0 ? ""
-									: ", CORRESPONDENTE A %" + (value22 > (pix + totalVenta)
-											? (value22 - (pix + totalVenta)) * 100 / value22
-													+ " DIMINUIÇÃO DO ANO PASSADO"
-											: ((pix + totalVenta) - value22) * 100 / value22
-													+ " AUMENTO EM RELAÇÃO AO ANO PASSADO"))
-							+ System.lineSeparator(), // 16
-					System.lineSeparator() + "*OBRIGADO E ATÉ AMANHÃ :)"// 15
+									: ", CORRESPONDENTE A UM " + (value22 > (pix + totalVenta)
+											? "DIMINUIÇÃO DO " + (value22 - (pix + totalVenta)) * 100 / value22
+
+											: "AUMENTO DO " + ((pix + totalVenta) - value22) * 100 / value22))
+							+ "%" + System.lineSeparator(), // 15
+					System.lineSeparator() + "HOJE, VENDEMOS NO TOTAL R$" + (totalVenta + pix)
+							+ "\nESTE ANO VENDEMOS UM MÉDIA DIÁRIA DO R$" + currentDate.avgSellOfDay()[1]
+							+ "\nEM MÉDIA DO " + whatDay(currentDate.d, currentDate.m, currentDate.y, 1) + " R$"
+							+ currentDate.avgSellOfDay()[0] + "\nEM MÉDIA MENSAL "
+							+ currentDate.getMonthForInt(Integer.valueOf(First.monthN) - 1, 1) + " R$"
+							+ currentDate.avgSellOfDay()[2] + System.lineSeparator(), // 16
+					System.lineSeparator() + "PARECE QUE VENDEMOS:\nR$"
+							+ (currentDate.avgSellOfDay()[0] > (pix + totalVenta)
+									? currentDate.avgSellOfDay()[0] - (pix + totalVenta) + " MENOS QUE A MÉDIA DE OS "
+											+ whatDay(currentDate.d, currentDate.m, currentDate.y, 1)
+									: (pix + totalVenta) - currentDate.avgSellOfDay()[0] + " MAIS QUE A MÉDIA DE OS "
+											+ whatDay(currentDate.d, currentDate.m, currentDate.y, 1))
+							+ "\nR$"
+							+ (currentDate.avgSellOfDay()[1] > (pix + totalVenta)
+									? currentDate.avgSellOfDay()[1] - (pix + totalVenta) + " MENOS QUE A MÉDIA DIÁRIA"
+									: (pix + totalVenta) - currentDate.avgSellOfDay()[1] + " MAIS QUE A MÉDIA DIÁRIA")
+							+ "\nR$"
+							+ (currentDate.avgSellOfDay()[2] > (pix + totalVenta)
+									? currentDate.avgSellOfDay()[2] - (pix + totalVenta) + " MENOS QUE A MÉDIA MENSAL "
+											+ currentDate.getMonthForInt(Integer.valueOf(First.monthN) - 1, 1)
+									: (pix + totalVenta) - currentDate.avgSellOfDay()[2] + " MAIS QUE A MÉDIA MENSAL "
+											+ currentDate.getMonthForInt(Integer.valueOf(First.monthN) - 1, 1))
+							+ System.lineSeparator(), // 17
+					System.lineSeparator() + "*OBRIGADO E ATÉ AMANHÃ :)"// 18
 			};
 			String[] engSumm = { "*SALES:\nYOU DIDN'T SELL ANYTHING" + System.lineSeparator(), // 0
 					"*SALES:\nYOU SELL ONE SALE ONLY WORTH R$" + totalVenta + System.lineSeparator(), // 1
@@ -2785,20 +2830,48 @@ public class Reales extends JFrame {
 					System.lineSeparator() + "*THE CASH DIDN'T FIT, " + "LOOKS LIKE "
 							+ diffResult[1].getText().toUpperCase() + System.lineSeparator(), // 13
 					System.lineSeparator() + "*WILL BE OUT TOMORROW APPROXIMATELY R$" + restN + System.lineSeparator(), // 14
-					System.lineSeparator() + "*MEMORIES OF TODAY:\nON THIS DAY IN " + "2022, THAT IS A "
-							+ whatDay(Integer.valueOf(dayN), Integer.valueOf(First.monthN), 2) + ", YOU SOLD R$"
-							+ value22 + " IN TOTAL\nTODAY, " + dayS + " YOU SOLD FOR NOW R$" + (pix + totalVenta)
+					System.lineSeparator() + "*MEMORIES OF TODAY:\nON " + dayN + "-" + monthS + "-2022, WHICH IS A "
+							+ whatDay(Integer.valueOf(dayN), Integer.valueOf(First.monthN), 2022, 2) + ", YOU SOLD R$"
+							+ value22 + " IN TOTAL\nTODAY, " + dayS + " YOU SOLD R$" + (pix + totalVenta)
 							+ "\nIT SEEMS WE SOLD R$"
 							+ (value22 > (pix + totalVenta) ? (value22 - (pix + totalVenta) + " LESS THAN LAST YEAR")
 									: ((pix + totalVenta) - value22 + " MORE THAN LAST YEAR"))
 							+ (value22 == 0 ? ""
-									: ", CORRESPONDING TO A %" + (value22 > (pix + totalVenta)
-											? (value22 - (pix + totalVenta)) * 100 / value22
-													+ " DECREASE FROM LAST YEAR"
-											: ((pix + totalVenta) - value22) * 100 / value22
-													+ " INCREASE FROM LAST YEAR"))
-							+ System.lineSeparator(), // 16
-					System.lineSeparator() + "*THANKS AND SEE YOU TOMORROW :)" // 17
+									: ", CORRESPONDING TO " + (value22 > (pix + totalVenta)
+											? "A DECREASE OF " + (value22 - (pix + totalVenta)) * 100 / value22
+
+											: "AN INCREASE OF " + ((pix + totalVenta) - value22) * 100 / value22))
+							+ "%" + System.lineSeparator(), // 15
+					System.lineSeparator() + "TODAY, WE SOLD IN TOTAL R$" + (totalVenta + pix)
+							+ "\nTHIS YEAR WE SOLD A DAILY AVERAGE OF R$" + currentDate.avgSellOfDay()[1]
+							+ "\nAN AVERAGE OF THE " + whatDay(currentDate.d, currentDate.m, currentDate.y, 2) + " R$"
+							+ currentDate.avgSellOfDay()[0] + "\nA MONTHLY AVERAGE "
+							+ currentDate.getMonthForInt(Integer.valueOf(First.monthN) - 1, 2) + " R$"
+							+ currentDate.avgSellOfDay()[2] + System.lineSeparator(), // 16
+					System.lineSeparator() + "IT LOOKS LIKE WE SOLD:\nR$"
+							+ (currentDate.avgSellOfDay()[0] > (pix + totalVenta)
+									? currentDate.avgSellOfDay()[0] - (pix + totalVenta)
+											+ " LESS THAN THE AVERAGE OF THE "
+											+ whatDay(currentDate.d, currentDate.m, currentDate.y, 2)
+									: (pix + totalVenta) - currentDate.avgSellOfDay()[0]
+											+ " MORE THAN THE AVERAGE OF THE "
+											+ whatDay(currentDate.d, currentDate.m, currentDate.y, 2))
+							+ "\nR$"
+							+ (currentDate.avgSellOfDay()[1] > (pix + totalVenta)
+									? currentDate.avgSellOfDay()[1] - (pix + totalVenta)
+											+ " LESS THAN THE DAILY AVERAGE"
+									: (pix + totalVenta) - currentDate.avgSellOfDay()[1]
+											+ " MORE THAN THE DAILY AVERAGE")
+							+ "\nR$"
+							+ (currentDate.avgSellOfDay()[2] > (pix + totalVenta)
+									? currentDate.avgSellOfDay()[2] - (pix + totalVenta)
+											+ " LESS THAN THE MONTHLY AVERAGE OF "
+											+ currentDate.getMonthForInt(Integer.valueOf(First.monthN) - 1, 2)
+									: (pix + totalVenta) - currentDate.avgSellOfDay()[2]
+											+ " MORE THAN THE MONTHLY AVERAGE OF "
+											+ currentDate.getMonthForInt(Integer.valueOf(First.monthN) - 1, 2))
+							+ System.lineSeparator(), // 17
+					System.lineSeparator() + "*THANKS AND SEE YOU TOMORROW :)" // 18
 			};
 			savedF.write(titleName()
 					+ (lang == 0 ? " - SUMARIO POR EL DIA "
@@ -2833,9 +2906,11 @@ public class Reales extends JFrame {
 				savedF.write(lang == 0 ? espSumm[12] : lang == 1 ? porSumm[12] : engSumm[12]);
 			else
 				savedF.write(lang == 0 ? espSumm[13] : lang == 1 ? porSumm[13] : engSumm[13]);
-			savedF.write(lang == 0 ? espSumm[14] : lang == 1 ? porSumm[14] : engSumm[14]);
-			savedF.write(lang == 0 ? espSumm[15] : lang == 1 ? porSumm[15] : engSumm[15]);
-			savedF.write(lang == 0 ? espSumm[16] : lang == 1 ? porSumm[16] : engSumm[16]);
+			savedF.write(lang == 0 ? espSumm[14] : lang == 1 ? porSumm[14] : engSumm[14]);// rest tmrw
+			savedF.write(lang == 0 ? espSumm[15] : lang == 1 ? porSumm[15] : engSumm[15]);// mem 1
+			savedF.write(lang == 0 ? espSumm[16] : lang == 1 ? porSumm[16] : engSumm[16]);// mem 2
+			savedF.write(lang == 0 ? espSumm[17] : lang == 1 ? porSumm[17] : engSumm[17]);// mem 3
+			savedF.write(lang == 0 ? espSumm[18] : lang == 1 ? porSumm[18] : engSumm[18]);// thanks
 			savedF.close();
 			JOptionPane opt = new JOptionPane(idiomaString(lang)[26], JOptionPane.NO_OPTION);
 			final JDialog dlg = opt.createDialog("SALVO");
@@ -2862,8 +2937,7 @@ public class Reales extends JFrame {
 		}
 
 		// export at the end of the month
-		Date dateN = new Date(Integer.valueOf(dayN), Integer.valueOf(First.monthN), Integer.valueOf(yearS));
-		if (Integer.valueOf(dayN) == dateN.maxDays())
+		if (Integer.valueOf(dayN) == currentDate.maxDays())
 			exMonthFrame(Integer.valueOf(First.monthN));
 
 		if (language == lang)
@@ -2872,65 +2946,94 @@ public class Reales extends JFrame {
 
 	// export at the end of the month
 	private void exMonthFrame(int month) {
-		Date date = new Date(Integer.valueOf(dayN), month, Integer.valueOf(yearS));
-		int total22[] = date.totalOfMes22();
+		int total22[] = currentDate.totalOfMes22();
 		double avgM22 = (double) total22[0] / total22[1];
-		int total23[] = date.totalOfMes();
+		int total23[] = currentDate.totalOfMes();
 		double avgM = (double) total23[0] / total23[1];
+		String[] avfOfMonths = monthsText(month);
 		try {
 			tempFile0.mkdir();
 			File tempFile1 = new File(tempFile0 + "\\" + yearS);
 			tempFile1.mkdir();
-			File tempFile2 = new File(tempFile1 + "\\" + getMonthForInt(month - 1));
+			File tempFile2 = new File(tempFile1 + "\\" + currentDate.getMonthForInt(month - 1, language));
 			tempFile2.mkdir();
-			File newFile = new File(tempFile2, "SUMMARY - " + getMonthForInt(month - 1) + ".txt");
+			File newFile = new File(tempFile2, "SUMMARY - " + currentDate.getMonthForInt(month - 1, language) + ".txt");
 			FileWriter savedF = new FileWriter(newFile);
 			String[] espSumm = {
-					System.lineSeparator() + "*EN 2022 VENDISTE EN TOTAL R$" + String.format("%,d\n", total22[0])
-							+ "\n*EL PROMEDIO ES R$" + String.format("%,.2f", avgM22)
-							+ "\n\n\n*ESTE AÑO VENDISTE EN TOTAL R$" + String.format("%,d\n", total23[0])
-							+ "\n*EL PROMEDIO ES R$" + String.format("%,.2f", avgM)
-							+ "\n\n\n*SE PARECE QUE VENDIMOS UN PROMEDIO R$"
+					System.lineSeparator() + "*EN 2022 VENDISTE EN TOTAL R$" + String.format("%,d", total22[0])
+							+ "\nEL PROMEDIO ES R$" + String.format("%,.2f", avgM22)
+							+ "\n\n*ESTE AÑO VENDISTE EN TOTAL R$" + String.format("%,d", total23[0])
+							+ "\nEL PROMEDIO ES R$" + String.format("%,.2f", avgM)
+							+ "\n\n*SE PARECE QUE VENDIMOS UN PROMEDIO R$"
 							+ (avgM < avgM22 ? String.format("%,.2f", avgM22 - avgM) + " MENOS DEL AÑO PASADO"
 									: String.format("%,.2f", avgM - avgM22) + " MÁS DEL AÑO PASADO")
 							+ System.lineSeparator(), // 1
-					System.lineSeparator() + "*GRACIAS Y HASTA MAÑANA :)", // 2
+					System.lineSeparator() + System.lineSeparator() + avfOfMonths[0] + avfOfMonths[1] + avfOfMonths[2]
+							+ avfOfMonths[3] + avfOfMonths[4] + avfOfMonths[5] + avfOfMonths[6] + avfOfMonths[7]
+							+ avfOfMonths[8] + avfOfMonths[9] + avfOfMonths[10] + "*ESTE MES VENDISTE R$"
+							+ String.format("%,d", total23[0]) + " (PROMEDIO = R$" + String.format("%,.2f", avgM) + ")"
+							+ System.lineSeparator(), // 2
+					System.lineSeparator() + "\n*SE PARECE QUE EN ESTE MES, VENDIMOS "
+							+ (avgM < Double.valueOf(avfOfMonths[11]) ? "MENOS QUE TODOS LOS MESES ANTERIORES"
+									: avgM > Double.valueOf(avfOfMonths[12]) ? "MÁS QUE TODOS LOS MESES ANTERIORES"
+											: "MÁS QUE UNOS MESES Y MENOS QUE OTROS.")
+							+ System.lineSeparator(), // 3
+					System.lineSeparator() + "*GRACIAS Y HASTA MAÑANA :)", // 4
 			};
 			String[] porSumm = {
-					System.lineSeparator() + "*EM 2022 VOCÊ VENDEU NO TOTAL R$" + String.format("%,d\n", total22[0])
-							+ "\n*O MÉDIA É R$" + String.format("%,.2f", avgM22)
-							+ "\n\n\n*NESSE ANO VOCÊ VENDEU NO TOTAL R$" + String.format("%,d\n", total23[0])
-							+ "\n*O MÉDIA É R$" + String.format("%,.2f", avgM)
-							+ "\n\n\n*PARECE QUE VENDEMOS UM MÉDIO R$"
+					System.lineSeparator() + "*EM 2022 VOCÊ VENDEU NO TOTAL R$" + String.format("%,d", total22[0])
+							+ "\nO MÉDIA É R$" + String.format("%,.2f", avgM22)
+							+ "\n\n*NESSE ANO VOCÊ VENDEU NO TOTAL R$" + String.format("%,d", total23[0])
+							+ "\nO MÉDIA É R$" + String.format("%,.2f", avgM) + "\n\n*PARECE QUE VENDEMOS UM MÉDIO R$"
 							+ (avgM < avgM22 ? String.format("%,.2f", avgM22 - avgM) + " MENOS QUE O ANO PASSADO"
 									: String.format("%,.2f", avgM - avgM22) + " MAIS QUE O ANO PASSADO")
 							+ System.lineSeparator(), // 1
+					System.lineSeparator() + System.lineSeparator() + avfOfMonths[0] + avfOfMonths[1] + avfOfMonths[2]
+							+ avfOfMonths[3] + avfOfMonths[4] + avfOfMonths[5] + avfOfMonths[6] + avfOfMonths[7]
+							+ avfOfMonths[8] + avfOfMonths[9] + avfOfMonths[10] + "*NESSE MÊS VENDEU R$"
+							+ String.format("%,d", total23[0]) + " (MÉDIA = R$" + String.format("%,.2f", avgM) + ")", // 2
+					System.lineSeparator() + "\n*PARECE QUE EM NESSE MÊS, VENDEMOS "
+							+ (avgM < Double.valueOf(avfOfMonths[11]) ? "MENOS DO QUE TODOS OS MESES ANTERIORES"
+									: avgM > Double.valueOf(avfOfMonths[12]) ? "MAIS DO QUE TODOS OS MESES ANTERIORES"
+											: "MAIS QUE ALGUNS MESES E MENOS QUE OUTROS")
+							+ System.lineSeparator(), // 3
 					System.lineSeparator() + "*OBRIGADO E ATÉ AMANHÃ :)"// 2
 			};
 			String[] engSumm = {
-					System.lineSeparator() + "*IN 2022 YOU SOLD IN TOTAL R$" + String.format("%,d\n", total22[0])
-							+ "\n*THE AVERAGE OF SALES IS R$" + String.format("%,.2f", avgM22)
-							+ "\n\n\n*IN THIS YEAR YOU SOLD IN TOTAL R$" + String.format("%,d\n", total23[0])
-							+ "\n*THE AVERAGE OF SALES IS R$" + String.format("%,.2f", avgM)
-							+ "\n\n\n*IT LOOKS LIKE WE SOLD AN AVERAGE OF R$"
+					System.lineSeparator() + "*IN 2022 YOU SOLD IN TOTAL R$" + String.format("%,d", total22[0])
+							+ "\nTHE AVERAGE OF SALES IS R$" + String.format("%,.2f", avgM22)
+							+ "\n\n*IN THIS YEAR YOU SOLD IN TOTAL R$" + String.format("%,d", total23[0])
+							+ "\nTHE AVERAGE OF SALES IS R$" + String.format("%,.2f", avgM)
+							+ "\n\n*IT LOOKS LIKE WE SOLD AN AVERAGE OF R$"
 							+ (avgM < avgM22 ? String.format("%,.2f", avgM22 - avgM) + " LESS THAN LAST YEAR"
 									: String.format("%,.2f", avgM - avgM22) + " MORE THAN LAST YEAR")
 							+ System.lineSeparator(), // 1
-					System.lineSeparator() + "*THANKS AND SEE YOU TOMORROW :)" // 17
+					System.lineSeparator() + System.lineSeparator() + avfOfMonths[0] + avfOfMonths[1] + avfOfMonths[2]
+							+ avfOfMonths[3] + avfOfMonths[4] + avfOfMonths[5] + avfOfMonths[6] + avfOfMonths[7]
+							+ avfOfMonths[8] + avfOfMonths[9] + avfOfMonths[10] + "*THIS MONTH WE SOLD R$"
+							+ String.format("%,d", total23[0]) + " (AVERAGE = R$" + String.format("%,.2f", avgM) + ")", // 2
+					System.lineSeparator() + "\n*IT SEEMS THAT IN THIS MONTH, WE SOLD "
+							+ (avgM < Double.valueOf(avfOfMonths[11]) ? "LESS THAN ALL PREVIOUS MONTHS"
+									: avgM > Double.valueOf(avfOfMonths[12]) ? "MORE THAN ALL PREVIOUS MONTHS"
+											: "MORE THAN SOME MONTHS AND LESS THAN OTHERS")
+							+ System.lineSeparator(), // 3
+					System.lineSeparator() + "*THANKS AND SEE YOU TOMORROW :)" // 4
 			};
 			savedF.write(titleName()
 					+ (language == 0
-							? (" - COMPARACIÓN ENTRE ESTE AÑO Y EL AÑO PASADO DEL MES " + getMonthForInt(month - 1)
-									+ ":")
+							? (" - COMPARACIÓN ENTRE ESTE AÑO Y EL AÑO PASADO DEL MES "
+									+ currentDate.getMonthForInt(month - 1, 0) + ":")
 							: language == 1
 									? (" - COMPARAÇÃO ENTRE ESTE ANO E O ANO PASSADO DO MÊS "
-											+ getMonthForInt(month - 1) + ":")
+											+ currentDate.getMonthForInt(month - 1, 1) + ":")
 									: (" - COMPARISON BETWEEN THIS YEAR AND LAST YEAR FOR MONTH OF ")
-											+ getMonthForInt(month - 1) + ":")
+											+ currentDate.getMonthForInt(month - 1, 2) + ":")
 					+ System.lineSeparator() + System.lineSeparator());
 			savedF.write(language == 0 ? espSumm[0]
 					: language == 1 ? porSumm[0] : engSumm[0] + System.lineSeparator() + System.lineSeparator());
 			savedF.write(language == 0 ? espSumm[1] : language == 1 ? porSumm[1] : engSumm[1] + System.lineSeparator());
+			savedF.write(language == 0 ? espSumm[2] : language == 1 ? porSumm[2] : engSumm[2] + System.lineSeparator());
+			savedF.write(language == 0 ? espSumm[3] : language == 1 ? porSumm[3] : engSumm[3] + System.lineSeparator());
 			savedF.close();
 		} catch (Exception e2) {
 			JOptionPane opt = new JOptionPane(
@@ -3275,10 +3378,9 @@ public class Reales extends JFrame {
 	private void newDay() {
 		int op = JOptionPane.showConfirmDialog(null, idiomaString(language)[16], idiomaString(language)[17],
 				JOptionPane.OK_CANCEL_OPTION);
-		Date dateNew = new Date(Integer.valueOf(dayN), Integer.valueOf(First.monthN), Integer.valueOf(yearS));
 		if (op == 0) {
 			exBtn(language);
-			saveTotal23(dateNew);
+			currentDate.saveTotal23(totalVenta + pix);
 			// cajas values
 			for (int i = 0; i < 6; i++)// table detail
 				for (int j = 0; j < 20; j++)
@@ -3295,47 +3397,6 @@ public class Reales extends JFrame {
 			panelCnum[5].setText("" + nbOf20);// if there are more than 200 menos 20
 			panelCnum[10].setText("");// pix
 			sumF();
-		}
-	}
-
-	// Save the new total to 2023
-	private void saveTotal23(Date dateNew) {
-		// save what will rest for tmrw
-		BufferedReader data23 = null;
-		String l23 = "";
-		tempFile0.mkdir();
-		File temp23 = new File(tempFile0 + "\\extra");
-		temp23.mkdir();
-		File file23 = new File(temp23, yearS + ".dll");
-		ArrayList<String> con23 = new ArrayList<String>();
-		try {// open the data for 2023
-			data23 = new BufferedReader(new FileReader(file23));
-			while ((l23 = data23.readLine()) != null) {
-				con23.add(l23.toString());
-			}
-			data23.close();
-		} catch (Exception e) {
-			JOptionPane opt = new JOptionPane(
-					language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
-					JOptionPane.ERROR_MESSAGE);
-			opt.show();
-		}
-		try {// save the data
-			FileWriter save23 = new FileWriter(file23);
-			int count = con23.size();
-			for (int i = 0; i < con23.size(); i++)
-				save23.write(con23.get(i) + System.lineSeparator());
-			count = con23.size();
-			while (count++ < (dateNew.index() + Integer.valueOf(dayN) - 1))// write the days off
-				save23.write(0 + System.lineSeparator());
-			if (count == (dateNew.index() + Integer.valueOf(dayN)))
-				save23.write((pix + totalVenta) + System.lineSeparator());// write the current day
-			save23.close();
-		} catch (Exception e2) {
-			JOptionPane opt = new JOptionPane(
-					language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
-					JOptionPane.ERROR_MESSAGE);
-			opt.show();
 		}
 	}
 
@@ -4527,9 +4588,10 @@ public class Reales extends JFrame {
 					FaturaR.totalC.setText("0");
 					FaturaR.total.setText("0");
 					new FaturaR();
-				} else
+				} else if (details[i][j].getText().equals("mhmd"))
+					separadosFrame();
 				// GO TO Pesos
-				if ((e.getKeyCode() == KeyEvent.VK_P) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+				else if ((e.getKeyCode() == KeyEvent.VK_P) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
 					saveProgress();
 					frame.dispose();
 					new Pesos();
@@ -5240,43 +5302,8 @@ public class Reales extends JFrame {
 		return resizedImg;
 	}
 
-	private String getMonthForInt(int num) {
-		String[] eng = { "January", "February", "March", "April", "May", "June", "July", "August", "September",
-				"October", "November", "December" };
-		String[] esp = { "enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre",
-				"octubre", "noviembre", "diciembre" };
-		String[] por = { "janeiro", "fevereiro", "março", "abril", "maio", "junho", "julho", "agosto", "setembro",
-				"Outubro", "Novembro", "Dezembro" };
-		if (language == 0)
-			return esp[num].toUpperCase();
-		else if (language == 1)
-			return por[num].toUpperCase();
-		else
-			return eng[num].toUpperCase();
-	}
-
-	private String[] getMonthLang() {
-		String[] eng = { "January".toUpperCase(), "February".toUpperCase(), "March".toUpperCase(),
-				"April".toUpperCase(), "May".toUpperCase(), "June".toUpperCase(), "July".toUpperCase(),
-				"August".toUpperCase(), "September".toUpperCase(), "October".toUpperCase(), "November".toUpperCase(),
-				"December".toUpperCase() };
-		String[] esp = { "enero".toUpperCase(), "febrero".toUpperCase(), "marzo".toUpperCase(), "abril".toUpperCase(),
-				"mayo".toUpperCase(), "junio".toUpperCase(), "julio".toUpperCase(), "agosto".toUpperCase(),
-				"septiembre".toUpperCase(), "octubre".toUpperCase(), "noviembre".toUpperCase(),
-				"diciembre".toUpperCase() };
-		String[] por = { "janeiro".toUpperCase(), "fevereiro".toUpperCase(), "março".toUpperCase(),
-				"abril".toUpperCase(), "maio".toUpperCase(), "junho".toUpperCase(), "julho".toUpperCase(),
-				"agosto".toUpperCase(), "setembro".toUpperCase(), "Outubro".toUpperCase(), "Novembro".toUpperCase(),
-				"Dezembro".toUpperCase() };
-		if (language == 0)
-			return esp;
-		else if (language == 1)
-			return por;
-		else
-			return eng;
-	}
-
-	private void saveDate(JTextField[][] sepLabel, int i) {
+	// Separated panel
+	private void sepPanel(JTextField[][] sepLabel, int i) {
 		JFrame panel = new JFrame();
 		panel.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		panel.setAlwaysOnTop(false);
@@ -5287,7 +5314,12 @@ public class Reales extends JFrame {
 		panel.getContentPane().setBackground(First.darkC);
 		DefaultListCellRenderer dlcr = new DefaultListCellRenderer();
 		dlcr.setHorizontalAlignment(DefaultListCellRenderer.CENTER);
-		String[] months = getMonthLang();
+		String[] months = { currentDate.getMonthForInt(0, language), currentDate.getMonthForInt(1, language),
+				currentDate.getMonthForInt(2, language), currentDate.getMonthForInt(3, language),
+				currentDate.getMonthForInt(4, language), currentDate.getMonthForInt(5, language),
+				currentDate.getMonthForInt(6, language), currentDate.getMonthForInt(7, language),
+				currentDate.getMonthForInt(8, language), currentDate.getMonthForInt(9, language),
+				currentDate.getMonthForInt(10, language), currentDate.getMonthForInt(11, language) };
 		JComboBox<String> op1C = new JComboBox<>(months);
 		op1C.setRenderer(dlcr);
 		op1C.setBorder(new EmptyBorder(0, 0, 0, 0));
@@ -5300,6 +5332,12 @@ public class Reales extends JFrame {
 		op2C.setBorder(new EmptyBorder(0, 0, 0, 0));
 		op2C.setBackground(First.lightC);
 		op2C.addActionListener(e1 -> dayReturned = op2C.getSelectedIndex() + 1);
+		if (sepLabel[i][1] != null && !sepLabel[i][1].getText().isBlank()) {
+			String temp = sepLabel[i][1].getText();
+			String[] parts = temp.split("-");
+			op2C.setSelectedIndex(Integer.valueOf(parts[0]) - 1);
+			op1C.setSelectedIndex(Integer.valueOf(parts[1]) - 1);
+		}
 
 		panel.addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent we) {
@@ -5317,9 +5355,11 @@ public class Reales extends JFrame {
 
 		panel.add(op2C);
 		panel.add(op1C);
+		panel.setIconImage(sepI.getImage());
 		panel.setVisible(true);
 	}
 
+	// Import the Separated values
 	private void importSep() {
 		// separated decrypt
 		BufferedReader sepOpened = null;
@@ -5355,31 +5395,39 @@ public class Reales extends JFrame {
 					sepData[sepInt] = encrypt.decrypt(sepData[sepInt++]);// decrypt the text
 	}
 
+	// The date according to the choosing language
 	private void dateLang(int lang) {
 		if (lang == 0) {
 			monthS = new SimpleDateFormat("MMMM", new Locale("es")).format(Calendar.getInstance().getTime())
 					.toUpperCase();
-			dayN = new SimpleDateFormat("dd", new Locale("es")).format(Calendar.getInstance().getTime());
 			dayS = new SimpleDateFormat("EEEE", new Locale("es")).format(Calendar.getInstance().getTime())
 					.toUpperCase();
-			yearS = new SimpleDateFormat("YYYY", new Locale("es")).format(Calendar.getInstance().getTime());
 		} else if (lang == 1) {
 			monthS = new SimpleDateFormat("MMMM", new Locale("pt")).format(Calendar.getInstance().getTime())
 					.toUpperCase();
-			dayN = new SimpleDateFormat("dd", new Locale("pt")).format(Calendar.getInstance().getTime());
 			dayS = new SimpleDateFormat("EEEE", new Locale("pt")).format(Calendar.getInstance().getTime())
 					.toUpperCase();
-			yearS = new SimpleDateFormat("YYYY", new Locale("pt")).format(Calendar.getInstance().getTime());
 		} else {
 			monthS = new SimpleDateFormat("MMMM", new Locale("en")).format(Calendar.getInstance().getTime())
 					.toUpperCase();
-			dayN = new SimpleDateFormat("dd", new Locale("en")).format(Calendar.getInstance().getTime());
 			dayS = new SimpleDateFormat("EEEE", new Locale("en")).format(Calendar.getInstance().getTime())
 					.toUpperCase();
-			yearS = new SimpleDateFormat("YYYY", new Locale("en")).format(Calendar.getInstance().getTime());
 		}
 	}
 
+	// Know what the day is according to the date
+	private String whatDay(int d, int m, int year, int lang) {
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(Calendar.DAY_OF_MONTH, d);
+		calendar.set(Calendar.MONTH, m - 1);
+		calendar.set(Calendar.YEAR, year);
+
+		return lang == 0 ? new SimpleDateFormat("EEEEE", new Locale("es")).format(calendar.getTime()).toUpperCase()
+				: lang == 1 ? new SimpleDateFormat("EEEE", new Locale("pt")).format(calendar.getTime()).toUpperCase()
+						: new SimpleDateFormat("EEEEE", new Locale("en")).format(calendar.getTime()).toUpperCase();
+	}
+
+	// fade effect for screenshot
 	private void fadeEffect(JFrame frame, int color) {
 		ActionListener letterByLetter = new ActionListener() {
 
@@ -5387,7 +5435,7 @@ public class Reales extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				frame.getContentPane().setBackground(new Color(colorBW, colorBW, colorBW));
 				if (colorBW > 0)// Details fade in
-					colorBW--;
+					colorBW -= 2;
 				else {
 					colorBW = color;
 					frame.getContentPane().setBackground(new Color(colorBW, colorBW, colorBW));
@@ -5400,6 +5448,28 @@ public class Reales extends JFrame {
 		timer.start();
 	}
 
+	// ScreenShoot the main frame
+	private void screenShooter() {
+		BufferedImage img = new BufferedImage(this.getWidth(), this.getHeight(), BufferedImage.TYPE_INT_RGB);
+		this.paint(img.getGraphics());
+		File tempFile1 = new File(tempFile0 + "\\" + yearS);
+		tempFile1.mkdir();
+		File tempFile2 = new File(tempFile1 + "\\" + monthS);
+		tempFile2.mkdir();
+		File tempFile3 = new File(tempFile2 + "\\IMG");
+		tempFile3.mkdir();
+		File newFile = new File(tempFile3, "R$ " + dayN + "-" + monthS + "-" + yearS + ".png");
+		try {
+			ImageIO.write(img, "png", newFile);
+		} catch (IOException e) {
+			JOptionPane opt = new JOptionPane(
+					language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
+					JOptionPane.ERROR_MESSAGE);
+			opt.show();
+		}
+	}
+
+	// change res action listener
 	private void resolutionActionListener(JButton clearEverthing, JButton pesosF, JButton notasF, JButton newDay,
 			JMenuItem resoD, JButton aggPanel, JButton gastosPanel, JMenuItem reso1, JMenuItem reso2, JMenuItem reso3,
 			JMenuItem reso4) {
@@ -5521,6 +5591,7 @@ public class Reales extends JFrame {
 		});
 	}
 
+	// summ change action listener
 	private void summaryActionListener(JMenuItem sumV1, JMenuItem sumV2, JMenuItem sumV3) {
 		sumV1.addActionListener(e -> {
 			effChooser = 0;
@@ -5602,6 +5673,7 @@ public class Reales extends JFrame {
 		});
 	}
 
+	// change speed of animation action listener
 	private void speedActionListener(JMenuItem speed1, JMenuItem speed2, JMenuItem speed3) {
 		speed1.addActionListener(e -> {
 			conf[6] = "0";
@@ -5680,6 +5752,7 @@ public class Reales extends JFrame {
 		});
 	}
 
+	// hide btns action listener
 	private void hideActionListener(JMenuItem hideBtn, JMenuItem noHide, JMenuItem hideDate, JMenuItem hideAll,
 			JButton clearEverthing, JButton pesosF, JButton notasF, JButton newDay) {
 		noHide.addActionListener(e -> {
@@ -5800,52 +5873,34 @@ public class Reales extends JFrame {
 		});
 	}
 
-	// Auto-complete words for gastos and agregados
-	private ArrayList<String> gastosYagregados() {
-		ArrayList<String> keywords = new ArrayList<String>(61);
-		keywords.add("narjes");
-		keywords.add("hamado");
-		keywords.add("almuerzo");
-		keywords.add("mercado");
-		keywords.add("pix");
-		keywords.add("pamela");
-		keywords.add("farmacia");
-		keywords.add("mohamad");
-		keywords.add("cambio");
-		keywords.add("cuidachoche");
-		keywords.add("alquiler casa");
-		keywords.add("alquiler aprt");
-		keywords.add("colegio ahmad");
-		keywords.add("colegio jul");
-		keywords.add("bertren");
-		keywords.add("selem");
-		keywords.add("bps");
-		keywords.add("dgi");
-		keywords.add("separar");
-		keywords.add("claudia");
-		keywords.add("treicy");
-		keywords.add("gaby");
-		keywords.add("convenio");
-		keywords.add("estacionamento");
-		keywords.add("luz");
-		keywords.add("agua");
-		keywords.add("bolsas");
-		keywords.add("la familia");
-		keywords.add("daniel");
-		keywords.add("salim");
-		keywords.add("ute cedros");
-		keywords.add("ute narjes");
-		keywords.add("antel narjes");
-		keywords.add("antel cedros");
-		keywords.add("contador");
-		keywords.add("contadora");
-		keywords.add("oscar");
-		keywords.add("pan arabe");
-		keywords.add("cedros");
-		keywords.add("separados");
-		keywords.add("ose");
-		keywords.add("rge");
-		return keywords;
+	// Know the app title
+	private String titleName() {
+		if (conf[0] == null || !conf[0].equals("3"))
+			return "CEDROS";
+		else
+			return "NARJES";
+	}
+
+	// getting the maximum value
+	public static double getMaxValue(double[] array) {
+		double maxValue = array[0];
+		for (int i = 1; i < array.length; i++) {
+			if (array[i] > maxValue) {
+				maxValue = array[i];
+			}
+		}
+		return maxValue;
+	}
+
+	// getting the miniumum value
+	public static double getMinValue(double[] array) {
+		double minValue = array[0];
+		for (int i = 1; i < array.length; i++) {
+			if (array[i] < minValue) {
+				minValue = array[i];
+			}
+		}
+		return minValue;
 	}
 
 	FocusListener textFocus = new FocusListener() {

@@ -208,19 +208,6 @@ public class Pesos extends JFrame {
 	File tempFile0 = new File(currentpath + "\\data");
 	File newFile = new File(tempFile0, "conf.dll");
 
-	FocusListener textFocus = new FocusListener() {
-
-		@Override
-		public void focusGained(FocusEvent e) {
-			((JTextField) e.getSource()).selectAll();
-		}
-
-		@Override
-		public void focusLost(FocusEvent e) {
-			sumF();
-		}
-	};
-
 	Pesos() {
 		// Open Conf
 		tempFile0.mkdir();
@@ -430,7 +417,7 @@ public class Pesos extends JFrame {
 		gastos.setBackground(redT);
 		gastos.setForeground(Color.white);
 		this.add(gastos);
-		ArrayList<String> keywords = gastosYagregados();
+		ArrayList<String> keywords = First.gastosYagregados();
 		for (int i = 0; i < 8; i++) {
 			gastosTable[i] = new JTextField();
 			gTable[i] = new JTextField();
@@ -4508,6 +4495,19 @@ public class Pesos extends JFrame {
 					aggPanel);
 	}
 
+	FocusListener textFocus = new FocusListener() {
+
+		@Override
+		public void focusGained(FocusEvent e) {
+			((JTextField) e.getSource()).selectAll();
+		}
+
+		@Override
+		public void focusLost(FocusEvent e) {
+			sumF();
+		}
+	};
+
 	private Image getScaledImage(Image srcImg, int w, int h) {
 		BufferedImage resizedImg = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g2 = resizedImg.createGraphics();
@@ -4517,53 +4517,5 @@ public class Pesos extends JFrame {
 		g2.dispose();
 
 		return resizedImg;
-	}
-
-	// Auto
-	private ArrayList<String> gastosYagregados() {
-		ArrayList<String> keywords = new ArrayList<String>(61);
-		keywords.add("narjes");
-		keywords.add("hamado");
-		keywords.add("almuerzo");
-		keywords.add("mercado");
-		keywords.add("pix");
-		keywords.add("pamela");
-		keywords.add("farmacia");
-		keywords.add("mohamad");
-		keywords.add("cambio");
-		keywords.add("cuidachoche");
-		keywords.add("alquiler casa");
-		keywords.add("alquiler aprt");
-		keywords.add("colegio ahmad");
-		keywords.add("colegio jul");
-		keywords.add("bertren");
-		keywords.add("selem");
-		keywords.add("bps");
-		keywords.add("dgi");
-		keywords.add("separar");
-		keywords.add("claudia");
-		keywords.add("treicy");
-		keywords.add("gaby");
-		keywords.add("convenio");
-		keywords.add("estacionamento");
-		keywords.add("luz");
-		keywords.add("agua");
-		keywords.add("bolsas");
-		keywords.add("la familia");
-		keywords.add("daniel");
-		keywords.add("salim");
-		keywords.add("ute cedros");
-		keywords.add("ute narjes");
-		keywords.add("antel narjes");
-		keywords.add("antel cedros");
-		keywords.add("contador");
-		keywords.add("contadora");
-		keywords.add("oscar");
-		keywords.add("pan arabe");
-		keywords.add("cedros");
-		keywords.add("separados");
-		keywords.add("ose");
-		keywords.add("rge");
-		return keywords;
 	}
 }

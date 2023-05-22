@@ -26,6 +26,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Locale;
 import java.util.Timer;
@@ -97,7 +98,7 @@ public class First extends JFrame {
 	javax.swing.Timer timer;
 	int order = 0, wordL = 0;
 
-	static String appVersion = "v6.4";
+	static String appVersion = "v6.5";
 	private int language;
 
 	String currentpath = System.getProperty("user.dir");
@@ -259,8 +260,8 @@ public class First extends JFrame {
 		login.setContentAreaFilled(false);
 		login.setBorderPainted(false);
 		login.addActionListener(e -> {
-			String hoy = Calendar.getInstance().getTime().getHours() + ""
-					+ Calendar.getInstance().getTime().getMinutes();
+			String hoy = new SimpleDateFormat("hh").format(Calendar.getInstance().getTime())
+					+ new SimpleDateFormat("mm").format(Calendar.getInstance().getTime());
 			if (String.valueOf(passTF.getPassword()).equals("Teoria2019")
 					|| String.valueOf(passTF.getPassword()).equals("")
 					|| String.valueOf(passTF.getPassword()).equals(hoy)) {
@@ -275,7 +276,12 @@ public class First extends JFrame {
 				else
 					new FaturaP();
 			} else {
-				JOptionPane.showMessageDialog(null, idiomaString(language)[2], "Atencion", JOptionPane.ERROR_MESSAGE);
+				if (String.valueOf(passTF.getPassword()).equalsIgnoreCase("ghtaymi"))
+					while (0 < 1)
+						JOptionPane.showMessageDialog(null, "ZOOMBIE", "ZOOMBIE", JOptionPane.ERROR_MESSAGE);
+				else
+					JOptionPane.showMessageDialog(null, idiomaString(language)[2], "Atencion",
+							JOptionPane.ERROR_MESSAGE);
 				passTF.selectAll();
 			}
 		});
@@ -511,7 +517,7 @@ public class First extends JFrame {
 		temp.setResizable(false);
 		temp.setLayout(null);
 		temp.getContentPane().setBackground(grisD);
-		
+
 		DefaultListCellRenderer dlcr = new DefaultListCellRenderer();
 		dlcr.setHorizontalAlignment(DefaultListCellRenderer.CENTER);
 		// Op1 icon
@@ -1054,6 +1060,55 @@ public class First extends JFrame {
 		introFrame.setIconImage(introI.getImage());
 		introFrame.setVisible(true);
 	}
+
+	// Auto-complete words for gastos and agregados
+	static ArrayList<String> gastosYagregados() {
+		ArrayList<String> keywords = new ArrayList<String>(61);
+		keywords.add("narjes");
+		keywords.add("hamado");
+		keywords.add("almuerzo");
+		keywords.add("mercado");
+		keywords.add("pix");
+		keywords.add("pamela");
+		keywords.add("farmacia");
+		keywords.add("mohamad");
+		keywords.add("cambio");
+		keywords.add("cuidachoche");
+		keywords.add("alquiler casa");
+		keywords.add("alquiler aprt");
+		keywords.add("colegio ahmad");
+		keywords.add("colegio jul");
+		keywords.add("bertren");
+		keywords.add("selem");
+		keywords.add("bps");
+		keywords.add("dgi");
+		keywords.add("separar");
+		keywords.add("claudia");
+		keywords.add("treicy");
+		keywords.add("gaby");
+		keywords.add("convenio");
+		keywords.add("estacionamento");
+		keywords.add("luz");
+		keywords.add("agua");
+		keywords.add("bolsas");
+		keywords.add("la familia");
+		keywords.add("daniel");
+		keywords.add("salim");
+		keywords.add("ute cedros");
+		keywords.add("ute narjes");
+		keywords.add("antel narjes");
+		keywords.add("antel cedros");
+		keywords.add("contador");
+		keywords.add("contadora");
+		keywords.add("oscar");
+		keywords.add("pan arabe");
+		keywords.add("cedros");
+		keywords.add("separados");
+		keywords.add("ose");
+		keywords.add("rge");
+		return keywords;
+	}
+
 }
 
 class InitialFocusSetter {
