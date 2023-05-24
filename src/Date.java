@@ -47,7 +47,7 @@ public class Date {
 		this.y = y;
 	}
 
-	private String whatDay(Date d, int lang) {
+	private String dayName(Date d, int lang) {
 		Calendar calendar = Calendar.getInstance();
 		calendar.set(Calendar.DAY_OF_MONTH, d.d);
 		calendar.set(Calendar.MONTH, d.m);
@@ -56,6 +56,40 @@ public class Date {
 		return lang == 0 ? new SimpleDateFormat("EEEEE", new Locale("es")).format(calendar.getTime()).toUpperCase()
 				: lang == 1 ? new SimpleDateFormat("EEEE", new Locale("pt")).format(calendar.getTime()).toUpperCase()
 						: new SimpleDateFormat("EEEEE", new Locale("en")).format(calendar.getTime()).toUpperCase();
+	}
+
+	int dayFromIndex(int index, int lang) {
+		int indexMonths[] = new int[12];
+		indexMonths[0] = daysInMonth[0];
+		for (int i = 1; i < 12; i++) {
+			indexMonths[i] = daysInMonth[i] + indexMonths[i - 1];
+		}
+
+		int indexTrue = 0;
+		while (indexTrue < 12) {
+			if (index < indexMonths[indexTrue])
+				break;
+			indexTrue++;
+		}
+		int day = index - indexMonths[indexTrue - 1] + 1;
+
+		return day;
+	}
+
+	int monthFromIndex(int index) {
+		int indexMonths[] = new int[12];
+		indexMonths[0] = daysInMonth[0];
+		for (int i = 1; i < 12; i++) {
+			indexMonths[i] = daysInMonth[i] + indexMonths[i - 1];
+		}
+		int indexTrue = 0;
+		while (indexTrue < 12) {
+			if (index < indexMonths[indexTrue])
+				break;
+			indexTrue++;
+		}
+
+		return indexTrue + 1;
 	}
 
 	int maxDays() {
@@ -88,8 +122,7 @@ public class Date {
 	}
 
 	int[] totalOfMes22() {
-		Date date = new Date(d, m, y);
-		int index = date.index();
+		int index = this.index();
 		int returned[] = { 0, 0 };
 		String appV;
 		if (conf[0] == null || !conf[0].equals("3"))
@@ -109,7 +142,7 @@ public class Date {
 			dataOpened.close();
 		} catch (Exception e) {
 		}
-		for (int i = index; i < index + date.maxDays(); i++) {
+		for (int i = index; i < index + this.maxDays(); i++) {
 			if (First.isNumeric(value22[i])) {
 				returned[0] += Integer.valueOf(value22[i]);
 				if (Integer.valueOf(value22[i]) != 0)
@@ -120,30 +153,110 @@ public class Date {
 	}
 
 	int[] totalOfMes() {// return the total for this month, and the quantity of days
-		Date date = new Date(d, m, y);
-		int index = date.index();
+		int index = this.index();
 		int returned[] = { 0, 0 };
-		String value23[] = new String[366];
-		try {
+		ArrayList<String> con23 = new ArrayList<String>();
+		try {// open the data for 2023
 			File extraFolder = new File(tempFile0 + "\\extra");
 			File extraFile = new File(extraFolder, "2023.dll");
 			BufferedReader dataOpened = new BufferedReader(new FileReader(extraFile));
 			String line = "";
-			int z = 0;
 			while ((line = dataOpened.readLine()) != null) {
-				value23[z] = line.toString();
-				z++;
+				con23.add(line.toString());
 			}
 			dataOpened.close();
 		} catch (Exception e) {
+			JOptionPane opt = new JOptionPane("ERROR!", JOptionPane.ERROR_MESSAGE);
+			opt.show();
 		}
-		for (int i = index; i < index + date.maxDays(); i++) {
-			if (i < value23.length && First.isNumeric(value23[i])) {
-				returned[0] += Integer.valueOf(value23[i]);
-				if (Integer.valueOf(value23[i]) != 0)
+
+		for (int i = index; i < index + this.maxDays(); i++) {
+			if (i < con23.size() && First.isNumeric(con23.get(i))) {
+				returned[0] += Integer.valueOf(con23.get(i));
+				if (Integer.valueOf(con23.get(i)) != 0)
 					returned[1]++;
 			}
 		}
+		return returned;
+	}
+
+	int[] maxMinMes() {// return the max and the min of the month
+		int index = this.index();
+		int returned[] = { 0, 0, 0, 0 };
+		ArrayList<String> con23 = new ArrayList<String>();
+		try {// open the data for 2023
+			File extraFolder = new File(tempFile0 + "\\extra");
+			File extraFile = new File(extraFolder, "2023.dll");
+			BufferedReader dataOpened = new BufferedReader(new FileReader(extraFile));
+			String line = "";
+			while ((line = dataOpened.readLine()) != null) {
+				con23.add(line.toString());
+			}
+			dataOpened.close();
+		} catch (Exception e) {
+			JOptionPane opt = new JOptionPane("ERROR!", JOptionPane.ERROR_MESSAGE);
+			opt.show();
+		}
+		int[] valuesMes = new int[this.maxDays()];
+		int count = 0;
+		for (int i = index; i < index + this.maxDays(); i++) {
+			if (i < con23.size())
+				if (First.isNumeric(con23.get(i)) && Integer.valueOf(con23.get(i)) != 0)
+					valuesMes[count] = Integer.valueOf(con23.get(i));
+				else
+					valuesMes[count] = avgSellOfDay()[2];
+			else
+				valuesMes[count] = avgSellOfDay()[2];
+			count++;
+		}
+		returned[0] = getMaxValue(valuesMes)[0];
+		returned[1] = getMinValue(valuesMes)[0];
+		returned[2] = getMaxValue(valuesMes)[1] + index;
+		returned[3] = getMinValue(valuesMes)[1] + index;
+		return returned;
+	}
+
+	int[] yearMaxMin() {// return the max and the min of the year
+		int[] returned = { 0, 0, 0, 0 };
+		ArrayList<String> con23 = new ArrayList<String>();
+		try {// open the data for 2023
+			File extraFolder = new File(tempFile0 + "\\extra");
+			File extraFile = new File(extraFolder, "2023.dll");
+			BufferedReader dataOpened = new BufferedReader(new FileReader(extraFile));
+			String line = "";
+			while ((line = dataOpened.readLine()) != null) {
+				con23.add(line.toString());
+			}
+			dataOpened.close();
+		} catch (Exception e) {
+			JOptionPane opt = new JOptionPane("ERROR!", JOptionPane.ERROR_MESSAGE);
+			opt.show();
+		}
+		int maxYear[] = new int[whatMonthsToAdd() + 1];
+		int minYear[] = new int[whatMonthsToAdd() + 1];
+		int maxIndex[] = new int[whatMonthsToAdd() + 1];
+		int minIndex[] = new int[whatMonthsToAdd() + 1];
+		int maxTotal[] = new int[2];
+		int minTotal[] = new int[2];
+		int monthIndex = 1;
+		Date monthS = new Date(d, monthIndex, y);
+		int optOfMonth[] = new int[4];
+		for (int i = 0; i < whatMonthsToAdd() + 1; i++) {
+			optOfMonth = monthS.maxMinMes();
+			maxYear[i] = optOfMonth[0];
+			minYear[i] = optOfMonth[1];
+			maxIndex[i] = optOfMonth[2];
+			minIndex[i] = optOfMonth[3];
+			monthIndex++;
+			monthS = new Date(d, monthIndex, y);
+		}
+		maxTotal = getMaxValue(maxYear);
+		minTotal = getMinValue(minYear);
+
+		returned[0] = maxTotal[0];
+		returned[1] = minTotal[0];
+		returned[2] = maxIndex[maxTotal[1]];
+		returned[3] = minIndex[minTotal[1]];
 		return returned;
 	}
 
@@ -195,7 +308,6 @@ public class Date {
 	}
 
 	int[] avgSellOfDay() {
-		Date date = new Date(d, m, y);
 		Date date2 = new Date(1, 1, 2023);
 		BufferedReader data23 = null;
 		String l23 = "";
@@ -213,30 +325,85 @@ public class Date {
 		}
 		int i = 0, counter = 0, nbOfDays = 0;
 		while (i < con23.size()) {// average of the same days
-			if (whatDay(date, 0).equals(whatDay(date2, 0))) {
-				counter += First.isNumeric(con23.get(i)) ? Integer.valueOf(con23.get(i)) : 0;
-				nbOfDays++;
-			}
+			if (dayName(this, 0).equals(dayName(date2, 0)))
+				if (First.isNumeric(con23.get(i))) {
+					counter += Integer.valueOf(con23.get(i));
+					nbOfDays++;
+				}
 			i++;
 			date2.addDays(1);
 		}
 		result[0] = counter / nbOfDays;
+		nbOfDays = 0;
+		// daily average
 		i = 0;
-		int counterYear = 0;
-		while (i < con23.size()) {// average of the same days
-			counterYear += First.isNumeric(con23.get(i)) ? Integer.valueOf(con23.get(i)) : 0;
+		counter = 0;
+		while (i < con23.size()) {
+			if (First.isNumeric(con23.get(i))) {
+				counter += Integer.valueOf(con23.get(i));
+				nbOfDays++;
+			}
 			i++;
 		}
-		result[1] = counterYear / (con23.size() - 1);
-		i = date.index();
-		int countertMonth = 0;
-		while (i < con23.size()) {// average of the same days
-			countertMonth += First.isNumeric(con23.get(i)) ? Integer.valueOf(con23.get(i)) : 0;
+		result[1] = counter / nbOfDays;
+		// monthly average
+		i = this.index();
+		counter = 0;
+		nbOfDays = 0;
+		while (i < con23.size()) {
+			if (First.isNumeric(con23.get(i))) {
+				counter += First.isNumeric(con23.get(i)) ? Integer.valueOf(con23.get(i)) : 0;
+				nbOfDays++;
+			}
 			i++;
 		}
-		result[2] = countertMonth / (i - date.index());
+		result[2] = counter / nbOfDays;
 
 		return result;
+	}
+
+	int dailyAverage(int year) {
+		int i = 0, nbOfDays = 0;
+		int counter = 0;
+		String appV;
+		ArrayList<String> con23 = new ArrayList<String>();
+		if (year == 2022) {
+			if (conf[0] == null || !conf[0].equals("3"))
+				appV = "2022C.dll";
+			else
+				appV = "2022N.dll";
+			try {
+				BufferedReader dataOpened = new BufferedReader(
+						new InputStreamReader(this.getClass().getResourceAsStream("/extra/" + appV)));
+				String line = "";
+				while ((line = dataOpened.readLine()) != null) {
+					con23.add(line.toString());
+				}
+				dataOpened.close();
+			} catch (Exception e) {
+			}
+		} else {
+			// open the data for 2023
+			File extraFolder = new File(tempFile0 + "\\extra");
+			File extraFile = new File(extraFolder, "2023.dll");
+			try {
+				BufferedReader dataOpened = new BufferedReader(new FileReader(extraFile));
+				String line = "";
+				while ((line = dataOpened.readLine()) != null) {
+					con23.add(line.toString());
+				}
+				dataOpened.close();
+			} catch (Exception e) {
+			}
+		}
+		while (i < con23.size()) {
+			if (First.isNumeric(con23.get(i))) {
+				counter += Integer.valueOf(con23.get(i));
+				nbOfDays++;
+			}
+			i++;
+		}
+		return (counter / nbOfDays);
 	}
 
 	String vend2022(int d) {
@@ -282,6 +449,32 @@ public class Date {
 						? new SimpleDateFormat("MMMM", new Locale("pt")).format(calendar.getTime()).toUpperCase()
 						: new SimpleDateFormat("MMMM", new Locale("en")).format(calendar.getTime()).toUpperCase();
 
+	}
+
+	// getting the maximum value
+	private int[] getMaxValue(int[] array) {
+		int index[] = { 0, 0 };
+		index[0] = array[0];
+		for (int i = 1; i < array.length; i++) {
+			if (array[i] > index[0]) {
+				index[0] = array[i];
+				index[1] = i;
+			}
+		}
+		return index;
+	}
+
+	// getting the miniumum value
+	private int[] getMinValue(int[] array) {
+		int index[] = { 0, 0 };
+		index[0] = array[0];
+		for (int i = 1; i < array.length; i++) {
+			if (array[i] < index[0]) {
+				index[0] = array[i];
+				index[1] = i;
+			}
+		}
+		return index;
 	}
 
 	// Save the new total to 2023
