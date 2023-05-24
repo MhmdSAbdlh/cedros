@@ -1174,10 +1174,11 @@ public class Reales extends JFrame {
 						+ temp[0] + "\n\n\n" + "*EL PEOR DÍA DE ESTE AÑO ES " + minDayString + " " + minDIndex + "-"
 						+ currentDate.getMonthForInt(currentDate.monthFromIndex(temp[3]), 0) + "\n\nLO QUE VENDIMOS R$"
 						+ temp[1], // 1
-				avgOfMonths[0] + avgOfMonths[1] + avgOfMonths[2] + avgOfMonths[3] + avgOfMonths[4] + avgOfMonths[5], // 2
-				avgOfMonths[6] + avgOfMonths[7] + avgOfMonths[8] + avgOfMonths[9] + avgOfMonths[10]
-						+ "*ESTE MES VENDISTE R$" + String.format("%,d", total23[0]) + " (PROMEDIO = R$"
-						+ String.format("%,.2f", avgM) + ")", // 3 months summary
+				avgOfMonths[0] + "\n" + avgOfMonths[1] + "\n" + avgOfMonths[2] + "\n" + avgOfMonths[3] + "\n"
+						+ avgOfMonths[4] + "\n" + avgOfMonths[5], // 2
+				"\n" + avgOfMonths[6] + "\n" + avgOfMonths[7] + "\n" + avgOfMonths[8] + "\n" + avgOfMonths[9] + "\n"
+						+ avgOfMonths[10] + "\n*ESTE MES VENDISTE R$" + String.format("%,d", total23[0])
+						+ " (PROMEDIO = R$" + String.format("%,.2f", avgM) + ")", // 3 months summary
 		};
 		String[] porSumm = {
 				"*ESTE ANO\n\nVENDEMOS POR AGORA UMA MÉDIA DE R$" + dailyAvg + "\n\n\n"
@@ -1193,10 +1194,11 @@ public class Reales extends JFrame {
 						+ temp[0] + "\n\n\n" + "*O PIOR DIA DO ANO É " + minDayString + " " + minDIndex + "-"
 						+ currentDate.getMonthForInt(currentDate.monthFromIndex(temp[3]), 1) + "\n\nO QUE VENDEMOS R$"
 						+ temp[1], // 1
-				avgOfMonths[0] + avgOfMonths[1] + avgOfMonths[2] + avgOfMonths[3] + avgOfMonths[4] + avgOfMonths[5], // 2
-				avgOfMonths[6] + avgOfMonths[7] + avgOfMonths[8] + avgOfMonths[9] + avgOfMonths[10]
-						+ "* NESTE MÊS VOCÊ VENDEU R$" + String.format("%,d", total23[0]) + " (MÉDIA = R$"
-						+ String.format("%,.2f", avgM) + ")", // 3 months summary
+				avgOfMonths[0] + "\n" + avgOfMonths[1] + "\n" + avgOfMonths[2] + "\n" + avgOfMonths[3] + "\n"
+						+ avgOfMonths[4] + "\n" + avgOfMonths[5], // 1
+				avgOfMonths[6] + "\n" + avgOfMonths[7] + "\n" + avgOfMonths[8] + "\n" + avgOfMonths[9] + "\n"
+						+ avgOfMonths[10] + "\n*NESSE MÊS VENDEU R$" + String.format("%,d", total23[0]) + " (MÉDIA = R$"
+						+ String.format("%,.2f", avgM) + ")", // 2
 		};
 		String[] engSumm = {
 				"*THIS YEAR\n\nWE SOLD FOR NOW AN AVERAGE OF R$" + dailyAvg + "\n\n\n"
@@ -1212,10 +1214,11 @@ public class Reales extends JFrame {
 						+ temp[0] + "\n\n\n" + "*THE WORST DAY OF THIS YEAR IS " + minDayString + " " + minDIndex + "-"
 						+ currentDate.getMonthForInt(currentDate.monthFromIndex(temp[3]), 2) + "\n\nWHAT WE SOLD R$"
 						+ temp[1], // 1
-				avgOfMonths[0] + avgOfMonths[1] + avgOfMonths[2] + avgOfMonths[3] + avgOfMonths[4] + avgOfMonths[5], // 2
-				avgOfMonths[6] + avgOfMonths[7] + avgOfMonths[8] + avgOfMonths[9] + avgOfMonths[10]
-						+ "*YOU SOLD THIS MONTH R$" + String.format("%,d", total23[0]) + " (AVERAGE = R$"
-						+ String.format("%,.2f", avgM) + ")", // 3 months summary
+				avgOfMonths[0] + "\n" + avgOfMonths[1] + "\n" + avgOfMonths[2] + "\n" + avgOfMonths[3] + "\n"
+						+ avgOfMonths[4] + "\n" + avgOfMonths[5], // 1
+				avgOfMonths[6] + "\n" + avgOfMonths[7] + "\n" + avgOfMonths[8] + "\n" + avgOfMonths[9] + "\n"
+						+ avgOfMonths[10] + "\n*THIS MONTH WE SOLD R$" + String.format("%,d", total23[0])
+						+ " (AVERAGE = R$" + String.format("%,.2f", avgM) + ")", // 2
 		};
 		ActionListener letterByLetter = new ActionListener() {
 
@@ -1389,10 +1392,11 @@ public class Reales extends JFrame {
 						+ minDIndex + "-" + month + "\nLO QUE VENDIMOS R$" + min + "\n\n*EL MEJOR DÍA EN "
 						+ currentDate.getMonthForInt(month - 1, 0) + " ES UN " + maxDayString + " " + maxDIndex + "-"
 						+ month + "\nLO QUE VENDIMOS R$" + max, // 1 minimo y maximo del mes
-				avgOfMonths[0] + avgOfMonths[1] + avgOfMonths[2] + avgOfMonths[3] + avgOfMonths[4] + avgOfMonths[5], // 2
-				avgOfMonths[6] + avgOfMonths[7] + avgOfMonths[8] + avgOfMonths[9] + avgOfMonths[10]
-						+ "*ESTE MES VENDISTE R$" + String.format("%,d", total23[0]) + " (PROMEDIO = R$"
-						+ String.format("%,.2f", avgM) + ")", // 3 months summary
+				avgOfMonths[0] + "\n" + avgOfMonths[1] + "\n" + avgOfMonths[2] + "\n" + avgOfMonths[3] + "\n"
+						+ avgOfMonths[4] + "\n" + avgOfMonths[5], // 2
+				"\n" + avgOfMonths[6] + "\n" + avgOfMonths[7] + "\n" + avgOfMonths[8] + "\n" + avgOfMonths[9] + "\n"
+						+ avgOfMonths[10] + "\n*ESTE MES VENDISTE R$" + String.format("%,d", total23[0])
+						+ " (PROMEDIO = R$" + String.format("%,.2f", avgM) + ")", // 3 months summary
 				"*SE PARECE QUE EN ESTE MES\n\n\nVENDIMOS "
 						+ (avgM < Double.valueOf(avgOfMonths[11]) ? "MENOS QUE TODOS LOS MESES ANTERIORES"
 								: avgM > Double.valueOf(avgOfMonths[12]) ? "MÁS QUE TODOS LOS MESES ANTERIORES"
@@ -1410,9 +1414,10 @@ public class Reales extends JFrame {
 						+ "-" + month + "\nO QUE VENDEMOS R$" + min + "\n\n*O MELHOR DIA EM "
 						+ currentDate.getMonthForInt(month - 1, 1) + " É UM " + maxDayString + " " + maxDIndex + "-"
 						+ month + "\nO QUE VENDEMOS R$" + max, // 1 minimo y maximo del mes
-				avgOfMonths[0] + avgOfMonths[1] + avgOfMonths[2] + avgOfMonths[3] + avgOfMonths[4] + avgOfMonths[5], // 1
-				avgOfMonths[6] + avgOfMonths[7] + avgOfMonths[8] + avgOfMonths[9] + avgOfMonths[10]
-						+ "*NESSE MÊS VENDEU R$" + String.format("%,d", total23[0]) + " (MÉDIA = R$"
+				avgOfMonths[0] + "\n" + avgOfMonths[1] + "\n" + avgOfMonths[2] + "\n" + avgOfMonths[3] + "\n"
+						+ avgOfMonths[4] + "\n" + avgOfMonths[5], // 1
+				avgOfMonths[6] + "\n" + avgOfMonths[7] + "\n" + avgOfMonths[8] + "\n" + avgOfMonths[9] + "\n"
+						+ avgOfMonths[10] + "\n*NESSE MÊS VENDEU R$" + String.format("%,d", total23[0]) + " (MÉDIA = R$"
 						+ String.format("%,.2f", avgM) + ")", // 2
 				"*PARECE QUE EM NESSE MÊS\n\n\nVENDEMOS "
 						+ (avgM < Double.valueOf(avgOfMonths[11]) ? "MENOS DO QUE TODOS OS MESES ANTERIORES"
@@ -1431,10 +1436,11 @@ public class Reales extends JFrame {
 						+ minDIndex + "-" + month + "\nWHAT WE SOLD R$" + min + "\n\n*THE BEST DAY IN "
 						+ currentDate.getMonthForInt(month - 1, 2) + " IT'S A " + maxDayString + " " + maxDIndex + "-"
 						+ month + "\nWHAT WE SOLD R$" + max, // 1 minimo y maximo del mes
-				avgOfMonths[0] + avgOfMonths[1] + avgOfMonths[2] + avgOfMonths[3] + avgOfMonths[4] + avgOfMonths[5], // 1
-				avgOfMonths[6] + avgOfMonths[7] + avgOfMonths[8] + avgOfMonths[9] + avgOfMonths[10]
-						+ "*THIS MONTH WE SOLD R$" + String.format("%,d", total23[0]) + " (AVERAGE = R$"
-						+ String.format("%,.2f", avgM) + ")", // 2
+				avgOfMonths[0] + "\n" + avgOfMonths[1] + "\n" + avgOfMonths[2] + "\n" + avgOfMonths[3] + "\n"
+						+ avgOfMonths[4] + "\n" + avgOfMonths[5], // 1
+				avgOfMonths[6] + "\n" + avgOfMonths[7] + "\n" + avgOfMonths[8] + "\n" + avgOfMonths[9] + "\n"
+						+ avgOfMonths[10] + "\n*THIS MONTH WE SOLD R$" + String.format("%,d", total23[0])
+						+ " (AVERAGE = R$" + String.format("%,.2f", avgM) + ")", // 2
 				"*IT SEEMS THAT IN THIS MONTH\n\n\nWE SOLD "
 						+ (avgM < Double.valueOf(avgOfMonths[11]) ? "LESS THAN ALL PREVIOUS MONTHS"
 								: avgM > Double.valueOf(avgOfMonths[12]) ? "MORE THAN ALL PREVIOUS MONTHS"
@@ -1577,19 +1583,19 @@ public class Reales extends JFrame {
 							+ String.format("%,d", avgOfMonths[indexOfMonth][0]) + " (PROMEDIO = R$"
 							+ String.format("%,.2f",
 									(double) avgOfMonths[indexOfMonth][0] / avgOfMonths[indexOfMonth][1])
-							+ ")\n\n";
+							+ ")\n";
 				else if (language == 1)
 					temp[indexOfMonth] = "*EM " + currentDate.getMonthForInt(indexOfMonth, 1) + " VENDEU R$"
 							+ String.format("%,d", avgOfMonths[indexOfMonth][0]) + " (MÉDIA = R$"
 							+ String.format("%,.2f",
 									(double) avgOfMonths[indexOfMonth][0] / avgOfMonths[indexOfMonth][1])
-							+ ")\n\n";
+							+ ")\n";
 				else
 					temp[indexOfMonth] = "*IN " + currentDate.getMonthForInt(indexOfMonth, 2) + " YOU SOLD R$"
 							+ String.format("%,d", avgOfMonths[indexOfMonth][0]) + " (AVERAGE = R$"
 							+ String.format("%,.2f",
 									(double) avgOfMonths[indexOfMonth][0] / avgOfMonths[indexOfMonth][1])
-							+ ")\n\n";
+							+ ")\n";
 			else
 				temp[indexOfMonth] = "";
 			indexOfMonth++;
@@ -3295,23 +3301,7 @@ public class Reales extends JFrame {
 			savedF.write(lang == 0 ? espSumm[18] : lang == 1 ? porSumm[18] : engSumm[18]);// mas o menos
 			savedF.write(lang == 0 ? espSumm[19] : lang == 1 ? porSumm[19] : engSumm[19]);// thanks
 			savedF.close();
-			JOptionPane opt = new JOptionPane(idiomaString(lang)[26], JOptionPane.NO_OPTION);
-			final JDialog dlg = opt.createDialog("SALVO");
-			new Thread(new Runnable() {
-				public void run() {
-					try {
-						Thread.sleep(1000);
-						dlg.dispose();
-
-					} catch (Throwable th) {
-						JOptionPane opt = new JOptionPane(
-								language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
-								JOptionPane.ERROR_MESSAGE);
-						opt.show();
-					}
-				}
-			}).start();
-			dlg.setVisible(true);
+			savedCorrectly(lang);
 		} catch (Exception e2) {
 			JOptionPane opt = new JOptionPane(
 					lang == 0 ? "ERROR, NO SALVO!" : lang == 1 ? "ERROR, NAO SALVO!" : "ERROR",
@@ -3328,6 +3318,26 @@ public class Reales extends JFrame {
 
 		if (language == lang)
 			screenShooter();
+	}
+
+	private void savedCorrectly(int lang) {
+		JOptionPane opt = new JOptionPane(idiomaString(lang)[26], JOptionPane.NO_OPTION);
+		final JDialog dlg = opt.createDialog("SALVO");
+		new Thread(new Runnable() {
+			public void run() {
+				try {
+					Thread.sleep(1000);
+					dlg.dispose();
+
+				} catch (Throwable th) {
+					JOptionPane opt = new JOptionPane(
+							language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
+							JOptionPane.ERROR_MESSAGE);
+					opt.show();
+				}
+			}
+		}).start();
+		dlg.setVisible(true);
 	}
 
 	// export at the end of the month
@@ -3360,21 +3370,20 @@ public class Reales extends JFrame {
 							+ "\n\n*SE PARECE QUE VENDIMOS UN PROMEDIO R$"
 							+ (avgM < avgM22 ? String.format("%,.2f", avgM22 - avgM) + " MENOS DEL AÑO PASADO"
 									: String.format("%,.2f", avgM - avgM22) + " MÁS DEL AÑO PASADO")
-							+ System.lineSeparator(), // 0
+							+ "\n" + System.lineSeparator(), // 0
 					"*EL PEOR DÍA EN " + currentDate.getMonthForInt(month - 1, 0) + " ES UN " + minDayString + " "
-							+ minDIndex + "-" + month + ", LO QUE VENDIMOS R$" + min + "\n\n*EL MEJOR DÍA EN "
+							+ minDIndex + "-" + month + ", LO QUE VENDIMOS R$" + min + "\n*EL MEJOR DÍA EN "
 							+ currentDate.getMonthForInt(month - 1, 0) + " ES UN " + maxDayString + " " + maxDIndex
 							+ "-" + month + ", LO QUE VENDIMOS R$" + max, // 1
-					System.lineSeparator() + System.lineSeparator() + avfOfMonths[0] + avfOfMonths[1] + avfOfMonths[2]
-							+ avfOfMonths[3] + avfOfMonths[4] + avfOfMonths[5] + avfOfMonths[6] + avfOfMonths[7]
-							+ avfOfMonths[8] + avfOfMonths[9] + avfOfMonths[10] + "*ESTE MES VENDISTE R$"
-							+ String.format("%,d", total23[0]) + " (PROMEDIO = R$" + String.format("%,.2f", avgM) + ")"
-							+ System.lineSeparator(), // 2
-					System.lineSeparator() + "\n*SE PARECE QUE EN ESTE MES, VENDIMOS "
+					"\n\n" + avfOfMonths[0] + avfOfMonths[1] + avfOfMonths[2] + avfOfMonths[3] + avfOfMonths[4]
+							+ avfOfMonths[5] + avfOfMonths[6] + avfOfMonths[7] + avfOfMonths[8] + avfOfMonths[9]
+							+ avfOfMonths[10] + "*ESTE MES VENDISTE R$" + String.format("%,d", total23[0])
+							+ " (PROMEDIO = R$" + String.format("%,.2f", avgM) + ")\n", // 2
+					System.lineSeparator() + "*SE PARECE QUE EN ESTE MES, VENDIMOS "
 							+ (avgM < Double.valueOf(avfOfMonths[11]) ? "MENOS QUE TODOS LOS MESES ANTERIORES"
 									: avgM > Double.valueOf(avfOfMonths[12]) ? "MÁS QUE TODOS LOS MESES ANTERIORES"
 											: "MÁS QUE UNOS MESES Y MENOS QUE OTROS.")
-							+ System.lineSeparator(), // 3
+							+ "\n", // 3
 					System.lineSeparator() + "*GRACIAS Y HASTA MAÑANA :)", // 4
 			};
 			String[] porSumm = {
@@ -3384,20 +3393,20 @@ public class Reales extends JFrame {
 							+ "\nO MÉDIA É R$" + String.format("%,.2f", avgM) + "\n\n*PARECE QUE VENDEMOS UM MÉDIO R$"
 							+ (avgM < avgM22 ? String.format("%,.2f", avgM22 - avgM) + " MENOS QUE O ANO PASSADO"
 									: String.format("%,.2f", avgM - avgM22) + " MAIS QUE O ANO PASSADO")
-							+ System.lineSeparator(), // 0
+							+ "\n" + System.lineSeparator(), // 0
 					"*O PIOR DIA EM " + currentDate.getMonthForInt(month - 1, 1) + " É UM " + minDayString + " "
-							+ minDIndex + "-" + month + ", O QUE VENDEMOS R$" + min + "\n\n*O MELHOR DIA EM "
+							+ minDIndex + "-" + month + ", O QUE VENDEMOS R$" + min + "\n*O MELHOR DIA EM "
 							+ currentDate.getMonthForInt(month - 1, 1) + " É UM " + maxDayString + " " + maxDIndex + "-"
 							+ month + ", O QUE VENDEMOS R$" + max, // 1
-					System.lineSeparator() + System.lineSeparator() + avfOfMonths[0] + avfOfMonths[1] + avfOfMonths[2]
-							+ avfOfMonths[3] + avfOfMonths[4] + avfOfMonths[5] + avfOfMonths[6] + avfOfMonths[7]
-							+ avfOfMonths[8] + avfOfMonths[9] + avfOfMonths[10] + "*NESSE MÊS VENDEU R$"
-							+ String.format("%,d", total23[0]) + " (MÉDIA = R$" + String.format("%,.2f", avgM) + ")", // 2
-					System.lineSeparator() + "\n*PARECE QUE EM NESSE MÊS, VENDEMOS "
+					"\n\n" + avfOfMonths[0] + avfOfMonths[1] + avfOfMonths[2] + avfOfMonths[3] + avfOfMonths[4]
+							+ avfOfMonths[5] + avfOfMonths[6] + avfOfMonths[7] + avfOfMonths[8] + avfOfMonths[9]
+							+ avfOfMonths[10] + "*NESSE MÊS VENDEU R$" + String.format("%,d", total23[0])
+							+ " (MÉDIA = R$" + String.format("%,.2f", avgM) + ")\n", // 2
+					System.lineSeparator() + "*PARECE QUE EM NESSE MÊS, VENDEMOS "
 							+ (avgM < Double.valueOf(avfOfMonths[11]) ? "MENOS DO QUE TODOS OS MESES ANTERIORES"
 									: avgM > Double.valueOf(avfOfMonths[12]) ? "MAIS DO QUE TODOS OS MESES ANTERIORES"
 											: "MAIS QUE ALGUNS MESES E MENOS QUE OUTROS")
-							+ System.lineSeparator(), // 3
+							+ "\n", // 3
 					System.lineSeparator() + "*OBRIGADO E ATÉ AMANHÃ :)"// 2
 			};
 			String[] engSumm = {
@@ -3408,20 +3417,20 @@ public class Reales extends JFrame {
 							+ "\n\n*IT LOOKS LIKE WE SOLD AN AVERAGE OF R$"
 							+ (avgM < avgM22 ? String.format("%,.2f", avgM22 - avgM) + " LESS THAN LAST YEAR"
 									: String.format("%,.2f", avgM - avgM22) + " MORE THAN LAST YEAR")
-							+ System.lineSeparator(), // 0
+							+ "\n" + System.lineSeparator(), // 0
 					"*THE WORST DAY IN " + currentDate.getMonthForInt(month - 1, 2) + " IT'S A " + minDayString + " "
-							+ minDIndex + "-" + month + ", WHAT WE SOLD R$" + min + "\n\n*THE BEST DAY IN "
+							+ minDIndex + "-" + month + ", WHAT WE SOLD R$" + min + "\n*THE BEST DAY IN "
 							+ currentDate.getMonthForInt(month - 1, 2) + " IT'S A " + maxDayString + " " + maxDIndex
 							+ "-" + month + ", WHAT WE SOLD R$" + max, // 1
-					System.lineSeparator() + System.lineSeparator() + avfOfMonths[0] + avfOfMonths[1] + avfOfMonths[2]
-							+ avfOfMonths[3] + avfOfMonths[4] + avfOfMonths[5] + avfOfMonths[6] + avfOfMonths[7]
-							+ avfOfMonths[8] + avfOfMonths[9] + avfOfMonths[10] + "*THIS MONTH WE SOLD R$"
-							+ String.format("%,d", total23[0]) + " (AVERAGE = R$" + String.format("%,.2f", avgM) + ")", // 2
-					System.lineSeparator() + "\n*IT SEEMS THAT IN THIS MONTH, WE SOLD "
+					"\n\n" + avfOfMonths[0] + avfOfMonths[1] + avfOfMonths[2] + avfOfMonths[3] + avfOfMonths[4]
+							+ avfOfMonths[5] + avfOfMonths[6] + avfOfMonths[7] + avfOfMonths[8] + avfOfMonths[9]
+							+ avfOfMonths[10] + "*THIS MONTH WE SOLD R$" + String.format("%,d", total23[0])
+							+ " (AVERAGE = R$" + String.format("%,.2f", avgM) + ")\n", // 2
+					System.lineSeparator() + "*IT SEEMS THAT IN THIS MONTH, WE SOLD "
 							+ (avgM < Double.valueOf(avfOfMonths[11]) ? "LESS THAN ALL PREVIOUS MONTHS"
 									: avgM > Double.valueOf(avfOfMonths[12]) ? "MORE THAN ALL PREVIOUS MONTHS"
 											: "MORE THAN SOME MONTHS AND LESS THAN OTHERS")
-							+ System.lineSeparator(), // 3
+							+ "\n", // 3
 					System.lineSeparator() + "*THANKS AND SEE YOU TOMORROW :)" // 4
 			};
 			savedF.write(titleName()
@@ -3441,6 +3450,7 @@ public class Reales extends JFrame {
 			savedF.write(language == 0 ? espSumm[3] : language == 1 ? porSumm[3] : engSumm[3] + System.lineSeparator());
 			savedF.write(language == 0 ? espSumm[4] : language == 1 ? porSumm[4] : engSumm[4] + System.lineSeparator());
 			savedF.close();
+			savedCorrectly(language);
 		} catch (Exception e2) {
 			JOptionPane opt = new JOptionPane(
 					language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
@@ -3469,7 +3479,7 @@ public class Reales extends JFrame {
 			FileWriter savedF = new FileWriter(newFile);
 			String[] espSumm = {
 					"*ESTE AÑO, VENDIMOS UN PROMEDIO DE R$" + dailyAvg + "\n*EL AÑO PASADO, VENDIMOS UN PROMEDIO DE R$"
-							+ dailyAvg22 + "\n*SE PARECE QUE VENDIMOS\n\nR$"
+							+ dailyAvg22 + "\n*SE PARECE QUE VENDIMOS R$"
 							+ (dailyAvg > dailyAvg22
 									? (dailyAvg - dailyAvg22) + " MÁS QUE EL AÑO PASADO ( ⬆ "
 											+ 100 * (dailyAvg - dailyAvg22) / dailyAvg22 + "%)"
@@ -3479,11 +3489,11 @@ public class Reales extends JFrame {
 							+ currentDate.getMonthForInt(currentDate.monthFromIndex(temp[2]), 0)
 							+ ", LO QUE VENDIMOS R$" + temp[0] + "\n*EL PEOR DÍA DE ESTE AÑO ES " + minDayString + " "
 							+ minDIndex + "-" + currentDate.getMonthForInt(currentDate.monthFromIndex(temp[3]), 0)
-							+ ", LO QUE VENDIMOS R$" + temp[1] + "\n\n\n", // 1
+							+ ", LO QUE VENDIMOS R$" + temp[1] + "\n\n", // 1
 					avgOfMonths[0] + avgOfMonths[1] + avgOfMonths[2] + avgOfMonths[3] + avgOfMonths[4] + avgOfMonths[5], // 2
 					avgOfMonths[6] + avgOfMonths[7] + avgOfMonths[8] + avgOfMonths[9] + avgOfMonths[10]
 							+ "*ESTE MES VENDISTE R$" + String.format("%,d", total23[0]) + " (PROMEDIO = R$"
-							+ String.format("%,.2f", avgM) + ")", // 3 months summary
+							+ String.format("%,.2f", avgM) + ")\n", // 3 months summary
 					System.lineSeparator() + "*GRACIAS Y HASTA MAÑANA :)", // 4
 			};
 			String[] porSumm = {
@@ -3498,11 +3508,11 @@ public class Reales extends JFrame {
 							+ currentDate.getMonthForInt(currentDate.monthFromIndex(temp[2]), 1) + ", O QUE VENDEMOS R$"
 							+ temp[0] + "\n*O PIOR DIA DO ANO É " + minDayString + " " + minDIndex + "-"
 							+ currentDate.getMonthForInt(currentDate.monthFromIndex(temp[3]), 1) + ", O QUE VENDEMOS R$"
-							+ temp[1] + "\n\n\n", // 1
+							+ temp[1] + "\n\n", // 1
 					avgOfMonths[0] + avgOfMonths[1] + avgOfMonths[2] + avgOfMonths[3] + avgOfMonths[4] + avgOfMonths[5], // 2
 					avgOfMonths[6] + avgOfMonths[7] + avgOfMonths[8] + avgOfMonths[9] + avgOfMonths[10]
-							+ "* NESTE MÊS VOCÊ VENDEU R$" + String.format("%,d", total23[0]) + " (MÉDIA = R$"
-							+ String.format("%,.2f", avgM) + ")", // 3 months summary
+							+ "*NESTE MÊS VOCÊ VENDEU R$" + String.format("%,d", total23[0]) + " (MÉDIA = R$"
+							+ String.format("%,.2f", avgM) + ")\n", // 3 months summary
 					System.lineSeparator() + "*OBRIGADO E ATÉ AMANHÃ :)"// 2
 			};
 			String[] engSumm = {
@@ -3517,11 +3527,11 @@ public class Reales extends JFrame {
 							+ currentDate.getMonthForInt(currentDate.monthFromIndex(temp[2]), 2) + ", WHAT WE SOLD R$"
 							+ temp[0] + "\n*THE WORST DAY OF THIS YEAR IS " + minDayString + " " + minDIndex + "-"
 							+ currentDate.getMonthForInt(currentDate.monthFromIndex(temp[3]), 2) + ", WHAT WE SOLD R$"
-							+ temp[1] + "\n\n\n", // 1
+							+ temp[1] + "\n\n", // 1
 					avgOfMonths[0] + avgOfMonths[1] + avgOfMonths[2] + avgOfMonths[3] + avgOfMonths[4] + avgOfMonths[5], // 2
 					avgOfMonths[6] + avgOfMonths[7] + avgOfMonths[8] + avgOfMonths[9] + avgOfMonths[10]
 							+ "*YOU SOLD THIS MONTH R$" + String.format("%,d", total23[0]) + " (AVERAGE = R$"
-							+ String.format("%,.2f", avgM) + ")", // 3 months summary
+							+ String.format("%,.2f", avgM) + ")\n", // 3 months summary
 					System.lineSeparator() + "*THANKS AND SEE YOU TOMORROW :)" // 4
 			};
 			savedF.write(titleName()
@@ -3535,6 +3545,7 @@ public class Reales extends JFrame {
 			savedF.write(language == 0 ? espSumm[3] : language == 1 ? porSumm[3] : engSumm[3] + System.lineSeparator());
 			savedF.write(language == 0 ? espSumm[4] : language == 1 ? porSumm[4] : engSumm[4] + System.lineSeparator());
 			savedF.close();
+			savedCorrectly(language);
 		} catch (Exception e2) {
 			JOptionPane opt = new JOptionPane(
 					language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
@@ -3810,6 +3821,7 @@ public class Reales extends JFrame {
 					savedF.write((conf[8].equals("null") ? 0 : conf[8]) + System.lineSeparator());// effchooser
 					savedF.write((conf[9].equals("null") ? "1,1" : conf[9]) + System.lineSeparator());// intro
 					savedF.close();
+					savedCorrectly(language);
 				} catch (Exception e2) {
 					JOptionPane opt = new JOptionPane(
 							language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
