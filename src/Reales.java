@@ -702,7 +702,10 @@ public class Reales extends JFrame {
 		novo.addActionListener(e -> newDay());
 		calc.addActionListener(e -> sumF());
 		clear.addActionListener(e -> clearAll());
-		save.addActionListener(e -> saveProgress());
+		save.addActionListener(e -> {
+			saveProgress();
+			First.savedCorrectly(language);
+		});
 		screenShot.addActionListener(e -> {
 			fadeEffect(Reales.this, 40);
 			screenShooter();
@@ -3301,7 +3304,7 @@ public class Reales extends JFrame {
 			savedF.write(lang == 0 ? espSumm[18] : lang == 1 ? porSumm[18] : engSumm[18]);// mas o menos
 			savedF.write(lang == 0 ? espSumm[19] : lang == 1 ? porSumm[19] : engSumm[19]);// thanks
 			savedF.close();
-			savedCorrectly(lang);
+			First.savedCorrectly(lang);
 		} catch (Exception e2) {
 			JOptionPane opt = new JOptionPane(
 					lang == 0 ? "ERROR, NO SALVO!" : lang == 1 ? "ERROR, NAO SALVO!" : "ERROR",
@@ -3318,26 +3321,6 @@ public class Reales extends JFrame {
 
 		if (language == lang)
 			screenShooter();
-	}
-
-	private void savedCorrectly(int lang) {
-		JOptionPane opt = new JOptionPane(idiomaString(lang)[26], JOptionPane.NO_OPTION);
-		final JDialog dlg = opt.createDialog("SALVO");
-		new Thread(new Runnable() {
-			public void run() {
-				try {
-					Thread.sleep(1000);
-					dlg.dispose();
-
-				} catch (Throwable th) {
-					JOptionPane opt = new JOptionPane(
-							language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
-							JOptionPane.ERROR_MESSAGE);
-					opt.show();
-				}
-			}
-		}).start();
-		dlg.setVisible(true);
 	}
 
 	// export at the end of the month
@@ -3450,7 +3433,7 @@ public class Reales extends JFrame {
 			savedF.write(language == 0 ? espSumm[3] : language == 1 ? porSumm[3] : engSumm[3] + System.lineSeparator());
 			savedF.write(language == 0 ? espSumm[4] : language == 1 ? porSumm[4] : engSumm[4] + System.lineSeparator());
 			savedF.close();
-			savedCorrectly(language);
+			First.savedCorrectly(language);
 		} catch (Exception e2) {
 			JOptionPane opt = new JOptionPane(
 					language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
@@ -3545,7 +3528,7 @@ public class Reales extends JFrame {
 			savedF.write(language == 0 ? espSumm[3] : language == 1 ? porSumm[3] : engSumm[3] + System.lineSeparator());
 			savedF.write(language == 0 ? espSumm[4] : language == 1 ? porSumm[4] : engSumm[4] + System.lineSeparator());
 			savedF.close();
-			savedCorrectly(language);
+			First.savedCorrectly(language);
 		} catch (Exception e2) {
 			JOptionPane opt = new JOptionPane(
 					language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
@@ -3821,7 +3804,6 @@ public class Reales extends JFrame {
 					savedF.write((conf[8].equals("null") ? 0 : conf[8]) + System.lineSeparator());// effchooser
 					savedF.write((conf[9].equals("null") ? "1,1" : conf[9]) + System.lineSeparator());// intro
 					savedF.close();
-					savedCorrectly(language);
 				} catch (Exception e2) {
 					JOptionPane opt = new JOptionPane(
 							language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",

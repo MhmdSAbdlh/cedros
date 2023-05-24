@@ -657,7 +657,10 @@ public class Pesos extends JFrame {
 		novo.addActionListener(e -> newDay());
 		calc.addActionListener(e -> sumF());
 		clear.addActionListener(e -> clearAll());
-		save.addActionListener(e -> saveProgress());
+		save.addActionListener(e -> {
+			saveProgress();
+			First.savedCorrectly(language);
+		});
 		screenShot.addActionListener(e -> {
 			colorBW = 254;
 			ActionListener letterByLetter = new ActionListener() {
@@ -2337,6 +2340,7 @@ public class Pesos extends JFrame {
 			savedF.write(lang == 0 ? espSumm[12] : lang == 1 ? porSumm[12] : engSumm[12]);
 			savedF.write(lang == 0 ? espSumm[13] : lang == 1 ? porSumm[13] : engSumm[13]);
 			savedF.close();
+			First.savedCorrectly(lang);
 			JOptionPane opt = new JOptionPane(idiomaString(lang)[25], JOptionPane.NO_OPTION);
 			final JDialog dlg = opt.createDialog("SALVO");
 			new Thread(new Runnable() {

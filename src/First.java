@@ -36,6 +36,7 @@ import javax.swing.DefaultListCellRenderer;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -81,8 +82,8 @@ public class First extends JFrame {
 	private ImageIcon iconI = new ImageIcon(icon);
 	private URL setting = getClass().getResource("images/setting.png");
 	private ImageIcon settingI = new ImageIcon(setting);
-	private URL conf = getClass().getResource("images/menubar/setting.png");
-	private ImageIcon confI = new ImageIcon(conf);
+	private URL confP = getClass().getResource("images/menubar/setting.png");
+	private ImageIcon confI = new ImageIcon(confP);
 	private URL creator = getClass().getResource("images/menubar/creator.png");
 	private ImageIcon creatorI = new ImageIcon(creator);
 	private URL about = getClass().getResource("images/menubar/about.png");
@@ -98,12 +99,13 @@ public class First extends JFrame {
 	javax.swing.Timer timer;
 	int order = 0, wordL = 0;
 
-	static String appVersion = "v6.6";
+	static String appVersion = "v6.7";
 	private int language;
 
 	String currentpath = System.getProperty("user.dir");
 	File tempFile0 = new File(currentpath + "\\data");
 	File newFile = new File(tempFile0, "conf.dll");
+	static String conf[] = new String[10];
 
 	public static void main(String[] args) {
 		new First();
@@ -122,7 +124,6 @@ public class First extends JFrame {
 		BufferedReader dataOpened = null;
 		String line = "";
 		int z = 0;
-		String conf[] = new String[10];
 		// Check if a conf is exist
 		File conFile = new File(tempFile0, "conf.dll");
 		if (!conFile.exists()) {
@@ -1059,6 +1060,26 @@ public class First extends JFrame {
 		introFrame.add(introL);
 		introFrame.setIconImage(introI.getImage());
 		introFrame.setVisible(true);
+	}
+
+	static void savedCorrectly(int lang) {
+		JOptionPane opt = new JOptionPane(
+				lang == 0 ? "SALVADO CON ÉXITO" : lang == 1 ? "SALVO COM SUCESSO" : "SAVED SUCCESSFULLY",
+				JOptionPane.NO_OPTION);
+		final JDialog dlg = opt.createDialog("SALVO");
+		new Thread(new Runnable() {
+			public void run() {
+				try {
+					Thread.sleep(1000);
+					dlg.dispose();
+
+				} catch (Throwable th) {
+					JOptionPane opt = new JOptionPane("ERROR", JOptionPane.ERROR_MESSAGE);
+					opt.show();
+				}
+			}
+		}).start();
+		dlg.setVisible(true);
 	}
 
 	// Auto-complete words for gastos and agregados

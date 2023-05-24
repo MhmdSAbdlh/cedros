@@ -18,27 +18,11 @@ public class Date {
 
 	String currentpath = System.getProperty("user.dir");
 	File tempFile0 = new File(currentpath + "\\data");
-	File newFile = new File(tempFile0, "conf.dll");
 	File temp23 = new File(tempFile0 + "\\extra");
 	File file23 = new File(temp23, "2023.dll");
 	String conf[] = new String[10];
 
 	Date(String date) {
-		// Open Conf
-		tempFile0.mkdir();
-		temp23.mkdir();
-		BufferedReader dataOpened = null;
-		String line = "";
-		int z = 0;
-		try {
-			dataOpened = new BufferedReader(new FileReader(newFile));
-			while ((line = dataOpened.readLine()) != null) {
-				conf[z] = line.toString();
-				z++;
-			}
-			dataOpened.close();
-		} catch (Exception e) {
-		}
 	}
 
 	Date(int d, int m, int y) {
@@ -71,7 +55,11 @@ public class Date {
 				break;
 			indexTrue++;
 		}
-		int day = index - indexMonths[indexTrue - 1] + 1;
+		int day;
+		if (indexTrue == 0)
+			day = 0;
+		else
+			day = index - indexMonths[indexTrue - 1] + 1;
 
 		return day;
 	}
@@ -125,7 +113,7 @@ public class Date {
 		int index = this.index();
 		int returned[] = { 0, 0 };
 		String appV;
-		if (conf[0] == null || !conf[0].equals("3"))
+		if (First.conf[0] == null || !First.conf[0].equals("3"))
 			appV = "2022C.dll";
 		else
 			appV = "2022N.dll";
@@ -368,7 +356,7 @@ public class Date {
 		String appV;
 		ArrayList<String> con23 = new ArrayList<String>();
 		if (year == 2022) {
-			if (conf[0] == null || !conf[0].equals("3"))
+			if (First.conf[0] == null || !First.conf[0].equals("3"))
 				appV = "2022C.dll";
 			else
 				appV = "2022N.dll";
@@ -410,7 +398,7 @@ public class Date {
 		Date date = new Date(1, 1, 2022);
 		String date22[] = new String[366];
 		String appV;
-		if (conf[0] == null || !conf[0].equals("3"))
+		if (First.conf[0] == null || !First.conf[0].equals("3"))
 			appV = "2022C.dll";
 		else
 			appV = "2022N.dll";

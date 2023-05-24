@@ -1892,6 +1892,7 @@ public class FaturaR extends JFrame {
 			}
 			savedF.write(numbers[i]);// pix save
 			savedF.close();
+			First.savedCorrectly(language);
 		} catch (Exception e) {
 			JOptionPane opt = new JOptionPane(
 					language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
