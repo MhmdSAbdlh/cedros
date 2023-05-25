@@ -46,7 +46,13 @@ public class Date {
 		int indexMonths[] = new int[12];
 		indexMonths[0] = daysInMonth[0];
 		for (int i = 1; i < 12; i++) {
-			indexMonths[i] = daysInMonth[i] + indexMonths[i - 1];
+			if (i == 1)
+				if ((y % 4 == 0) && !(y % 100 == 0) || (y % 400 == 0))
+					indexMonths[i] = 29 + indexMonths[i - 1];
+				else
+					indexMonths[i] = daysInMonth[i] + indexMonths[i - 1];
+			else
+				indexMonths[i] = daysInMonth[i] + indexMonths[i - 1];
 		}
 
 		int indexTrue = 0;
@@ -68,7 +74,13 @@ public class Date {
 		int indexMonths[] = new int[12];
 		indexMonths[0] = daysInMonth[0];
 		for (int i = 1; i < 12; i++) {
-			indexMonths[i] = daysInMonth[i] + indexMonths[i - 1];
+			if (i == 1)
+				if ((y % 4 == 0) && !(y % 100 == 0) || (y % 400 == 0))
+					indexMonths[i] = 29 + indexMonths[i - 1];
+				else
+					indexMonths[i] = daysInMonth[i] + indexMonths[i - 1];
+			else
+				indexMonths[i] = daysInMonth[i] + indexMonths[i - 1];
 		}
 		int indexTrue = 0;
 		while (indexTrue < 12) {
@@ -83,13 +95,25 @@ public class Date {
 	int maxDays() {
 		int md = daysInMonth[m - 1];
 		// correction for Feb
+		if (m == 2)
+			if ((y % 4 == 0) && !(y % 100 == 0) || (y % 400 == 0))
+				md = 29;
+			else
+				md = 28;
+
 		return md;
 	}
 
 	int index() {
 		int index = 0;
 		for (int i = 0; i < m - 1; i++) {
-			index += daysInMonth[i];
+			if (i == 1)
+				if ((y % 4 == 0) && !(y % 100 == 0) || (y % 400 == 0))
+					index += 29;
+				else
+					index += 28;
+			else
+				index += daysInMonth[i];
 		}
 		return index;
 	}

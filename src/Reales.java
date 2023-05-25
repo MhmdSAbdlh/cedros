@@ -1150,7 +1150,7 @@ public class Reales extends JFrame {
 		int dailyAvg22 = currentDate.dailyAverage(2022);
 		String[] avgOfMonths = monthsText(Integer.valueOf(First.monthN));
 		int total23[] = currentDate.totalOfMes();
-		double avgM = (double) total23[0] / total23[1];
+		int avgM = total23[0] / total23[1];
 
 		sumItem.addKeyListener(new KeyAdapter() {// Escape to close
 			@SuppressWarnings("static-access")
@@ -1173,15 +1173,19 @@ public class Reales extends JFrame {
 								: (dailyAvg22 - dailyAvg) + " MENOS QUE EL AÑO PASADO ( ⬇ "
 										+ 100 * (dailyAvg22 - dailyAvg) / dailyAvg22 + "%)"), // 0
 				"*EL MEJOR DÍA DE ESTE AÑO ES " + maxDayString + " " + maxDIndex + "-"
-						+ currentDate.getMonthForInt(currentDate.monthFromIndex(temp[2]), 0) + "\n\nLO QUE VENDIMOS R$"
-						+ temp[0] + "\n\n\n" + "*EL PEOR DÍA DE ESTE AÑO ES " + minDayString + " " + minDIndex + "-"
-						+ currentDate.getMonthForInt(currentDate.monthFromIndex(temp[3]), 0) + "\n\nLO QUE VENDIMOS R$"
-						+ temp[1], // 1
+						+ currentDate.getMonthForInt(currentDate.monthFromIndex(temp[2]) - 1, 0)
+						+ "\n\nLO QUE VENDIMOS R$" + temp[0] + "\n\n\n" + "*EL PEOR DÍA DE ESTE AÑO ES " + minDayString
+						+ " " + minDIndex + "-" + currentDate.getMonthForInt(currentDate.monthFromIndex(temp[3]) - 1, 0)
+						+ "\n\nLO QUE VENDIMOS R$" + temp[1], // 1
 				avgOfMonths[0] + "\n" + avgOfMonths[1] + "\n" + avgOfMonths[2] + "\n" + avgOfMonths[3] + "\n"
 						+ avgOfMonths[4] + "\n" + avgOfMonths[5], // 2
 				"\n" + avgOfMonths[6] + "\n" + avgOfMonths[7] + "\n" + avgOfMonths[8] + "\n" + avgOfMonths[9] + "\n"
-						+ avgOfMonths[10] + "\n*ESTE MES VENDISTE R$" + String.format("%,d", total23[0])
-						+ " (PROMEDIO = R$" + String.format("%,.2f", avgM) + ")", // 3 months summary
+						+ avgOfMonths[10] + "\n*EN " + currentDate.getMonthForInt(Integer.valueOf(First.monthN) - 1, 0)
+						+ " VENDISTE R$" + total23[0] + " (PROMEDIO = R$" + avgM + ")", // 3 months
+				"*EL MEJOR MES DEL AÑO FUE " + currentDate.getMonthForInt(Integer.valueOf(avgOfMonths[13]), 0) + "\n\n"
+						+ "LO QUE VENDIMOS UN PROMEDIO DE R$" + avgOfMonths[11] + "\n\n\n" + "*EL PEOR MES DEL AÑO FUE "
+						+ currentDate.getMonthForInt(Integer.valueOf(avgOfMonths[14]), 0) + "\n\n"
+						+ "LO QUE VENDIMOS UN PROMEDIO DE R$" + avgOfMonths[12]// 4 MAX AND MIN FOR THE MONTH
 		};
 		String[] porSumm = {
 				"*ESTE ANO\n\nVENDEMOS POR AGORA UMA MÉDIA DE R$" + dailyAvg + "\n\n\n"
@@ -1193,15 +1197,19 @@ public class Reales extends JFrame {
 								: (dailyAvg22 - dailyAvg) + " MENOS QUE ANO PASSADO ( ⬇ "
 										+ 100 * (dailyAvg22 - dailyAvg) / dailyAvg22 + "%)"), // 0
 				"*O MELHOR DIA DESTE ANO É " + maxDayString + " " + maxDIndex + "-"
-						+ currentDate.getMonthForInt(currentDate.monthFromIndex(temp[2]), 1) + "\n\nO QUE VENDEMOS R$"
-						+ temp[0] + "\n\n\n" + "*O PIOR DIA DO ANO É " + minDayString + " " + minDIndex + "-"
-						+ currentDate.getMonthForInt(currentDate.monthFromIndex(temp[3]), 1) + "\n\nO QUE VENDEMOS R$"
-						+ temp[1], // 1
+						+ currentDate.getMonthForInt(currentDate.monthFromIndex(temp[2]) - 1, 1)
+						+ "\n\nO QUE VENDEMOS R$" + temp[0] + "\n\n\n" + "*O PIOR DIA DO ANO É " + minDayString + " "
+						+ minDIndex + "-" + currentDate.getMonthForInt(currentDate.monthFromIndex(temp[3]) - 1, 1)
+						+ "\n\nO QUE VENDEMOS R$" + temp[1], // 1
 				avgOfMonths[0] + "\n" + avgOfMonths[1] + "\n" + avgOfMonths[2] + "\n" + avgOfMonths[3] + "\n"
-						+ avgOfMonths[4] + "\n" + avgOfMonths[5], // 1
+						+ avgOfMonths[4] + "\n" + avgOfMonths[5], // 2
 				avgOfMonths[6] + "\n" + avgOfMonths[7] + "\n" + avgOfMonths[8] + "\n" + avgOfMonths[9] + "\n"
-						+ avgOfMonths[10] + "\n*NESSE MÊS VENDEU R$" + String.format("%,d", total23[0]) + " (MÉDIA = R$"
-						+ String.format("%,.2f", avgM) + ")", // 2
+						+ avgOfMonths[10] + "\n*EM " + currentDate.getMonthForInt(Integer.valueOf(First.monthN) - 1, 1)
+						+ " VENDEU R$" + total23[0] + " (MÉDIA = R$" + avgM + ")", // 3
+				"*O MELHOR MÊS DO ANO FOI " + currentDate.getMonthForInt(Integer.valueOf(avgOfMonths[13]), 1) + "\n\n"
+						+ "O QUE VENDEMOS EM MÉDIA R$" + avgOfMonths[11] + "\n\n\n" + "*O PIOR MÊS DO ANO FOI "
+						+ currentDate.getMonthForInt(Integer.valueOf(avgOfMonths[14]), 1) + "\n\n"
+						+ "O QUE VENDEMOS EM MÉDIA R$" + avgOfMonths[12]// 4 MAX AND MIN FOR THE MONTH
 		};
 		String[] engSumm = {
 				"*THIS YEAR\n\nWE SOLD FOR NOW AN AVERAGE OF R$" + dailyAvg + "\n\n\n"
@@ -1213,15 +1221,20 @@ public class Reales extends JFrame {
 								: (dailyAvg22 - dailyAvg) + " LESS THAN LAST YEAR ( ⬇ "
 										+ 100 * (dailyAvg22 - dailyAvg) / dailyAvg22 + "%)"), // 0
 				"*THE BEST DAY OF THIS YEAR IS " + maxDayString + " " + maxDIndex + "-"
-						+ currentDate.getMonthForInt(currentDate.monthFromIndex(temp[2]), 2) + "\n\nWHAT WE SOLD R$"
+						+ currentDate.getMonthForInt(currentDate.monthFromIndex(temp[2]) - 1, 2) + "\n\nWHAT WE SOLD R$"
 						+ temp[0] + "\n\n\n" + "*THE WORST DAY OF THIS YEAR IS " + minDayString + " " + minDIndex + "-"
-						+ currentDate.getMonthForInt(currentDate.monthFromIndex(temp[3]), 2) + "\n\nWHAT WE SOLD R$"
+						+ currentDate.getMonthForInt(currentDate.monthFromIndex(temp[3]) - 1, 2) + "\n\nWHAT WE SOLD R$"
 						+ temp[1], // 1
 				avgOfMonths[0] + "\n" + avgOfMonths[1] + "\n" + avgOfMonths[2] + "\n" + avgOfMonths[3] + "\n"
-						+ avgOfMonths[4] + "\n" + avgOfMonths[5], // 1
+						+ avgOfMonths[4] + "\n" + avgOfMonths[5], // 2
 				avgOfMonths[6] + "\n" + avgOfMonths[7] + "\n" + avgOfMonths[8] + "\n" + avgOfMonths[9] + "\n"
-						+ avgOfMonths[10] + "\n*THIS MONTH WE SOLD R$" + String.format("%,d", total23[0])
-						+ " (AVERAGE = R$" + String.format("%,.2f", avgM) + ")", // 2
+						+ avgOfMonths[10] + "\n*IN " + currentDate.getMonthForInt(Integer.valueOf(First.monthN) - 1, 2)
+						+ " WE SOLD R$" + total23[0] + " (AVERAGE = R$" + avgM + ")", // 3
+				"*THE BEST MONTH OF THE YEAR WAS " + currentDate.getMonthForInt(Integer.valueOf(avgOfMonths[13]), 2)
+						+ "\n\n" + "WHAT WE SOLD AN AVERAGE OF R$" + avgOfMonths[11] + "\n\n\n"
+						+ "*THE WORST MONTH OF THE YEAR WAS "
+						+ currentDate.getMonthForInt(Integer.valueOf(avgOfMonths[14]), 2) + "\n\n"
+						+ "WHAT WE SOLD AN AVERAGE OF R$" + avgOfMonths[12]// 4 MAX AND MIN FOR THE MONTH
 		};
 		ActionListener letterByLetter = new ActionListener() {
 
@@ -1278,6 +1291,22 @@ public class Reales extends JFrame {
 				case 3: {
 					sumItem.setBounds(30, 170, 590, 550);
 					char[] wordT = (language == 0 ? espSumm[3] : language == 1 ? porSumm[3] : engSumm[3]).toCharArray();
+					if (wordL < wordT.length)
+						sumItem.setText(sumItem.getText() + wordT[wordL++]);
+					else {
+						if (wordL < wordT.length + 15) {
+							wordL++;
+						} else {
+							order++;
+							wordL = 0;
+							sumItem.setText("");
+						}
+					}
+					break;
+				}
+				case 4: {
+					sumItem.setBounds(30, 170, 590, 550);
+					char[] wordT = (language == 0 ? espSumm[4] : language == 1 ? porSumm[4] : engSumm[4]).toCharArray();
 					if (wordL < wordT.length)
 						sumItem.setText(sumItem.getText() + wordT[wordL++]);
 					else {
@@ -1350,9 +1379,9 @@ public class Reales extends JFrame {
 		int minDIndex = dateFromMonth.dayFromIndex(dateFromMonth.maxMinMes()[3], language);
 		String minDayString = whatDay(minDIndex, month, 2023, language);
 		int total22[] = dateFromMonth.totalOfMes22();
-		double avgM22 = (double) total22[0] / total22[1];
+		int avgM22 = total22[0] / total22[1];
 		int total23[] = dateFromMonth.totalOfMes();
-		double avgM = (double) total23[0] / total23[1];
+		int avgM = total23[0] / total23[1];
 		String[] avgOfMonths = monthsText(month);
 		JTextPane sumItem = new JTextPane();
 		StyledDocument doc = sumItem.getStyledDocument();
@@ -1384,69 +1413,63 @@ public class Reales extends JFrame {
 			}
 		});
 		String[] espSumm = {
-				"*EN " + currentDate.getMonthForInt(month - 1, 0) + " 2022 VENDISTE EN TOTAL R$"
-						+ String.format("%,d", total22[0]) + "\n(PROMEDIO = R$" + String.format("%,.2f", avgM22)
-						+ ")\n\n\n*EN " + currentDate.getMonthForInt(month - 1, 0) + " DE ESTE AÑO VENDISTE EN TOTAL R$"
-						+ String.format("%,d", total23[0]) + "\n(PROMEDIO = R$" + String.format("%,.2f", avgM)
+				"*EN " + currentDate.getMonthForInt(month - 1, 0) + " 2022 VENDISTE EN TOTAL R$" + total22[0]
+						+ "\n(PROMEDIO = R$" + avgM22 + ")\n\n\n*EN " + currentDate.getMonthForInt(month - 1, 0)
+						+ " DE ESTE AÑO VENDISTE EN TOTAL R$" + total23[0] + "\n(PROMEDIO = R$" + avgM
 						+ ")\n\n\n*SE PARECE QUE VENDIMOS" + "\nUN PROMEDIO R$"
-						+ (avgM < avgM22 ? String.format("%,.2f", avgM22 - avgM) + " MENOS DEL AÑO PASADO"
-								: String.format("%,.2f", avgM - avgM22) + " MÁS DEL AÑO PASADO"), // 0-2022-2023
+						+ (avgM < avgM22 ? avgM22 - avgM + " MENOS DEL AÑO PASADO"
+								: avgM - avgM22 + " MÁS DEL AÑO PASADO"), // 0-2022-2023
 				"*EL PEOR DÍA EN " + currentDate.getMonthForInt(month - 1, 0) + " ES UN " + minDayString + " "
-						+ minDIndex + "-" + month + "\nLO QUE VENDIMOS R$" + min + "\n\n*EL MEJOR DÍA EN "
+						+ minDIndex + "-" + month + "\n\nLO QUE VENDIMOS R$" + min + "\n\n\n*EL MEJOR DÍA EN "
 						+ currentDate.getMonthForInt(month - 1, 0) + " ES UN " + maxDayString + " " + maxDIndex + "-"
-						+ month + "\nLO QUE VENDIMOS R$" + max, // 1 minimo y maximo del mes
+						+ month + "\n\nLO QUE VENDIMOS R$" + max, // 1 minimo y maximo del mes
 				avgOfMonths[0] + "\n" + avgOfMonths[1] + "\n" + avgOfMonths[2] + "\n" + avgOfMonths[3] + "\n"
 						+ avgOfMonths[4] + "\n" + avgOfMonths[5], // 2
 				"\n" + avgOfMonths[6] + "\n" + avgOfMonths[7] + "\n" + avgOfMonths[8] + "\n" + avgOfMonths[9] + "\n"
-						+ avgOfMonths[10] + "\n*ESTE MES VENDISTE R$" + String.format("%,d", total23[0])
-						+ " (PROMEDIO = R$" + String.format("%,.2f", avgM) + ")", // 3 months summary
+						+ avgOfMonths[10] + "\n*ESTE MES VENDISTE R$" + total23[0] + " (PROMEDIO = R$" + avgM + ")", // 3
 				"*SE PARECE QUE EN ESTE MES\n\n\nVENDIMOS "
-						+ (avgM < Double.valueOf(avgOfMonths[11]) ? "MENOS QUE TODOS LOS MESES ANTERIORES"
-								: avgM > Double.valueOf(avgOfMonths[12]) ? "MÁS QUE TODOS LOS MESES ANTERIORES"
+						+ (avgM < Integer.valueOf(avgOfMonths[11]) ? "MENOS QUE TODOS LOS MESES ANTERIORES"
+								: avgM > Integer.valueOf(avgOfMonths[12]) ? "MÁS QUE TODOS LOS MESES ANTERIORES"
 										: "MÁS QUE UNOS MESES Y MENOS QUE OTROS") // 4 compare mnths
 		};
 		String[] porSumm = {
-				("*EM " + currentDate.getMonthForInt(month - 1, 1) + " 2022 VOCÊ VENDEU NO TOTAL R$"
-						+ String.format("%,d", total22[0]) + "\n(MÉDIA = R$" + String.format("%,.2f", avgM22)
-						+ ")\n\n\n*EM " + currentDate.getMonthForInt(month - 1, 1)
-						+ " NESSE ANO VOCÊ VENDEU NO TOTAL R$" + String.format("%,d", total23[0]) + "\n(MÉDIA = R$"
-						+ String.format("%,.2f", avgM) + ")\n\n\n*PARECE QUE VENDEMOS" + "\nUM MÉDIO R$"
-						+ (avgM < avgM22 ? String.format("%,.2f", avgM22 - avgM) + " MENOS QUE O ANO PASSADO"
-								: String.format("%,.2f", avgM - avgM22) + " MAIS QUE O ANO PASSADO")), // 0
+				("*EM " + currentDate.getMonthForInt(month - 1, 1) + " 2022 VOCÊ VENDEU NO TOTAL R$" + total22[0]
+						+ "\n(MÉDIA = R$" + avgM22 + ")\n\n\n*EM " + currentDate.getMonthForInt(month - 1, 1)
+						+ " NESSE ANO VOCÊ VENDEU NO TOTAL R$" + total23[0] + "\n(MÉDIA = R$" + avgM
+						+ ")\n\n\n*PARECE QUE VENDEMOS" + "\nUM MÉDIO R$"
+						+ (avgM < avgM22 ? avgM22 - avgM + " MENOS QUE O ANO PASSADO"
+								: avgM - avgM22 + " MAIS QUE O ANO PASSADO")), // 0
 				"*O PIOR DIA EM " + currentDate.getMonthForInt(month - 1, 1) + " É UM " + minDayString + " " + minDIndex
-						+ "-" + month + "\nO QUE VENDEMOS R$" + min + "\n\n*O MELHOR DIA EM "
+						+ "-" + month + "\n\nO QUE VENDEMOS R$" + min + "\n\n\n*O MELHOR DIA EM "
 						+ currentDate.getMonthForInt(month - 1, 1) + " É UM " + maxDayString + " " + maxDIndex + "-"
-						+ month + "\nO QUE VENDEMOS R$" + max, // 1 minimo y maximo del mes
+						+ month + "\n\nO QUE VENDEMOS R$" + max, // 1 minimo y maximo del mes
 				avgOfMonths[0] + "\n" + avgOfMonths[1] + "\n" + avgOfMonths[2] + "\n" + avgOfMonths[3] + "\n"
 						+ avgOfMonths[4] + "\n" + avgOfMonths[5], // 1
 				avgOfMonths[6] + "\n" + avgOfMonths[7] + "\n" + avgOfMonths[8] + "\n" + avgOfMonths[9] + "\n"
-						+ avgOfMonths[10] + "\n*NESSE MÊS VENDEU R$" + String.format("%,d", total23[0]) + " (MÉDIA = R$"
-						+ String.format("%,.2f", avgM) + ")", // 2
+						+ avgOfMonths[10] + "\n*NESSE MÊS VENDEU R$" + total23[0] + " (MÉDIA = R$" + avgM + ")", // 2
 				"*PARECE QUE EM NESSE MÊS\n\n\nVENDEMOS "
-						+ (avgM < Double.valueOf(avgOfMonths[11]) ? "MENOS DO QUE TODOS OS MESES ANTERIORES"
-								: avgM > Double.valueOf(avgOfMonths[12]) ? "MAIS DO QUE TODOS OS MESES ANTERIORES"
+						+ (avgM < Integer.valueOf(avgOfMonths[11]) ? "MENOS DO QUE TODOS OS MESES ANTERIORES"
+								: avgM > Integer.valueOf(avgOfMonths[12]) ? "MAIS DO QUE TODOS OS MESES ANTERIORES"
 										: "MAIS QUE ALGUNS MESES E MENOS QUE OUTROS") // 3
 		};
 		String[] engSumm = {
-				("*IN " + currentDate.getMonthForInt(month - 1, 2) + " 2022 YOU SOLD IN TOTAL R$"
-						+ String.format("%,d", total22[0]) + "\n(AVERAGE = R$" + String.format("%,.2f", avgM22)
-						+ ")\n\n\n*IN " + currentDate.getMonthForInt(month - 1, 2)
-						+ " OF THIS YEAR YOU SOLD IN TOTAL R$" + String.format("%,d", total23[0]) + "\n(AVERAGE = R$"
-						+ String.format("%,.2f", avgM) + ")\n\n\n*IT LOOKS LIKE WE SOLD" + "\nAN AVERAGE OF R$"
-						+ (avgM < avgM22 ? String.format("%,.2f", avgM22 - avgM) + " LESS THAN LAST YEAR"
-								: String.format("%,.2f", avgM - avgM22) + " MORE THAN LAST YEAR")), // 0
+				("*IN " + currentDate.getMonthForInt(month - 1, 2) + " 2022 YOU SOLD IN TOTAL R$" + total22[0]
+						+ "\n(AVERAGE = R$" + avgM22 + ")\n\n\n*IN " + currentDate.getMonthForInt(month - 1, 2)
+						+ " OF THIS YEAR YOU SOLD IN TOTAL R$" + total23[0] + "\n(AVERAGE = R$" + avgM
+						+ ")\n\n\n*IT LOOKS LIKE WE SOLD" + "\nAN AVERAGE OF R$"
+						+ (avgM < avgM22 ? avgM22 - avgM + " LESS THAN LAST YEAR"
+								: avgM - avgM22 + " MORE THAN LAST YEAR")), // 0
 				"*THE WORST DAY IN " + currentDate.getMonthForInt(month - 1, 2) + " IT'S A " + minDayString + " "
-						+ minDIndex + "-" + month + "\nWHAT WE SOLD R$" + min + "\n\n*THE BEST DAY IN "
+						+ minDIndex + "-" + month + "\n\nWHAT WE SOLD R$" + min + "\n\n\n*THE BEST DAY IN "
 						+ currentDate.getMonthForInt(month - 1, 2) + " IT'S A " + maxDayString + " " + maxDIndex + "-"
-						+ month + "\nWHAT WE SOLD R$" + max, // 1 minimo y maximo del mes
+						+ month + "\n\nWHAT WE SOLD R$" + max, // 1 minimo y maximo del mes
 				avgOfMonths[0] + "\n" + avgOfMonths[1] + "\n" + avgOfMonths[2] + "\n" + avgOfMonths[3] + "\n"
 						+ avgOfMonths[4] + "\n" + avgOfMonths[5], // 1
 				avgOfMonths[6] + "\n" + avgOfMonths[7] + "\n" + avgOfMonths[8] + "\n" + avgOfMonths[9] + "\n"
-						+ avgOfMonths[10] + "\n*THIS MONTH WE SOLD R$" + String.format("%,d", total23[0])
-						+ " (AVERAGE = R$" + String.format("%,.2f", avgM) + ")", // 2
+						+ avgOfMonths[10] + "\n*THIS MONTH WE SOLD R$" + total23[0] + " (AVERAGE = R$" + avgM + ")", // 2
 				"*IT SEEMS THAT IN THIS MONTH\n\n\nWE SOLD "
-						+ (avgM < Double.valueOf(avgOfMonths[11]) ? "LESS THAN ALL PREVIOUS MONTHS"
-								: avgM > Double.valueOf(avgOfMonths[12]) ? "MORE THAN ALL PREVIOUS MONTHS"
+						+ (avgM < Integer.valueOf(avgOfMonths[11]) ? "LESS THAN ALL PREVIOUS MONTHS"
+								: avgM > Integer.valueOf(avgOfMonths[12]) ? "MORE THAN ALL PREVIOUS MONTHS"
 										: "MORE THAN SOME MONTHS AND LESS THAN OTHERS") // 3
 		};
 		ActionListener letterByLetter = new ActionListener() {
@@ -1569,42 +1592,60 @@ public class Reales extends JFrame {
 		int avgOfMonths[][] = dateFromMonth.totalOfMeses();
 		int monthsCount = dateFromMonth.whatMonthsToAdd();
 		int indexOfMonth = 0;
-		double avg[] = new double[monthsCount];
+		int avg[] = new int[monthsCount];
+		// average of every month
 		if (monthsCount == 0)
 			return null;
 		while (indexOfMonth < monthsCount) {
-			avg[indexOfMonth] = (double) avgOfMonths[indexOfMonth][0] / avgOfMonths[indexOfMonth][1];
+			avg[indexOfMonth] = avgOfMonths[indexOfMonth][0] / avgOfMonths[indexOfMonth][1];
 			indexOfMonth++;
 		}
+		// max month
+		int maxMonth = 0, maxDay = 0;
+		maxMonth = getMaxValue(avg);
+		indexOfMonth = 0;
+		while (indexOfMonth < monthsCount) {
+			if (maxMonth == avg[indexOfMonth])
+				break;
+			indexOfMonth++;
+		}
+		maxDay = indexOfMonth;
+		// min month
+		int minMonth = 0, minDay = 0;
+		minMonth = getMinValue(avg);
+		indexOfMonth = 0;
+		while (indexOfMonth < monthsCount) {
+			if (minMonth == avg[indexOfMonth])
+				break;
+			indexOfMonth++;
+		}
+		minDay = indexOfMonth;
 
-		String temp[] = new String[13];
+		// return the result
+		String temp[] = new String[15];
 		indexOfMonth = 0;
 		while (indexOfMonth < 11) {
 			if (indexOfMonth < monthsCount)
 				if (language == 0)
 					temp[indexOfMonth] = "*EN " + currentDate.getMonthForInt(indexOfMonth, 0) + " VENDISTE R$"
-							+ String.format("%,d", avgOfMonths[indexOfMonth][0]) + " (PROMEDIO = R$"
-							+ String.format("%,.2f",
-									(double) avgOfMonths[indexOfMonth][0] / avgOfMonths[indexOfMonth][1])
-							+ ")\n";
+							+ avgOfMonths[indexOfMonth][0] + " (PROMEDIO = R$"
+							+ avgOfMonths[indexOfMonth][0] / avgOfMonths[indexOfMonth][1] + ")\n";
 				else if (language == 1)
 					temp[indexOfMonth] = "*EM " + currentDate.getMonthForInt(indexOfMonth, 1) + " VENDEU R$"
-							+ String.format("%,d", avgOfMonths[indexOfMonth][0]) + " (MÉDIA = R$"
-							+ String.format("%,.2f",
-									(double) avgOfMonths[indexOfMonth][0] / avgOfMonths[indexOfMonth][1])
-							+ ")\n";
+							+ avgOfMonths[indexOfMonth][0] + " (MÉDIA = R$"
+							+ avgOfMonths[indexOfMonth][0] / avgOfMonths[indexOfMonth][1] + ")\n";
 				else
 					temp[indexOfMonth] = "*IN " + currentDate.getMonthForInt(indexOfMonth, 2) + " YOU SOLD R$"
-							+ String.format("%,d", avgOfMonths[indexOfMonth][0]) + " (AVERAGE = R$"
-							+ String.format("%,.2f",
-									(double) avgOfMonths[indexOfMonth][0] / avgOfMonths[indexOfMonth][1])
-							+ ")\n";
+							+ avgOfMonths[indexOfMonth][0] + " (AVERAGE = R$"
+							+ avgOfMonths[indexOfMonth][0] / avgOfMonths[indexOfMonth][1] + ")\n";
 			else
 				temp[indexOfMonth] = "";
 			indexOfMonth++;
 		}
-		temp[11] = "" + getMinValue(avg);
-		temp[12] = "" + getMaxValue(avg);
+		temp[11] = "" + maxMonth;
+		temp[12] = "" + minMonth;
+		temp[13] = "" + maxDay;
+		temp[14] = "" + minDay;
 		return temp;
 	}
 
@@ -3327,9 +3368,9 @@ public class Reales extends JFrame {
 	private void exMonthFrame(int month) {
 		Date dateFromMonth = new Date(Integer.valueOf(dayN), month, Integer.valueOf(yearS));
 		int total22[] = currentDate.totalOfMes22();
-		double avgM22 = (double) total22[0] / total22[1];
+		int avgM22 = total22[0] / total22[1];
 		int total23[] = currentDate.totalOfMes();
-		double avgM = (double) total23[0] / total23[1];
+		int avgM = total23[0] / total23[1];
 		int max = dateFromMonth.maxMinMes()[0], min = dateFromMonth.maxMinMes()[1],
 				dayMax = dateFromMonth.maxMinMes()[2], dayMin = dateFromMonth.maxMinMes()[3];
 		int maxDIndex = dateFromMonth.dayFromIndex(dayMax, language);
@@ -3346,72 +3387,65 @@ public class Reales extends JFrame {
 			File newFile = new File(tempFile2, "SUMMARY - " + currentDate.getMonthForInt(month - 1, language) + ".txt");
 			FileWriter savedF = new FileWriter(newFile);
 			String[] espSumm = {
-					System.lineSeparator() + "*EN 2022 VENDISTE EN TOTAL R$" + String.format("%,d", total22[0])
-							+ "\nEL PROMEDIO ES R$" + String.format("%,.2f", avgM22)
-							+ "\n\n*ESTE AÑO VENDISTE EN TOTAL R$" + String.format("%,d", total23[0])
-							+ "\nEL PROMEDIO ES R$" + String.format("%,.2f", avgM)
+					System.lineSeparator() + "*EN 2022 VENDISTE EN TOTAL R$" + total22[0] + "\nEL PROMEDIO ES R$"
+							+ avgM22 + "\n\n*ESTE AÑO VENDISTE EN TOTAL R$" + total23[0] + "\nEL PROMEDIO ES R$" + avgM
 							+ "\n\n*SE PARECE QUE VENDIMOS UN PROMEDIO R$"
-							+ (avgM < avgM22 ? String.format("%,.2f", avgM22 - avgM) + " MENOS DEL AÑO PASADO"
-									: String.format("%,.2f", avgM - avgM22) + " MÁS DEL AÑO PASADO")
-							+ "\n" + System.lineSeparator(), // 0
+							+ (avgM < avgM22 ? avgM22 - avgM + " MENOS DEL AÑO PASADO"
+									: avgM - avgM22 + " MÁS DEL AÑO PASADO")
+							+ System.lineSeparator(), // 0
 					"*EL PEOR DÍA EN " + currentDate.getMonthForInt(month - 1, 0) + " ES UN " + minDayString + " "
 							+ minDIndex + "-" + month + ", LO QUE VENDIMOS R$" + min + "\n*EL MEJOR DÍA EN "
 							+ currentDate.getMonthForInt(month - 1, 0) + " ES UN " + maxDayString + " " + maxDIndex
 							+ "-" + month + ", LO QUE VENDIMOS R$" + max, // 1
 					"\n\n" + avfOfMonths[0] + avfOfMonths[1] + avfOfMonths[2] + avfOfMonths[3] + avfOfMonths[4]
 							+ avfOfMonths[5] + avfOfMonths[6] + avfOfMonths[7] + avfOfMonths[8] + avfOfMonths[9]
-							+ avfOfMonths[10] + "*ESTE MES VENDISTE R$" + String.format("%,d", total23[0])
-							+ " (PROMEDIO = R$" + String.format("%,.2f", avgM) + ")\n", // 2
+							+ avfOfMonths[10] + "*ESTE MES VENDISTE R$" + total23[0] + " (PROMEDIO = R$" + avgM + ")\n", // 2
 					System.lineSeparator() + "*SE PARECE QUE EN ESTE MES, VENDIMOS "
-							+ (avgM < Double.valueOf(avfOfMonths[11]) ? "MENOS QUE TODOS LOS MESES ANTERIORES"
-									: avgM > Double.valueOf(avfOfMonths[12]) ? "MÁS QUE TODOS LOS MESES ANTERIORES"
+							+ (avgM < Integer.valueOf(avfOfMonths[11]) ? "MENOS QUE TODOS LOS MESES ANTERIORES"
+									: avgM > Integer.valueOf(avfOfMonths[12]) ? "MÁS QUE TODOS LOS MESES ANTERIORES"
 											: "MÁS QUE UNOS MESES Y MENOS QUE OTROS.")
 							+ "\n", // 3
 					System.lineSeparator() + "*GRACIAS Y HASTA MAÑANA :)", // 4
 			};
 			String[] porSumm = {
-					System.lineSeparator() + "*EM 2022 VOCÊ VENDEU NO TOTAL R$" + String.format("%,d", total22[0])
-							+ "\nO MÉDIA É R$" + String.format("%,.2f", avgM22)
-							+ "\n\n*NESSE ANO VOCÊ VENDEU NO TOTAL R$" + String.format("%,d", total23[0])
-							+ "\nO MÉDIA É R$" + String.format("%,.2f", avgM) + "\n\n*PARECE QUE VENDEMOS UM MÉDIO R$"
-							+ (avgM < avgM22 ? String.format("%,.2f", avgM22 - avgM) + " MENOS QUE O ANO PASSADO"
-									: String.format("%,.2f", avgM - avgM22) + " MAIS QUE O ANO PASSADO")
-							+ "\n" + System.lineSeparator(), // 0
+					System.lineSeparator() + "*EM 2022 VOCÊ VENDEU NO TOTAL R$" + total22[0] + "\nO MÉDIA É R$" + avgM22
+							+ "\n\n*NESSE ANO VOCÊ VENDEU NO TOTAL R$" + total23[0] + "\nO MÉDIA É R$" + avgM
+							+ "\n\n*PARECE QUE VENDEMOS UM MÉDIO R$"
+							+ (avgM < avgM22 ? avgM22 - avgM + " MENOS QUE O ANO PASSADO"
+									: avgM - avgM22 + " MAIS QUE O ANO PASSADO")
+							+ System.lineSeparator(), // 0
 					"*O PIOR DIA EM " + currentDate.getMonthForInt(month - 1, 1) + " É UM " + minDayString + " "
 							+ minDIndex + "-" + month + ", O QUE VENDEMOS R$" + min + "\n*O MELHOR DIA EM "
 							+ currentDate.getMonthForInt(month - 1, 1) + " É UM " + maxDayString + " " + maxDIndex + "-"
 							+ month + ", O QUE VENDEMOS R$" + max, // 1
 					"\n\n" + avfOfMonths[0] + avfOfMonths[1] + avfOfMonths[2] + avfOfMonths[3] + avfOfMonths[4]
 							+ avfOfMonths[5] + avfOfMonths[6] + avfOfMonths[7] + avfOfMonths[8] + avfOfMonths[9]
-							+ avfOfMonths[10] + "*NESSE MÊS VENDEU R$" + String.format("%,d", total23[0])
-							+ " (MÉDIA = R$" + String.format("%,.2f", avgM) + ")\n", // 2
+							+ avfOfMonths[10] + "*NESSE MÊS VENDEU R$" + total23[0] + " (MÉDIA = R$" + avgM + ")\n", // 2
 					System.lineSeparator() + "*PARECE QUE EM NESSE MÊS, VENDEMOS "
-							+ (avgM < Double.valueOf(avfOfMonths[11]) ? "MENOS DO QUE TODOS OS MESES ANTERIORES"
-									: avgM > Double.valueOf(avfOfMonths[12]) ? "MAIS DO QUE TODOS OS MESES ANTERIORES"
+							+ (avgM < Integer.valueOf(avfOfMonths[11]) ? "MENOS DO QUE TODOS OS MESES ANTERIORES"
+									: avgM > Integer.valueOf(avfOfMonths[12]) ? "MAIS DO QUE TODOS OS MESES ANTERIORES"
 											: "MAIS QUE ALGUNS MESES E MENOS QUE OUTROS")
 							+ "\n", // 3
 					System.lineSeparator() + "*OBRIGADO E ATÉ AMANHÃ :)"// 2
 			};
 			String[] engSumm = {
-					System.lineSeparator() + "*IN 2022 YOU SOLD IN TOTAL R$" + String.format("%,d", total22[0])
-							+ "\nTHE AVERAGE OF SALES IS R$" + String.format("%,.2f", avgM22)
-							+ "\n\n*IN THIS YEAR YOU SOLD IN TOTAL R$" + String.format("%,d", total23[0])
-							+ "\nTHE AVERAGE OF SALES IS R$" + String.format("%,.2f", avgM)
+					System.lineSeparator() + "*IN 2022 YOU SOLD IN TOTAL R$" + total22[0]
+							+ "\nTHE AVERAGE OF SALES IS R$" + avgM22 + "\n\n*IN THIS YEAR YOU SOLD IN TOTAL R$"
+							+ total23[0] + "\nTHE AVERAGE OF SALES IS R$" + avgM
 							+ "\n\n*IT LOOKS LIKE WE SOLD AN AVERAGE OF R$"
-							+ (avgM < avgM22 ? String.format("%,.2f", avgM22 - avgM) + " LESS THAN LAST YEAR"
-									: String.format("%,.2f", avgM - avgM22) + " MORE THAN LAST YEAR")
-							+ "\n" + System.lineSeparator(), // 0
+							+ (avgM < avgM22 ? avgM22 - avgM + " LESS THAN LAST YEAR"
+									: avgM - avgM22 + " MORE THAN LAST YEAR")
+							+ System.lineSeparator(), // 0
 					"*THE WORST DAY IN " + currentDate.getMonthForInt(month - 1, 2) + " IT'S A " + minDayString + " "
 							+ minDIndex + "-" + month + ", WHAT WE SOLD R$" + min + "\n*THE BEST DAY IN "
 							+ currentDate.getMonthForInt(month - 1, 2) + " IT'S A " + maxDayString + " " + maxDIndex
 							+ "-" + month + ", WHAT WE SOLD R$" + max, // 1
 					"\n\n" + avfOfMonths[0] + avfOfMonths[1] + avfOfMonths[2] + avfOfMonths[3] + avfOfMonths[4]
 							+ avfOfMonths[5] + avfOfMonths[6] + avfOfMonths[7] + avfOfMonths[8] + avfOfMonths[9]
-							+ avfOfMonths[10] + "*THIS MONTH WE SOLD R$" + String.format("%,d", total23[0])
-							+ " (AVERAGE = R$" + String.format("%,.2f", avgM) + ")\n", // 2
+							+ avfOfMonths[10] + "*THIS MONTH WE SOLD R$" + total23[0] + " (AVERAGE = R$" + avgM + ")\n", // 2
 					System.lineSeparator() + "*IT SEEMS THAT IN THIS MONTH, WE SOLD "
-							+ (avgM < Double.valueOf(avfOfMonths[11]) ? "LESS THAN ALL PREVIOUS MONTHS"
-									: avgM > Double.valueOf(avfOfMonths[12]) ? "MORE THAN ALL PREVIOUS MONTHS"
+							+ (avgM < Integer.valueOf(avfOfMonths[11]) ? "LESS THAN ALL PREVIOUS MONTHS"
+									: avgM > Integer.valueOf(avfOfMonths[12]) ? "MORE THAN ALL PREVIOUS MONTHS"
 											: "MORE THAN SOME MONTHS AND LESS THAN OTHERS")
 							+ "\n", // 3
 					System.lineSeparator() + "*THANKS AND SEE YOU TOMORROW :)" // 4
@@ -3426,12 +3460,11 @@ public class Reales extends JFrame {
 									: (" - COMPARISON BETWEEN THIS YEAR AND LAST YEAR FOR MONTH OF ")
 											+ currentDate.getMonthForInt(month - 1, 2) + ":")
 					+ System.lineSeparator() + System.lineSeparator());
-			savedF.write(language == 0 ? espSumm[0]
-					: language == 1 ? porSumm[0] : engSumm[0] + System.lineSeparator() + System.lineSeparator());
-			savedF.write(language == 0 ? espSumm[1] : language == 1 ? porSumm[1] : engSumm[1] + System.lineSeparator());
-			savedF.write(language == 0 ? espSumm[2] : language == 1 ? porSumm[2] : engSumm[2] + System.lineSeparator());
-			savedF.write(language == 0 ? espSumm[3] : language == 1 ? porSumm[3] : engSumm[3] + System.lineSeparator());
-			savedF.write(language == 0 ? espSumm[4] : language == 1 ? porSumm[4] : engSumm[4] + System.lineSeparator());
+			savedF.write(language == 0 ? espSumm[0] : language == 1 ? porSumm[0] : engSumm[0]);
+			savedF.write(language == 0 ? espSumm[1] : language == 1 ? porSumm[1] : engSumm[1]);
+			savedF.write(language == 0 ? espSumm[2] : language == 1 ? porSumm[2] : engSumm[2]);
+			savedF.write(language == 0 ? espSumm[3] : language == 1 ? porSumm[3] : engSumm[3]);
+			savedF.write(language == 0 ? espSumm[4] : language == 1 ? porSumm[4] : engSumm[4]);
 			savedF.close();
 			First.savedCorrectly(language);
 		} catch (Exception e2) {
@@ -3453,7 +3486,7 @@ public class Reales extends JFrame {
 		int dailyAvg22 = currentDate.dailyAverage(2022);
 		String[] avgOfMonths = monthsText(Integer.valueOf(First.monthN));
 		int total23[] = currentDate.totalOfMes();
-		double avgM = (double) total23[0] / total23[1];
+		int avgM = total23[0] / total23[1];
 		try {
 			tempFile0.mkdir();
 			File tempFile1 = new File(tempFile0 + "\\" + yearS);
@@ -3468,15 +3501,21 @@ public class Reales extends JFrame {
 											+ 100 * (dailyAvg - dailyAvg22) / dailyAvg22 + "%)"
 									: (dailyAvg22 - dailyAvg) + " MENOS QUE EL AÑO PASADO ( ⬇ "
 											+ 100 * (dailyAvg22 - dailyAvg) / dailyAvg22 + "%)"), // 0
-					"\n\n*EL MEJOR DÍA DE ESTE AÑO ES " + maxDayString + " " + maxDIndex + "-"
+					System.lineSeparator() + "*EL MEJOR DÍA DE ESTE AÑO ES " + maxDayString + " " + maxDIndex + "-"
 							+ currentDate.getMonthForInt(currentDate.monthFromIndex(temp[2]), 0)
 							+ ", LO QUE VENDIMOS R$" + temp[0] + "\n*EL PEOR DÍA DE ESTE AÑO ES " + minDayString + " "
 							+ minDIndex + "-" + currentDate.getMonthForInt(currentDate.monthFromIndex(temp[3]), 0)
-							+ ", LO QUE VENDIMOS R$" + temp[1] + "\n\n", // 1
-					avgOfMonths[0] + avgOfMonths[1] + avgOfMonths[2] + avgOfMonths[3] + avgOfMonths[4] + avgOfMonths[5], // 2
-					avgOfMonths[6] + avgOfMonths[7] + avgOfMonths[8] + avgOfMonths[9] + avgOfMonths[10]
-							+ "*ESTE MES VENDISTE R$" + String.format("%,d", total23[0]) + " (PROMEDIO = R$"
-							+ String.format("%,.2f", avgM) + ")\n", // 3 months summary
+							+ ", LO QUE VENDIMOS R$" + temp[1], // 1
+					System.lineSeparator() + avgOfMonths[0] + avgOfMonths[1] + avgOfMonths[2] + avgOfMonths[3]
+							+ avgOfMonths[4] + avgOfMonths[5], // 2
+					avgOfMonths[6] + avgOfMonths[7] + avgOfMonths[8] + avgOfMonths[9] + avgOfMonths[10] + "*EN "
+							+ currentDate.getMonthForInt(Integer.valueOf(First.monthN) - 1, 0) + " VENDISTE R$"
+							+ total23[0] + " (PROMEDIO = R$" + avgM + ")", // 3 months
+					System.lineSeparator() + "*EL MEJOR MES DEL AÑO FUE "
+							+ currentDate.getMonthForInt(Integer.valueOf(avgOfMonths[13]), 0)
+							+ ", LO QUE VENDIMOS UN PROMEDIO DE R$" + avgOfMonths[11] + "\n*EL PEOR MES DEL AÑO FUE "
+							+ currentDate.getMonthForInt(Integer.valueOf(avgOfMonths[14]), 0)
+							+ ", LO QUE VENDIMOS UN PROMEDIO DE R$" + avgOfMonths[12], // 4 MAX AND MIN FOR THE MONTH
 					System.lineSeparator() + "*GRACIAS Y HASTA MAÑANA :)", // 4
 			};
 			String[] porSumm = {
@@ -3487,15 +3526,19 @@ public class Reales extends JFrame {
 											+ 100 * (dailyAvg - dailyAvg22) / dailyAvg22 + "%)"
 									: (dailyAvg22 - dailyAvg) + " MENOS QUE ANO PASSADO ( ⬇ "
 											+ 100 * (dailyAvg22 - dailyAvg) / dailyAvg22 + "%)"), // 0
-					"\n\n*O MELHOR DIA DESTE ANO É " + maxDayString + " " + maxDIndex + "-"
+					"\n*O MELHOR DIA DESTE ANO É " + maxDayString + " " + maxDIndex + "-"
 							+ currentDate.getMonthForInt(currentDate.monthFromIndex(temp[2]), 1) + ", O QUE VENDEMOS R$"
 							+ temp[0] + "\n*O PIOR DIA DO ANO É " + minDayString + " " + minDIndex + "-"
 							+ currentDate.getMonthForInt(currentDate.monthFromIndex(temp[3]), 1) + ", O QUE VENDEMOS R$"
-							+ temp[1] + "\n\n", // 1
+							+ temp[1] + "\n", // 1
 					avgOfMonths[0] + avgOfMonths[1] + avgOfMonths[2] + avgOfMonths[3] + avgOfMonths[4] + avgOfMonths[5], // 2
-					avgOfMonths[6] + avgOfMonths[7] + avgOfMonths[8] + avgOfMonths[9] + avgOfMonths[10]
-							+ "*NESTE MÊS VOCÊ VENDEU R$" + String.format("%,d", total23[0]) + " (MÉDIA = R$"
-							+ String.format("%,.2f", avgM) + ")\n", // 3 months summary
+					avgOfMonths[6] + avgOfMonths[7] + avgOfMonths[8] + avgOfMonths[9] + avgOfMonths[10] + "*EM "
+							+ currentDate.getMonthForInt(Integer.valueOf(First.monthN) - 1, 1) + " VOCÊ VENDEU R$"
+							+ total23[0] + " (MÉDIA = R$" + avgM + ")\n", // 3 months
+					"*O MELHOR MÊS DO ANO FOI " + currentDate.getMonthForInt(Integer.valueOf(avgOfMonths[13]), 1)
+							+ ", O QUE VENDEMOS EM MÉDIA R$" + avgOfMonths[11] + "\n*O PIOR MÊS DO ANO FOI "
+							+ currentDate.getMonthForInt(Integer.valueOf(avgOfMonths[14]), 1)
+							+ ", O QUE VENDEMOS EM MÉDIA R$" + avgOfMonths[12], // 4 MAX AND MIN FOR THE MONTH
 					System.lineSeparator() + "*OBRIGADO E ATÉ AMANHÃ :)"// 2
 			};
 			String[] engSumm = {
@@ -3506,15 +3549,20 @@ public class Reales extends JFrame {
 											+ 100 * (dailyAvg - dailyAvg22) / dailyAvg22 + "%)"
 									: (dailyAvg22 - dailyAvg) + " LESS THAN LAST YEAR ( ⬇ "
 											+ 100 * (dailyAvg22 - dailyAvg) / dailyAvg22 + "%)"), // 0
-					"\n\n*THE BEST DAY OF THIS YEAR IS " + maxDayString + " " + maxDIndex + "-"
-							+ currentDate.getMonthForInt(currentDate.monthFromIndex(temp[2]), 2) + ", WHAT WE SOLD R$"
-							+ temp[0] + "\n*THE WORST DAY OF THIS YEAR IS " + minDayString + " " + minDIndex + "-"
-							+ currentDate.getMonthForInt(currentDate.monthFromIndex(temp[3]), 2) + ", WHAT WE SOLD R$"
-							+ temp[1] + "\n\n", // 1
+					"\n*THE BEST DAY OF THIS YEAR IS " + maxDayString + " " + maxDIndex + "-"
+							+ currentDate.getMonthForInt(currentDate.monthFromIndex(temp[2]) - 1, 2)
+							+ ", WHAT WE SOLD R$" + temp[0] + "\n*THE WORST DAY OF THIS YEAR IS " + minDayString + " "
+							+ minDIndex + "-" + currentDate.getMonthForInt(currentDate.monthFromIndex(temp[3] - 1), 2)
+							+ ", WHAT WE SOLD R$" + temp[1] + "\n", // 1
 					avgOfMonths[0] + avgOfMonths[1] + avgOfMonths[2] + avgOfMonths[3] + avgOfMonths[4] + avgOfMonths[5], // 2
-					avgOfMonths[6] + avgOfMonths[7] + avgOfMonths[8] + avgOfMonths[9] + avgOfMonths[10]
-							+ "*YOU SOLD THIS MONTH R$" + String.format("%,d", total23[0]) + " (AVERAGE = R$"
-							+ String.format("%,.2f", avgM) + ")\n", // 3 months summary
+					avgOfMonths[6] + avgOfMonths[7] + avgOfMonths[8] + avgOfMonths[9] + avgOfMonths[10] + "*EN "
+							+ currentDate.getMonthForInt(Integer.valueOf(First.monthN) - 1, 2) + " YOU SOLD R$"
+							+ total23[0] + " (AVERAGE = R$" + avgM + ")\n", // 3 months
+					"*THE BEST MONTH OF THE YEAR WAS " + currentDate.getMonthForInt(Integer.valueOf(avgOfMonths[13]), 2)
+							+ ", WHAT WE SOLD AN AVERAGE OF R$" + avgOfMonths[11]
+							+ "\n*THE WORST MONTH OF THE YEAR WAS "
+							+ currentDate.getMonthForInt(Integer.valueOf(avgOfMonths[14]), 2)
+							+ ", WHAT WE SOLD AN AVERAGE OF R$" + avgOfMonths[12], // 4 MAX AND MIN FOR THE MONTH
 					System.lineSeparator() + "*THANKS AND SEE YOU TOMORROW :)" // 4
 			};
 			savedF.write(titleName()
@@ -3523,10 +3571,16 @@ public class Reales extends JFrame {
 					+ System.lineSeparator() + System.lineSeparator());
 			savedF.write(language == 0 ? espSumm[0]
 					: language == 1 ? porSumm[0] : engSumm[0] + System.lineSeparator() + System.lineSeparator());
-			savedF.write(language == 0 ? espSumm[1] : language == 1 ? porSumm[1] : engSumm[1] + System.lineSeparator());
-			savedF.write(language == 0 ? espSumm[2] : language == 1 ? porSumm[2] : engSumm[2] + System.lineSeparator());
-			savedF.write(language == 0 ? espSumm[3] : language == 1 ? porSumm[3] : engSumm[3] + System.lineSeparator());
-			savedF.write(language == 0 ? espSumm[4] : language == 1 ? porSumm[4] : engSumm[4] + System.lineSeparator());
+			savedF.write(
+					(language == 0 ? espSumm[1] : language == 1 ? porSumm[1] : engSumm[1]) + System.lineSeparator());
+			savedF.write(
+					(language == 0 ? espSumm[2] : language == 1 ? porSumm[2] : engSumm[2]) + System.lineSeparator());
+			savedF.write(
+					(language == 0 ? espSumm[3] : language == 1 ? porSumm[3] : engSumm[3]) + System.lineSeparator());
+			savedF.write(
+					(language == 0 ? espSumm[4] : language == 1 ? porSumm[4] : engSumm[4]) + System.lineSeparator());
+			savedF.write(
+					(language == 0 ? espSumm[5] : language == 1 ? porSumm[5] : engSumm[5]) + System.lineSeparator());
 			savedF.close();
 			First.savedCorrectly(language);
 		} catch (Exception e2) {
@@ -6379,8 +6433,8 @@ public class Reales extends JFrame {
 	}
 
 	// getting the maximum value
-	private double getMaxValue(double[] array) {
-		double maxValue = array[0];
+	private int getMaxValue(int[] array) {
+		int maxValue = array[0];
 		for (int i = 1; i < array.length; i++) {
 			if (array[i] > maxValue) {
 				maxValue = array[i];
@@ -6390,8 +6444,8 @@ public class Reales extends JFrame {
 	}
 
 	// getting the miniumum value
-	private double getMinValue(double[] array) {
-		double minValue = array[0];
+	private int getMinValue(int[] array) {
+		int minValue = array[0];
 		for (int i = 1; i < array.length; i++) {
 			if (array[i] < minValue) {
 				minValue = array[i];
