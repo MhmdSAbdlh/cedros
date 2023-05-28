@@ -1,4 +1,4 @@
-# cedros/narjes v6.6
+# cedros/narjes
 App for the Cedros free Shop
 
 [en]
