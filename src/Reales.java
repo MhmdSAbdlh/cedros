@@ -1100,7 +1100,7 @@ public class Reales extends JFrame {
 		// disable memory frame in 29/feb
 		if (currentDate.d == 29 && currentDate.m == 2) {
 			oldYears.setEnabled(false);
-			oldYears.setText("DISABLED TODAY");
+			oldYears.setText(language == 0 ? "BLOQUEO HOY!" : language == 1 ? "BLOQUEO HOJE!" : "DISABLED TODAY!");
 		}
 
 		// LANGUAGE
@@ -1108,8 +1108,6 @@ public class Reales extends JFrame {
 				novo, clear, calc, save, screenShot, option, exit, summary, sumV, effectChooser, sumV1, sumV2, sumV3,
 				exMenu, speedChooser, speed1, speed2, speed3, goTo, pesos, fatura, firstFrame, reso, reso1, reso2,
 				reso3, reso4, help, hideMenu, keyShortcut, creator, about);
-
-		exMonthFrame(5);
 
 		// Close popup
 		this.addWindowListener(new java.awt.event.WindowAdapter() {
@@ -1709,8 +1707,6 @@ public class Reales extends JFrame {
 				sepLabel[i][j].setBackground(First.blueC);
 				sepLabel[i][j].setBorder(new LineBorder(First.darkC, 2));
 				sepLabel[i][j].setHorizontalAlignment(0);
-				if (j == 1)
-					sepLabel[i][j].setEditable(false);
 				extraF.add(sepLabel[i][j]);
 			}
 
