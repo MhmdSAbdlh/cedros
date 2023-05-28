@@ -99,7 +99,7 @@ public class First extends JFrame {
 	javax.swing.Timer timer;
 	int order = 0, wordL = 0;
 
-	static String appVersion = "v6.7";
+	static String appVersion = "v6.8";
 	private int language;
 
 	String currentpath = System.getProperty("user.dir");

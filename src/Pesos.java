@@ -48,7 +48,6 @@ import javax.swing.DefaultListCellRenderer;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
-import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -682,22 +681,7 @@ public class Pesos extends JFrame {
 			timer = new Timer(1, letterByLetter);
 			timer.start();
 			screenShooter();
-			JOptionPane opt = new JOptionPane(idiomaString(language)[24], JOptionPane.NO_OPTION);
-			final JDialog dlg = opt.createDialog("SALVO");
-			new Thread(new Runnable() {
-				public void run() {
-					try {
-						Thread.sleep(1000);
-						dlg.dispose();
-					} catch (Throwable th) {
-						JOptionPane opt = new JOptionPane(
-								language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
-								JOptionPane.ERROR_MESSAGE);
-						opt.show();
-					}
-				}
-			}).start();
-			dlg.setVisible(true);
+			First.savedCorrectly(language);
 			try {// sounds
 				AudioInputStream audioStream = AudioSystem.getAudioInputStream(Reales.screenSound);
 				Clip clip = AudioSystem.getClip();
@@ -2341,23 +2325,6 @@ public class Pesos extends JFrame {
 			savedF.write(lang == 0 ? espSumm[13] : lang == 1 ? porSumm[13] : engSumm[13]);
 			savedF.close();
 			First.savedCorrectly(lang);
-			JOptionPane opt = new JOptionPane(idiomaString(lang)[25], JOptionPane.NO_OPTION);
-			final JDialog dlg = opt.createDialog("SALVO");
-			new Thread(new Runnable() {
-				public void run() {
-					try {
-						Thread.sleep(1000);
-						dlg.dispose();
-
-					} catch (Throwable th) {
-						JOptionPane opt = new JOptionPane(
-								language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
-								JOptionPane.ERROR_MESSAGE);
-						opt.show();
-					}
-				}
-			}).start();
-			dlg.setVisible(true);
 		} catch (Exception e2) {
 			JOptionPane opt = new JOptionPane(lang == 0 ? "ERROR, NO SALVO!" : "ERROR, NAO SALVO!",
 					JOptionPane.ERROR_MESSAGE);
