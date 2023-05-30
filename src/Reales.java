@@ -3392,6 +3392,8 @@ public class Reales extends JFrame {
 
 	// Export the year overview
 	private void exYearFrame() {
+		dailyAvg = avgSellOfDay()[1];
+		monthlyAvg = monTotalAverage(currentDate.m)[0] / monTotalAverage(currentDate.m)[1];
 		int temp[] = yearMaxMin();
 		int maxDIndex = currentDate.dayFromIndex(temp[2]);
 		String maxDayString = whatDay(maxDIndex, monthFromIndex(temp[2]), 2023, language);
@@ -3834,9 +3836,9 @@ public class Reales extends JFrame {
 		int op = JOptionPane.showConfirmDialog(null, idiomaString(language)[16], idiomaString(language)[17],
 				JOptionPane.OK_CANCEL_OPTION);
 		if (op == 0) {
-			exBtn(language);
 			if (currentDate.d != 29 || currentDate.m != 2)
 				currentDate.saveTotal23(totalVenta + pix);
+			exBtn(language);
 			// cajas values
 			for (int i = 0; i < 6; i++)// table detail
 				for (int j = 0; j < 20; j++)
@@ -6562,13 +6564,26 @@ public class Reales extends JFrame {
 		Date tempDate = new Date(1, month, 2023);
 		int index = tempDate.index();
 		int returned[] = { 0, 0, 0, 0 };
-
+		ArrayList<String> totalMes = new ArrayList<String>();
+		String line = "";
+		try {// open the data for 2023
+			File extraFolder = new File(tempFile0 + "\\extra");
+			File extraFile = new File(extraFolder, "2023.dll");
+			BufferedReader dataOpened = new BufferedReader(new FileReader(extraFile));
+			while ((line = dataOpened.readLine()) != null) {
+				totalMes.add(line.toString());
+			}
+			dataOpened.close();
+		} catch (Exception e) {
+			JOptionPane opt = new JOptionPane("ERROR!", JOptionPane.ERROR_MESSAGE);
+			opt.show();
+		}
 		int[] valuesMes = new int[tempDate.maxDays()];
 		int count = 0;
 		for (int i = index; i < index + tempDate.maxDays(); i++) {
-			if (i < con23.size())
-				if (First.isNumeric(con23.get(i)) && Integer.valueOf(con23.get(i)) != 0)
-					valuesMes[count] = Integer.valueOf(con23.get(i));
+			if (i < totalMes.size())
+				if (First.isNumeric(totalMes.get(i)) && Integer.valueOf(totalMes.get(i)) != 0)
+					valuesMes[count] = Integer.valueOf(totalMes.get(i));
 				else
 					valuesMes[count] = monthlyAvg;
 			else
@@ -6600,12 +6615,27 @@ public class Reales extends JFrame {
 		Date date2 = new Date(1, 1, 2023);
 		int result[] = { 0, 0, 0, 0 };
 		int i = 0, counter = 0, nbOfDays = 0;
+		ArrayList<String> totalMes = new ArrayList<String>();
+		String line = "";
+		try {// open the data for 2023
+			File extraFolder = new File(tempFile0 + "\\extra");
+			File extraFile = new File(extraFolder, "2023.dll");
+			BufferedReader dataOpened = new BufferedReader(new FileReader(extraFile));
+			while ((line = dataOpened.readLine()) != null) {
+				totalMes.add(line.toString());
+			}
+			dataOpened.close();
+		} catch (Exception e) {
+			JOptionPane opt = new JOptionPane("ERROR!", JOptionPane.ERROR_MESSAGE);
+			opt.show();
+		}
 		// average of the same days
-		while (i < con23.size()) {
+		while (i < totalMes.size()) {
 			if (dayName(currentDate, 0).equals(dayName(date2, 0)))
-				if (First.isNumeric(con23.get(i))) {
-					counter += Integer.valueOf(con23.get(i));
-					nbOfDays++;
+				if (First.isNumeric(totalMes.get(i))) {
+					counter += Integer.valueOf(totalMes.get(i));
+					if (Integer.valueOf(totalMes.get(i)) != 0)
+						nbOfDays++;
 				}
 			i++;
 			date2.addDays(1);
@@ -6616,10 +6646,11 @@ public class Reales extends JFrame {
 		// daily average
 		i = 0;
 		counter = 0;
-		while (i < con23.size()) {
-			if (First.isNumeric(con23.get(i))) {
-				counter += Integer.valueOf(con23.get(i));
-				nbOfDays++;
+		while (i < totalMes.size()) {
+			if (First.isNumeric(totalMes.get(i))) {
+				counter += Integer.valueOf(totalMes.get(i));
+				if (Integer.valueOf(totalMes.get(i)) != 0)
+					nbOfDays++;
 			}
 			i++;
 		}
@@ -6631,11 +6662,25 @@ public class Reales extends JFrame {
 	// total for selected month[0] and nbofdays[1]
 	private int[] monTotalAverage(int month) {
 		Date date2 = new Date(1, month, 2023);
+		ArrayList<String> totalMes = new ArrayList<String>();
+		String line = "";
 		int index = date2.index(), counter = 0, nbOfDays = 0;
+		try {// open the data for 2023
+			File extraFolder = new File(tempFile0 + "\\extra");
+			File extraFile = new File(extraFolder, "2023.dll");
+			BufferedReader dataOpened = new BufferedReader(new FileReader(extraFile));
+			while ((line = dataOpened.readLine()) != null) {
+				totalMes.add(line.toString());
+			}
+			dataOpened.close();
+		} catch (Exception e) {
+			JOptionPane opt = new JOptionPane("ERROR!", JOptionPane.ERROR_MESSAGE);
+			opt.show();
+		}
 		for (int j = index; j < index + date2.maxDays(); j++)
-			if (j < con23.size() && First.isNumeric(con23.get(j))) {
-				counter += Integer.valueOf(con23.get(j));
-				if (Integer.valueOf(con23.get(j)) != 0)
+			if (j < totalMes.size() && First.isNumeric(totalMes.get(j))) {
+				counter += Integer.valueOf(totalMes.get(j));
+				if (Integer.valueOf(totalMes.get(j)) != 0)
 					nbOfDays++;
 			}
 		int[] returned = { counter, nbOfDays };

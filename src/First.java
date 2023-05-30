@@ -99,7 +99,7 @@ public class First extends JFrame {
 	javax.swing.Timer timer;
 	int order = 0, wordL = 0;
 
-	static String appVersion = "v6.8";
+	static String appVersion = "v6.9";
 	private int language;
 
 	String currentpath = System.getProperty("user.dir");
@@ -168,6 +168,7 @@ public class First extends JFrame {
 			language = 1;
 		else
 			language = 2;
+		myBirthday(language);// my birthday norification
 		this.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 		this.setAlwaysOnTop(false);
 		this.setSize(width, height);
@@ -264,7 +265,6 @@ public class First extends JFrame {
 			String hoy = new SimpleDateFormat("hh").format(Calendar.getInstance().getTime())
 					+ new SimpleDateFormat("mm").format(Calendar.getInstance().getTime());
 			if (String.valueOf(passTF.getPassword()).equals("Teoria2019")
-					|| String.valueOf(passTF.getPassword()).equals("")
 					|| String.valueOf(passTF.getPassword()).equals(hoy)) {
 				passTF.setText("");
 				this.dispose();
@@ -279,7 +279,7 @@ public class First extends JFrame {
 			} else {
 				if (String.valueOf(passTF.getPassword()).equalsIgnoreCase("ghtaymi"))
 					while (0 < 1)
-						JOptionPane.showMessageDialog(null, "ZOOMBIE", "ZOOMBIE", JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(null, "ZOOMBIE", "GHTAYMI", JOptionPane.ERROR_MESSAGE);
 				else
 					JOptionPane.showMessageDialog(null, idiomaString(language)[2], "Atencion",
 							JOptionPane.ERROR_MESSAGE);
@@ -391,6 +391,31 @@ public class First extends JFrame {
 		date.set(Calendar.SECOND, 59);
 		date.set(Calendar.MILLISECOND, 0);
 		if ((date1.getTime().getHours() == 17 && date1.getTime().getMinutes() > 58) || date1.getTime().getHours() > 17)
+			timer.cancel();
+		else
+			timer.schedule(task, date.getTime());
+	}
+
+	// Notification when its my cumple
+	static void myBirthday(int lang) {
+		Timer timer = new Timer();
+		TimerTask task = new TimerTask() {
+
+			@Override
+			public void run() {
+				JOptionPane.showMessageDialog(null, lang == 0
+						? "<html><div font-weight: bold>ES MI CUMPLEAÑOS<br><br>DESÉAME UN FELIZ AÑO :)<br></div></html>"
+						: lang == 1
+								? "<html><div font-weight: bold>É MEU ANIVERSÁRIO<br><br>ME DESEJE UM FELIZ ANO :)<br></div></html>"
+								: "<html><div font-weight: bold>IT'S MY BIRTHDAY<br><br>WISH ME A HAPPY YEAR :)<br></div></html>",
+						"INFORMATION", JOptionPane.WARNING_MESSAGE);
+			}
+		};
+		Calendar date = Calendar.getInstance();
+		Calendar date1 = Calendar.getInstance();
+		date.set(Calendar.MONTH, 8);
+		date.set(Calendar.DAY_OF_MONTH, 15);
+		if (date1.getTime().getDate() != 15 || date1.getTime().getMonth() != 8)
 			timer.cancel();
 		else
 			timer.schedule(task, date.getTime());
