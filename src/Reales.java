@@ -294,7 +294,8 @@ public class Reales extends JFrame {
 		}
 		sameDayAvg = avgSellOfDay()[0];
 		dailyAvg = avgSellOfDay()[1];
-		monthlyAvg = monTotalAverage(currentDate.m)[0] / monTotalAverage(currentDate.m)[1];
+		monthlyAvg = monTotalAverage(currentDate.m)[1] == 0 ? 0
+				: monTotalAverage(currentDate.m)[0] / monTotalAverage(currentDate.m)[1];
 
 		try {// open the data for 2022
 			String appV;
@@ -1420,7 +1421,7 @@ public class Reales extends JFrame {
 		int total22[] = totalOfMes(dateFromMonth.m, 2022);
 		int avgM22 = total22[1] == 0 ? 0 : total22[0] / total22[1];
 		int total23[] = totalOfMes(month, 2023);
-		int avgM = total23[0] / total23[1];
+		int avgM = total23[1] == 0 ? 0 : total23[0] / total23[1];
 		String[] avgOfMonths = monthsText(month);
 		JTextPane sumItem = new JTextPane();
 		StyledDocument doc = sumItem.getStyledDocument();
@@ -1791,13 +1792,16 @@ public class Reales extends JFrame {
 						+ whatDay(Integer.valueOf(dayN), Integer.valueOf(First.monthN), 2022, 0) + ", VENDISTE R$"
 						+ value22 + " EN TOTAL\n\n\n*HOY, " + dayS + " VENDISTE POR AHORA R$" + (pix + totalVenta)
 						+ "\n\n\n*SE PARECE QUE VENDIMOS R$"
-						+ (value22 > (pix + totalVenta) ? (value22 - (pix + totalVenta) + " MENOS QUE EL AÑO PASADO")
+						+ (value22 > (pix + totalVenta) ? (value22 - (pix + totalVenta)
+								+ " MENOS QUE EL AÑO PASADO")
 								: ((pix + totalVenta) - value22 + " MÁS QUE EL AÑO PASADO"))
 						+ (value22 == 0 ? ""
 								: "\n\nCORRESPONDIENTE A UN " + (value22 > (pix + totalVenta)
-										? "DISMINUIR DE " + (value22 - (pix + totalVenta)) * 100 / value22
+										? "DISMINUIR DE "
+												+ (value22 == 0 ? 0 : (value22 - (pix + totalVenta)) * 100 / value22)
 
-										: "AUMENTAR DE " + ((pix + totalVenta) - value22) * 100 / value22))
+										: "AUMENTAR DE "
+												+ (value22 == 0 ? 0 : (pix + totalVenta - value22) * 100 / value22)))
 						+ "%"), // 0
 				"*HOY, VENDEMOS EN TOTAL R$" + (totalVenta + pix) + "\n\n\n*ESTE AÑO VENDIMOS UN PROMEDIO DIARIO DE R$"
 						+ dailyAvg + "\n\n\n*UN PROMEDIO DE LOS "
@@ -1806,26 +1810,29 @@ public class Reales extends JFrame {
 						+ currentDate.getMonthForInt(Integer.valueOf(First.monthN) - 1, 0) + " R$" + monthlyAvg, // 1
 				"SE PARECE QUE VENDIMOS\n\n*R$"
 						+ (sameDayAvg > (pix + totalVenta)
-								? sameDayAvg - (pix + totalVenta) + " MENOS QUE EL PROMEDIO DE LOS "
+								? sameDayAvg
+										- (pix + totalVenta) + " MENOS QUE EL PROMEDIO DE LOS "
 										+ whatDay(currentDate.d, currentDate.m, currentDate.y, 0) + " ⬇ "
-										+ (100 * (sameDayAvg - (pix + totalVenta)) / sameDayAvg)
+										+ (sameDayAvg == 0 ? 0 : 100 * (sameDayAvg - (pix + totalVenta)) / sameDayAvg)
 								: ((pix + totalVenta) - sameDayAvg + " MÁS QUE EL PROMEDIO DE LOS "
 										+ whatDay(currentDate.d, currentDate.m, currentDate.y, 0)) + " ⬆ "
-										+ (100 * (-sameDayAvg + (pix + totalVenta)) / sameDayAvg))
+										+ (sameDayAvg == 0 ? 0 : 100 * (-sameDayAvg + (pix + totalVenta)) / sameDayAvg))
 						+ "%\n\n*R$"
 						+ (dailyAvg > (pix + totalVenta)
 								? dailyAvg - (pix + totalVenta) + " MENOS QUE EL PROMEDIO DIARIO" + " ⬇ "
-										+ (100 * (dailyAvg - (pix + totalVenta)) / dailyAvg)
+										+ (dailyAvg == 0 ? 0 : 100 * (dailyAvg - (pix + totalVenta)) / dailyAvg)
 								: ((pix + totalVenta) - dailyAvg + " MÁS QUE EL PROMEDIO DIARIO") + " ⬆ "
-										+ (100 * (-dailyAvg + (pix + totalVenta)) / dailyAvg))
+										+ (dailyAvg == 0 ? 0 : 100 * (-dailyAvg + (pix + totalVenta)) / dailyAvg))
 						+ "%\n\n*R$"
 						+ (monthlyAvg > (pix + totalVenta)
-								? monthlyAvg - (pix + totalVenta) + " MENOS QUE PROMEDIO MENSUAL DE "
+								? monthlyAvg
+										- (pix + totalVenta) + " MENOS QUE PROMEDIO MENSUAL DE "
 										+ currentDate.getMonthForInt(Integer.valueOf(First.monthN) - 1, 0) + " ⬇ "
-										+ (100 * (monthlyAvg - (pix + totalVenta)) / monthlyAvg)
+										+ (monthlyAvg == 0 ? 0 : 100 * (monthlyAvg - (pix + totalVenta)) / monthlyAvg)
 								: ((pix + totalVenta) - monthlyAvg + " MÁS QUE EL PPROMEDIO MENSUAL DE "
 										+ currentDate.getMonthForInt(Integer.valueOf(First.monthN) - 1, 0) + " ⬆ "
-										+ (100 * (-monthlyAvg + (pix + totalVenta)) / monthlyAvg)))
+										+ (monthlyAvg == 0 ? 0
+												: 100 * (-monthlyAvg + (pix + totalVenta)) / monthlyAvg)))
 						+ "%"
 						+ (min >= (totalVenta + pix)
 								? "\n\n\n*SE PARECE QUE ESTE DÍA ES EL PEOR DE ESTE MES\nVENDIMOS R$"
@@ -1840,40 +1847,43 @@ public class Reales extends JFrame {
 						+ whatDay(Integer.valueOf(dayN), Integer.valueOf(First.monthN), 2022, 1) + ", VOCÊ VENDEU R$"
 						+ value22 + " EM TOTAL\n\n\n*HOJE, " + dayS + " VENDEU POR AGORA R$" + (pix + totalVenta)
 						+ "\n\n\n*PARECE QUE VENDEMOS R$"
-						+ (value22 > (pix + totalVenta) ? (value22 - (pix + totalVenta) + " MENOS QUE ANO PASSADO")
+						+ (value22 > (pix + totalVenta) ? (value22
+								- (pix + totalVenta) + " MENOS QUE ANO PASSADO")
 								: ((pix + totalVenta) - value22 + " MAIS QUE ANO PASSADO"))
 						+ (value22 == 0 ? ""
 								: "\n\nCORRESPONDENTE A UM " + (value22 > (pix + totalVenta)
-										? "DIMINUIÇÃO DO " + (value22 - (pix + totalVenta)) * 100 / value22
-
-										: "AUMENTO DO " + ((pix + totalVenta) - value22) * 100 / value22))
+										? "DIMINUIÇÃO DO "
+												+ (value22 == 0 ? 0 : (value22 - (pix + totalVenta)) * 100 / value22)
+										: "AUMENTO DO "
+												+ (value22 == 0 ? 0 : (pix + totalVenta - value22) * 100 / value22)))
 						+ "%", // 0
 				"*HOJE, VENDEMOS NO TOTAL R$" + (totalVenta + pix) + "\n\n\n*ESTE ANO VENDEMOS UM MÉDIA DIÁRIA DO R$"
 						+ dailyAvg + "\n\n\n*EM MÉDIA DO " + whatDay(currentDate.d, currentDate.m, currentDate.y, 1)
 						+ " R$" + sameDayAvg + "\n\n\n*EM MÉDIA MENSAL "
 						+ currentDate.getMonthForInt(Integer.valueOf(First.monthN) - 1, 1) + " R$" + monthlyAvg, // 1
 				"PARECE QUE VENDEMOS\n\n*R$"
-						+ (sameDayAvg > (pix + totalVenta)
-								? sameDayAvg - (pix + totalVenta) + " MENOS QUE A MÉDIA DE OS "
-										+ whatDay(currentDate.d, currentDate.m, currentDate.y, 1) + " ⬇ "
-										+ (100 * (sameDayAvg - (pix + totalVenta)) / sameDayAvg)
+						+ (sameDayAvg > (pix + totalVenta) ? sameDayAvg - (pix + totalVenta)
+								+ " MENOS QUE A MÉDIA DE OS " + whatDay(currentDate.d, currentDate.m, currentDate.y, 1)
+								+ " ⬇ " + (sameDayAvg == 0 ? 0 : 100 * (sameDayAvg - (pix + totalVenta)) / sameDayAvg)
 								: (pix + totalVenta) - sameDayAvg + " MAIS QUE A MÉDIA DE OS "
 										+ (whatDay(currentDate.d, currentDate.m, currentDate.y, 1)) + " ⬆ "
-										+ (100 * (-sameDayAvg + (pix + totalVenta)) / sameDayAvg))
+										+ (sameDayAvg == 0 ? 0 : 100 * (-sameDayAvg + (pix + totalVenta)) / sameDayAvg))
 						+ "%\n\n*R$"
 						+ (dailyAvg > (pix + totalVenta)
 								? dailyAvg - (pix + totalVenta) + " MENOS QUE A MÉDIA DIÁRIA" + " ⬇ "
-										+ (100 * (dailyAvg - (pix + totalVenta)) / dailyAvg)
+										+ (dailyAvg == 0 ? 0 : 100 * (dailyAvg - (pix + totalVenta)) / dailyAvg)
 								: (pix + totalVenta) - dailyAvg + " MAIS QUE A MÉDIA DIÁRIA" + " ⬆ "
-										+ (100 * (-dailyAvg + (pix + totalVenta)) / dailyAvg))
+										+ (dailyAvg == 0 ? 0 : 100 * (-dailyAvg + (pix + totalVenta)) / dailyAvg))
 						+ "%\n\n*R$"
 						+ (monthlyAvg > (pix + totalVenta)
-								? monthlyAvg - (pix + totalVenta) + " MENOS QUE A MÉDIA MENSAL "
+								? monthlyAvg
+										- (pix + totalVenta) + " MENOS QUE A MÉDIA MENSAL "
 										+ currentDate.getMonthForInt(Integer.valueOf(First.monthN) - 1, 1) + " ⬇ "
-										+ (100 * (monthlyAvg - (pix + totalVenta)) / monthlyAvg)
+										+ (monthlyAvg == 0 ? 0 : 100 * (monthlyAvg - (pix + totalVenta)) / monthlyAvg)
 								: ((pix + totalVenta) - monthlyAvg + " MAIS QUE A MÉDIA MENSAL "
 										+ currentDate.getMonthForInt(Integer.valueOf(First.monthN) - 1, 1) + " ⬆ "
-										+ (100 * (-monthlyAvg + (pix + totalVenta)) / monthlyAvg)))
+										+ (monthlyAvg == 0 ? 0
+												: 100 * (-monthlyAvg + (pix + totalVenta)) / monthlyAvg)))
 						+ "%"
 						+ (min >= (totalVenta + pix)
 								? "\n\n\n*PARECE QUE ESSE DIA É O PIOR DESTE MÊS\nVENDEMOS R$"
@@ -1888,13 +1898,16 @@ public class Reales extends JFrame {
 						+ whatDay(Integer.valueOf(dayN), Integer.valueOf(First.monthN), 2022, 2) + ", YOU SOLD R$"
 						+ value22 + " IN TOTAL\n\n\n*TODAY, " + dayS + " YOU SOLD FOR NOW R$" + (pix + totalVenta)
 						+ "\n\n\n*IT SEEMS WE SOLD R$"
-						+ (value22 > (pix + totalVenta) ? (value22 - (pix + totalVenta) + " LESS THAN LAST YEAR")
+						+ (value22 > (pix + totalVenta)
+								? (value22 - (pix + totalVenta) + " LESS THAN LAST YEAR")
 								: ((pix + totalVenta) - value22 + " MORE THAN LAST YEAR"))
 						+ (value22 == 0 ? ""
 								: "\n\nCORRESPONDING TO " + (value22 > (pix + totalVenta)
-										? "A DECREASE OF " + (value22 - (pix + totalVenta)) * 100 / value22
+										? "A DECREASE OF "
+												+ (value22 == 0 ? 0 : (value22 - (pix + totalVenta)) * 100 / value22)
 
-										: "AN INCREASE OF " + ((pix + totalVenta) - value22) * 100 / value22))
+										: "AN INCREASE OF "
+												+ (value22 == 0 ? 0 : (pix + totalVenta - value22) * 100 / value22)))
 						+ "%", // 0
 				"*TODAY, WE SOLD IN TOTAL R$" + (totalVenta + pix) + "\n\n\n*THIS YEAR WE SOLD A DAILY AVERAGE OF R$"
 						+ dailyAvg + "\n\n\n*AN AVERAGE OF THE "
@@ -1902,27 +1915,30 @@ public class Reales extends JFrame {
 						+ "\n\n\n*A MONTHLY AVERAGE " + currentDate.getMonthForInt(Integer.valueOf(First.monthN) - 1, 2)
 						+ " R$" + monthlyAvg, // 1
 				"IT LOOKS LIKE WE SOLD\n\n*R$"
-						+ (sameDayAvg > (pix + totalVenta)
-								? sameDayAvg - (pix + totalVenta) + " LESS THAN THE AVERAGE OF THE "
-										+ whatDay(currentDate.d, currentDate.m, currentDate.y, 2) + " ⬇ "
-										+ (100 * (sameDayAvg - (pix + totalVenta)) / sameDayAvg)
+						+ (sameDayAvg > (pix + totalVenta) ? sameDayAvg
+								- (pix + totalVenta) + " LESS THAN THE AVERAGE OF THE "
+								+ whatDay(currentDate.d, currentDate.m, currentDate.y, 2) + " ⬇ "
+								+ (sameDayAvg == 0 ? 0 : 100 * (sameDayAvg - (pix + totalVenta)) / sameDayAvg)
 								: ((pix + totalVenta) - sameDayAvg + " MORE THAN THE AVERAGE OF THE "
 										+ whatDay(currentDate.d, currentDate.m, currentDate.y, 2) + " ⬆ "
-										+ (100 * (-sameDayAvg + (pix + totalVenta)) / sameDayAvg)))
+										+ (sameDayAvg == 0 ? 0
+												: 100 * (-sameDayAvg + (pix + totalVenta)) / sameDayAvg)))
 						+ "%\n\n*R$"
 						+ (dailyAvg > (pix + totalVenta)
 								? dailyAvg - (pix + totalVenta) + " LESS THAN THE DAILY AVERAGE" + " ⬇ "
-										+ (100 * (dailyAvg - (pix + totalVenta)) / dailyAvg)
+										+ (dailyAvg == 0 ? 0 : 100 * (dailyAvg - (pix + totalVenta)) / dailyAvg)
 								: ((pix + totalVenta) - dailyAvg + " MORE THAN THE DAILY AVERAGE" + " ⬆ "
-										+ (100 * (-dailyAvg + (pix + totalVenta)) / dailyAvg)))
+										+ (dailyAvg == 0 ? 0 : 100 * (-dailyAvg + (pix + totalVenta)) / dailyAvg)))
 						+ "%\n\n*R$"
 						+ (monthlyAvg > (pix + totalVenta)
-								? monthlyAvg - (pix + totalVenta) + " LESS THAN THE MONTHLY AVERAGE OF "
+								? monthlyAvg
+										- (pix + totalVenta) + " LESS THAN THE MONTHLY AVERAGE OF "
 										+ currentDate.getMonthForInt(Integer.valueOf(First.monthN) - 1, 2) + " ⬇ "
-										+ (100 * (monthlyAvg - (pix + totalVenta)) / monthlyAvg)
+										+ (monthlyAvg == 0 ? 0 : 100 * (monthlyAvg - (pix + totalVenta)) / monthlyAvg)
 								: ((pix + totalVenta) - monthlyAvg + " MORE THAN THE MONTHLY AVERAGE OF "
 										+ currentDate.getMonthForInt(Integer.valueOf(First.monthN) - 1, 2) + " ⬆ "
-										+ (100 * (-monthlyAvg + (pix + totalVenta)) / monthlyAvg)))
+										+ (monthlyAvg == 0 ? 0
+												: 100 * (-monthlyAvg + (pix + totalVenta)) / monthlyAvg)))
 						+ "%"
 						+ (min >= (totalVenta + pix)
 								? "\n\n\n*IT SEEMS THAT THIS DAY IS THE WORST OF THIS MONTH\nWE SOLD R$"
@@ -3004,9 +3020,10 @@ public class Reales extends JFrame {
 									: ((pix + totalVenta) - value22 + " MÁS QUE EL AÑO PASADO"))
 							+ (value22 == 0 ? ""
 									: ", CORRESPONDIENTE A UN " + (value22 > (pix + totalVenta)
-											? "DISMINUIR DE " + (value22 - (pix + totalVenta)) * 100 / value22
-
-											: "AUMENTAR DE " + ((pix + totalVenta) - value22) * 100 / value22))
+											? "DISMINUIR DE "
+													+ (value22 == 0 ? 0 : (value22 - pix - totalVenta) * 100 / value22)
+											: "AUMENTAR DE " + (value22 == 0 ? 0
+													: (pix + totalVenta - value22) * 100 / value22)))
 							+ "%" + System.lineSeparator(), // 15
 					System.lineSeparator() + "HOY, VENDEMOS EN TOTAL R$" + (totalVenta + pix)
 							+ "\nESTE AÑO VENDIMOS UN PROMEDIO DIARIO DE R$" + dailyAvg + "\nUN PROMEDIO DE LOS "
@@ -3018,24 +3035,30 @@ public class Reales extends JFrame {
 							+ (sameDayAvg > (pix + totalVenta)
 									? sameDayAvg - (pix + totalVenta) + " MENOS QUE EL PROMEDIO DE LOS "
 											+ whatDay(currentDate.d, currentDate.m, currentDate.y, 0) + " ⬇ "
-											+ (100 * (sameDayAvg - (pix + totalVenta)) / sameDayAvg)
+											+ (sameDayAvg == 0 ? 0
+													: 100 * (sameDayAvg - (pix + totalVenta)) / sameDayAvg)
 									: ((pix + totalVenta) - sameDayAvg + " MÁS QUE EL PROMEDIO DE LOS "
-											+ whatDay(currentDate.d, currentDate.m, currentDate.y, 0)) + " ⬆ "
-											+ (100 * (-sameDayAvg + (pix + totalVenta)) / sameDayAvg))
+											+ whatDay(currentDate.d, currentDate.m, currentDate.y, 0))
+											+ " ⬆ "
+											+ (sameDayAvg == 0 ? 0
+													: 100 * (-sameDayAvg + (pix + totalVenta)) / sameDayAvg))
 							+ "%\nR$"
 							+ (dailyAvg > (pix + totalVenta)
 									? dailyAvg - (pix + totalVenta) + " MENOS QUE EL PROMEDIO DIARIO" + " ⬇ "
-											+ (100 * (dailyAvg - (pix + totalVenta)) / dailyAvg)
+											+ (dailyAvg == 0 ? 0 : 100 * (dailyAvg - (pix + totalVenta)) / dailyAvg)
 									: ((pix + totalVenta) - dailyAvg + " MÁS QUE EL PROMEDIO DIARIO") + " ⬆ "
-											+ (100 * (-dailyAvg + (pix + totalVenta)) / dailyAvg))
+											+ (dailyAvg == 0 ? 0 : 100 * (-dailyAvg + (pix + totalVenta)) / dailyAvg))
 							+ "%\nR$"
 							+ (monthlyAvg > (pix + totalVenta)
-									? monthlyAvg - (pix + totalVenta) + " MENOS QUE PROMEDIO MENSUAL DE "
+									? monthlyAvg
+											- (pix + totalVenta) + " MENOS QUE PROMEDIO MENSUAL DE "
 											+ currentDate.getMonthForInt(Integer.valueOf(First.monthN) - 1, 0) + " ⬇ "
-											+ (100 * (monthlyAvg - (pix + totalVenta)) / monthlyAvg)
+											+ (monthlyAvg == 0 ? 0
+													: 100 * (monthlyAvg - (pix + totalVenta)) / monthlyAvg)
 									: ((pix + totalVenta) - monthlyAvg + " MÁS QUE EL PPROMEDIO MENSUAL DE "
 											+ currentDate.getMonthForInt(Integer.valueOf(First.monthN) - 1, 0) + " ⬆ "
-											+ (100 * (-monthlyAvg + (pix + totalVenta)) / monthlyAvg)))
+											+ (monthlyAvg == 0 ? 0
+													: 100 * (-monthlyAvg + (pix + totalVenta)) / monthlyAvg)))
 							+ "%" + System.lineSeparator(), // 17
 					(min >= (totalVenta + pix)
 							? System.lineSeparator() + "SE PARECE QUE ESTE DÍA ES EL PEOR DE ESTE MES, VENDIMOS R$"
@@ -3089,10 +3112,10 @@ public class Reales extends JFrame {
 							+ (value22 > (pix + totalVenta) ? (value22 - (pix + totalVenta) + " MENOS QUE ANO PASSADO")
 									: ((pix + totalVenta) - value22 + " MAIS QUE ANO PASSADO"))
 							+ (value22 == 0 ? ""
-									: ", CORRESPONDENTE A UM " + (value22 > (pix + totalVenta)
-											? "DIMINUIÇÃO DO " + (value22 - (pix + totalVenta)) * 100 / value22
-
-											: "AUMENTO DO " + ((pix + totalVenta) - value22) * 100 / value22))
+									: ", CORRESPONDENTE A UM " + (value22 > (pix + totalVenta) ? "DIMINUIÇÃO DO "
+											+ (value22 == 0 ? 0 : (value22 - (pix + totalVenta)) * 100 / value22)
+											: "AUMENTO DO " + (value22 == 0 ? 0
+													: (pix + totalVenta - value22) * 100 / value22)))
 							+ "%" + System.lineSeparator(), // 15
 					System.lineSeparator() + "HOJE, VENDEMOS NO TOTAL R$" + (totalVenta + pix)
 							+ "\nESTE ANO VENDEMOS UM MÉDIA DIÁRIA DO R$" + dailyAvg + "\nEM MÉDIA DO "
@@ -3103,24 +3126,29 @@ public class Reales extends JFrame {
 							+ (sameDayAvg > (pix + totalVenta)
 									? sameDayAvg - (pix + totalVenta) + " MENOS QUE A MÉDIA DE OS "
 											+ whatDay(currentDate.d, currentDate.m, currentDate.y, 1) + " ⬇ "
-											+ (100 * (sameDayAvg - (pix + totalVenta)) / sameDayAvg)
+											+ (sameDayAvg == 0 ? 0
+													: 100 * (sameDayAvg - (pix + totalVenta)) / sameDayAvg)
 									: (pix + totalVenta) - sameDayAvg + " MAIS QUE A MÉDIA DE OS "
 											+ (whatDay(currentDate.d, currentDate.m, currentDate.y, 1)) + " ⬆ "
-											+ (100 * (-sameDayAvg + (pix + totalVenta)) / sameDayAvg))
+											+ (sameDayAvg == 0 ? 0
+													: 100 * (-sameDayAvg + (pix + totalVenta)) / sameDayAvg))
 							+ "%\nR$"
 							+ (dailyAvg > (pix + totalVenta)
 									? dailyAvg - (pix + totalVenta) + " MENOS QUE A MÉDIA DIÁRIA" + " ⬇ "
-											+ (100 * (dailyAvg - (pix + totalVenta)) / dailyAvg)
+											+ (dailyAvg == 0 ? 0 : 100 * (dailyAvg - (pix + totalVenta)) / dailyAvg)
 									: (pix + totalVenta) - dailyAvg + " MAIS QUE A MÉDIA DIÁRIA" + " ⬆ "
-											+ (100 * (-dailyAvg + (pix + totalVenta)) / dailyAvg))
+											+ (dailyAvg == 0 ? 0 : 100 * (-dailyAvg + (pix + totalVenta)) / dailyAvg))
 							+ "%\nR$"
 							+ (monthlyAvg > (pix + totalVenta)
-									? monthlyAvg - (pix + totalVenta) + " MENOS QUE A MÉDIA MENSAL "
+									? monthlyAvg
+											- (pix + totalVenta) + " MENOS QUE A MÉDIA MENSAL "
 											+ currentDate.getMonthForInt(Integer.valueOf(First.monthN) - 1, 1) + " ⬇ "
-											+ (100 * (monthlyAvg - (pix + totalVenta)) / monthlyAvg)
+											+ (monthlyAvg == 0 ? 0
+													: 100 * (monthlyAvg - (pix + totalVenta)) / monthlyAvg)
 									: ((pix + totalVenta) - monthlyAvg + " MAIS QUE A MÉDIA MENSAL "
 											+ currentDate.getMonthForInt(Integer.valueOf(First.monthN) - 1, 1) + " ⬆ "
-											+ (100 * (-monthlyAvg + (pix + totalVenta)) / monthlyAvg)))
+											+ (monthlyAvg == 0 ? 0
+													: 100 * (-monthlyAvg + (pix + totalVenta)) / monthlyAvg)))
 							+ "%" + System.lineSeparator(),
 					(min >= (totalVenta + pix)
 							? System.lineSeparator() + "PARECE QUE ESSE DIA É O PIOR DESTE MÊS, VENDEMOS R$"
@@ -3173,10 +3201,10 @@ public class Reales extends JFrame {
 							+ (value22 > (pix + totalVenta) ? (value22 - (pix + totalVenta) + " LESS THAN LAST YEAR")
 									: ((pix + totalVenta) - value22 + " MORE THAN LAST YEAR"))
 							+ (value22 == 0 ? ""
-									: ", CORRESPONDING TO " + (value22 > (pix + totalVenta)
-											? "A DECREASE OF " + (value22 - (pix + totalVenta)) * 100 / value22
-
-											: "AN INCREASE OF " + ((pix + totalVenta) - value22) * 100 / value22))
+									: ", CORRESPONDING TO " + (value22 > (pix + totalVenta) ? "A DECREASE OF "
+											+ (value22 == 0 ? 0 : (value22 - (pix + totalVenta)) * 100 / value22)
+											: "AN INCREASE OF " + (value22 == 0 ? 0 : (pix + totalVenta) - value22)
+													* 100 / value22))
 							+ "%" + System.lineSeparator(), // 15
 					System.lineSeparator() + "TODAY, WE SOLD IN TOTAL R$" + (totalVenta + pix)
 							+ "\nTHIS YEAR WE SOLD A DAILY AVERAGE OF R$" + dailyAvg + "\nAN AVERAGE OF THE "
@@ -3187,24 +3215,28 @@ public class Reales extends JFrame {
 							+ (sameDayAvg > (pix + totalVenta)
 									? sameDayAvg - (pix + totalVenta) + " LESS THAN THE AVERAGE OF THE "
 											+ whatDay(currentDate.d, currentDate.m, currentDate.y, 2) + " ⬇ "
-											+ (100 * (sameDayAvg - (pix + totalVenta)) / sameDayAvg)
+											+ (sameDayAvg == 0 ? 0
+													: 100 * (sameDayAvg - (pix + totalVenta)) / sameDayAvg)
 									: ((pix + totalVenta) - sameDayAvg + " MORE THAN THE AVERAGE OF THE "
 											+ whatDay(currentDate.d, currentDate.m, currentDate.y, 2) + " ⬆ "
-											+ (100 * (-sameDayAvg + (pix + totalVenta)) / sameDayAvg)))
+											+ (sameDayAvg == 0 ? 0
+													: 100 * (-sameDayAvg + (pix + totalVenta)) / sameDayAvg)))
 							+ "%\nR$"
 							+ (dailyAvg > (pix + totalVenta)
 									? dailyAvg - (pix + totalVenta) + " LESS THAN THE DAILY AVERAGE" + " ⬇ "
-											+ (100 * (dailyAvg - (pix + totalVenta)) / dailyAvg)
+											+ (dailyAvg == 0 ? 0 : 100 * (dailyAvg - (pix + totalVenta)) / dailyAvg)
 									: ((pix + totalVenta) - dailyAvg + " MORE THAN THE DAILY AVERAGE" + " ⬆ "
-											+ (100 * (-dailyAvg + (pix + totalVenta)) / dailyAvg)))
+											+ (dailyAvg == 0 ? 0 : 100 * (-dailyAvg + (pix + totalVenta)) / dailyAvg)))
 							+ "%\nR$"
 							+ (monthlyAvg > (pix + totalVenta)
 									? monthlyAvg - (pix + totalVenta) + " LESS THAN THE MONTHLY AVERAGE OF "
 											+ currentDate.getMonthForInt(Integer.valueOf(First.monthN) - 1, 2) + " ⬇ "
-											+ (100 * (monthlyAvg - (pix + totalVenta)) / monthlyAvg)
+											+ (monthlyAvg == 0 ? 0
+													: 100 * (monthlyAvg - (pix + totalVenta)) / monthlyAvg)
 									: ((pix + totalVenta) - monthlyAvg + " MORE THAN THE MONTHLY AVERAGE OF "
 											+ currentDate.getMonthForInt(Integer.valueOf(First.monthN) - 1, 2) + " ⬆ "
-											+ (100 * (-monthlyAvg + (pix + totalVenta)) / monthlyAvg)))
+											+ (monthlyAvg == 0 ? 0
+													: 100 * (-monthlyAvg + (pix + totalVenta)) / monthlyAvg)))
 							+ "%" + System.lineSeparator(), // 17
 					(min >= (totalVenta + pix)
 							? System.lineSeparator() + "IT SEEMS THAT THIS DAY IS THE WORST OF THIS MONTH, WE SOLD R$"
@@ -3286,7 +3318,7 @@ public class Reales extends JFrame {
 		int total22[] = totalOfMes(month, 2022);
 		int avgM22 = total22[0] == 0 ? 0 : total22[0] / total22[1];
 		int total23[] = totalOfMes(month, 2023);
-		int avgM = total23[0] / total23[1];
+		int avgM = total23[1] == 0 ? 0 : total23[0] / total23[1];
 		int[] optMonth = maxMinMes(month);
 		int max = optMonth[0], min = optMonth[1];
 		int maxDIndex = optMonth[2] - dateFromMonth.index();
@@ -3393,7 +3425,8 @@ public class Reales extends JFrame {
 	// Export the year overview
 	private void exYearFrame() {
 		dailyAvg = avgSellOfDay()[1];
-		monthlyAvg = monTotalAverage(currentDate.m)[0] / monTotalAverage(currentDate.m)[1];
+		monthlyAvg = monTotalAverage(currentDate.m)[1] == 0 ? 0
+				: monTotalAverage(currentDate.m)[0] / monTotalAverage(currentDate.m)[1];
 		int temp[] = yearMaxMin();
 		int maxDIndex = currentDate.dayFromIndex(temp[2]);
 		String maxDayString = whatDay(maxDIndex, monthFromIndex(temp[2]), 2023, language);
@@ -6509,7 +6542,8 @@ public class Reales extends JFrame {
 		if (monthsCount == 0)
 			return null;
 		while (indexOfMonth < monthsCount) {
-			avgOfMonths[indexOfMonth] = monTotalAverage(indexOfMonth + 1)[0] / monTotalAverage(indexOfMonth + 1)[1];
+			avgOfMonths[indexOfMonth] = monTotalAverage(indexOfMonth + 1)[1] == 0 ? 0
+					: monTotalAverage(indexOfMonth + 1)[0] / monTotalAverage(indexOfMonth + 1)[1];
 			totalOfMonths[indexOfMonth] = monTotalAverage(indexOfMonth + 1)[0];
 			indexOfMonth++;
 		}
@@ -6563,6 +6597,7 @@ public class Reales extends JFrame {
 	private int[] maxMinMes(int month) {
 		Date tempDate = new Date(1, month, 2023);
 		int index = tempDate.index();
+		int avgMonth = monTotalAverage(month)[1] == 0 ? 0 : monTotalAverage(month)[0] / monTotalAverage(month)[1];
 		int returned[] = { 0, 0, 0, 0 };
 		ArrayList<String> totalMes = new ArrayList<String>();
 		String line = "";
@@ -6585,9 +6620,9 @@ public class Reales extends JFrame {
 				if (First.isNumeric(totalMes.get(i)) && Integer.valueOf(totalMes.get(i)) != 0)
 					valuesMes[count] = Integer.valueOf(totalMes.get(i));
 				else
-					valuesMes[count] = monthlyAvg;
+					valuesMes[count] = avgMonth;
 			else
-				valuesMes[count] = monthlyAvg;
+				valuesMes[count] = avgMonth;
 			count++;
 		}
 		returned[0] = getMaxValue(valuesMes)[0];// max
