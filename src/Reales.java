@@ -1639,7 +1639,7 @@ public class Reales extends JFrame {
 		JFrame extraF = new JFrame(idiomaString(language)[35]);
 		extraF.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		extraF.setAlwaysOnTop(false);
-		extraF.setSize(415, 285);
+		extraF.setSize(415, 325);
 		extraF.setLocationRelativeTo(null);
 		extraF.setResizable(false);
 		extraF.setLayout(null);
@@ -1648,6 +1648,7 @@ public class Reales extends JFrame {
 		JTextField[][] sepLabel = new JTextField[5][2];
 		JLabel titleSep[] = new JLabel[2];
 		JButton btns[] = new JButton[5];
+		JLabel totalSep = new JLabel("T O T A L");
 		ImageIcon btnIcon = new ImageIcon(getScaledImage(dateI.getImage(), 40, 40));
 		KeyAdapter kA = new KeyAdapter() {// Escape to close
 			@SuppressWarnings("static-access")
@@ -1708,9 +1709,43 @@ public class Reales extends JFrame {
 				sepLabel[i][j].setBackground(First.blueC);
 				sepLabel[i][j].setBorder(new LineBorder(First.darkC, 2));
 				sepLabel[i][j].setHorizontalAlignment(0);
+				sepLabel[i][j].addFocusListener(new FocusListener() {
+
+					@Override
+					public void focusLost(FocusEvent e) {
+						totalSep.setText((First.isNumeric(sepLabel[0][0].getText())
+								? Integer.valueOf(sepLabel[0][0].getText())
+								: 0)
+								+ (First.isNumeric(sepLabel[1][0].getText()) ? Integer.valueOf(sepLabel[1][0].getText())
+										: 0)
+								+ (First.isNumeric(sepLabel[2][0].getText()) ? Integer.valueOf(sepLabel[2][0].getText())
+										: 0)
+								+ (First.isNumeric(sepLabel[3][0].getText()) ? Integer.valueOf(sepLabel[3][0].getText())
+										: 0)
+								+ (First.isNumeric(sepLabel[4][0].getText()) ? Integer.valueOf(sepLabel[4][0].getText())
+										: 0)
+								+ "");
+					}
+
+					@Override
+					public void focusGained(FocusEvent e) {
+					}
+				});
 				extraF.add(sepLabel[i][j]);
 			}
-
+		totalSep.setText((First.isNumeric(sepLabel[0][0].getText()) ? Integer.valueOf(sepLabel[0][0].getText()) : 0)
+				+ (First.isNumeric(sepLabel[1][0].getText()) ? Integer.valueOf(sepLabel[1][0].getText()) : 0)
+				+ (First.isNumeric(sepLabel[2][0].getText()) ? Integer.valueOf(sepLabel[2][0].getText()) : 0)
+				+ (First.isNumeric(sepLabel[3][0].getText()) ? Integer.valueOf(sepLabel[3][0].getText()) : 0)
+				+ (First.isNumeric(sepLabel[4][0].getText()) ? Integer.valueOf(sepLabel[4][0].getText()) : 0) + "");
+		totalSep.setBounds(0, 246, 400, 40);
+		totalSep.setFont(new Font("Tahoma", Font.BOLD, 22));
+		totalSep.setForeground(First.lightC);
+		totalSep.setBackground(First.blueD);
+		totalSep.setOpaque(true);
+		totalSep.setHorizontalAlignment(0);
+		totalSep.setBorder(new LineBorder(First.darkC, 2));
+		extraF.add(totalSep);
 		titleSep[0].setText(idiomaString(language)[38]);
 		titleSep[1].setText(idiomaString(language)[39]);
 
@@ -1750,7 +1785,6 @@ public class Reales extends JFrame {
 
 	// What we sold one year before today
 	private void memoryFrame() {
-		int max = maxMinMes(currentDate.m)[0], min = maxMinMes(currentDate.m)[1];
 		JFrame extraF = new JFrame(idiomaString(language)[31]);
 		extraF.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		extraF.setAlwaysOnTop(false);
@@ -1825,22 +1859,14 @@ public class Reales extends JFrame {
 										+ (dailyAvg == 0 ? 0 : 100 * (-dailyAvg + (pix + totalVenta)) / dailyAvg))
 						+ "%\n\n*R$"
 						+ (monthlyAvg > (pix + totalVenta)
-								? monthlyAvg
-										- (pix + totalVenta) + " MENOS QUE PROMEDIO MENSUAL DE "
+								? monthlyAvg - (pix + totalVenta) + " MENOS QUE PROMEDIO MENSUAL DE "
 										+ currentDate.getMonthForInt(Integer.valueOf(First.monthN) - 1, 0) + " ⬇ "
 										+ (monthlyAvg == 0 ? 0 : 100 * (monthlyAvg - (pix + totalVenta)) / monthlyAvg)
 								: ((pix + totalVenta) - monthlyAvg + " MÁS QUE EL PPROMEDIO MENSUAL DE "
 										+ currentDate.getMonthForInt(Integer.valueOf(First.monthN) - 1, 0) + " ⬆ "
 										+ (monthlyAvg == 0 ? 0
 												: 100 * (-monthlyAvg + (pix + totalVenta)) / monthlyAvg)))
-						+ "%"
-						+ (min >= (totalVenta + pix)
-								? "\n\n\n*SE PARECE QUE ESTE DÍA ES EL PEOR DE ESTE MES\nVENDIMOS R$"
-										+ (min - totalVenta - pix) + " MENOS QUE EL MÍNIMO DÍA"
-								: max <= (totalVenta + pix)
-										? "\n\n\n*SE PARECE QUE ESTE DÍA ES EL MEJOR DE ESTE MES\nVENDIMOS R$"
-												+ (-min + totalVenta + pix) + " MÁS QUE EL MÁXIMO DÍA"
-										: "")// 2
+						+ "%"// 2
 		};
 		String[] porSumm = {
 				"*EM " + dayN + "-" + monthS + "-2022,\n\nO QUE É UM "
@@ -1876,22 +1902,14 @@ public class Reales extends JFrame {
 										+ (dailyAvg == 0 ? 0 : 100 * (-dailyAvg + (pix + totalVenta)) / dailyAvg))
 						+ "%\n\n*R$"
 						+ (monthlyAvg > (pix + totalVenta)
-								? monthlyAvg
-										- (pix + totalVenta) + " MENOS QUE A MÉDIA MENSAL "
+								? monthlyAvg - (pix + totalVenta) + " MENOS QUE A MÉDIA MENSAL "
 										+ currentDate.getMonthForInt(Integer.valueOf(First.monthN) - 1, 1) + " ⬇ "
 										+ (monthlyAvg == 0 ? 0 : 100 * (monthlyAvg - (pix + totalVenta)) / monthlyAvg)
 								: ((pix + totalVenta) - monthlyAvg + " MAIS QUE A MÉDIA MENSAL "
 										+ currentDate.getMonthForInt(Integer.valueOf(First.monthN) - 1, 1) + " ⬆ "
 										+ (monthlyAvg == 0 ? 0
 												: 100 * (-monthlyAvg + (pix + totalVenta)) / monthlyAvg)))
-						+ "%"
-						+ (min >= (totalVenta + pix)
-								? "\n\n\n*PARECE QUE ESSE DIA É O PIOR DESTE MÊS\nVENDEMOS R$"
-										+ (min - totalVenta - pix) + " MENOS QUE O DIA MÍNIMO"
-								: max <= (totalVenta + pix)
-										? "\n\n\n*PARECE QUE ESSE DIA É O MELHOR DESTE MÊS\nVENDEMOS R$"
-												+ (-min + totalVenta + pix) + " MAIS QUE O DIA MÁXIMO"
-										: "")// 2
+						+ "%"// 2
 		};
 		String[] engSumm = {
 				"*ON " + dayN + "-" + monthS + "-2022,\n\nWHICH IS A "
@@ -1931,22 +1949,14 @@ public class Reales extends JFrame {
 										+ (dailyAvg == 0 ? 0 : 100 * (-dailyAvg + (pix + totalVenta)) / dailyAvg)))
 						+ "%\n\n*R$"
 						+ (monthlyAvg > (pix + totalVenta)
-								? monthlyAvg
-										- (pix + totalVenta) + " LESS THAN THE MONTHLY AVERAGE OF "
+								? monthlyAvg - (pix + totalVenta) + " LESS THAN THE MONTHLY AVERAGE OF "
 										+ currentDate.getMonthForInt(Integer.valueOf(First.monthN) - 1, 2) + " ⬇ "
 										+ (monthlyAvg == 0 ? 0 : 100 * (monthlyAvg - (pix + totalVenta)) / monthlyAvg)
 								: ((pix + totalVenta) - monthlyAvg + " MORE THAN THE MONTHLY AVERAGE OF "
 										+ currentDate.getMonthForInt(Integer.valueOf(First.monthN) - 1, 2) + " ⬆ "
 										+ (monthlyAvg == 0 ? 0
 												: 100 * (-monthlyAvg + (pix + totalVenta)) / monthlyAvg)))
-						+ "%"
-						+ (min >= (totalVenta + pix)
-								? "\n\n\n*IT SEEMS THAT THIS DAY IS THE WORST OF THIS MONTH\nWE SOLD R$"
-										+ (min - totalVenta - pix) + " LESS THAN THE MINIMUM DAY"
-								: max <= (totalVenta + pix)
-										? "\n\n\n*IT SEEMS THAT THIS DAY IS THE BEST OF THIS MONTH\nWE SOLD R$"
-												+ (-min + totalVenta + pix) + " MORE THAN THE MAXIMUM DAY"
-										: "")// 2
+						+ "%"// 2
 		};
 
 		ActionListener letterByLetter = new ActionListener() {
@@ -2966,7 +2976,6 @@ public class Reales extends JFrame {
 	// Save the summary of the day
 	private void exBtn(int lang) {
 		dateLang(lang);
-		int max = maxMinMes(currentDate.m)[0], min = maxMinMes(currentDate.m)[1];
 		try {
 			tempFile0.mkdir();
 			File tempFile1 = new File(tempFile0 + "\\" + yearS);
@@ -3060,14 +3069,7 @@ public class Reales extends JFrame {
 											+ (monthlyAvg == 0 ? 0
 													: 100 * (-monthlyAvg + (pix + totalVenta)) / monthlyAvg)))
 							+ "%" + System.lineSeparator(), // 17
-					(min >= (totalVenta + pix)
-							? System.lineSeparator() + "SE PARECE QUE ESTE DÍA ES EL PEOR DE ESTE MES, VENDIMOS R$"
-									+ (min - totalVenta - pix) + " MENOS QUE EL MÍNIMO DÍA" + System.lineSeparator()
-							: max <= (totalVenta + pix) ? System.lineSeparator()
-									+ "SE PARECE QUE ESTE DÍA ES EL MEJOR DE ESTE MES, VENDIMOS R$"
-									+ (-min + totalVenta + pix) + " MÁS QUE EL MÁXIMO DÍA" + System.lineSeparator()
-									: ""), // 18
-					System.lineSeparator() + "*GRACIAS Y HASTA MAÑANA :)", // 19
+					System.lineSeparator() + "*GRACIAS Y HASTA MAÑANA :)", // 18
 			};
 			String[] porSumm = { "*VENDAS:\nVOCÊ NÃO VENDEU NADA" + System.lineSeparator(), // 0
 					"*VENDAS:\nVOCÊ VENDEU UMA VENDA SÓ QUE VALE R$" + totalVenta + System.lineSeparator(), // 1
@@ -3150,13 +3152,6 @@ public class Reales extends JFrame {
 											+ (monthlyAvg == 0 ? 0
 													: 100 * (-monthlyAvg + (pix + totalVenta)) / monthlyAvg)))
 							+ "%" + System.lineSeparator(),
-					(min >= (totalVenta + pix)
-							? System.lineSeparator() + "PARECE QUE ESSE DIA É O PIOR DESTE MÊS, VENDEMOS R$"
-									+ (min - totalVenta - pix) + " MENOS QUE O DIA MÍNIMO" + System.lineSeparator()
-							: max <= (totalVenta + pix) ? System.lineSeparator()
-									+ "PARECE QUE ESSE DIA É O MELHOR DESTE MÊS, VENDEMOS R$"
-									+ (-min + totalVenta + pix) + " MAIS QUE O DIA MÁXIMO" + System.lineSeparator()
-									: ""), // 2 // 17
 					System.lineSeparator() + "*OBRIGADO E ATÉ AMANHÃ :)"// 18
 			};
 			String[] engSumm = { "*SALES:\nYOU DIDN'T SELL ANYTHING" + System.lineSeparator(), // 0
@@ -3238,13 +3233,6 @@ public class Reales extends JFrame {
 											+ (monthlyAvg == 0 ? 0
 													: 100 * (-monthlyAvg + (pix + totalVenta)) / monthlyAvg)))
 							+ "%" + System.lineSeparator(), // 17
-					(min >= (totalVenta + pix)
-							? System.lineSeparator() + "IT SEEMS THAT THIS DAY IS THE WORST OF THIS MONTH, WE SOLD R$"
-									+ (min - totalVenta - pix) + " LESS THAN THE MINIMUM DAY" + System.lineSeparator()
-							: max <= (totalVenta + pix) ? System.lineSeparator()
-									+ "IT SEEMS THAT THIS DAY IS THE BEST OF THIS MONTH, WE SOLD R$"
-									+ (-min + totalVenta + pix) + " MORE THAN THE MAXIMUM DAY" + System.lineSeparator()
-									: ""), // 2
 					System.lineSeparator() + "*THANKS AND SEE YOU TOMORROW :)" // 18
 			};
 			savedF.write(titleName()
@@ -3289,9 +3277,8 @@ public class Reales extends JFrame {
 				savedF.write(lang == 0 ? espSumm[15] : lang == 1 ? porSumm[15] : engSumm[15]);// mem 1
 				savedF.write(lang == 0 ? espSumm[16] : lang == 1 ? porSumm[16] : engSumm[16]);// mem 2
 				savedF.write(lang == 0 ? espSumm[17] : lang == 1 ? porSumm[17] : engSumm[17]);// mem 3
-				savedF.write(lang == 0 ? espSumm[18] : lang == 1 ? porSumm[18] : engSumm[18]);// mas o menos
 			}
-			savedF.write(lang == 0 ? espSumm[19] : lang == 1 ? porSumm[19] : engSumm[19]);// thanks
+			savedF.write(lang == 0 ? espSumm[18] : lang == 1 ? porSumm[18] : engSumm[18]);// thanks
 			savedF.close();
 			First.savedCorrectly(lang);
 		} catch (Exception e2) {

@@ -99,7 +99,7 @@ public class First extends JFrame {
 	javax.swing.Timer timer;
 	int order = 0, wordL = 0;
 
-	static String appVersion = "v7.0";
+	static String appVersion = "v7.1";
 	private int language;
 
 	String currentpath = System.getProperty("user.dir");
@@ -346,7 +346,8 @@ public class First extends JFrame {
 		defaults.put("textInactiveText", UIManager.get("Button.disabledText"));
 
 		// intro
-		if (conf[9] == null || !conf[9].equals(dayN + "," + monthN)) {
+		if (conf[9] == null || conf[9].equalsIgnoreCase("null")
+				|| (!conf[9].equals("true") && !conf[9].equals(dayN + "," + monthN))) {
 			try {
 				FileWriter savedF = new FileWriter(newFile);
 				savedF.write((conf[0].equals("null") ? 0 : conf[0]) + System.lineSeparator());// icon
@@ -370,7 +371,7 @@ public class First extends JFrame {
 		}
 
 		// language
-		espIdioma(inputText, showHide, file, exit, creator, about, option, language);
+		textLang(inputText, showHide, file, exit, creator, about, option, language);
 	}
 
 	// Notification when its time to end the day
@@ -421,7 +422,7 @@ public class First extends JFrame {
 			timer.schedule(task, date.getTime());
 	}
 
-	private void espIdioma(JLabel inputText, JButton showHide, JMenu file, JMenuItem exit, JMenuItem creator,
+	private void textLang(JLabel inputText, JButton showHide, JMenu file, JMenuItem exit, JMenuItem creator,
 			JMenuItem about, JMenuItem option, int idioma) {
 		if (idioma == 0) {
 			inputText.setText("Escribe la contraseña");
@@ -688,7 +689,7 @@ public class First extends JFrame {
 			}
 		});
 
-		// OPTION 4 AUTOSAVE
+		// OPTION 5 AUTOSAVE
 		JLabel op5 = new JLabel(idiomaString(language)[10]);
 		op5.setBounds(50, 300, 200, 40);
 		op5.setFont(myFont);
@@ -743,6 +744,64 @@ public class First extends JFrame {
 					btnsHideShow3.setText(idiomaString(language)[14]);
 				else
 					btnsHideShow3.setText(idiomaString(language)[13]);
+			}
+		});
+
+		// OPTION 6 INTRO
+		JLabel opIntro = new JLabel("INTRO");
+		opIntro.setBounds(50, 370, 200, 40);
+		opIntro.setFont(myFont);
+		JToggleButton btnsHideShow4 = new JToggleButton();
+		if (conf[9] == null || !conf[9].equals("true")) {
+			btnsHideShow4.setText(idiomaString(language)[13]);
+		} else {
+			btnsHideShow4.setText(idiomaString(language)[14]);
+			btnsHideShow4.setSelected(true);
+		}
+		btnsHideShow4.setBounds(415, 370, 80, 40);
+		btnsHideShow4.setFont(myFont);
+		btnsHideShow4.setBorder(border);
+		btnsHideShow4.setBackground(greenC);
+		btnsHideShow4.setForeground(lightC);
+		btnsHideShow4.setFocusable(false);
+		btnsHideShow4.addMouseListener(new MouseListener() {
+
+			@Override
+			public void mouseReleased(MouseEvent e) {
+			}
+
+			@Override
+			public void mousePressed(MouseEvent e) {
+			}
+
+			@Override
+			public void mouseExited(MouseEvent e) {
+				btnsHideShow4.setBackground(greenC);
+			}
+
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				btnsHideShow4.setBackground(greenD);
+			}
+
+			@Override
+			public void mouseClicked(MouseEvent e) {
+			}
+		});
+		btnsHideShow4.setUI(new MetalToggleButtonUI() {
+			@Override
+			protected Color getSelectColor() {
+				return redC;
+			}
+		});
+		btnsHideShow4.addItemListener(new ItemListener() {
+
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				if (e.getStateChange() == ItemEvent.SELECTED)
+					btnsHideShow4.setText(idiomaString(language)[14]);
+				else
+					btnsHideShow4.setText(idiomaString(language)[13]);
 			}
 		});
 
@@ -835,7 +894,9 @@ public class First extends JFrame {
 					savedF.write((conf[6].equals("null") ? 1 : conf[6]) + System.lineSeparator());// speed
 					savedF.write(lang.getSelectedIndex() + System.lineSeparator());// lang
 					savedF.write((conf[8].equals("null") ? 0 : conf[8]) + System.lineSeparator());// speed
-					savedF.write((conf[9].equals("null") ? "1,1" : conf[9]) + System.lineSeparator());// intro
+					savedF.write((conf[9].equals("null") ? "1,1"
+							: btnsHideShow4.isSelected() == false ? dayN + "," + monthN : "true")
+							+ System.lineSeparator());// intro
 					savedF.close();
 				} catch (Exception e2) {
 					JOptionPane opt = new JOptionPane(
@@ -881,6 +942,8 @@ public class First extends JFrame {
 		temp.add(op3C);
 		temp.add(defSet);
 		temp.add(btnsHideShow3);
+		temp.add(opIntro);
+		temp.add(btnsHideShow4);
 		temp.add(save);
 		temp.setVisible(true);
 	}
