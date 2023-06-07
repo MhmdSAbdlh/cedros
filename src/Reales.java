@@ -336,8 +336,9 @@ public class Reales extends JFrame {
 		JButton notasF = new JButton();// FATURA BUTTON
 		JButton newDay = new JButton();// REST
 		JMenuItem resoD = new JMenuItem();
-		JButton aggPanel = new JButton();
-		JButton gastosPanel = new JButton();
+		JButton aggPanel = new JButton(idiomaString(language)[41]);
+		JButton gastosPanel = new JButton(idiomaString(language)[41]);
+		JButton pixMore = new JButton();
 
 		// Frame
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -665,9 +666,40 @@ public class Reales extends JFrame {
 		aggBtn[1].hide();
 		aggBtn[1].addActionListener(e -> addSetHun());
 		this.add(aggBtn[1]);
+		// pix btn
+		pixMore.setText(idiomaString(language)[41]);
+		First.btnStyle(pixMore);
+		pixMore.setBackground(First.darkC);
+		pixMore.setForeground(First.lightC);
+		pixMore.addActionListener(e -> pixFrame());
+		pixMore.addMouseListener(new MouseListener() {
+			@Override
+			public void mouseReleased(MouseEvent e) {
+			}
 
-		// Panel 5
-		diffResult[0] = new JLabel("Diferencia");// DIFFERENCE
+			@Override
+			public void mousePressed(MouseEvent e) {
+			}
+
+			@Override
+			public void mouseClicked(MouseEvent e) {
+			}
+
+			@Override
+			public void mouseExited(MouseEvent e) {
+				pixMore.setBackground(First.darkC);
+			}
+
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				pixMore.setBackground(Color.black);
+			}
+
+		});
+		this.add(pixMore);
+
+		// Panel 5 DIFFERENCE
+		diffResult[0] = new JLabel("Diferencia");
 		First.labelStyle(diffResult[0]);
 		diffResult[0].setBackground(Color.black);
 		diffResult[0].setForeground(First.lightC);
@@ -820,7 +852,7 @@ public class Reales extends JFrame {
 		reso.add(reso2);
 		reso.add(reso1);
 		resolutionActionListener(clearEverthing, pesosF, notasF, newDay, resoD, aggPanel, gastosPanel, reso1, reso2,
-				reso3, reso4);
+				reso3, reso4, pixMore);
 		// extra
 		JMenu extraM = new JMenu("EXTRA");
 		JMenuItem oldYears = new JMenuItem(idiomaString(language)[31]);
@@ -1085,15 +1117,19 @@ public class Reales extends JFrame {
 		// Resolution
 		if (conf[3] == null || conf[3].equals("0")) {
 			opResolution(clearEverthing, pesosF, notasF, newDay, resoD, reso4, reso3, reso2, reso1, aggPanel,
-					gastosPanel);
+					gastosPanel, pixMore);
 		} else if (conf[3].equals("1"))
-			resXP(resoD, reso4, reso3, reso2, reso1, notasF, pesosF, newDay, clearEverthing, gastosPanel, aggPanel);
+			resXP(resoD, reso4, reso3, reso2, reso1, notasF, pesosF, newDay, clearEverthing, gastosPanel, aggPanel,
+					pixMore);
 		else if (conf[3].equals("2"))
-			resP(resoD, reso4, reso3, reso2, reso1, notasF, pesosF, newDay, clearEverthing, gastosPanel, aggPanel);
+			resP(resoD, reso4, reso3, reso2, reso1, notasF, pesosF, newDay, clearEverthing, gastosPanel, aggPanel,
+					pixMore);
 		else if (conf[3].equals("3"))
-			resM(resoD, reso4, reso3, reso2, reso1, notasF, pesosF, newDay, clearEverthing, gastosPanel, aggPanel);
+			resM(resoD, reso4, reso3, reso2, reso1, notasF, pesosF, newDay, clearEverthing, gastosPanel, aggPanel,
+					pixMore);
 		else
-			resG(resoD, reso4, reso3, reso2, reso1, notasF, pesosF, newDay, clearEverthing, gastosPanel, aggPanel);
+			resG(resoD, reso4, reso3, reso2, reso1, notasF, pesosF, newDay, clearEverthing, gastosPanel, aggPanel,
+					pixMore);
 
 		// import sep
 		importSep();
@@ -4099,7 +4135,7 @@ public class Reales extends JFrame {
 	// Resolution X-small
 	private void resXP(JMenuItem resoD, JMenuItem resoXP, JMenuItem resoP, JMenuItem resoM, JMenuItem resoG,
 			JButton notasF, JButton pesosF, JButton newDay, JButton clearEverthing, JButton gastosPanel,
-			JButton aggPanel) {
+			JButton aggPanel, JButton pixMore) {
 		this.setSize(1000, 600);
 		resoXP.setEnabled(false);
 		resoP.setEnabled(true);
@@ -4211,12 +4247,14 @@ public class Reales extends JFrame {
 				break;
 			}
 		}
-		plusSymbol.setBounds(900, 275, 50, 50);
+		plusSymbol.setBounds(900, 295, 50, 50);
 		plusSymbol.setFont(First.myFont);
 		panelFoto[10].setIcon(new ImageIcon(getScaledImage(pixI.getImage(), 45, 35)));
 		panelFoto[10].setBounds(915, 260, 50, 40);
 		panelCnum[10].setBounds(915, 300, 50, 40);
 		panelCnum[10].setFont(First.myFont);
+		pixMore.setBounds(915, 340, 50, 40);
+		pixMore.setFont(First.myFontS);
 		aggBtn[0].setBounds(400, 240, 50, 20);
 		aggBtn[1].setBounds(450, 240, 50, 20);
 		total[7].setBounds(400, 340, 500, 40);
@@ -4242,7 +4280,7 @@ public class Reales extends JFrame {
 	// Resolution small
 	private void resP(JMenuItem resoD, JMenuItem resoXP, JMenuItem resoP, JMenuItem resoM, JMenuItem resoG,
 			JButton notasF, JButton pesosF, JButton newDay, JButton clearEverthing, JButton gastosPanel,
-			JButton aggPanel) {
+			JButton aggPanel, JButton pixMore) {
 		this.setSize(1300, 700);
 		resoXP.setEnabled(true);
 		resoP.setEnabled(false);
@@ -4354,12 +4392,14 @@ public class Reales extends JFrame {
 				break;
 			}
 		}
-		plusSymbol.setBounds(1182, 335, 50, 50);
+		plusSymbol.setBounds(1182, 355, 50, 50);
 		plusSymbol.setFont(First.myFont);
 		panelFoto[10].setIcon(new ImageIcon(getScaledImage(pixI.getImage(), 55, 35)));
 		panelFoto[10].setBounds(1200, 320, 60, 40);
 		panelCnum[10].setBounds(1200, 360, 60, 40);
 		panelCnum[10].setFont(First.myFont);
+		pixMore.setBounds(1200, 400, 60, 40);
+		pixMore.setFont(First.myFontS);
 		aggBtn[0].setBounds(580, 300, 60, 20);
 		aggBtn[1].setBounds(640, 300, 60, 20);
 		total[7].setBounds(580, 400, 600, 40);
@@ -4385,7 +4425,7 @@ public class Reales extends JFrame {
 	// Resolution medium
 	private void resM(JMenuItem resoD, JMenuItem resoXP, JMenuItem resoP, JMenuItem resoM, JMenuItem resoG,
 			JButton notasF, JButton pesosF, JButton newDay, JButton clearEverthing, JButton gastosPanel,
-			JButton aggPanel) {
+			JButton aggPanel, JButton pixMore) {
 		this.setSize(1500, 800);
 		resoXP.setEnabled(true);
 		resoP.setEnabled(true);
@@ -4498,12 +4538,14 @@ public class Reales extends JFrame {
 				break;
 			}
 		}
-		plusSymbol.setBounds(1341, 405, 50, 50);
+		plusSymbol.setBounds(1341, 425, 50, 50);
 		plusSymbol.setFont(First.myFont);
 		panelFoto[10].setIcon(new ImageIcon(getScaledImage(pixI.getImage(), 65, 45)));
 		panelFoto[10].setBounds(1360, 380, 70, 50);
 		panelCnum[10].setBounds(1360, 430, 70, 50);
 		panelCnum[10].setFont(First.myFont);
+		pixMore.setBounds(1360, 480, 70, 50);
+		pixMore.setFont(First.myFontS);
 		aggBtn[0].setBounds(640, 351, 70, 30);
 		aggBtn[1].setBounds(710, 351, 70, 30);
 		total[7].setBounds(640, 480, 700, 50);
@@ -4529,7 +4571,7 @@ public class Reales extends JFrame {
 	// Resolution large
 	private void resG(JMenuItem resoD, JMenuItem resoXP, JMenuItem resoP, JMenuItem resoM, JMenuItem resoG,
 			JButton notasF, JButton pesosF, JButton newDay, JButton clearEverthing, JButton gastosPanel,
-			JButton aggPanel) {
+			JButton aggPanel, JButton pixMore) {
 		this.setSize(1820, 980);
 		resoXP.setEnabled(true);
 		resoP.setEnabled(true);
@@ -4642,12 +4684,14 @@ public class Reales extends JFrame {
 				break;
 			}
 		}
-		plusSymbol.setBounds(1602, 480, 80, 80);
+		plusSymbol.setBounds(1602, 595, 80, 80);
 		plusSymbol.setFont(First.myFont);
 		panelFoto[10].setIcon(new ImageIcon(getScaledImage(pixI.getImage(), 75, 55)));
 		panelFoto[10].setBounds(1620, 470, 80, 60);
 		panelCnum[10].setBounds(1620, 530, 80, 60);
 		panelCnum[10].setFont(First.myFont);
+		pixMore.setBounds(1620, 590, 80, 60);
+		pixMore.setFont(First.myFontS);
 		total[7].setBounds(800, 590, 800, 60);
 		aggBtn[0].setBounds(800, 432, 80, 40);
 		aggBtn[1].setBounds(880, 432, 80, 40);
@@ -4687,8 +4731,6 @@ public class Reales extends JFrame {
 			hideAll.setText("TODO");
 			newDay.setText("<html><center>Se Quedará<br>Para Mañana</center></html>");// REST
 			resoD.setText("ÓPTIMO");
-			aggPanel.setText("↑MÁS↓");
-			gastosPanel.setText("↑MÁS↓");
 			summaryT[0].setText("Inicio");
 			summaryT[1].setText("Gastos");
 			summaryT[2].setText("Agregado");
@@ -4740,8 +4782,6 @@ public class Reales extends JFrame {
 			hideAll.setText("TUDO");
 			newDay.setText("<html><center>Vai Ficar<br>Para Amanhã</center></html>");// REST
 			resoD.setText("ÓTIMO");
-			aggPanel.setText("↑MAIS↓");
-			gastosPanel.setText("↑MAIS↓");
 			summaryT[0].setText("Início");
 			summaryT[1].setText("Gastos");
 			summaryT[2].setText("Agregado");
@@ -4793,8 +4833,6 @@ public class Reales extends JFrame {
 			hideAll.setText("ALL");
 			newDay.setText("<html><center>Will stay<br>For tomorrow</center></html>");// REST
 			resoD.setText("OPTIMAL");
-			aggPanel.setText("↑MORE↓");
-			gastosPanel.setText("↑MORE↓");
 			summaryT[0].setText("Initial");
 			summaryT[1].setText("Bills");
 			summaryT[2].setText("Aggregates");
@@ -4892,6 +4930,7 @@ public class Reales extends JFrame {
 				, "SEPARADOS"// 38
 				, "FECHA"// 39
 				, "REVISIÓN DEL AÑO"// 40
+				, "MÁS"// 41
 		};
 		String[] portugues = { "• CTRL + S → ir para a fatura.\n" + "• CTRL + P → ir para os pesos.\n"
 				+ "• CTRL + B → excluir tudo.\n" + "• CTRL + N → prepare-se para o dia seguinte.\n"
@@ -4944,6 +4983,7 @@ public class Reales extends JFrame {
 				, "SEPARADAS"// 38
 				, "DATA"// 39
 				, "REVISÃO DO ANO" // 40
+				, "MAIS"// 41
 		};
 		String[] english = {
 				"• CTRL + S → go to invoice.\n" + "• CTRL + P → go to the pesos.\n" + "• CTRL + B → delete all.\n"
@@ -4977,7 +5017,7 @@ public class Reales extends JFrame {
 				, "NEW DAY" // new day 18
 				, "DO YOU WANT TO DELETE EVERYTHING?"// clear 19
 				, "DELETE EVERYTHING" // clear20
-				, "MORE "// mas 21
+				, "More "// mas 21
 				, "<html><center>There is no difference</html>"// diif 22
 				, "More R$" // sobro 23
 				, "Missed R$" // falta 24
@@ -4998,6 +5038,7 @@ public class Reales extends JFrame {
 				, "SEPARATED"// 38
 				, "DATE"// 39
 				, "ANNUAL REVIEW" // 40
+				, "MORE"// 41
 		};
 		if (idioma == 0)
 			return espanol;
@@ -5605,16 +5646,70 @@ public class Reales extends JFrame {
 
 	// Optimal resolution
 	private void opResolution(JButton clearEverthing, JButton pesosF, JButton notasF, JButton newDay, JMenuItem resoD,
-			JMenuItem resoXP, JMenuItem resoP, JMenuItem resoM, JMenuItem resoG, JButton aggPanel,
-			JButton gastosPanel) {
+			JMenuItem resoXP, JMenuItem resoP, JMenuItem resoM, JMenuItem resoG, JButton aggPanel, JButton gastosPanel,
+			JButton pixMore) {
 		if (width > 1800 && height > 1000)
-			resG(resoD, resoXP, resoP, resoM, resoG, notasF, pesosF, newDay, clearEverthing, gastosPanel, aggPanel);
+			resG(resoD, resoXP, resoP, resoM, resoG, notasF, pesosF, newDay, clearEverthing, gastosPanel, aggPanel,
+					pixMore);
 		else if (width > 1500 && height > 700)
-			resM(resoD, resoXP, resoP, resoM, resoG, notasF, pesosF, newDay, clearEverthing, gastosPanel, aggPanel);
+			resM(resoD, resoXP, resoP, resoM, resoG, notasF, pesosF, newDay, clearEverthing, gastosPanel, aggPanel,
+					pixMore);
 		else if (width > 1300 && height > 700)
-			resP(resoD, resoXP, resoP, resoM, resoG, notasF, pesosF, newDay, clearEverthing, gastosPanel, aggPanel);
+			resP(resoD, resoXP, resoP, resoM, resoG, notasF, pesosF, newDay, clearEverthing, gastosPanel, aggPanel,
+					pixMore);
 		else
-			resXP(resoD, resoXP, resoP, resoM, resoG, notasF, pesosF, newDay, clearEverthing, gastosPanel, aggPanel);
+			resXP(resoD, resoXP, resoP, resoM, resoG, notasF, pesosF, newDay, clearEverthing, gastosPanel, aggPanel,
+					pixMore);
+	}
+
+	private void pixFrame() {
+		JFrame pixFrame = new JFrame();
+		pixFrame.setTitle("PIX");
+		pixFrame.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+		pixFrame.setAlwaysOnTop(false);
+		pixFrame.setSize(167, 267);
+		pixFrame.setLocationRelativeTo(null);
+		pixFrame.setResizable(false);
+		pixFrame.setLayout(null);
+		pixFrame.getContentPane().setBackground(First.darkC);
+		pixFrame.setIconImage(pixI.getImage());
+		JTextField pixNmb[] = new JTextField[5];
+		for (int i = 0; i < 5; i++) {
+			pixNmb[i] = new JTextField();
+			textFieldStyle(pixNmb[i]);
+			pixNmb[i].setBounds(0, 2 + 45 * i, 150, 45);
+			pixNmb[i].setBackground(First.darkC);
+			pixNmb[i].removeFocusListener(textFocus);
+			pixNmb[i].setForeground(First.lightC);
+			pixNmb[i].addKeyListener(new KeyAdapter() {// Escape to close
+				@SuppressWarnings("static-access")
+				public void keyPressed(KeyEvent ke) {
+					if (ke.getKeyCode() == ke.VK_ESCAPE) {
+						pix = 0;
+						for (int i = 0; i < 5; i++)
+							if (First.isNumeric(pixNmb[i].getText()))
+								pix += Integer.valueOf(pixNmb[i].getText());
+						panelCnum[10].setText(pix + "");
+						sumF();
+						pixFrame.dispose();
+					}
+				}
+			});
+			pixFrame.add(pixNmb[i]);
+		}
+		// Close popup
+		pixFrame.addWindowListener(new java.awt.event.WindowAdapter() {
+			@Override
+			public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+				pix = 0;
+				for (int i = 0; i < 5; i++)
+					if (First.isNumeric(pixNmb[i].getText()))
+						pix += Integer.valueOf(pixNmb[i].getText());
+				panelCnum[10].setText(pix + "");
+				sumF();
+			}
+		});
+		pixFrame.setVisible(true);
 	}
 
 	// Gastos frame if there is more than 4
@@ -5953,11 +6048,11 @@ public class Reales extends JFrame {
 	// change res action listener
 	private void resolutionActionListener(JButton clearEverthing, JButton pesosF, JButton notasF, JButton newDay,
 			JMenuItem resoD, JButton aggPanel, JButton gastosPanel, JMenuItem reso1, JMenuItem reso2, JMenuItem reso3,
-			JMenuItem reso4) {
+			JMenuItem reso4, JButton pixMore) {
 		resoD.addActionListener(e -> {
 			conf[3] = "0";
 			opResolution(clearEverthing, pesosF, notasF, newDay, resoD, reso4, reso3, reso2, reso1, aggPanel,
-					gastosPanel);
+					gastosPanel, pixMore);
 			try {
 				FileWriter savedF = new FileWriter(newFile);
 				savedF.write((conf[0].equals("null") ? 0 : conf[0]) + System.lineSeparator());
@@ -5980,7 +6075,8 @@ public class Reales extends JFrame {
 		});
 		reso1.addActionListener(e -> {
 			conf[3] = "4";
-			resG(resoD, reso4, reso3, reso2, reso1, notasF, pesosF, newDay, clearEverthing, gastosPanel, aggPanel);
+			resG(resoD, reso4, reso3, reso2, reso1, notasF, pesosF, newDay, clearEverthing, gastosPanel, aggPanel,
+					pixMore);
 			try {
 				FileWriter savedF = new FileWriter(newFile);
 				savedF.write((conf[0].equals("null") ? 0 : conf[0]) + System.lineSeparator());
@@ -6003,7 +6099,8 @@ public class Reales extends JFrame {
 		});
 		reso2.addActionListener(e -> {
 			conf[3] = "3";
-			resM(resoD, reso4, reso3, reso2, reso1, notasF, pesosF, newDay, clearEverthing, gastosPanel, aggPanel);
+			resM(resoD, reso4, reso3, reso2, reso1, notasF, pesosF, newDay, clearEverthing, gastosPanel, aggPanel,
+					pixMore);
 			try {
 				FileWriter savedF = new FileWriter(newFile);
 				savedF.write((conf[0].equals("null") ? 0 : conf[0]) + System.lineSeparator());
@@ -6026,7 +6123,8 @@ public class Reales extends JFrame {
 		});
 		reso3.addActionListener(e -> {
 			conf[3] = "2";
-			resP(resoD, reso4, reso3, reso2, reso1, notasF, pesosF, newDay, clearEverthing, gastosPanel, aggPanel);
+			resP(resoD, reso4, reso3, reso2, reso1, notasF, pesosF, newDay, clearEverthing, gastosPanel, aggPanel,
+					pixMore);
 			try {
 				FileWriter savedF = new FileWriter(newFile);
 				savedF.write((conf[0].equals("null") ? 0 : conf[0]) + System.lineSeparator());
@@ -6049,7 +6147,8 @@ public class Reales extends JFrame {
 		});
 		reso4.addActionListener(e -> {
 			conf[3] = "1";
-			resXP(resoD, reso4, reso3, reso2, reso1, notasF, pesosF, newDay, clearEverthing, gastosPanel, aggPanel);
+			resXP(resoD, reso4, reso3, reso2, reso1, notasF, pesosF, newDay, clearEverthing, gastosPanel, aggPanel,
+					pixMore);
 			try {
 				FileWriter savedF = new FileWriter(newFile);
 				savedF.write((conf[0].equals("null") ? 0 : conf[0]) + System.lineSeparator());
