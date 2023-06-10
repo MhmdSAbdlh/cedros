@@ -213,7 +213,6 @@ public class Reales extends JFrame {
 	static JLabel panelFoto[] = new JLabel[11];// Photo row
 	static JLabel[] diffResult = new JLabel[2];// calculate the difference
 	static JLabel restTmrw = new JLabel();// rest for tomorrow
-	JLabel plusSymbol = new JLabel("+");
 	// Define values
 	static int totalCol = 0, totalVenta = 0, totalO = 0;
 	static int gastosT = 0, agregadoT = 0, pix = 0;
@@ -641,12 +640,7 @@ public class Reales extends JFrame {
 				cajaFocus(i, this, newDay, notasF, pesosF, clearEverthing, hideBtn, resoD, gastosPanel, aggPanel);
 			this.add(panelCnum[i]);
 		}
-		plusSymbol.setForeground(First.lightC);
-		panelFoto[10].setBackground(Color.white);
-		panelCnum[10].setBackground(Color.black);
-		panelCnum[10].setForeground(First.lightC);
-		panelCnum[10].setCaretColor(First.lightC);
-		this.add(plusSymbol);
+		panelFoto[10].setBackground(Color.DARK_GRAY);
 		total[7] = new JLabel("TOTAL");// Total Label
 		First.labelStyle(total[7]);
 		total[7].setBackground(Color.black);
@@ -1162,7 +1156,7 @@ public class Reales extends JFrame {
 				} else if (selectedOption == 2) {
 					exBtn(language);
 					if (currentDate.d != 29 || currentDate.m != 2)
-						currentDate.saveTotal23(totalVenta + pix);
+						currentDate.saveTotal23(totalVenta);
 					for (int i = 0; i < 6; i++)
 						for (int j = 0; j < 20; j++)
 							details[i][j].setText("");
@@ -1860,138 +1854,125 @@ public class Reales extends JFrame {
 		String[] espSumm = {
 				("*EN " + dayN + "-" + monthS + "-2022,\n\nLO QUE ES UN "
 						+ whatDay(Integer.valueOf(dayN), Integer.valueOf(First.monthN), 2022, 0) + ", VENDISTE R$"
-						+ value22 + " EN TOTAL\n\n\n*HOY, " + dayS + " VENDISTE POR AHORA R$" + (pix + totalVenta)
+						+ value22 + " EN TOTAL\n\n\n*HOY, " + dayS + " VENDISTE POR AHORA R$" + totalVenta
 						+ "\n\n\n*SE PARECE QUE VENDIMOS R$"
-						+ (value22 > (pix + totalVenta) ? (value22 - (pix + totalVenta)
-								+ " MENOS QUE EL AÑO PASADO")
-								: ((pix + totalVenta) - value22 + " MÁS QUE EL AÑO PASADO"))
+						+ (value22 > totalVenta ? (value22 - totalVenta + " MENOS QUE EL AÑO PASADO")
+								: (totalVenta - value22 + " MÁS QUE EL AÑO PASADO"))
 						+ (value22 == 0 ? ""
-								: "\n\nCORRESPONDIENTE A UN " + (value22 > (pix + totalVenta)
-										? "DISMINUIR DE "
-												+ (value22 == 0 ? 0 : (value22 - (pix + totalVenta)) * 100 / value22)
+								: "\n\nCORRESPONDIENTE A UN " + (value22 > totalVenta
+										? "DISMINUIR DE " + (value22 == 0 ? 0 : (value22 - totalVenta) * 100 / value22)
 
-										: "AUMENTAR DE "
-												+ (value22 == 0 ? 0 : (pix + totalVenta - value22) * 100 / value22)))
+										: "AUMENTAR DE " + (value22 == 0 ? 0 : (totalVenta - value22) * 100 / value22)))
 						+ "%"), // 0
-				"*HOY, VENDEMOS EN TOTAL R$" + (totalVenta + pix) + "\n\n\n*ESTE AÑO VENDIMOS UN PROMEDIO DIARIO DE R$"
+				"*HOY, VENDEMOS EN TOTAL R$" + totalVenta + "\n\n\n*ESTE AÑO VENDIMOS UN PROMEDIO DIARIO DE R$"
 						+ dailyAvg + "\n\n\n*UN PROMEDIO DE LOS "
 						+ whatDay(currentDate.d, currentDate.m, currentDate.y, 0) + " R$" + sameDayAvg
 						+ "\n\n\n*UN PROMEDIO MENSUAL DE "
 						+ currentDate.getMonthForInt(Integer.valueOf(First.monthN) - 1, 0) + " R$" + monthlyAvg, // 1
 				"SE PARECE QUE VENDIMOS\n\n*R$"
-						+ (sameDayAvg > (pix + totalVenta)
-								? sameDayAvg
-										- (pix + totalVenta) + " MENOS QUE EL PROMEDIO DE LOS "
+						+ (sameDayAvg > totalVenta
+								? sameDayAvg - totalVenta + " MENOS QUE EL PROMEDIO DE LOS "
 										+ whatDay(currentDate.d, currentDate.m, currentDate.y, 0) + " ⬇ "
-										+ (sameDayAvg == 0 ? 0 : 100 * (sameDayAvg - (pix + totalVenta)) / sameDayAvg)
-								: ((pix + totalVenta) - sameDayAvg + " MÁS QUE EL PROMEDIO DE LOS "
+										+ (sameDayAvg == 0 ? 0 : 100 * (sameDayAvg - totalVenta) / sameDayAvg)
+								: (totalVenta - sameDayAvg + " MÁS QUE EL PROMEDIO DE LOS "
 										+ whatDay(currentDate.d, currentDate.m, currentDate.y, 0)) + " ⬆ "
-										+ (sameDayAvg == 0 ? 0 : 100 * (-sameDayAvg + (pix + totalVenta)) / sameDayAvg))
+										+ (sameDayAvg == 0 ? 0 : 100 * (-sameDayAvg + totalVenta) / sameDayAvg))
 						+ "%\n\n*R$"
-						+ (dailyAvg > (pix + totalVenta)
-								? dailyAvg - (pix + totalVenta) + " MENOS QUE EL PROMEDIO DIARIO" + " ⬇ "
-										+ (dailyAvg == 0 ? 0 : 100 * (dailyAvg - (pix + totalVenta)) / dailyAvg)
-								: ((pix + totalVenta) - dailyAvg + " MÁS QUE EL PROMEDIO DIARIO") + " ⬆ "
-										+ (dailyAvg == 0 ? 0 : 100 * (-dailyAvg + (pix + totalVenta)) / dailyAvg))
+						+ (dailyAvg > totalVenta
+								? dailyAvg - totalVenta + " MENOS QUE EL PROMEDIO DIARIO" + " ⬇ "
+										+ (dailyAvg == 0 ? 0 : 100 * (dailyAvg - totalVenta) / dailyAvg)
+								: (totalVenta - dailyAvg + " MÁS QUE EL PROMEDIO DIARIO")
+										+ " ⬆ " + (dailyAvg == 0 ? 0 : 100 * (-dailyAvg + totalVenta) / dailyAvg))
 						+ "%\n\n*R$"
-						+ (monthlyAvg > (pix + totalVenta)
-								? monthlyAvg - (pix + totalVenta) + " MENOS QUE PROMEDIO MENSUAL DE "
+						+ (monthlyAvg > totalVenta
+								? monthlyAvg - totalVenta + " MENOS QUE PROMEDIO MENSUAL DE "
 										+ currentDate.getMonthForInt(Integer.valueOf(First.monthN) - 1, 0) + " ⬇ "
-										+ (monthlyAvg == 0 ? 0 : 100 * (monthlyAvg - (pix + totalVenta)) / monthlyAvg)
-								: ((pix + totalVenta) - monthlyAvg + " MÁS QUE EL PPROMEDIO MENSUAL DE "
+										+ (monthlyAvg == 0 ? 0 : 100 * (monthlyAvg - totalVenta) / monthlyAvg)
+								: (totalVenta - monthlyAvg + " MÁS QUE EL PPROMEDIO MENSUAL DE "
 										+ currentDate.getMonthForInt(Integer.valueOf(First.monthN) - 1, 0) + " ⬆ "
-										+ (monthlyAvg == 0 ? 0
-												: 100 * (-monthlyAvg + (pix + totalVenta)) / monthlyAvg)))
+										+ (monthlyAvg == 0 ? 0 : 100 * (-monthlyAvg + totalVenta) / monthlyAvg)))
 						+ "%"// 2
 		};
 		String[] porSumm = {
 				"*EM " + dayN + "-" + monthS + "-2022,\n\nO QUE É UM "
 						+ whatDay(Integer.valueOf(dayN), Integer.valueOf(First.monthN), 2022, 1) + ", VOCÊ VENDEU R$"
-						+ value22 + " EM TOTAL\n\n\n*HOJE, " + dayS + " VENDEU POR AGORA R$" + (pix + totalVenta)
+						+ value22 + " EM TOTAL\n\n\n*HOJE, " + dayS + " VENDEU POR AGORA R$" + totalVenta
 						+ "\n\n\n*PARECE QUE VENDEMOS R$"
-						+ (value22 > (pix + totalVenta) ? (value22
-								- (pix + totalVenta) + " MENOS QUE ANO PASSADO")
-								: ((pix + totalVenta) - value22 + " MAIS QUE ANO PASSADO"))
+						+ (value22 > totalVenta ? (value22 - totalVenta + " MENOS QUE ANO PASSADO")
+								: (totalVenta - value22 + " MAIS QUE ANO PASSADO"))
 						+ (value22 == 0 ? ""
-								: "\n\nCORRESPONDENTE A UM " + (value22 > (pix + totalVenta)
-										? "DIMINUIÇÃO DO "
-												+ (value22 == 0 ? 0 : (value22 - (pix + totalVenta)) * 100 / value22)
-										: "AUMENTO DO "
-												+ (value22 == 0 ? 0 : (pix + totalVenta - value22) * 100 / value22)))
+								: "\n\nCORRESPONDENTE A UM " + (value22 > totalVenta
+										? "DIMINUIÇÃO DO " + (value22 == 0 ? 0 : (value22 - totalVenta) * 100 / value22)
+										: "AUMENTO DO " + (value22 == 0 ? 0 : (totalVenta - value22) * 100 / value22)))
 						+ "%", // 0
-				"*HOJE, VENDEMOS NO TOTAL R$" + (totalVenta + pix) + "\n\n\n*ESTE ANO VENDEMOS UM MÉDIA DIÁRIA DO R$"
-						+ dailyAvg + "\n\n\n*EM MÉDIA DO " + whatDay(currentDate.d, currentDate.m, currentDate.y, 1)
-						+ " R$" + sameDayAvg + "\n\n\n*EM MÉDIA MENSAL "
+				"*HOJE, VENDEMOS NO TOTAL R$" + totalVenta + "\n\n\n*ESTE ANO VENDEMOS UM MÉDIA DIÁRIA DO R$" + dailyAvg
+						+ "\n\n\n*EM MÉDIA DO " + whatDay(currentDate.d, currentDate.m, currentDate.y, 1) + " R$"
+						+ sameDayAvg + "\n\n\n*EM MÉDIA MENSAL "
 						+ currentDate.getMonthForInt(Integer.valueOf(First.monthN) - 1, 1) + " R$" + monthlyAvg, // 1
 				"PARECE QUE VENDEMOS\n\n*R$"
-						+ (sameDayAvg > (pix + totalVenta) ? sameDayAvg - (pix + totalVenta)
-								+ " MENOS QUE A MÉDIA DE OS " + whatDay(currentDate.d, currentDate.m, currentDate.y, 1)
-								+ " ⬇ " + (sameDayAvg == 0 ? 0 : 100 * (sameDayAvg - (pix + totalVenta)) / sameDayAvg)
-								: (pix + totalVenta) - sameDayAvg + " MAIS QUE A MÉDIA DE OS "
+						+ (sameDayAvg > totalVenta
+								? sameDayAvg - totalVenta + " MENOS QUE A MÉDIA DE OS "
+										+ whatDay(currentDate.d, currentDate.m, currentDate.y, 1) + " ⬇ "
+										+ (sameDayAvg == 0 ? 0 : 100 * (sameDayAvg - totalVenta) / sameDayAvg)
+								: totalVenta - sameDayAvg + " MAIS QUE A MÉDIA DE OS "
 										+ (whatDay(currentDate.d, currentDate.m, currentDate.y, 1)) + " ⬆ "
-										+ (sameDayAvg == 0 ? 0 : 100 * (-sameDayAvg + (pix + totalVenta)) / sameDayAvg))
+										+ (sameDayAvg == 0 ? 0 : 100 * (-sameDayAvg + totalVenta) / sameDayAvg))
 						+ "%\n\n*R$"
-						+ (dailyAvg > (pix + totalVenta)
-								? dailyAvg - (pix + totalVenta) + " MENOS QUE A MÉDIA DIÁRIA" + " ⬇ "
-										+ (dailyAvg == 0 ? 0 : 100 * (dailyAvg - (pix + totalVenta)) / dailyAvg)
-								: (pix + totalVenta) - dailyAvg + " MAIS QUE A MÉDIA DIÁRIA" + " ⬆ "
-										+ (dailyAvg == 0 ? 0 : 100 * (-dailyAvg + (pix + totalVenta)) / dailyAvg))
+						+ (dailyAvg > totalVenta
+								? dailyAvg - totalVenta + " MENOS QUE A MÉDIA DIÁRIA" + " ⬇ "
+										+ (dailyAvg == 0 ? 0 : 100 * (dailyAvg - totalVenta) / dailyAvg)
+								: totalVenta - dailyAvg + " MAIS QUE A MÉDIA DIÁRIA" + " ⬆ "
+										+ (dailyAvg == 0 ? 0 : 100 * (-dailyAvg + totalVenta) / dailyAvg))
 						+ "%\n\n*R$"
-						+ (monthlyAvg > (pix + totalVenta)
-								? monthlyAvg - (pix + totalVenta) + " MENOS QUE A MÉDIA MENSAL "
+						+ (monthlyAvg > totalVenta
+								? monthlyAvg - totalVenta + " MENOS QUE A MÉDIA MENSAL "
 										+ currentDate.getMonthForInt(Integer.valueOf(First.monthN) - 1, 1) + " ⬇ "
-										+ (monthlyAvg == 0 ? 0 : 100 * (monthlyAvg - (pix + totalVenta)) / monthlyAvg)
-								: ((pix + totalVenta) - monthlyAvg + " MAIS QUE A MÉDIA MENSAL "
+										+ (monthlyAvg == 0 ? 0 : 100 * (monthlyAvg - totalVenta) / monthlyAvg)
+								: (totalVenta - monthlyAvg + " MAIS QUE A MÉDIA MENSAL "
 										+ currentDate.getMonthForInt(Integer.valueOf(First.monthN) - 1, 1) + " ⬆ "
-										+ (monthlyAvg == 0 ? 0
-												: 100 * (-monthlyAvg + (pix + totalVenta)) / monthlyAvg)))
+										+ (monthlyAvg == 0 ? 0 : 100 * (-monthlyAvg + totalVenta) / monthlyAvg)))
 						+ "%"// 2
 		};
 		String[] engSumm = {
 				"*ON " + dayN + "-" + monthS + "-2022,\n\nWHICH IS A "
 						+ whatDay(Integer.valueOf(dayN), Integer.valueOf(First.monthN), 2022, 2) + ", YOU SOLD R$"
-						+ value22 + " IN TOTAL\n\n\n*TODAY, " + dayS + " YOU SOLD FOR NOW R$" + (pix + totalVenta)
+						+ value22 + " IN TOTAL\n\n\n*TODAY, " + dayS + " YOU SOLD FOR NOW R$" + totalVenta
 						+ "\n\n\n*IT SEEMS WE SOLD R$"
-						+ (value22 > (pix + totalVenta)
-								? (value22 - (pix + totalVenta) + " LESS THAN LAST YEAR")
-								: ((pix + totalVenta) - value22 + " MORE THAN LAST YEAR"))
+						+ (value22 > totalVenta ? (value22 - totalVenta + " LESS THAN LAST YEAR")
+								: (totalVenta - value22 + " MORE THAN LAST YEAR"))
 						+ (value22 == 0 ? ""
-								: "\n\nCORRESPONDING TO " + (value22 > (pix + totalVenta)
-										? "A DECREASE OF "
-												+ (value22 == 0 ? 0 : (value22 - (pix + totalVenta)) * 100 / value22)
+								: "\n\nCORRESPONDING TO " + (value22 > totalVenta
+										? "A DECREASE OF " + (value22 == 0 ? 0 : (value22 - totalVenta) * 100 / value22)
 
 										: "AN INCREASE OF "
-												+ (value22 == 0 ? 0 : (pix + totalVenta - value22) * 100 / value22)))
+												+ (value22 == 0 ? 0 : (totalVenta - value22) * 100 / value22)))
 						+ "%", // 0
-				"*TODAY, WE SOLD IN TOTAL R$" + (totalVenta + pix) + "\n\n\n*THIS YEAR WE SOLD A DAILY AVERAGE OF R$"
-						+ dailyAvg + "\n\n\n*AN AVERAGE OF THE "
-						+ whatDay(currentDate.d, currentDate.m, currentDate.y, 2) + " R$" + sameDayAvg
-						+ "\n\n\n*A MONTHLY AVERAGE " + currentDate.getMonthForInt(Integer.valueOf(First.monthN) - 1, 2)
-						+ " R$" + monthlyAvg, // 1
+				"*TODAY, WE SOLD IN TOTAL R$" + totalVenta + "\n\n\n*THIS YEAR WE SOLD A DAILY AVERAGE OF R$" + dailyAvg
+						+ "\n\n\n*AN AVERAGE OF THE " + whatDay(currentDate.d, currentDate.m, currentDate.y, 2) + " R$"
+						+ sameDayAvg + "\n\n\n*A MONTHLY AVERAGE "
+						+ currentDate.getMonthForInt(Integer.valueOf(First.monthN) - 1, 2) + " R$" + monthlyAvg, // 1
 				"IT LOOKS LIKE WE SOLD\n\n*R$"
-						+ (sameDayAvg > (pix + totalVenta) ? sameDayAvg
-								- (pix + totalVenta) + " LESS THAN THE AVERAGE OF THE "
-								+ whatDay(currentDate.d, currentDate.m, currentDate.y, 2) + " ⬇ "
-								+ (sameDayAvg == 0 ? 0 : 100 * (sameDayAvg - (pix + totalVenta)) / sameDayAvg)
-								: ((pix + totalVenta) - sameDayAvg + " MORE THAN THE AVERAGE OF THE "
+						+ (sameDayAvg > totalVenta
+								? sameDayAvg - totalVenta + " LESS THAN THE AVERAGE OF THE "
+										+ whatDay(currentDate.d, currentDate.m, currentDate.y, 2) + " ⬇ "
+										+ (sameDayAvg == 0 ? 0 : 100 * (sameDayAvg - totalVenta) / sameDayAvg)
+								: (totalVenta - sameDayAvg + " MORE THAN THE AVERAGE OF THE "
 										+ whatDay(currentDate.d, currentDate.m, currentDate.y, 2) + " ⬆ "
-										+ (sameDayAvg == 0 ? 0
-												: 100 * (-sameDayAvg + (pix + totalVenta)) / sameDayAvg)))
+										+ (sameDayAvg == 0 ? 0 : 100 * (-sameDayAvg + totalVenta) / sameDayAvg)))
 						+ "%\n\n*R$"
-						+ (dailyAvg > (pix + totalVenta)
-								? dailyAvg - (pix + totalVenta) + " LESS THAN THE DAILY AVERAGE" + " ⬇ "
-										+ (dailyAvg == 0 ? 0 : 100 * (dailyAvg - (pix + totalVenta)) / dailyAvg)
-								: ((pix + totalVenta) - dailyAvg + " MORE THAN THE DAILY AVERAGE" + " ⬆ "
-										+ (dailyAvg == 0 ? 0 : 100 * (-dailyAvg + (pix + totalVenta)) / dailyAvg)))
+						+ (dailyAvg > totalVenta
+								? dailyAvg - totalVenta + " LESS THAN THE DAILY AVERAGE" + " ⬇ "
+										+ (dailyAvg == 0 ? 0 : 100 * (dailyAvg - totalVenta) / dailyAvg)
+								: (totalVenta - dailyAvg + " MORE THAN THE DAILY AVERAGE" + " ⬆ "
+										+ (dailyAvg == 0 ? 0 : 100 * (-dailyAvg + totalVenta) / dailyAvg)))
 						+ "%\n\n*R$"
-						+ (monthlyAvg > (pix + totalVenta)
-								? monthlyAvg - (pix + totalVenta) + " LESS THAN THE MONTHLY AVERAGE OF "
+						+ (monthlyAvg > totalVenta
+								? monthlyAvg - totalVenta + " LESS THAN THE MONTHLY AVERAGE OF "
 										+ currentDate.getMonthForInt(Integer.valueOf(First.monthN) - 1, 2) + " ⬇ "
-										+ (monthlyAvg == 0 ? 0 : 100 * (monthlyAvg - (pix + totalVenta)) / monthlyAvg)
-								: ((pix + totalVenta) - monthlyAvg + " MORE THAN THE MONTHLY AVERAGE OF "
+										+ (monthlyAvg == 0 ? 0 : 100 * (monthlyAvg - totalVenta) / monthlyAvg)
+								: (totalVenta - monthlyAvg + " MORE THAN THE MONTHLY AVERAGE OF "
 										+ currentDate.getMonthForInt(Integer.valueOf(First.monthN) - 1, 2) + " ⬆ "
-										+ (monthlyAvg == 0 ? 0
-												: 100 * (-monthlyAvg + (pix + totalVenta)) / monthlyAvg)))
+										+ (monthlyAvg == 0 ? 0 : 100 * (-monthlyAvg + totalVenta) / monthlyAvg)))
 						+ "%"// 2
 		};
 
@@ -2146,21 +2127,15 @@ public class Reales extends JFrame {
 						+ "CON UN PROMEDIO DE $" + (nbAgregados() == 0 ? 0 : agregadoT / nbAgregados()) + "\n\n"
 						+ "DETALLADO COMO:\n" + agregadoDetalles(), // 8
 				"PARA RESUMIR\n\n" + "EMPEZAMOS EL DÍA CON R$" + initialDay.getText() + "\n\nY VENDIMOS R$" + totalVenta
-						+ "\n\nY GASTO R$" + gastosT + "\n\nQUE TERMINARÁ CON R$" + totalO + " EN TOTAL"
-						+ "\n\nCON UN R$" + panelCnum[10].getText() + " COMO PIX", // 9
-				"PARA RESUMIR\n\n" + "EMPEZAMOS EL DÍA CON R$" + initialDay.getText() + "\n\nY VENDIMOS R$" + totalVenta
-						+ "\n\nY GASTO R$" + gastosT + "\n\nQUE TERMINARÁ CON R$" + totalO + " EN TOTAL", // 10
+						+ "\n\nY GASTO R$" + gastosT + "\n\nQUE TERMINARÁ CON R$" + totalO + " EN TOTAL", // 9
 				"PARA RESUMIR\n\n" + "EMPEZAMOS EL DÍA CON R$" + initialDay.getText() + "\n\nY VENDIMOS R$" + totalVenta
 						+ "\n\nY GASTO R$" + gastosT + "\n\nY AGREGÓ R$" + agregadoT + "\n\nQUE TERMINARÁ CON R$"
-						+ totalO + " EN TOTAL" + "\n\nCON UN R$" + panelCnum[10].getText() + " COMO PIX", // 11
-				"PARA RESUMIR\n\n" + "EMPEZAMOS EL DÍA CON R$" + initialDay.getText() + "\n\nY VENDIMOS R$" + totalVenta
-						+ "\n\nY GASTO R$" + gastosT + "\n\nY AGREGÓ R$" + agregadoT + "\n\nQUE TERMINARÁ CON R$"
-						+ totalO + " EN TOTAL", // 12
-				"LA CAJA DIO BIEN\n\n" + "NO HAY DIFERENCIA\n\n" + ":)", // 13
+						+ totalO + " EN TOTAL", // 10
+				"LA CAJA DIO BIEN\n\n" + "NO HAY DIFERENCIA\n\n" + ":)", // 11
 				"LA CAJA NO DIO BIEN\n\n" + "PARECE QUE " + diffResult[1].getText().toUpperCase()
-						+ "\n\nREVISA LOS BOLETOS Y LA CAJA", // 14
-				"QUEDARÁ PARA MAÑANA APROXIMADAMENTE\n\nR$" + restN, // 15
-				"TOQUE EL BOTÓN PARA EXPORTAR EL RESULTADO"// 16
+						+ "\n\nREVISA LOS BOLETOS Y LA CAJA", // 12
+				"QUEDARÁ PARA MAÑANA APROXIMADAMENTE\n\nR$" + restN, // 13
+				"TOQUE EL BOTÓN PARA EXPORTAR EL RESULTADO"// 14
 		};
 		String[] porSumm = { "VOCÊ NÃO VENDEU NADA", // 0
 				"VOCÊ VENDEU UMA VENDA SÓ QUE VALE R$" + totalVenta, // 1
@@ -2178,13 +2153,7 @@ public class Reales extends JFrame {
 						+ " COISAS\n\n" + "COM MÉDIA DE R$" + (nbAgregados() == 0 ? 0 : agregadoT / nbAgregados())
 						+ "\n\n" + "DETALHADO COMO:\n" + agregadoDetalles(), // 8
 				"PARA RESUMIR\n\n" + "COMEÇAMOS O DIA COM R$" + initialDay.getText() + "\n\nE VENDEMOS R$" + totalVenta
-						+ "\n\nE GASTO R$" + gastosT + "\n\nQUE VAI ACABAR EM R$" + totalO + " EM TOTAL"
-						+ "\n\nCOM UM R$" + panelCnum[10].getText() + " COMO PIX", // 9
-				"PARA RESUMIR\n\n" + "COMEÇAMOS O DIA COM R$" + initialDay.getText() + "\n\nE VENDEMOS R$" + totalVenta
-						+ "\n\nE GASTO R$" + gastosT + "\n\nQUE VAI ACABAR EM R$" + totalO + " EM TOTAL", // 10
-				"PARA RESUMIR\n\n" + "COMEÇAMOS O DIA COM R$" + initialDay.getText() + "\n\nE VENDEMOS R$" + totalVenta
-						+ "\n\nE GASTO R$" + gastosT + "\n\nE ADICIONO R$" + agregadoT + "\n\nQUE VAI ACABAR EM R$"
-						+ totalO + " EM TOTAL" + "\n\nCOM UM R$" + panelCnum[10].getText() + " COMO PIX", // 11
+						+ "\n\nE GASTO R$" + gastosT + "\n\nQUE VAI ACABAR EM R$" + totalO + " EM TOTAL", // 9
 				"PARA RESUMIR\n\n" + "COMEÇAMOS O DIA COM R$" + initialDay.getText() + "\n\nE VENDEMOS R$" + totalVenta
 						+ "\n\nE GASTO R$" + gastosT + "\n\nE ADICIONO R$" + agregadoT + "\n\nQUE VAI ACABAR EM R$"
 						+ totalO + " EM TOTAL", // 12
@@ -2211,14 +2180,7 @@ public class Reales extends JFrame {
 						+ "\n\n" + "DETAILED AS:\n" + agregadoDetalles(), // 8
 				"TO SUMMARIZE\n\n" + "WE START THE DAY WITH R$" + initialDay.getText() + "\n\nAND WE SELL R$"
 						+ totalVenta + "\n\nAND WE SPENT R$" + gastosT + "\n\nWHAT WILL END IN R$" + totalO
-						+ " IN TOTAL" + "\n\nWITH R$" + panelCnum[10].getText() + " AS PIX", // 9
-				"TO SUMMARIZE\n\n" + "WE START THE DAY WITH R$" + initialDay.getText() + "\n\nAND WE SELL R$"
-						+ totalVenta + "\n\nAND WE SPENT R$" + gastosT + "\n\nWHAT WILL END IN R$" + totalO
-						+ " IN TOTAL", // 10
-				"TO SUMMARIZE\n\n" + "WE START THE DAY WITH R$" + initialDay.getText() + "\n\nAND WE SELL R$"
-						+ totalVenta + "\n\nAND WE SPENT R$" + gastosT + "\n\nAND WE ADD R$" + agregadoT
-						+ "\n\nWHAT WILL END IN R$" + totalO + " IN TOTAL" + "\n\nWITH R$" + panelCnum[10].getText()
-						+ " AS PIX", // 11
+						+ " IN TOTAL", // 9
 				"TO SUMMARIZE\n\n" + "WE START THE DAY WITH R$" + initialDay.getText() + "\n\nAND WE SELL R$"
 						+ totalVenta + "\n\nAND WE SPENT R$" + gastosT + "\n\nAND WE ADD R$" + agregadoT
 						+ "\n\nWHAT WILL END IN R$" + totalO + " IN TOTAL", // 12
@@ -2310,14 +2272,9 @@ public class Reales extends JFrame {
 				case 3: {// SUMMARY start
 					sumItem.setBounds(0, 100, 650, 550);
 					if (agregadoT == 0)
-						if (Integer.valueOf(panelCnum[10].getText()) > 0)
-							sumItem.setText(language == 0 ? espSumm[9] : language == 1 ? porSumm[9] : engSumm[9]);
-						else
-							sumItem.setText(language == 0 ? espSumm[10] : language == 1 ? porSumm[10] : engSumm[10]);
-					else if (Integer.valueOf(panelCnum[10].getText()) > 0)
-						sumItem.setText(language == 0 ? espSumm[11] : language == 1 ? porSumm[11] : engSumm[11]);
+						sumItem.setText(language == 0 ? espSumm[9] : language == 1 ? porSumm[10] : engSumm[9]);
 					else
-						sumItem.setText(language == 0 ? espSumm[12] : language == 1 ? porSumm[12] : engSumm[12]);
+						sumItem.setText(language == 0 ? espSumm[10] : language == 1 ? porSumm[12] : engSumm[10]);
 					if (colorX < 254 && !status)// summ fade in
 						colorX++;
 					else {
@@ -2332,9 +2289,9 @@ public class Reales extends JFrame {
 				case 4: {// diferrence
 					sumItem.setBounds(0, 200, 650, 550);
 					if (totalO == totalCaja)
-						sumItem.setText(language == 0 ? espSumm[13] : language == 1 ? porSumm[13] : engSumm[13]);
+						sumItem.setText(language == 0 ? espSumm[11] : language == 1 ? porSumm[11] : engSumm[11]);
 					else
-						sumItem.setText(language == 0 ? espSumm[14] : language == 1 ? porSumm[14] : engSumm[14]);
+						sumItem.setText(language == 0 ? espSumm[12] : language == 1 ? porSumm[12] : engSumm[12]);
 					// diferrence fade in
 					if (colorX < 254 && status)
 						colorX += 2;
@@ -2349,7 +2306,7 @@ public class Reales extends JFrame {
 				}
 				case 5: {// remain for tmrw
 					sumItem.setBounds(0, 220, 650, 550);
-					sumItem.setText(language == 0 ? espSumm[15] : language == 1 ? porSumm[15] : engSumm[15]);
+					sumItem.setText(language == 0 ? espSumm[13] : language == 1 ? porSumm[13] : engSumm[13]);
 					if (colorX < 254 && !status)// remain fade in
 						colorX += 2;
 					else {
@@ -2363,7 +2320,7 @@ public class Reales extends JFrame {
 				}
 				case 6: {// export button
 					sumItem.setBounds(0, 200, 650, 550);
-					sumItem.setText(language == 0 ? espSumm[16] : language == 1 ? porSumm[16] : engSumm[16]);
+					sumItem.setText(language == 0 ? espSumm[14] : language == 1 ? porSumm[14] : engSumm[14]);
 					if (colorX < 254)// export label fade in
 						colorX += 2;
 					else {
@@ -2531,42 +2488,10 @@ public class Reales extends JFrame {
 					break;
 				}
 				case 3: {// SUMMARY start
-					if (agregadoT == 0)
-						if (Integer.valueOf(panelCnum[10].getText()) > 0) {
-							sumItem.setBounds(0, 120, 650, 550);
-							String[] wordT = language == 0 ? espSumm[9].split(" ")
-									: language == 1 ? porSumm[9].split(" ") : engSumm[9].split(" ");
-							if (wordL < wordT.length)
-								sumItem.setText(sumItem.getText().concat(wordT[wordL++] + " "));
-							else {
-								if (wordL < wordT.length + 3) {
-									wordL++;
-								} else {
-									order++;
-									wordL = 0;
-									sumItem.setText("");
-								}
-							}
-						} else {
-							sumItem.setBounds(0, 140, 650, 550);
-							String[] wordT = language == 0 ? espSumm[10].split(" ")
-									: language == 1 ? porSumm[10].split(" ") : engSumm[10].split(" ");
-							if (wordL < wordT.length)
-								sumItem.setText(sumItem.getText().concat(wordT[wordL++] + " "));
-							else {
-								if (wordL < wordT.length + 3) {
-									wordL++;
-								} else {
-									order++;
-									wordL = 0;
-									sumItem.setText("");
-								}
-							}
-						}
-					else if (Integer.valueOf(panelCnum[10].getText()) > 0) {
-						sumItem.setBounds(0, 100, 650, 550);
-						String[] wordT = language == 0 ? espSumm[11].split(" ")
-								: language == 1 ? porSumm[11].split(" ") : engSumm[11].split(" ");
+					if (agregadoT == 0) {
+						sumItem.setBounds(0, 140, 650, 550);
+						String[] wordT = language == 0 ? espSumm[9].split(" ")
+								: language == 1 ? porSumm[9].split(" ") : engSumm[9].split(" ");
 						if (wordL < wordT.length)
 							sumItem.setText(sumItem.getText().concat(wordT[wordL++] + " "));
 						else {
@@ -2580,8 +2505,8 @@ public class Reales extends JFrame {
 						}
 					} else {
 						sumItem.setBounds(0, 120, 650, 550);
-						String[] wordT = language == 0 ? espSumm[12].split(" ")
-								: language == 1 ? porSumm[12].split(" ") : engSumm[12].split(" ");
+						String[] wordT = language == 0 ? espSumm[10].split(" ")
+								: language == 1 ? porSumm[10].split(" ") : engSumm[10].split(" ");
 						if (wordL < wordT.length)
 							sumItem.setText(sumItem.getText().concat(wordT[wordL++] + " "));
 						else {
@@ -2598,8 +2523,8 @@ public class Reales extends JFrame {
 				}
 				case 4: {// diferrence start
 					if (totalO == totalCaja) {
-						String[] wordT = language == 0 ? espSumm[13].split(" ")
-								: language == 1 ? porSumm[13].split(" ") : engSumm[13].split(" ");
+						String[] wordT = language == 0 ? espSumm[11].split(" ")
+								: language == 1 ? porSumm[11].split(" ") : engSumm[11].split(" ");
 						sumItem.setBounds(0, 220, 650, 550);
 						if (wordL < wordT.length)
 							sumItem.setText(sumItem.getText().concat(wordT[wordL++] + " "));
@@ -2613,8 +2538,8 @@ public class Reales extends JFrame {
 							}
 						}
 					} else {
-						String[] wordT = language == 0 ? espSumm[14].split(" ")
-								: language == 1 ? porSumm[14].split(" ") : engSumm[14].split(" ");
+						String[] wordT = language == 0 ? espSumm[12].split(" ")
+								: language == 1 ? porSumm[12].split(" ") : engSumm[12].split(" ");
 						sumItem.setBounds(0, 200, 650, 550);
 						if (wordL < wordT.length)
 							sumItem.setText(sumItem.getText().concat(wordT[wordL++] + " "));
@@ -2631,8 +2556,8 @@ public class Reales extends JFrame {
 					break;
 				}
 				case 5: {// remain for tmrw
-					String[] wordT = language == 0 ? espSumm[15].split(" ")
-							: language == 1 ? porSumm[15].split(" ") : engSumm[15].split(" ");
+					String[] wordT = language == 0 ? espSumm[13].split(" ")
+							: language == 1 ? porSumm[13].split(" ") : engSumm[13].split(" ");
 					sumItem.setBounds(0, 220, 650, 550);
 					if (wordL < wordT.length)
 						sumItem.setText(sumItem.getText().concat(wordT[wordL++] + " "));
@@ -2648,8 +2573,8 @@ public class Reales extends JFrame {
 					break;
 				}
 				case 6: {// export button
-					String[] wordT = language == 0 ? espSumm[16].split(" ")
-							: language == 1 ? porSumm[16].split(" ") : engSumm[16].split(" ");
+					String[] wordT = language == 0 ? espSumm[14].split(" ")
+							: language == 1 ? porSumm[14].split(" ") : engSumm[14].split(" ");
 					if (wordL < wordT.length)
 						sumItem.setText(sumItem.getText().concat(wordT[wordL++] + " "));
 					else {
@@ -2819,46 +2744,13 @@ public class Reales extends JFrame {
 					break;
 				}
 				case 3: {// SUMMARY start
-					if (agregadoT == 0)
-						if (Integer.valueOf(panelCnum[10].getText()) > 0) {
-							sumItem.setBounds(0, 120, 650, 550);
-							char[] wordT = language == 0 ? espSumm[9].toCharArray()
-									: language == 1 ? porSumm[9].toCharArray() : engSumm[9].toCharArray();
-							if (wordL < wordT.length)
-								sumItem.setText(sumItem.getText() + (wordT[wordL++]));
-							else {
-								if (wordL < wordT.length + 3) {
-									wordL++;
-								} else {
-									order++;
-									wordL = 0;
-									sumItem.setText("");
-								}
-							}
-						} else {
-							sumItem.setBounds(0, 140, 650, 550);
-							char[] wordT = language == 0 ? espSumm[10].toCharArray()
-									: language == 1 ? porSumm[10].toCharArray() : engSumm[10].toCharArray();
-							if (wordL < wordT.length)
-								sumItem.setText(sumItem.getText() + (wordT[wordL++]));
-							else {
-								if (wordL < wordT.length + 3) {
-									wordL++;
-								} else {
-									order++;
-									wordL = 0;
-									sumItem.setText("");
-								}
-								;
-							}
-						}
-					else if (Integer.valueOf(panelCnum[10].getText()) > 0) {
-						sumItem.setBounds(0, 100, 650, 550);
-						char[] wordT = language == 0 ? espSumm[11].toCharArray()
-								: language == 1 ? porSumm[11].toCharArray() : engSumm[11].toCharArray();
-						if (wordL < wordT.length) {
+					if (agregadoT == 0) {
+						sumItem.setBounds(0, 140, 650, 550);
+						char[] wordT = language == 0 ? espSumm[9].toCharArray()
+								: language == 1 ? porSumm[9].toCharArray() : engSumm[9].toCharArray();
+						if (wordL < wordT.length)
 							sumItem.setText(sumItem.getText() + (wordT[wordL++]));
-						} else {
+						else {
 							if (wordL < wordT.length + 3) {
 								wordL++;
 							} else {
@@ -2866,11 +2758,12 @@ public class Reales extends JFrame {
 								wordL = 0;
 								sumItem.setText("");
 							}
+							;
 						}
 					} else {
 						sumItem.setBounds(0, 120, 650, 550);
-						char[] wordT = language == 0 ? espSumm[12].toCharArray()
-								: language == 1 ? porSumm[12].toCharArray() : engSumm[12].toCharArray();
+						char[] wordT = language == 0 ? espSumm[10].toCharArray()
+								: language == 1 ? porSumm[10].toCharArray() : engSumm[10].toCharArray();
 						if (wordL < wordT.length) {
 							sumItem.setText(sumItem.getText() + (wordT[wordL++]));
 						} else {
@@ -2887,8 +2780,8 @@ public class Reales extends JFrame {
 				}
 				case 4: {// diferrence start
 					if (totalO == totalCaja) {
-						char[] wordT = language == 0 ? espSumm[13].toCharArray()
-								: language == 1 ? porSumm[13].toCharArray() : engSumm[13].toCharArray();
+						char[] wordT = language == 0 ? espSumm[11].toCharArray()
+								: language == 1 ? porSumm[11].toCharArray() : engSumm[11].toCharArray();
 						sumItem.setBounds(0, 200, 650, 550);
 						if (wordL < wordT.length)
 							sumItem.setText(sumItem.getText() + (wordT[wordL++]));
@@ -2902,8 +2795,8 @@ public class Reales extends JFrame {
 							}
 						}
 					} else {
-						char[] wordT = language == 0 ? espSumm[14].toCharArray()
-								: language == 1 ? porSumm[14].toCharArray() : engSumm[14].toCharArray();
+						char[] wordT = language == 0 ? espSumm[12].toCharArray()
+								: language == 1 ? porSumm[12].toCharArray() : engSumm[12].toCharArray();
 						sumItem.setBounds(0, 200, 650, 550);
 						if (wordL < wordT.length)
 							sumItem.setText(sumItem.getText() + (wordT[wordL++]));
@@ -2920,8 +2813,8 @@ public class Reales extends JFrame {
 					break;
 				}
 				case 5: {// remain for tmrw
-					char[] wordT = language == 0 ? espSumm[15].toCharArray()
-							: language == 1 ? porSumm[15].toCharArray() : engSumm[15].toCharArray();
+					char[] wordT = language == 0 ? espSumm[13].toCharArray()
+							: language == 1 ? porSumm[13].toCharArray() : engSumm[13].toCharArray();
 					sumItem.setBounds(0, 220, 650, 550);
 					if (wordL < wordT.length)
 						sumItem.setText(sumItem.getText() + (wordT[wordL++]));
@@ -2937,8 +2830,8 @@ public class Reales extends JFrame {
 					break;
 				}
 				case 6: {// export button
-					char[] wordT = language == 0 ? espSumm[16].toCharArray()
-							: language == 1 ? porSumm[16].toCharArray() : engSumm[16].toCharArray();
+					char[] wordT = language == 0 ? espSumm[14].toCharArray()
+							: language == 1 ? porSumm[14].toCharArray() : engSumm[14].toCharArray();
 					sumItem.setBounds(0, 200, 650, 550);
 					if (wordL < wordT.length)
 						sumItem.setText(sumItem.getText() + (wordT[wordL++]));
@@ -3040,15 +2933,7 @@ public class Reales extends JFrame {
 							+ agregadoDetalles(), // 7
 					System.lineSeparator() + "*PARA RESUMIR:\n" + "EMPEZAMOS EL DÍA CON R$" + initialDay.getText()
 							+ "\nVENDIMOS R$" + totalVenta + "\nGASTO R$" + gastosT + "\nQUE TERMINARÁ CON R$" + totalO
-							+ " EN TOTAL" + "\nCON UN R$" + panelCnum[10].getText() + " COMO PIX"
-							+ System.lineSeparator(), // 8
-					System.lineSeparator() + "*PARA RESUMIR:\n" + "EMPEZAMOS EL DÍA CON R$" + initialDay.getText()
-							+ "\nVENDIMOS R$" + totalVenta + "\nGASTO R$" + gastosT + "\nQUE TERMINARÁ CON R$" + totalO
 							+ " EN TOTAL" + System.lineSeparator(), // 9
-					System.lineSeparator() + "*PARA RESUMIR:\n" + "EMPEZAMOS EL DÍA CON R$" + initialDay.getText()
-							+ "\nVENDIMOS R$" + totalVenta + "\nGASTO R$" + gastosT + "\nAGREGÓ R$" + agregadoT
-							+ "\nQUE TERMINARÁ CON R$" + totalO + " EN TOTAL" + "\nCON UN R$" + panelCnum[10].getText()
-							+ " COMO PIX" + System.lineSeparator(), // 10
 					System.lineSeparator() + "*PARA RESUMIR:\n" + "EMPEZAMOS EL DÍA CON R$" + initialDay.getText()
 							+ "\nVENDIMOS R$" + totalVenta + "\nGASTO R$" + gastosT + "\nAGREGÓ R$" + agregadoT
 							+ "\nQUE TERMINARÁ CON R$" + totalO + " EN TOTAL" + System.lineSeparator(), // 11
@@ -3058,52 +2943,45 @@ public class Reales extends JFrame {
 					System.lineSeparator() + "*QUEDARÁ PARA MAÑANA APROXIMADAMENTE R$" + restN + System.lineSeparator(), // 14
 					System.lineSeparator() + "*RECUERDOS DE HOY:\nEN " + dayN + "-" + monthS + "-2022, LO QUE ES UN "
 							+ whatDay(Integer.valueOf(dayN), Integer.valueOf(First.monthN), 2022, 0) + ", VENDISTE R$"
-							+ value22 + " EN TOTAL\nHOY, " + dayS + " VENDISTE R$" + (pix + totalVenta)
+							+ value22 + " EN TOTAL\nHOY, " + dayS + " VENDISTE R$" + totalVenta
 							+ "\nSE PARECE QUE VENDIMOS R$"
-							+ (value22 > (pix + totalVenta)
-									? (value22 - (pix + totalVenta) + " MENOS QUE EL AÑO PASADO")
-									: ((pix + totalVenta) - value22 + " MÁS QUE EL AÑO PASADO"))
+							+ (value22 > totalVenta ? (value22 - totalVenta + " MENOS QUE EL AÑO PASADO")
+									: (totalVenta - value22 + " MÁS QUE EL AÑO PASADO"))
 							+ (value22 == 0 ? ""
-									: ", CORRESPONDIENTE A UN " + (value22 > (pix + totalVenta)
+									: ", CORRESPONDIENTE A UN " + (value22 > totalVenta
 											? "DISMINUIR DE "
-													+ (value22 == 0 ? 0 : (value22 - pix - totalVenta) * 100 / value22)
-											: "AUMENTAR DE " + (value22 == 0 ? 0
-													: (pix + totalVenta - value22) * 100 / value22)))
+													+ (value22 == 0 ? 0 : (value22 - totalVenta) * 100 / value22)
+											: "AUMENTAR DE "
+													+ (value22 == 0 ? 0 : (totalVenta - value22) * 100 / value22)))
 							+ "%" + System.lineSeparator(), // 15
-					System.lineSeparator() + "HOY, VENDEMOS EN TOTAL R$" + (totalVenta + pix)
+					System.lineSeparator() + "HOY, VENDEMOS EN TOTAL R$" + totalVenta
 							+ "\nESTE AÑO VENDIMOS UN PROMEDIO DIARIO DE R$" + dailyAvg + "\nUN PROMEDIO DE LOS "
 							+ whatDay(currentDate.d, currentDate.m, currentDate.y, 0) + " R$" + sameDayAvg
 							+ "\nUN PROMEDIO MENSUAL DE "
 							+ currentDate.getMonthForInt(Integer.valueOf(First.monthN) - 1, 0) + " R$" + monthlyAvg
 							+ System.lineSeparator(), // 16
 					System.lineSeparator() + "SE PARECE QUE VENDIMOS\nR$"
-							+ (sameDayAvg > (pix + totalVenta)
-									? sameDayAvg - (pix + totalVenta) + " MENOS QUE EL PROMEDIO DE LOS "
+							+ (sameDayAvg > totalVenta
+									? sameDayAvg - totalVenta + " MENOS QUE EL PROMEDIO DE LOS "
 											+ whatDay(currentDate.d, currentDate.m, currentDate.y, 0) + " ⬇ "
-											+ (sameDayAvg == 0 ? 0
-													: 100 * (sameDayAvg - (pix + totalVenta)) / sameDayAvg)
-									: ((pix + totalVenta) - sameDayAvg + " MÁS QUE EL PROMEDIO DE LOS "
-											+ whatDay(currentDate.d, currentDate.m, currentDate.y, 0))
-											+ " ⬆ "
-											+ (sameDayAvg == 0 ? 0
-													: 100 * (-sameDayAvg + (pix + totalVenta)) / sameDayAvg))
+											+ (sameDayAvg == 0 ? 0 : 100 * (sameDayAvg - totalVenta) / sameDayAvg)
+									: (totalVenta - sameDayAvg + " MÁS QUE EL PROMEDIO DE LOS "
+											+ whatDay(currentDate.d, currentDate.m, currentDate.y, 0)) + " ⬆ "
+											+ (sameDayAvg == 0 ? 0 : 100 * (-sameDayAvg + totalVenta) / sameDayAvg))
 							+ "%\nR$"
-							+ (dailyAvg > (pix + totalVenta)
-									? dailyAvg - (pix + totalVenta) + " MENOS QUE EL PROMEDIO DIARIO" + " ⬇ "
-											+ (dailyAvg == 0 ? 0 : 100 * (dailyAvg - (pix + totalVenta)) / dailyAvg)
-									: ((pix + totalVenta) - dailyAvg + " MÁS QUE EL PROMEDIO DIARIO") + " ⬆ "
-											+ (dailyAvg == 0 ? 0 : 100 * (-dailyAvg + (pix + totalVenta)) / dailyAvg))
+							+ (dailyAvg > totalVenta
+									? dailyAvg - totalVenta + " MENOS QUE EL PROMEDIO DIARIO" + " ⬇ "
+											+ (dailyAvg == 0 ? 0 : 100 * (dailyAvg - totalVenta) / dailyAvg)
+									: (totalVenta - dailyAvg + " MÁS QUE EL PROMEDIO DIARIO")
+											+ " ⬆ " + (dailyAvg == 0 ? 0 : 100 * (-dailyAvg + totalVenta) / dailyAvg))
 							+ "%\nR$"
-							+ (monthlyAvg > (pix + totalVenta)
-									? monthlyAvg
-											- (pix + totalVenta) + " MENOS QUE PROMEDIO MENSUAL DE "
+							+ (monthlyAvg > totalVenta
+									? monthlyAvg - totalVenta + " MENOS QUE PROMEDIO MENSUAL DE "
 											+ currentDate.getMonthForInt(Integer.valueOf(First.monthN) - 1, 0) + " ⬇ "
-											+ (monthlyAvg == 0 ? 0
-													: 100 * (monthlyAvg - (pix + totalVenta)) / monthlyAvg)
-									: ((pix + totalVenta) - monthlyAvg + " MÁS QUE EL PPROMEDIO MENSUAL DE "
+											+ (monthlyAvg == 0 ? 0 : 100 * (monthlyAvg - totalVenta) / monthlyAvg)
+									: (totalVenta - monthlyAvg + " MÁS QUE EL PPROMEDIO MENSUAL DE "
 											+ currentDate.getMonthForInt(Integer.valueOf(First.monthN) - 1, 0) + " ⬆ "
-											+ (monthlyAvg == 0 ? 0
-													: 100 * (-monthlyAvg + (pix + totalVenta)) / monthlyAvg)))
+											+ (monthlyAvg == 0 ? 0 : 100 * (-monthlyAvg + totalVenta) / monthlyAvg)))
 							+ "%" + System.lineSeparator(), // 17
 					System.lineSeparator() + "*GRACIAS Y HASTA MAÑANA :)", // 18
 			};
@@ -3127,15 +3005,7 @@ public class Reales extends JFrame {
 							+ agregadoDetalles() + System.lineSeparator(), // 7
 					System.lineSeparator() + "*PARA RESUMIR:\n" + "COMEÇAMOS O DIA COM R$" + initialDay.getText()
 							+ "\nVENDEMOS R$" + totalVenta + "\nGASTO R$" + gastosT + "\nQUE VAI ACABAR EM R$" + totalO
-							+ " EM TOTAL" + "\nCOM UM R$" + panelCnum[10].getText() + " COMO PIX"
-							+ System.lineSeparator(), // 8
-					System.lineSeparator() + "*PARA RESUMIR:\n" + "COMEÇAMOS O DIA COM R$" + initialDay.getText()
-							+ "\nVENDEMOS R$" + totalVenta + "\nGASTO R$" + gastosT + "\nQUE VAI ACABAR EM R$" + totalO
 							+ " EM TOTAL" + System.lineSeparator(), // 9
-					System.lineSeparator() + "*PARA RESUMIR:\n" + "COMEÇAMOS O DIA COM R$" + initialDay.getText()
-							+ "\nVENDEMOS R$" + totalVenta + "\nGASTO R$" + gastosT + "\nADICIONO R$" + agregadoT
-							+ "\nQUE VAI ACABAR EM R$" + totalO + " EM TOTAL" + "\nCOM UM R$" + panelCnum[10].getText()
-							+ " COMO PIX" + System.lineSeparator(), // 10
 					System.lineSeparator() + "*PARA RESUMIR:\n" + "COMEÇAMOS O DIA COM R$" + initialDay.getText()
 							+ "\nVENDEMOS R$" + totalVenta + "\nGASTO R$" + gastosT + "\nADICIONO R$" + agregadoT
 							+ "\nQUE VAI ACABAR EM R$" + totalO + " EM TOTAL" + System.lineSeparator(), // 11
@@ -3145,48 +3015,44 @@ public class Reales extends JFrame {
 					System.lineSeparator() + "*FICARÁ PARA AMANHÃ APROXIMADAMENTE R$" + restN + System.lineSeparator(), // 14
 					System.lineSeparator() + "*MEMÓRIAS DE HOJE:\nEM " + dayN + "-" + monthS + "-2022, O QUE É UM "
 							+ whatDay(Integer.valueOf(dayN), Integer.valueOf(First.monthN), 2022, 1)
-							+ ", VOCÊ VENDEU R$" + value22 + " EM TOTAL\nHOJE, " + dayS + " VENDEU R$"
-							+ (pix + totalVenta) + "\nPARECE QUE VENDEMOS R$"
-							+ (value22 > (pix + totalVenta) ? (value22 - (pix + totalVenta) + " MENOS QUE ANO PASSADO")
-									: ((pix + totalVenta) - value22 + " MAIS QUE ANO PASSADO"))
+							+ ", VOCÊ VENDEU R$" + value22 + " EM TOTAL\nHOJE, " + dayS + " VENDEU R$" + totalVenta
+							+ "\nPARECE QUE VENDEMOS R$"
+							+ (value22 > totalVenta ? (value22 - totalVenta + " MENOS QUE ANO PASSADO")
+									: (totalVenta - value22 + " MAIS QUE ANO PASSADO"))
 							+ (value22 == 0 ? ""
-									: ", CORRESPONDENTE A UM " + (value22 > (pix + totalVenta) ? "DIMINUIÇÃO DO "
-											+ (value22 == 0 ? 0 : (value22 - (pix + totalVenta)) * 100 / value22)
-											: "AUMENTO DO " + (value22 == 0 ? 0
-													: (pix + totalVenta - value22) * 100 / value22)))
+									: ", CORRESPONDENTE A UM " + (value22 > totalVenta
+											? "DIMINUIÇÃO DO "
+													+ (value22 == 0 ? 0 : (value22 - totalVenta) * 100 / value22)
+											: "AUMENTO DO "
+													+ (value22 == 0 ? 0 : (totalVenta - value22) * 100 / value22)))
 							+ "%" + System.lineSeparator(), // 15
-					System.lineSeparator() + "HOJE, VENDEMOS NO TOTAL R$" + (totalVenta + pix)
+					System.lineSeparator() + "HOJE, VENDEMOS NO TOTAL R$" + totalVenta
 							+ "\nESTE ANO VENDEMOS UM MÉDIA DIÁRIA DO R$" + dailyAvg + "\nEM MÉDIA DO "
 							+ whatDay(currentDate.d, currentDate.m, currentDate.y, 1) + " R$" + sameDayAvg
 							+ "\nEM MÉDIA MENSAL " + currentDate.getMonthForInt(Integer.valueOf(First.monthN) - 1, 1)
 							+ " R$" + monthlyAvg + System.lineSeparator(), // 16
 					System.lineSeparator() + "PARECE QUE VENDEMOS\nR$"
-							+ (sameDayAvg > (pix + totalVenta)
-									? sameDayAvg - (pix + totalVenta) + " MENOS QUE A MÉDIA DE OS "
+							+ (sameDayAvg > totalVenta
+									? sameDayAvg - totalVenta + " MENOS QUE A MÉDIA DE OS "
 											+ whatDay(currentDate.d, currentDate.m, currentDate.y, 1) + " ⬇ "
-											+ (sameDayAvg == 0 ? 0
-													: 100 * (sameDayAvg - (pix + totalVenta)) / sameDayAvg)
-									: (pix + totalVenta) - sameDayAvg + " MAIS QUE A MÉDIA DE OS "
+											+ (sameDayAvg == 0 ? 0 : 100 * (sameDayAvg - totalVenta) / sameDayAvg)
+									: totalVenta - sameDayAvg + " MAIS QUE A MÉDIA DE OS "
 											+ (whatDay(currentDate.d, currentDate.m, currentDate.y, 1)) + " ⬆ "
-											+ (sameDayAvg == 0 ? 0
-													: 100 * (-sameDayAvg + (pix + totalVenta)) / sameDayAvg))
+											+ (sameDayAvg == 0 ? 0 : 100 * (-sameDayAvg + totalVenta) / sameDayAvg))
 							+ "%\nR$"
-							+ (dailyAvg > (pix + totalVenta)
-									? dailyAvg - (pix + totalVenta) + " MENOS QUE A MÉDIA DIÁRIA" + " ⬇ "
-											+ (dailyAvg == 0 ? 0 : 100 * (dailyAvg - (pix + totalVenta)) / dailyAvg)
-									: (pix + totalVenta) - dailyAvg + " MAIS QUE A MÉDIA DIÁRIA" + " ⬆ "
-											+ (dailyAvg == 0 ? 0 : 100 * (-dailyAvg + (pix + totalVenta)) / dailyAvg))
+							+ (dailyAvg > totalVenta
+									? dailyAvg - totalVenta + " MENOS QUE A MÉDIA DIÁRIA" + " ⬇ "
+											+ (dailyAvg == 0 ? 0 : 100 * (dailyAvg - totalVenta) / dailyAvg)
+									: totalVenta - dailyAvg + " MAIS QUE A MÉDIA DIÁRIA" + " ⬆ "
+											+ (dailyAvg == 0 ? 0 : 100 * (-dailyAvg + totalVenta) / dailyAvg))
 							+ "%\nR$"
-							+ (monthlyAvg > (pix + totalVenta)
-									? monthlyAvg
-											- (pix + totalVenta) + " MENOS QUE A MÉDIA MENSAL "
+							+ (monthlyAvg > totalVenta
+									? monthlyAvg - totalVenta + " MENOS QUE A MÉDIA MENSAL "
 											+ currentDate.getMonthForInt(Integer.valueOf(First.monthN) - 1, 1) + " ⬇ "
-											+ (monthlyAvg == 0 ? 0
-													: 100 * (monthlyAvg - (pix + totalVenta)) / monthlyAvg)
-									: ((pix + totalVenta) - monthlyAvg + " MAIS QUE A MÉDIA MENSAL "
+											+ (monthlyAvg == 0 ? 0 : 100 * (monthlyAvg - totalVenta) / monthlyAvg)
+									: (totalVenta - monthlyAvg + " MAIS QUE A MÉDIA MENSAL "
 											+ currentDate.getMonthForInt(Integer.valueOf(First.monthN) - 1, 1) + " ⬆ "
-											+ (monthlyAvg == 0 ? 0
-													: 100 * (-monthlyAvg + (pix + totalVenta)) / monthlyAvg)))
+											+ (monthlyAvg == 0 ? 0 : 100 * (-monthlyAvg + totalVenta) / monthlyAvg)))
 							+ "%" + System.lineSeparator(),
 					System.lineSeparator() + "*OBRIGADO E ATÉ AMANHÃ :)"// 18
 			};
@@ -3209,73 +3075,62 @@ public class Reales extends JFrame {
 							+ agregadoDetalles(), // 7
 					System.lineSeparator() + "*TO SUMMARIZE:\n" + "WE START THE DAY WITH R$" + initialDay.getText()
 							+ "\nSELL R$" + totalVenta + "\nSPENT R$" + gastosT + "\nWHAT WILL END IN R$" + totalO
-							+ " IN TOTAL" + "\nWITH ONE R$" + panelCnum[10].getText() + " AS PIX"
-							+ System.lineSeparator(), // 8
-					System.lineSeparator() + "*TO SUMMARIZE:\n" + "WE START THE DAY WITH R$" + initialDay.getText()
-							+ "\nSELL R$" + totalVenta + "\nSPENT R$" + gastosT + "\nWHAT WILL END IN R$" + totalO
-							+ " IN TOTAL" + System.lineSeparator(), // 9
+							+ " IN TOTAL" + System.lineSeparator(), // 8
 					System.lineSeparator() + "*TO SUMMARIZE:\n" + "WE START THE DAY WITH R$" + initialDay.getText()
 							+ "\nSELL R$" + totalVenta + "\nSPENT R$" + gastosT + "\nADD R$" + agregadoT
-							+ "\nWHAT WILL END IN R$" + totalO + " IN TOTAL" + "\nWITH R$" + panelCnum[10].getText()
-							+ " AS PIX" + System.lineSeparator(), // 10
-					System.lineSeparator() + "*TO SUMMARIZE:\n" + "WE START THE DAY WITH R$" + initialDay.getText()
-							+ "\nSELL R$" + totalVenta + "\nSPENT R$" + gastosT + "\nADD R$" + agregadoT
-							+ "\nWHAT WILL END IN R$" + totalO + " IN TOTAL" + System.lineSeparator(), // 11
-					System.lineSeparator() + "*THE CASH DID WELL, " + "NO DIFFERENCE" + System.lineSeparator(), // 12
+							+ "\nWHAT WILL END IN R$" + totalO + " IN TOTAL" + System.lineSeparator(), // 9
+					System.lineSeparator() + "*THE CASH DID WELL, " + "NO DIFFERENCE" + System.lineSeparator(), // 10
 					System.lineSeparator() + "*THE CASH DIDN'T FIT, " + "LOOKS LIKE "
-							+ diffResult[1].getText().toUpperCase() + System.lineSeparator(), // 13
-					System.lineSeparator() + "*WILL BE OUT TOMORROW APPROXIMATELY R$" + restN + System.lineSeparator(), // 14
+							+ diffResult[1].getText().toUpperCase() + System.lineSeparator(), // 11
+					System.lineSeparator() + "*WILL BE OUT TOMORROW APPROXIMATELY R$" + restN + System.lineSeparator(), // 12
 					System.lineSeparator() + "*MEMORIES OF TODAY:\nON " + dayN + "-" + monthS + "-2022, WHICH IS A "
 							+ whatDay(Integer.valueOf(dayN), Integer.valueOf(First.monthN), 2022, 2) + ", YOU SOLD R$"
-							+ value22 + " IN TOTAL\nTODAY, " + dayS + " YOU SOLD R$" + (pix + totalVenta)
+							+ value22 + " IN TOTAL\nTODAY, " + dayS + " YOU SOLD R$" + totalVenta
 							+ "\nIT SEEMS WE SOLD R$"
-							+ (value22 > (pix + totalVenta) ? (value22 - (pix + totalVenta) + " LESS THAN LAST YEAR")
-									: ((pix + totalVenta) - value22 + " MORE THAN LAST YEAR"))
+							+ (value22 > totalVenta ? (value22 - totalVenta + " LESS THAN LAST YEAR")
+									: (totalVenta - value22 + " MORE THAN LAST YEAR"))
 							+ (value22 == 0 ? ""
-									: ", CORRESPONDING TO " + (value22 > (pix + totalVenta) ? "A DECREASE OF "
-											+ (value22 == 0 ? 0 : (value22 - (pix + totalVenta)) * 100 / value22)
-											: "AN INCREASE OF " + (value22 == 0 ? 0 : (pix + totalVenta) - value22)
-													* 100 / value22))
-							+ "%" + System.lineSeparator(), // 15
-					System.lineSeparator() + "TODAY, WE SOLD IN TOTAL R$" + (totalVenta + pix)
+									: ", CORRESPONDING TO " + (value22 > totalVenta
+											? "A DECREASE OF "
+													+ (value22 == 0 ? 0 : (value22 - totalVenta) * 100 / value22)
+											: "AN INCREASE OF "
+													+ (value22 == 0 ? 0 : totalVenta - value22) * 100 / value22))
+							+ "%" + System.lineSeparator(), // 13
+					System.lineSeparator() + "TODAY, WE SOLD IN TOTAL R$" + totalVenta
 							+ "\nTHIS YEAR WE SOLD A DAILY AVERAGE OF R$" + dailyAvg + "\nAN AVERAGE OF THE "
 							+ whatDay(currentDate.d, currentDate.m, currentDate.y, 2) + " R$" + sameDayAvg
 							+ "\nA MONTHLY AVERAGE " + currentDate.getMonthForInt(Integer.valueOf(First.monthN) - 1, 2)
-							+ " R$" + monthlyAvg + System.lineSeparator(), // 16
+							+ " R$" + monthlyAvg + System.lineSeparator(), // 14
 					System.lineSeparator() + "IT LOOKS LIKE WE SOLD\nR$"
-							+ (sameDayAvg > (pix + totalVenta)
-									? sameDayAvg - (pix + totalVenta) + " LESS THAN THE AVERAGE OF THE "
+							+ (sameDayAvg > totalVenta
+									? sameDayAvg - totalVenta + " LESS THAN THE AVERAGE OF THE "
 											+ whatDay(currentDate.d, currentDate.m, currentDate.y, 2) + " ⬇ "
-											+ (sameDayAvg == 0 ? 0
-													: 100 * (sameDayAvg - (pix + totalVenta)) / sameDayAvg)
-									: ((pix + totalVenta) - sameDayAvg + " MORE THAN THE AVERAGE OF THE "
+											+ (sameDayAvg == 0 ? 0 : 100 * (sameDayAvg - totalVenta) / sameDayAvg)
+									: (totalVenta - sameDayAvg + " MORE THAN THE AVERAGE OF THE "
 											+ whatDay(currentDate.d, currentDate.m, currentDate.y, 2) + " ⬆ "
-											+ (sameDayAvg == 0 ? 0
-													: 100 * (-sameDayAvg + (pix + totalVenta)) / sameDayAvg)))
+											+ (sameDayAvg == 0 ? 0 : 100 * (-sameDayAvg + totalVenta) / sameDayAvg)))
 							+ "%\nR$"
-							+ (dailyAvg > (pix + totalVenta)
-									? dailyAvg - (pix + totalVenta) + " LESS THAN THE DAILY AVERAGE" + " ⬇ "
-											+ (dailyAvg == 0 ? 0 : 100 * (dailyAvg - (pix + totalVenta)) / dailyAvg)
-									: ((pix + totalVenta) - dailyAvg + " MORE THAN THE DAILY AVERAGE" + " ⬆ "
-											+ (dailyAvg == 0 ? 0 : 100 * (-dailyAvg + (pix + totalVenta)) / dailyAvg)))
+							+ (dailyAvg > totalVenta
+									? dailyAvg - totalVenta + " LESS THAN THE DAILY AVERAGE" + " ⬇ "
+											+ (dailyAvg == 0 ? 0 : 100 * (dailyAvg - totalVenta) / dailyAvg)
+									: (totalVenta - dailyAvg + " MORE THAN THE DAILY AVERAGE" + " ⬆ "
+											+ (dailyAvg == 0 ? 0 : 100 * (-dailyAvg + totalVenta) / dailyAvg)))
 							+ "%\nR$"
-							+ (monthlyAvg > (pix + totalVenta)
-									? monthlyAvg - (pix + totalVenta) + " LESS THAN THE MONTHLY AVERAGE OF "
+							+ (monthlyAvg > totalVenta
+									? monthlyAvg - totalVenta + " LESS THAN THE MONTHLY AVERAGE OF "
 											+ currentDate.getMonthForInt(Integer.valueOf(First.monthN) - 1, 2) + " ⬇ "
-											+ (monthlyAvg == 0 ? 0
-													: 100 * (monthlyAvg - (pix + totalVenta)) / monthlyAvg)
-									: ((pix + totalVenta) - monthlyAvg + " MORE THAN THE MONTHLY AVERAGE OF "
+											+ (monthlyAvg == 0 ? 0 : 100 * (monthlyAvg - totalVenta) / monthlyAvg)
+									: (totalVenta - monthlyAvg + " MORE THAN THE MONTHLY AVERAGE OF "
 											+ currentDate.getMonthForInt(Integer.valueOf(First.monthN) - 1, 2) + " ⬆ "
-											+ (monthlyAvg == 0 ? 0
-													: 100 * (-monthlyAvg + (pix + totalVenta)) / monthlyAvg)))
-							+ "%" + System.lineSeparator(), // 17
-					System.lineSeparator() + "*THANKS AND SEE YOU TOMORROW :)" // 18
+											+ (monthlyAvg == 0 ? 0 : 100 * (-monthlyAvg + totalVenta) / monthlyAvg)))
+							+ "%" + System.lineSeparator(), // 15
+					System.lineSeparator() + "*THANKS AND SEE YOU TOMORROW :)" // 16
 			};
 			savedF.write(titleName()
 					+ (lang == 0 ? " - SUMARIO POR EL DIA "
 							: lang == 1 ? " - SUMÁRIO DO DIA " : " - SUMMARY OF THE DAY ")
 					+ dayS + " " + dayN + "-" + monthS + "-" + yearS + System.lineSeparator() + System.lineSeparator());
-			if ((pix + totalVenta) == 0)
+			if (totalVenta == 0)
 				savedF.write(lang == 0 ? espSumm[0] : lang == 1 ? porSumm[0] : engSumm[0]);
 			else if (nbVentas() == 1)
 				savedF.write(lang == 0 ? espSumm[1] : lang == 1 ? porSumm[1] : engSumm[1]);
@@ -3292,29 +3147,24 @@ public class Reales extends JFrame {
 					savedF.write(lang == 0 ? espSumm[6] : lang == 1 ? porSumm[6] : engSumm[6]);
 				else
 					savedF.write(lang == 0 ? espSumm[7] : lang == 1 ? porSumm[7] : engSumm[7]);
-				if (Integer.valueOf(panelCnum[10].getText()) > 0)
-					savedF.write(lang == 0 ? espSumm[10] : lang == 1 ? porSumm[10] : engSumm[10]);
-				else
-					savedF.write(lang == 0 ? espSumm[11] : lang == 1 ? porSumm[11] : engSumm[11]);
-			} else if (Integer.valueOf(panelCnum[10].getText()) > 0)
-				savedF.write(lang == 0 ? espSumm[8] : lang == 1 ? porSumm[8] : engSumm[8]);
-			else
 				savedF.write(lang == 0 ? espSumm[9] : lang == 1 ? porSumm[9] : engSumm[9]);
+			} else
+				savedF.write(lang == 0 ? espSumm[8] : lang == 1 ? porSumm[8] : engSumm[8]);
 			if (totalO == totalCaja)
-				savedF.write(lang == 0 ? espSumm[12] : lang == 1 ? porSumm[12] : engSumm[12]);
+				savedF.write(lang == 0 ? espSumm[10] : lang == 1 ? porSumm[10] : engSumm[10]);
 			else
-				savedF.write(lang == 0 ? espSumm[13] : lang == 1 ? porSumm[13] : engSumm[13]);
-			savedF.write(lang == 0 ? espSumm[14] : lang == 1 ? porSumm[14] : engSumm[14]);// rest tmrw
+				savedF.write(lang == 0 ? espSumm[11] : lang == 1 ? porSumm[11] : engSumm[11]);
+			savedF.write(lang == 0 ? espSumm[12] : lang == 1 ? porSumm[12] : engSumm[12]);// rest tmrw
 			if (currentDate.d == 29 && currentDate.m == 2) {
 				savedF.write(lang == 0 ? "*HOY, ES EL 29 DE FEBRERO, NO TENEMOS RECUERDOS POR HOY!"
 						: lang == 1 ? "*HOJE, É 29 DE FEVEREIRO, NÃO TEMOS MEMÓRIAS DE HOJE!"
-								: "IT IS FEBRUARY 29, WE HAVE NO MEMORIES FOR TODAY");// mem 1
+								: "IT IS FEBRUARY 29, WE HAVE NO MEMORIES FOR TODAY");
 			} else {
-				savedF.write(lang == 0 ? espSumm[15] : lang == 1 ? porSumm[15] : engSumm[15]);// mem 1
-				savedF.write(lang == 0 ? espSumm[16] : lang == 1 ? porSumm[16] : engSumm[16]);// mem 2
-				savedF.write(lang == 0 ? espSumm[17] : lang == 1 ? porSumm[17] : engSumm[17]);// mem 3
+				savedF.write(lang == 0 ? espSumm[13] : lang == 1 ? porSumm[13] : engSumm[13]);// mem 1
+				savedF.write(lang == 0 ? espSumm[14] : lang == 1 ? porSumm[14] : engSumm[14]);// mem 2
+				savedF.write(lang == 0 ? espSumm[15] : lang == 1 ? porSumm[15] : engSumm[15]);// mem 3
 			}
-			savedF.write(lang == 0 ? espSumm[18] : lang == 1 ? porSumm[18] : engSumm[18]);// thanks
+			savedF.write(lang == 0 ? espSumm[16] : lang == 1 ? porSumm[16] : engSumm[16]);// thanks
 			savedF.close();
 			First.savedCorrectly(lang);
 		} catch (Exception e2) {
@@ -3893,7 +3743,7 @@ public class Reales extends JFrame {
 				JOptionPane.OK_CANCEL_OPTION);
 		if (op == 0) {
 			if (currentDate.d != 29 || currentDate.m != 2)
-				currentDate.saveTotal23(totalVenta + pix);
+				currentDate.saveTotal23(totalVenta);
 			exBtn(language);
 			// cajas values
 			for (int i = 0; i < 6; i++)// table detail
@@ -4098,9 +3948,9 @@ public class Reales extends JFrame {
 				+ (panelCnum[6].getText().equals("") ? 0 : Integer.valueOf(panelCnum[6].getText()) * 10)
 				+ (panelCnum[7].getText().equals("") ? 0 : Integer.valueOf(panelCnum[7].getText()) * 5)
 				+ (panelCnum[8].getText().equals("") ? 0 : Integer.valueOf(panelCnum[8].getText()) * 2)
-				+ (panelCnum[9].getText().equals("") ? 0 : Integer.valueOf(panelCnum[9].getText()) * 1));
+				+ (panelCnum[9].getText().equals("") ? 0 : Integer.valueOf(panelCnum[9].getText()) * 1)
+				+ (panelCnum[10].getText().equals("") ? 0 : Integer.valueOf(panelCnum[10].getText()) * 1));
 		total[7].setText("R$" + totalCaja);
-		pix = panelCnum[10].getText().equals("") ? 0 : Integer.valueOf(panelCnum[10].getText());
 		// Calculate the diferencia
 		if (totalCaja == totalO) {
 			diffResult[1].setText(idiomaString(language)[21]);
@@ -4120,7 +3970,8 @@ public class Reales extends JFrame {
 		// Calculate the restTmrw
 		restN = totalCaja - Integer.valueOf(panelCnum[0].getText()) * 1000
 				- Integer.valueOf(panelCnum[1].getText()) * 100 - Integer.valueOf(panelCnum[2].getText()) * 200
-				- Integer.valueOf(panelCnum[3].getText()) * 100 - Integer.valueOf(panelCnum[4].getText()) * 50;
+				- Integer.valueOf(panelCnum[3].getText()) * 100 - Integer.valueOf(panelCnum[4].getText()) * 50
+				- Integer.valueOf(panelCnum[10].getText());
 		nbOf20 = Integer.valueOf(panelCnum[5].getText());
 		if (!dayS.equals("VIERNES") && !dayS.equals("FRIDAY") && !dayS.equals("SEXTA-FEIRA"))
 			while (restN > 200 && nbOf20 > 1) {
@@ -4208,7 +4059,7 @@ public class Reales extends JFrame {
 			agregadoTable[i].setBounds(900, 80 + 30 * (i - 8), 50, 30);
 			agregadoTable[i].setFont(First.myFontS);
 		}
-		for (int i = 0; i < 10; i++) {
+		for (int i = 0; i < 11; i++) {
 			panelFoto[i].setBounds(400 + 50 * i, 260, 50, 40);
 			panelCnum[i].setBounds(400 + 50 * i, 300, 50, 40);
 			panelCnum[i].setFont(First.myFont);
@@ -4243,21 +4094,18 @@ public class Reales extends JFrame {
 			case 9:
 				panelFoto[i].setIcon(new ImageIcon(getScaledImage(i1.getImage(), 50, 40)));
 				break;
+			case 10:
+				panelFoto[i].setIcon(new ImageIcon(getScaledImage(pixI.getImage(), 50, 40)));
+				break;
 			default:
 				break;
 			}
 		}
-		plusSymbol.setBounds(900, 295, 50, 50);
-		plusSymbol.setFont(First.myFont);
-		panelFoto[10].setIcon(new ImageIcon(getScaledImage(pixI.getImage(), 45, 35)));
-		panelFoto[10].setBounds(915, 260, 50, 40);
-		panelCnum[10].setBounds(915, 300, 50, 40);
-		panelCnum[10].setFont(First.myFont);
-		pixMore.setBounds(915, 340, 50, 40);
+		pixMore.setBounds(900, 241, 50, 20);
 		pixMore.setFont(First.myFontS);
 		aggBtn[0].setBounds(400, 240, 50, 20);
 		aggBtn[1].setBounds(450, 240, 50, 20);
-		total[7].setBounds(400, 340, 500, 40);
+		total[7].setBounds(400, 340, 550, 40);
 		diffResult[0].setBounds(500, 430, 150, 35);
 		diffResult[1].setBounds(500, 464, 150, 35);
 		newDay.setBounds(750, 430, 150, 45);
@@ -4353,7 +4201,7 @@ public class Reales extends JFrame {
 			agregadoTable[i].setBounds(1180, 90 + 40 * (i - 8), 60, 40);
 			agregadoTable[i].setFont(First.myFontS);
 		}
-		for (int i = 0; i < 10; i++) {
+		for (int i = 0; i < 11; i++) {
 			panelFoto[i].setBounds(580 + 60 * i, 320, 60, 40);
 			panelCnum[i].setBounds(580 + 60 * i, 360, 60, 40);
 			panelCnum[i].setFont(First.myFont);
@@ -4388,21 +4236,18 @@ public class Reales extends JFrame {
 			case 9:
 				panelFoto[i].setIcon(new ImageIcon(getScaledImage(i1.getImage(), 60, 40)));
 				break;
+			case 10:
+				panelFoto[i].setIcon(new ImageIcon(getScaledImage(pixI.getImage(), 60, 40)));
+				break;
 			default:
 				break;
 			}
 		}
-		plusSymbol.setBounds(1182, 355, 50, 50);
-		plusSymbol.setFont(First.myFont);
-		panelFoto[10].setIcon(new ImageIcon(getScaledImage(pixI.getImage(), 55, 35)));
-		panelFoto[10].setBounds(1200, 320, 60, 40);
-		panelCnum[10].setBounds(1200, 360, 60, 40);
-		panelCnum[10].setFont(First.myFont);
-		pixMore.setBounds(1200, 400, 60, 40);
+		pixMore.setBounds(1180, 301, 60, 20);
 		pixMore.setFont(First.myFontS);
 		aggBtn[0].setBounds(580, 300, 60, 20);
 		aggBtn[1].setBounds(640, 300, 60, 20);
-		total[7].setBounds(580, 400, 600, 40);
+		total[7].setBounds(580, 400, 660, 40);
 		diffResult[0].setBounds(620, 490, 200, 45);
 		diffResult[1].setBounds(620, 534, 200, 45);
 		newDay.setBounds(950, 490, 210, 55);
@@ -4499,7 +4344,7 @@ public class Reales extends JFrame {
 			agregadoTable[i].setFont(First.myFontS);
 		}
 		// Caja
-		for (int i = 0; i < 10; i++) {
+		for (int i = 0; i < 11; i++) {
 			panelFoto[i].setBounds(640 + 70 * i, 380, 70, 50);
 			panelCnum[i].setBounds(640 + 70 * i, 430, 70, 50);
 			panelCnum[i].setFont(First.myFont);
@@ -4534,21 +4379,18 @@ public class Reales extends JFrame {
 			case 9:
 				panelFoto[i].setIcon(new ImageIcon(getScaledImage(i1.getImage(), 70, 50)));
 				break;
+			case 10:
+				panelFoto[i].setIcon(new ImageIcon(getScaledImage(pixI.getImage(), 70, 50)));
+				break;
 			default:
 				break;
 			}
 		}
-		plusSymbol.setBounds(1341, 425, 50, 50);
-		plusSymbol.setFont(First.myFont);
-		panelFoto[10].setIcon(new ImageIcon(getScaledImage(pixI.getImage(), 65, 45)));
-		panelFoto[10].setBounds(1360, 380, 70, 50);
-		panelCnum[10].setBounds(1360, 430, 70, 50);
-		panelCnum[10].setFont(First.myFont);
-		pixMore.setBounds(1360, 480, 70, 50);
+		pixMore.setBounds(1340, 351, 70, 30);
 		pixMore.setFont(First.myFontS);
 		aggBtn[0].setBounds(640, 351, 70, 30);
 		aggBtn[1].setBounds(710, 351, 70, 30);
-		total[7].setBounds(640, 480, 700, 50);
+		total[7].setBounds(640, 480, 770, 50);
 		diffResult[0].setBounds(680, 570, 250, 55);
 		diffResult[1].setBounds(680, 624, 250, 55);
 		newDay.setBounds(1070, 570, 250, 65);
@@ -4645,7 +4487,7 @@ public class Reales extends JFrame {
 			agregadoTable[i].setBounds(1680, 110 + 60 * (i - 8), 90, 60);
 			agregadoTable[i].setFont(First.myFontS);
 		}
-		for (int i = 0; i < 10; i++) {
+		for (int i = 0; i < 11; i++) {
 			panelFoto[i].setBounds(800 + 80 * i, 470, 80, 60);
 			panelCnum[i].setBounds(800 + 80 * i, 530, 80, 60);
 			panelCnum[i].setFont(First.myFont);
@@ -4680,19 +4522,16 @@ public class Reales extends JFrame {
 			case 9:
 				panelFoto[i].setIcon(new ImageIcon(getScaledImage(i1.getImage(), 80, 60)));
 				break;
+			case 10:
+				panelFoto[i].setIcon(new ImageIcon(getScaledImage(pixI.getImage(), 80, 60)));
+				break;
 			default:
 				break;
 			}
 		}
-		plusSymbol.setBounds(1602, 595, 80, 80);
-		plusSymbol.setFont(First.myFont);
-		panelFoto[10].setIcon(new ImageIcon(getScaledImage(pixI.getImage(), 75, 55)));
-		panelFoto[10].setBounds(1620, 470, 80, 60);
-		panelCnum[10].setBounds(1620, 530, 80, 60);
-		panelCnum[10].setFont(First.myFont);
-		pixMore.setBounds(1620, 590, 80, 60);
+		pixMore.setBounds(1600, 431, 80, 40);
 		pixMore.setFont(First.myFontS);
-		total[7].setBounds(800, 590, 800, 60);
+		total[7].setBounds(800, 590, 880, 60);
 		aggBtn[0].setBounds(800, 432, 80, 40);
 		aggBtn[1].setBounds(880, 432, 80, 40);
 		diffResult[0].setBounds(850, 700, 250, 65);
