@@ -2909,7 +2909,7 @@ public class Reales extends JFrame {
 			tempFile0.mkdir();
 			File tempFile1 = new File(tempFile0 + "\\" + yearS);
 			tempFile1.mkdir();
-			File tempFile2 = new File(tempFile1 + "\\" + monthS);
+			File tempFile2 = new File(tempFile1 + "\\" + currentDate.m + "-" + monthS);
 			tempFile2.mkdir();
 			File newFile = new File(tempFile2, "R$ " + dayN + "-" + First.monthN + " (" + dayS + ").txt");
 			FileWriter savedF = new FileWriter(newFile);
@@ -3203,7 +3203,7 @@ public class Reales extends JFrame {
 			tempFile0.mkdir();
 			File tempFile1 = new File(tempFile0 + "\\" + yearS);
 			tempFile1.mkdir();
-			File tempFile2 = new File(tempFile1 + "\\" + currentDate.getMonthForInt(month - 1, language));
+			File tempFile2 = new File(tempFile1 + "\\" + month + "-" + currentDate.getMonthForInt(month - 1, language));
 			tempFile2.mkdir();
 			File newFile = new File(tempFile2, "SUMMARY - " + currentDate.getMonthForInt(month - 1, language) + ".txt");
 			FileWriter savedF = new FileWriter(newFile);
@@ -6518,7 +6518,7 @@ public class Reales extends JFrame {
 		return temp;
 	}
 
-	// return the max[0]and its index[2] and the min[1]and its index[3] for month
+	// the max->[0]and its index->[2] and the min->[1]and its index->[3] for months
 	private int[] maxMinMes(int month) {
 		Date tempDate = new Date(1, month, 2023);
 		int index = tempDate.index();
@@ -6562,7 +6562,7 @@ public class Reales extends JFrame {
 	private String dayName(Date d, int lang) {
 		Calendar calendar = Calendar.getInstance();
 		calendar.set(Calendar.DAY_OF_MONTH, d.d);
-		calendar.set(Calendar.MONTH, d.m);
+		calendar.set(Calendar.MONTH, d.m - 1);
 		calendar.set(Calendar.YEAR, d.y);
 
 		return lang == 0 ? new SimpleDateFormat("EEEEE", new Locale("es")).format(calendar.getTime()).toUpperCase()
@@ -6570,7 +6570,7 @@ public class Reales extends JFrame {
 						: new SimpleDateFormat("EEEEE", new Locale("en")).format(calendar.getTime()).toUpperCase();
 	}
 
-	// Average for the year(daily)[1] and for the selected day[0]
+	// Average for the year(daily)->[1] and for the selected day->[0]
 	private int[] avgSellOfDay() {
 		Date date2 = new Date(1, 1, 2023);
 		int result[] = { 0, 0, 0, 0 };
@@ -6619,7 +6619,7 @@ public class Reales extends JFrame {
 		return result;
 	}
 
-	// total for selected month[0] and nbofdays[1]
+	// total for selected month->[0] and nbofdays->[1]
 	private int[] monTotalAverage(int month) {
 		Date date2 = new Date(1, month, 2023);
 		ArrayList<String> totalMes = new ArrayList<String>();
