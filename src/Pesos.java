@@ -2201,7 +2201,7 @@ public class Pesos extends JFrame {
 			tempFile0.mkdir();
 			File tempFile1 = new File(tempFile0 + "\\" + yearS);
 			tempFile1.mkdir();
-			File tempFile2 = new File(tempFile1 + "\\" + monthS);
+			File tempFile2 = new File(tempFile1 + "\\" + First.monthN + "-" + monthS);
 			tempFile2.mkdir();
 			File newFile = new File(tempFile2, "P$ " + dayN + "-" + First.monthN + " (" + dayS + ").txt");
 			FileWriter savedF = new FileWriter(newFile);
