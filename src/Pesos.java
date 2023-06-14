@@ -4393,7 +4393,7 @@ public class Pesos extends JFrame {
 		this.paint(img.getGraphics());
 		File tempFile1 = new File(tempFile0 + "\\" + yearS);
 		tempFile1.mkdir();
-		File tempFile2 = new File(tempFile1 + "\\" + monthS);
+		File tempFile2 = new File(tempFile1 + "\\" + First.monthN + "-" + monthS);
 		tempFile2.mkdir();
 		File tempFile3 = new File(tempFile2 + "\\IMG");
 		tempFile3.mkdir();
