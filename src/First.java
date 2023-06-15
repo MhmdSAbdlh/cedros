@@ -94,12 +94,12 @@ public class First extends JFrame {
 	private ImageIcon sumI = new ImageIcon(symPhoto);
 	private URL introP = getClass().getResource("images/menubar/intro.png");
 	private ImageIcon introI = new ImageIcon(introP);
-	String dayN = new SimpleDateFormat("dd").format(Calendar.getInstance().getTime());
+	static String dayN = new SimpleDateFormat("dd").format(Calendar.getInstance().getTime());
 	static String monthN = new SimpleDateFormat("M").format(Calendar.getInstance().getTime());
 	javax.swing.Timer timer;
 	int order = 0, wordL = 0;
 
-	static String appVersion = "v7.3";
+	static String appVersion = "v7.4";
 	private int language;
 
 	String currentpath = System.getProperty("user.dir");

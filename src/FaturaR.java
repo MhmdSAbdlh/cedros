@@ -1,7 +1,10 @@
+import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics2D;
+import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.RenderingHints;
 import java.awt.Toolkit;
@@ -20,8 +23,12 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Random;
 
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.ImageIcon;
@@ -34,9 +41,11 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
+import javax.swing.SwingConstants;
 import javax.swing.plaf.metal.MetalToggleButtonUI;
 
 @SuppressWarnings("serial")
@@ -102,6 +111,8 @@ public class FaturaR extends JFrame {
 	private ImageIcon optimalI = new ImageIcon(optimalP);
 	private URL keyboardP = getClass().getResource("images/menubar/keyboard.png");
 	private ImageIcon keyboardI = new ImageIcon(keyboardP);
+	private URL printerP = getClass().getResource("images/menubar/printer.png");
+	private ImageIcon printerI = new ImageIcon(printerP);
 	int width, height;
 
 	// Def
@@ -125,6 +136,10 @@ public class FaturaR extends JFrame {
 	String currentpath = System.getProperty("user.dir");
 	File tempFile0 = new File(currentpath + "\\data");
 	File newFile = new File(tempFile0, "conf.dll");
+	String timeH = new SimpleDateFormat("HH").format(Calendar.getInstance().getTime());
+	String timeM = new SimpleDateFormat("mm").format(Calendar.getInstance().getTime());
+	String timeS = new SimpleDateFormat("ss").format(Calendar.getInstance().getTime());
+	private int nFatura = 146365;
 
 	FaturaR() {
 		// Open Conf
@@ -343,6 +358,7 @@ public class FaturaR extends JFrame {
 
 		// 1ST CAMBIO
 		m1 = new MouseListener() {
+
 			@Override
 			public void mouseReleased(MouseEvent e) {
 			}
@@ -560,6 +576,7 @@ public class FaturaR extends JFrame {
 		JMenu help = new JMenu();
 		JMenuItem clear = new JMenuItem(idiomaString(language)[14]);
 		JMenuItem calc = new JMenuItem();
+		JMenuItem expFatura = new JMenuItem(idiomaString(language)[29]);
 		JMenuItem option = new JMenuItem(idiomaString(language)[4]);
 		JMenuItem exit = new JMenuItem(idiomaString(language)[13]);
 		JMenuItem reales = new JMenuItem("REALES");
@@ -574,6 +591,7 @@ public class FaturaR extends JFrame {
 		JMenuItem reso3 = new JMenuItem();
 		JMenuItem reso4 = new JMenuItem();
 		calc.addActionListener(e -> calTodo(cambioN, cambioN2, cambioN3));
+		expFatura.addActionListener(e -> writeFatura());
 		clear.addActionListener(e -> clearAll(cambioN, cambioN2, cambioN3));
 		option.addActionListener(e -> confFrame(conf, mainF, clearB, hideBtn, resoD, cambioN, cambioN2, cambioN3));
 		exit.addActionListener(e -> System.exit(0));
@@ -712,6 +730,7 @@ public class FaturaR extends JFrame {
 			}
 		});
 		file.add(calc);
+		file.add(expFatura);
 		file.add(clear);
 		file.add(option);
 		file.add(exit);
@@ -728,6 +747,7 @@ public class FaturaR extends JFrame {
 		// Image Icon
 		clear.setIcon(new ImageIcon(getScaledImage(clearmbI.getImage(), 35, 35)));
 		calc.setIcon(new ImageIcon(getScaledImage(calcI.getImage(), 35, 35)));
+		expFatura.setIcon(new ImageIcon(getScaledImage(printerI.getImage(), 35, 35)));
 		option.setIcon(new ImageIcon(getScaledImage(settingI.getImage(), 35, 35)));
 		exit.setIcon(new ImageIcon(getScaledImage(exitI.getImage(), 35, 35)));
 		reales.setIcon(new ImageIcon(getScaledImage(moneyI.getImage(), 35, 35)));
@@ -774,6 +794,117 @@ public class FaturaR extends JFrame {
 					System.exit(0);
 			}
 		});
+	}
+
+	public String[] login() {
+		String[] logininformation = new String[2];
+
+		JPanel panel = new JPanel(new BorderLayout(5, 5));
+
+		JPanel label = new JPanel(new GridLayout(0, 1, 2, 2));
+		label.add(new JLabel(language == 0 ? "Nombre" : language == 1 ? "Nome" : "Name", SwingConstants.RIGHT));
+		label.add(new JLabel("DNI", SwingConstants.RIGHT));
+		panel.add(label, BorderLayout.WEST);
+
+		JPanel controls = new JPanel(new GridLayout(0, 1, 2, 2));
+		JTextField username = new JTextField();
+		controls.add(username);
+		JTextField password = new JTextField();
+		controls.add(password);
+		panel.add(controls, BorderLayout.CENTER);
+
+		JOptionPane.showMessageDialog(null, panel, "login", JOptionPane.QUESTION_MESSAGE);
+
+		logininformation[0] = username.getText();
+		logininformation[1] = password.getText();
+		return logininformation;
+	}
+
+	private void writeFatura() {
+		String account[] = login();
+		account[0] = account[0].toUpperCase();
+		try {
+			tempFile0.mkdir();
+			File tempFile1 = new File(tempFile0 + "\\Faturas");
+			tempFile1.mkdir();
+			File faturaFile = new File(tempFile1, nFatura + ".html");
+			while (faturaFile.exists()) {
+				faturaFile = new File(tempFile1, ++nFatura + ".html");
+			}
+			Random rand = new Random();
+			int randN[] = new int[10];
+			for (int i = 0; i < 10; i++)
+				randN[i] = rand.nextInt(1000000);
+			FileWriter savedF = new FileWriter(faturaFile);
+			savedF.write("<!DOCTYPE html>" + System.lineSeparator() + "<html lang=\"en\">" + System.lineSeparator());// def
+			savedF.write("<head>" + System.lineSeparator() + " <!-- basic -->" + System.lineSeparator()// header
+					+ " <meta charset=\"utf-8\">" + System.lineSeparator()
+					+ " <meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">" + System.lineSeparator()
+					+ " <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">"
+					+ System.lineSeparator() + " <!-- mobile metas -->" + System.lineSeparator()
+					+ " <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">"
+					+ System.lineSeparator() + " <meta name=\"viewport\" content=\"initial-scale=1, maximum-scale=1\">"
+					+ System.lineSeparator() + " <!-- site metas -->" + System.lineSeparator() + " <title></title>"
+					+ System.lineSeparator() + " <meta name=\"keywords\" content=\"\">" + System.lineSeparator()
+					+ " <meta name=\"description\" content=\"\">" + System.lineSeparator()
+					+ " <meta name=\"author\" content=\"\">" + System.lineSeparator() + "<style>"
+					+ System.lineSeparator() + "div {" + System.lineSeparator() + "  white-space: pre; "
+					+ System.lineSeparator() + "  font-family: 'Raleway', sans-serif;" + System.lineSeparator()
+					+ "  font-size: 16px;" + System.lineSeparator() + "}" + System.lineSeparator() + "</style>"
+					+ System.lineSeparator() + "   </head>" + System.lineSeparator());
+			savedF.write("<body>" + System.lineSeparator() + "<div>		     		RUT: 216547290011"// intro company
+					+ System.lineSeparator() + "Abbas Chaachouh Mohamad" + System.lineSeparator()
+					+ "CEDROS DUTY FREE FREESHOP" + System.lineSeparator() + "33 Orientales 1170"
+					+ System.lineSeparator() + "Rivera			Tel.:46221965" + System.lineSeparator()
+					+ System.lineSeparator() + "Tipo Documento:	<b>e-Ticket</b>" + System.lineSeparator()
+					+ "Nro.Documento:	<b>A	" + nFatura + "</b>" + System.lineSeparator()
+					+ "Forma Pago:	<b>	Contado</b>" + System.lineSeparator() + "Fecha:		<b>	" + First.dayN + "/"
+					+ First.monthN + "/2023</b>  " + timeH + ":" + timeM + ":" + timeS + System.lineSeparator()
+					+ System.lineSeparator() + "</div>" + System.lineSeparator() + "<div style=\""
+					+ System.lineSeparator() + "  width: 100%;" + System.lineSeparator() + "  text-align: center;"
+					+ System.lineSeparator() + "  font-size: 2em;" + System.lineSeparator() + "  font-weight: 100;"
+					+ System.lineSeparator() + "  color: black;" + System.lineSeparator() + "  box-sizing: border-box;"
+					+ System.lineSeparator() + "  border: 2px solid black;\"><b>Consumo Final</b></div>");
+
+			savedF.write(System.lineSeparator() + "<div>" + System.lineSeparator() + "			DNI	" + account[1]
+					+ System.lineSeparator() + "  Nom:	" + account[0] + System.lineSeparator() + "  Dir.: 	BRASIL"
+					+ System.lineSeparator() + "		BRASIL" + System.lineSeparator());
+			savedF.write(
+					"<b>_____________________________________" + System.lineSeparator() + "" + System.lineSeparator()
+							+ "  Moneda: R$  Reales</b>" + System.lineSeparator() + System.lineSeparator());
+			for (int i = 0; i < 10; i++) {// the sells with prices
+				if (!details[i][1].getText().isEmpty() && !details[i][0].getText().isEmpty()
+						&& !details[i][2].getText().isEmpty())
+					savedF.write(randN[i] + "  " + details[i][1].getText() + System.lineSeparator()
+							+ details[i][0].getText() + " Un    X (	 " + details[i][2].getText()
+							+ "  	- 0.00 % ) 	  	 " + detailsR[i].getText() + System.lineSeparator());
+			}
+			savedF.write(System.lineSeparator() + "______________________________________</div>"
+					+ "<div style=\"text-align: center;\"><b>Total		" + total.getText() + System.lineSeparator()
+					+ System.lineSeparator() + "_______________ADENDA________________</b></div>"// total sells
+					+ System.lineSeparator() + System.lineSeparator() + "<div>" + System.lineSeparator() + "Cajera :1"
+					+ System.lineSeparator() + "<b>Nro. Trans   Fecha	  Hora	 Caja</b>" + System.lineSeparator()
+					+ "------------------------------------------------------------------" + System.lineSeparator()
+					+ "5,837      " + First.dayN + "/" + First.monthN + "/2023   " + timeH + ":" + timeM + "	    1"
+					+ System.lineSeparator() + System.lineSeparator() + "</div>" + System.lineSeparator()
+					+ "<div style=\"text-align: center;\"><b>___________FIN ADENDA____________" + System.lineSeparator()
+					+ System.lineSeparator() + "GRACIAS</b>" + System.lineSeparator() + "</div>"
+					+ System.lineSeparator() + "   </body>" + System.lineSeparator() + System.lineSeparator()
+					+ "</html>");
+			savedF.close();
+			First.savedCorrectly(language);
+			Desktop desktop = Desktop.getDesktop();
+			if (faturaFile.exists())
+				try {
+					desktop.open(faturaFile);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+		} catch (Exception e2) {
+			JOptionPane opt = new JOptionPane(language == 0 ? "ERROR, NO SALVO!" : "ERROR, NAO SALVO!",
+					JOptionPane.ERROR_MESSAGE);
+			opt.show();
+		}
 	}
 
 	private void confFrame(String[] conf, JButton realesF, JButton clearEverthing, JMenuItem hideBtn, JMenuItem resoD,
@@ -1134,7 +1265,9 @@ public class FaturaR extends JFrame {
 				} else if ((e.getKeyCode() == KeyEvent.VK_SHIFT)) {
 					details[i][j].setNextFocusableComponent(trocoCT[0]);
 					details[i][j].nextFocus();
-				} else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
+				} else if ((e.getKeyCode() == KeyEvent.VK_I) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0))
+					writeFatura();
+				else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
 					if (j < 2) {
 						details[i][j].setNextFocusableComponent(details[i][j + 1]);
 						details[i][j].nextFocus();
@@ -1191,7 +1324,9 @@ public class FaturaR extends JFrame {
 				} else if ((e.getKeyCode() == KeyEvent.VK_SHIFT)) {
 					trocoCT[i].setNextFocusableComponent(details[0][0]);
 					trocoCT[i].nextFocus();
-				} else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
+				} else if ((e.getKeyCode() == KeyEvent.VK_I) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0))
+					writeFatura();
+				else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
 					if (i < 7) {
 						trocoCT[i].setNextFocusableComponent(trocoCT[i + 1]);
 						trocoCT[i].nextFocus();
@@ -3057,6 +3192,7 @@ public class FaturaR extends JFrame {
 				, "ESCONDER LOS BOTONES"// 26
 				, "MOSTRAR LOS BOTONES"// 27
 				, "ARCHIVO"// 28
+				, "IMPRÍMELO"// 29
 		};
 		String[] portugues = { "• CTRL + S → ir para o real.\n" + "• CTRL + O → ocultar os botões.\n"
 				+ "• SHIFT → alternar entre as duas tabelas.\n" + "• SETAS → cima, baixo, direita e esquerda.\n",
@@ -3093,6 +3229,7 @@ public class FaturaR extends JFrame {
 				, "ESCONDE OS BOTÕES"// 26
 				, "MOSTRAR OS BOTÕES"// 27
 				, "ARCHIVO"// 28
+				, "IMPRIMA"// 28
 		};
 		String[] english = {
 				"• CTRL + S → go to real.\n" + "• CTRL + O → hide buttons.\n"
@@ -3131,6 +3268,7 @@ public class FaturaR extends JFrame {
 				, "HIDE THE BUTTONS"// 26
 				, "SHOW THE BUTTONS"// 27
 				, "FILE"// 28
+				, "PRINT IT"// 28
 		};
 		if (idioma == 0)
 			return espanol;
