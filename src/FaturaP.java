@@ -800,13 +800,14 @@ public class FaturaP extends JFrame {
 	}
 
 	public String[] login() {
-		String[] logininformation = new String[2];
+		String[] logininformation = new String[3];
 
 		JPanel panel = new JPanel(new BorderLayout(5, 5));
 
 		JPanel label = new JPanel(new GridLayout(0, 1, 2, 2));
 		label.add(new JLabel(language == 0 ? "Nombre" : language == 1 ? "Nome" : "Name", SwingConstants.RIGHT));
 		label.add(new JLabel("DNI", SwingConstants.RIGHT));
+		label.add(new JLabel(language == 0 ? "Moneda" : language == 1 ? "Moeda" : "Currency", SwingConstants.RIGHT));
 		panel.add(label, BorderLayout.WEST);
 
 		JPanel controls = new JPanel(new GridLayout(0, 1, 2, 2));
@@ -814,12 +815,16 @@ public class FaturaP extends JFrame {
 		controls.add(username);
 		JTextField password = new JTextField();
 		controls.add(password);
+		String s1[] = { "USD", "PESOS" };
+		JComboBox lang = new JComboBox(s1);
+		controls.add(lang);
 		panel.add(controls, BorderLayout.CENTER);
 
 		JOptionPane.showMessageDialog(null, panel, "login", JOptionPane.QUESTION_MESSAGE);
 
 		logininformation[0] = username.getText();
 		logininformation[1] = password.getText();
+		logininformation[2] = lang.getSelectedItem() + "";
 		return logininformation;
 	}
 
@@ -840,6 +845,7 @@ public class FaturaP extends JFrame {
 				randN[i] = rand.nextInt(1000000);
 			FileWriter savedF = new FileWriter(faturaFile);
 			savedF.write("<!DOCTYPE html>" + System.lineSeparator() + "<html lang=\"en\">" + System.lineSeparator());// def
+
 			savedF.write("<head>" + System.lineSeparator() + " <!-- basic -->" + System.lineSeparator()// header
 					+ " <meta charset=\"utf-8\">" + System.lineSeparator()
 					+ " <meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">" + System.lineSeparator()
@@ -855,6 +861,7 @@ public class FaturaP extends JFrame {
 					+ System.lineSeparator() + "  font-family: 'Raleway', sans-serif;" + System.lineSeparator()
 					+ "  font-size: 16px;" + System.lineSeparator() + "}" + System.lineSeparator() + "</style>"
 					+ System.lineSeparator() + "   </head>" + System.lineSeparator());
+
 			savedF.write("<body>" + System.lineSeparator() + "<div>		     		RUT: 216547290011"// intro company
 					+ System.lineSeparator() + "Abbas Chaachouh Mohamad" + System.lineSeparator()
 					+ "CEDROS DUTY FREE FREESHOP" + System.lineSeparator() + "33 Orientales 1170"
@@ -872,19 +879,36 @@ public class FaturaP extends JFrame {
 			savedF.write(System.lineSeparator() + "<div>" + System.lineSeparator() + "			DNI	" + account[1]
 					+ System.lineSeparator() + "  Nom:	" + account[0] + System.lineSeparator() + "  Dir.: 	BRASIL"
 					+ System.lineSeparator() + "		BRASIL" + System.lineSeparator());
+
 			savedF.write(
 					"<b>_____________________________________" + System.lineSeparator() + "" + System.lineSeparator()
-							+ "  Moneda: $  Pesos</b>" + System.lineSeparator() + System.lineSeparator());
+							+ "  Moneda: " + account[2] + "</b>" + System.lineSeparator() + System.lineSeparator());
+
 			for (int i = 0; i < 10; i++) {// the sells with prices
 				if (!details[i][1].getText().isEmpty() && !details[i][0].getText().isEmpty()
 						&& !details[i][2].getText().isEmpty())
-					savedF.write(randN[i] + "  " + details[i][1].getText() + System.lineSeparator()
-							+ details[i][0].getText() + " Un    X (	 " + details[i][2].getText()
-							+ "  	- 0.00 % ) 	  	 " + detailsR[i].getText() + System.lineSeparator());
+					if (account[2].equals("USD"))
+						savedF.write(randN[i] + "  " + details[i][1].getText() + System.lineSeparator()
+								+ details[i][0].getText() + " Un    X (	 " + Float.valueOf(details[i][2].getText()) / 40
+								+ "  	- 0.00 % ) 	  " + Float.valueOf(detailsR[i].getText()) / 40
+								+ System.lineSeparator());
+					else
+						savedF.write(randN[i] + "  " + details[i][1].getText() + System.lineSeparator()
+								+ details[i][0].getText() + " Un    X (	 " + details[i][2].getText()
+								+ "  	- 0.00 % ) 	  " + detailsR[i].getText() + System.lineSeparator());
 			}
-			savedF.write(System.lineSeparator() + "______________________________________</div>"
-					+ "<div style=\"text-align: center;\"><b>Total		" + total.getText() + System.lineSeparator()
-					+ System.lineSeparator() + "_______________ADENDA________________</b></div>"// total sells
+
+			if (account[2].equals("USD"))
+				savedF.write(System.lineSeparator() + "______________________________________</div>"
+						+ "<div style=\"text-align: center;\"><b>Total USD		" + (float) totalFatura / 40
+						+ System.lineSeparator() + System.lineSeparator());
+			else
+				savedF.write(System.lineSeparator() + "______________________________________</div>"
+						+ "<div style=\"text-align: center;\"><b>Total P$		" + totalFatura + System.lineSeparator()
+						+ System.lineSeparator());
+
+			// total sells
+			savedF.write(System.lineSeparator() + "_______________ADENDA________________</b></div>"// total sells
 					+ System.lineSeparator() + System.lineSeparator() + "<div>" + System.lineSeparator() + "Cajera :1"
 					+ System.lineSeparator() + "<b>Nro. Trans   Fecha	  Hora	 Caja</b>" + System.lineSeparator()
 					+ "------------------------------------------------------------------" + System.lineSeparator()
