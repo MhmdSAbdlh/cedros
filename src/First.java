@@ -99,7 +99,7 @@ public class First extends JFrame {
 	javax.swing.Timer timer;
 	int order = 0, wordL = 0;
 
-	static String appVersion = "v7.4";
+	static String appVersion = "v7.6";
 	private int language;
 
 	String currentpath = System.getProperty("user.dir");
@@ -280,6 +280,8 @@ public class First extends JFrame {
 				if (String.valueOf(passTF.getPassword()).equalsIgnoreCase("ghtaymi"))
 					while (0 < 1)
 						JOptionPane.showMessageDialog(null, "ZOOMBIE", "GHTAYMI", JOptionPane.ERROR_MESSAGE);
+				else if (String.valueOf(passTF.getPassword()).equalsIgnoreCase(""))
+					JOptionPane.showMessageDialog(null, "!!!VOID!!!", "?!?!", JOptionPane.ERROR_MESSAGE);
 				else
 					JOptionPane.showMessageDialog(null, idiomaString(language)[2], "Atencion",
 							JOptionPane.ERROR_MESSAGE);
