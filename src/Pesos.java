@@ -163,6 +163,8 @@ public class Pesos extends JFrame {
 	private ImageIcon engI = new ImageIcon(engP);
 	private URL espP = getClass().getResource("images/menubar/esp.png");
 	private ImageIcon espI = new ImageIcon(espP);
+	private URL frP = getClass().getResource("images/menubar/france.png");
+	private ImageIcon frI = new ImageIcon(frP);
 	private URL defaultP = getClass().getResource("images/menubar/default.png");
 	private ImageIcon defaultI = new ImageIcon(defaultP);
 	private URL porP = getClass().getResource("images/menubar/por.png");
@@ -238,8 +240,10 @@ public class Pesos extends JFrame {
 			language = 0;
 		else if (conf[7].equals("1"))
 			language = 1;
-		else
+		else if (conf[7].equals("2"))
 			language = 2;
+		else
+			language = 3;
 		dateLang(language);
 
 		// Buttons
@@ -712,11 +716,14 @@ public class Pesos extends JFrame {
 		JMenuItem sumV2 = new JMenuItem("APARECE PALABRA POR PALABRA");
 		JMenuItem sumV3 = new JMenuItem("APARECE LETRA POR LETRA");
 		JMenu exMenu = new JMenu("GUARDAR RESUMEN");
+		JMenu exMenuD = new JMenu(idiomaString(language)[10]);
 		JSeparator sep3 = new JSeparator();
-		JMenuItem exMenuS = new JMenuItem("SPANISH");
-		JMenuItem exMenuP = new JMenuItem("PORTUGUES");
+		JMenuItem exMenuR = new JMenuItem(
+				language == 0 ? "ESPAÑOL" : language == 1 ? "PORTUGUÊS" : language == 2 ? "ENGLISH" : "FRENCH");
+		JMenuItem exMenuS = new JMenuItem("ESPAÑOL");
+		JMenuItem exMenuP = new JMenuItem("PORTUGUÊS");
 		JMenuItem exMenuE = new JMenuItem("ENGLISH");
-		JMenuItem exMenuD = new JMenuItem("DEFAULT");
+		JMenuItem exMenuF = new JMenuItem("FRENCH");
 		JMenu speedChooser = new JMenu("VELOCIDAD DE ANIMACIÓN");
 		JMenuItem speed1 = new JMenuItem("LENTO");
 		JMenuItem speed2 = new JMenuItem("MEDIANO");
@@ -908,21 +915,40 @@ public class Pesos extends JFrame {
 			speed3.setEnabled(false);
 		});
 		/* speed default conf */
-		exMenuD.addActionListener(e -> exBtn(language));
+		exMenuR.addActionListener(e -> exBtn(language));
 		exMenuS.addActionListener(e -> exBtn(0));
 		exMenuP.addActionListener(e -> exBtn(1));
 		exMenuE.addActionListener(e -> exBtn(2));
-		exMenu.add(exMenuD);
+		exMenuF.addActionListener(e -> exBtn(3));
+		exMenu.add(exMenuR);
 		exMenu.add(sep3);
-		exMenu.add(exMenuS);
-		exMenu.add(exMenuP);
-		exMenu.add(exMenuE);
+		exMenu.add(exMenuD);
+		exMenuD.add(exMenuS);
+		exMenuD.add(exMenuP);
+		exMenuD.add(exMenuE);
+		exMenuD.add(exMenuF);
+		if (language == 0)
+			exMenuS.hide();
+		else if (language == 1)
+			exMenuP.hide();
+		else if (language == 2)
+			exMenuE.hide();
+		else
+			exMenuF.hide();
 		speedChooser.add(speed1);
 		speedChooser.add(speed2);
 		speedChooser.add(speed3);
 		effectChooser.add(sumV1);
 		effectChooser.add(sumV2);
 		effectChooser.add(sumV3);
+		if (language == 0)
+			exMenuS.hide();
+		else if (language == 1)
+			exMenuP.hide();
+		else if (language == 2)
+			exMenuE.hide();
+		else
+			exMenuF.hide();
 		summary.add(sumV);
 		summary.add(effectChooser);
 		summary.add(speedChooser);
@@ -1238,10 +1264,19 @@ public class Pesos extends JFrame {
 		effectChooser.setIcon(new ImageIcon(getScaledImage(themeI.getImage(), 35, 35)));
 		speedChooser.setIcon(new ImageIcon(getScaledImage(speedI.getImage(), 35, 35)));
 		exMenu.setIcon(new ImageIcon(getScaledImage(saveI.getImage(), 35, 35)));
+		if (language == 0)
+			exMenuR.setIcon(new ImageIcon(getScaledImage(espI.getImage(), 35, 35)));
+		else if (language == 1)
+			exMenuR.setIcon(new ImageIcon(getScaledImage(porI.getImage(), 35, 35)));
+		else if (language == 2)
+			exMenuR.setIcon(new ImageIcon(getScaledImage(engI.getImage(), 35, 35)));
+		else
+			exMenuR.setIcon(new ImageIcon(getScaledImage(frI.getImage(), 35, 35)));
 		exMenuD.setIcon(new ImageIcon(getScaledImage(defaultI.getImage(), 35, 35)));
 		exMenuS.setIcon(new ImageIcon(getScaledImage(espI.getImage(), 35, 35)));
 		exMenuP.setIcon(new ImageIcon(getScaledImage(porI.getImage(), 35, 35)));
 		exMenuE.setIcon(new ImageIcon(getScaledImage(engI.getImage(), 35, 35)));
+		exMenuF.setIcon(new ImageIcon(getScaledImage(frI.getImage(), 35, 35)));
 		sumV1.setIcon(new ImageIcon(getScaledImage(effect1I.getImage(), 35, 35)));
 		sumV2.setIcon(new ImageIcon(getScaledImage(effect2I.getImage(), 35, 35)));
 		sumV3.setIcon(new ImageIcon(getScaledImage(effect3I.getImage(), 35, 35)));
@@ -1360,8 +1395,10 @@ public class Pesos extends JFrame {
 			sum.setTitle("SUMARIO");
 		else if (language == 1)
 			sum.setTitle("SUMÁRIO");
-		else
+		else if (language == 2)
 			sum.setTitle("SUMMARY");
+		else
+			sum.setTitle("SOMMAIRE");
 		sum.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		sum.setAlwaysOnTop(false);
 		sum.setSize(650, 550);
@@ -1487,6 +1524,33 @@ public class Pesos extends JFrame {
 				"WILL BE OUT TOMORROW APPROXIMATELY\n\n$" + restN, // 13
 				"TOUCH THE BUTTON TO EXPORT THE RESULT"// 14
 		};
+		String[] frSumm = { "VOUS N'AVEZ RIEN VENDU", // 0
+				"VOUS VENDEZ UNE SEULE VENTE D'UNE VALEUR $" + totalVenta, // 1
+				" VOUS VENDEZ $ " + totalVenta + " \n\nDIVISER EN " + nbVentas() + " VENTES\n\n " + " AVEC MOYENNE $ "
+						+ (nbVentas() == 0 ? 0 : totalVenta / nbVentas()) + " A VENDRE", // 2
+				"VOUS N'AVEZ PAS DE DÉPENSES !", // 3
+				"VOUS AVEZ DÉPENSÉ AU TOTAL $" + gastosT + "\n\n" + "DÉTAILLÉ COMME :\n" + gastosDetalles(), // 4
+				"VOUS AVEZ UN TOTAL $" + gastosT + " COMME DÉPENSES\n\n" + "DIVISÉ PAR " + nbGastos() + " CHOSES\n\n"
+						+ "AVEC MOYENNE DE $" + (nbGastos() == 0 ? 0 : gastosT / nbGastos()) + "\n\n"
+						+ "DÉTAILLÉ COMME :\n" + gastosDetalles(), // 5
+				"VOUS N'AVEZ PAS D'AGRÉGAT !", // 6
+				"VOUS AVEZ AU TOTAL UNE VALEUR GLOBALE DE $" + agregadoT + "\n\n" + "DÉTAILLÉ COMME :\n"
+						+ agregadoDetalles(), // 7
+				"VOUS AVEZ AU TOTAL UN $" + agregadoT + " COMME AGRÉGATS\n\n" + "DIVISÉ PAR " + nbAgregados()
+						+ " CHOSES\n\n" + "AVEC MOYENNE DE $" + (nbAgregados() == 0 ? 0 : agregadoT / nbAgregados())
+						+ "\n\n" + "DÉTAILLÉ COMME :\n" + agregadoDetalles(), // 8
+				"POUR RÉSUMER\n\n" + "NOUS COMMENÇONS LA JOURNÉE AVEC $" + initialDay.getText()
+						+ "\n\nET NOUS VENDONS $" + totalVenta + "\n\nET NOUS AVONS DÉPENSÉ $" + gastosT
+						+ "\n\nCE QUI SE TERMINERA EN $" + totalO + " AU TOTAL ", // 9
+				"POUR RÉSUMER\n\n" + "NOUS COMMENÇONS LA JOURNÉE AVEC $" + initialDay.getText()
+						+ "\n\nET NOUS VENDONS $" + totalVenta + "\n\nET NOUS AVONS DÉPENSÉ $" + gastosT
+						+ "\n\nET NOUS AJOUTONS $" + agregadoT + "\n\nCE QUI SE TERMINERA EN $" + totalO + " AU TOTAL", // 12
+				"LE CASH A BIEN FAIT\n\n" + "PAS DE DIFFÉRENCE\n\n" + ":)", // 13
+				"L'ARGENT N'A PAS CONVENU\n\n" + "SEMBLE COMME IL Y EN A" + diffResult[1].getText().toUpperCase()
+						+ "\n\nREVÉRIFIEZ LES BILLETS ET LA BOÎTE", // 14
+				"SERA DEHORS DEMAIN ENVIRON\n\n$" + restN, // 15
+				"TOUCHEZ LE BOUTON POUR EXPORTER LE RÉSULTAT"// 16
+		};
 		ActionListener fadeTimer = new ActionListener() {
 
 			@Override
@@ -1495,14 +1559,17 @@ public class Pesos extends JFrame {
 				switch (order) {
 				case 0: {// details start
 					if (totalVenta == 0) {
-						sumItem.setText(language == 0 ? espSumm[0] : language == 1 ? porSumm[0] : engSumm[0]);
+						sumItem.setText(language == 0 ? espSumm[0]
+								: language == 1 ? porSumm[0] : language == 2 ? engSumm[0] : frSumm[0]);
 						sumItem.setBounds(0, 240, 650, 550);
 					} else {
 						if (nbVentas() == 1) {
-							sumItem.setText(language == 0 ? espSumm[1] : language == 1 ? porSumm[1] : engSumm[1]);
+							sumItem.setText(language == 0 ? espSumm[1]
+									: language == 1 ? porSumm[1] : language == 2 ? engSumm[1] : frSumm[1]);
 							sumItem.setBounds(0, 240, 650, 550);
 						} else {
-							sumItem.setText(language == 0 ? espSumm[2] : language == 1 ? porSumm[2] : engSumm[2]);
+							sumItem.setText(language == 0 ? espSumm[2]
+									: language == 1 ? porSumm[2] : language == 2 ? engSumm[2] : frSumm[2]);
 							sumItem.setBounds(0, 200, 650, 550);
 						}
 					}
@@ -1520,13 +1587,16 @@ public class Pesos extends JFrame {
 				case 1: {// gastos start
 					if (gastosT == 0) {
 						sumItem.setBounds(0, 240, 650, 550);
-						sumItem.setText(language == 0 ? espSumm[3] : language == 1 ? porSumm[3] : engSumm[3]);
+						sumItem.setText(language == 0 ? espSumm[3]
+								: language == 1 ? porSumm[3] : language == 2 ? engSumm[3] : frSumm[3]);
 					} else {
 						if (nbGastos() == 1) {
-							sumItem.setText(language == 0 ? espSumm[4] : language == 1 ? porSumm[4] : engSumm[4]);
+							sumItem.setText(language == 0 ? espSumm[4]
+									: language == 1 ? porSumm[4] : language == 2 ? engSumm[4] : frSumm[4]);
 							sumItem.setBounds(0, 220, 650, 550);
 						} else {
-							sumItem.setText(language == 0 ? espSumm[5] : language == 1 ? porSumm[5] : engSumm[5]);
+							sumItem.setText(language == 0 ? espSumm[5]
+									: language == 1 ? porSumm[5] : language == 2 ? engSumm[5] : frSumm[5]);
 							sumItem.setBounds(0, 120, 650, 550);
 						}
 					}
@@ -1543,14 +1613,17 @@ public class Pesos extends JFrame {
 				}
 				case 2: {// agg start
 					if (agregadoT == 0) {
-						sumItem.setText(language == 0 ? espSumm[6] : language == 1 ? porSumm[6] : engSumm[6]);
+						sumItem.setText(language == 0 ? espSumm[6]
+								: language == 1 ? porSumm[6] : language == 2 ? engSumm[6] : frSumm[6]);
 						sumItem.setBounds(0, 240, 650, 550);
 					} else {
 						if (nbAgregados() == 1) {
-							sumItem.setText(language == 0 ? espSumm[7] : language == 1 ? porSumm[7] : engSumm[7]);
+							sumItem.setText(language == 0 ? espSumm[7]
+									: language == 1 ? porSumm[7] : language == 2 ? engSumm[7] : frSumm[7]);
 							sumItem.setBounds(0, 220, 650, 550);
 						} else {
-							sumItem.setText(language == 0 ? espSumm[8] : language == 1 ? porSumm[8] : engSumm[8]);
+							sumItem.setText(language == 0 ? espSumm[8]
+									: language == 1 ? porSumm[8] : language == 2 ? engSumm[8] : frSumm[8]);
 							sumItem.setBounds(0, 120, 650, 550);
 						}
 					}
@@ -1568,9 +1641,11 @@ public class Pesos extends JFrame {
 				case 3: {// SUMMARY start
 					sumItem.setBounds(0, 100, 650, 550);
 					if (agregadoT == 0)
-						sumItem.setText(language == 0 ? espSumm[9] : language == 1 ? porSumm[9] : engSumm[9]);
+						sumItem.setText(language == 0 ? espSumm[9]
+								: language == 1 ? porSumm[9] : language == 2 ? engSumm[9] : frSumm[9]);
 					else
-						sumItem.setText(language == 0 ? espSumm[10] : language == 1 ? porSumm[10] : engSumm[10]);
+						sumItem.setText(language == 0 ? espSumm[10]
+								: language == 1 ? porSumm[10] : language == 2 ? engSumm[10] : frSumm[10]);
 					if (colorX < 254 && !status)// summ fade in
 						colorX++;
 					else {
@@ -1585,9 +1660,11 @@ public class Pesos extends JFrame {
 				case 4: {// diferrence
 					sumItem.setBounds(0, 200, 650, 550);
 					if (totalO == totalCaja)
-						sumItem.setText(language == 0 ? espSumm[11] : language == 1 ? porSumm[11] : engSumm[11]);
+						sumItem.setText(language == 0 ? espSumm[11]
+								: language == 1 ? porSumm[11] : language == 2 ? engSumm[11] : frSumm[11]);
 					else
-						sumItem.setText(language == 0 ? espSumm[12] : language == 1 ? porSumm[12] : engSumm[12]);
+						sumItem.setText(language == 0 ? espSumm[12]
+								: language == 1 ? porSumm[12] : language == 2 ? engSumm[12] : frSumm[12]);
 					// diferrence fade in
 					if (colorX < 254 && status)
 						colorX += 2;
@@ -1602,7 +1679,8 @@ public class Pesos extends JFrame {
 				}
 				case 5: {// remain for tmrw
 					sumItem.setBounds(0, 220, 650, 550);
-					sumItem.setText(language == 0 ? espSumm[13] : language == 1 ? porSumm[13] : engSumm[13]);
+					sumItem.setText(language == 0 ? espSumm[13]
+							: language == 1 ? porSumm[13] : language == 2 ? engSumm[13] : frSumm[13]);
 					if (colorX < 254 && !status)// remain fade in
 						colorX += 2;
 					else {
@@ -1616,7 +1694,8 @@ public class Pesos extends JFrame {
 				}
 				case 6: {// export button
 					sumItem.setBounds(0, 200, 650, 550);
-					sumItem.setText(language == 0 ? espSumm[14] : language == 1 ? porSumm[14] : engSumm[14]);
+					sumItem.setText(language == 0 ? espSumm[14]
+							: language == 1 ? porSumm[14] : language == 2 ? engSumm[14] : frSumm[14]);
 					if (colorX < 254)// export label fade in
 						colorX += 2;
 					else {
@@ -1639,7 +1718,8 @@ public class Pesos extends JFrame {
 				case 0: {// details start
 					if (totalVenta == 0) {// if ventas = 0
 						String[] wordT = language == 0 ? espSumm[0].split(" ")
-								: language == 1 ? porSumm[0].split(" ") : engSumm[0].split(" ");
+								: language == 1 ? porSumm[0].split(" ")
+										: language == 2 ? engSumm[0].split(" ") : frSumm[0].split(" ");
 						sumItem.setBounds(0, 240, 650, 550);
 						if (wordL < wordT.length)
 							sumItem.setText(sumItem.getText().concat(wordT[wordL++] + " "));
@@ -1654,7 +1734,8 @@ public class Pesos extends JFrame {
 						}
 					} else if (nbVentas() == 1) {// if = 1
 						String[] wordT = language == 0 ? espSumm[1].split(" ")
-								: language == 1 ? porSumm[1].split(" ") : engSumm[1].split(" ");
+								: language == 1 ? porSumm[1].split(" ")
+										: language == 2 ? engSumm[1].split(" ") : frSumm[1].split(" ");
 						sumItem.setBounds(0, 220, 650, 550);
 						if (wordL < wordT.length)
 							sumItem.setText(sumItem.getText().concat(wordT[wordL++] + " "));
@@ -1669,7 +1750,8 @@ public class Pesos extends JFrame {
 						}
 					} else {// if >1
 						String[] wordT = language == 0 ? espSumm[2].split(" ")
-								: language == 1 ? porSumm[2].split(" ") : engSumm[2].split(" ");
+								: language == 1 ? porSumm[2].split(" ")
+										: language == 2 ? engSumm[2].split(" ") : frSumm[2].split(" ");
 						sumItem.setBounds(0, 200, 650, 550);
 						if (wordL < wordT.length)
 							sumItem.setText(sumItem.getText().concat(wordT[wordL++] + " "));
@@ -1688,7 +1770,8 @@ public class Pesos extends JFrame {
 				case 1: {// gastos start
 					if (gastosT == 0) {
 						String[] wordT = language == 0 ? espSumm[3].split(" ")
-								: language == 1 ? porSumm[3].split(" ") : engSumm[3].split(" ");
+								: language == 1 ? porSumm[3].split(" ")
+										: language == 2 ? engSumm[3].split(" ") : frSumm[3].split(" ");
 						sumItem.setBounds(0, 240, 650, 550);
 						if (wordL < wordT.length)
 							sumItem.setText(sumItem.getText().concat(wordT[wordL++] + " "));
@@ -1703,7 +1786,8 @@ public class Pesos extends JFrame {
 						}
 					} else if (nbGastos() == 1) {
 						String[] wordT = language == 0 ? espSumm[4].split(" ")
-								: language == 1 ? porSumm[4].split(" ") : engSumm[4].split(" ");
+								: language == 1 ? porSumm[4].split(" ")
+										: language == 2 ? engSumm[4].split(" ") : frSumm[4].split(" ");
 						sumItem.setBounds(0, 200, 650, 550);
 						if (wordL < wordT.length)
 							sumItem.setText(sumItem.getText().concat(wordT[wordL++] + " "));
@@ -1718,7 +1802,8 @@ public class Pesos extends JFrame {
 						}
 					} else {
 						String[] wordT = language == 0 ? espSumm[5].split(" ")
-								: language == 1 ? porSumm[5].split(" ") : engSumm[5].split(" ");
+								: language == 1 ? porSumm[5].split(" ")
+										: language == 2 ? engSumm[5].split(" ") : frSumm[5].split(" ");
 						sumItem.setBounds(0, 120, 650, 550);
 						if (wordL < wordT.length)
 							sumItem.setText(sumItem.getText().concat(wordT[wordL++] + " "));
@@ -1737,7 +1822,8 @@ public class Pesos extends JFrame {
 				case 2: {// agg start
 					if (agregadoT == 0) {
 						String[] wordT = language == 0 ? espSumm[6].split(" ")
-								: language == 1 ? porSumm[6].split(" ") : engSumm[6].split(" ");
+								: language == 1 ? porSumm[6].split(" ")
+										: language == 2 ? engSumm[6].split(" ") : frSumm[6].split(" ");
 						sumItem.setBounds(0, 240, 650, 550);
 						if (wordL < wordT.length)
 							sumItem.setText(sumItem.getText().concat(wordT[wordL++] + " "));
@@ -1752,7 +1838,8 @@ public class Pesos extends JFrame {
 						}
 					} else if (nbAgregados() == 1) {
 						String[] wordT = language == 0 ? espSumm[7].split(" ")
-								: language == 1 ? porSumm[7].split(" ") : engSumm[7].split(" ");
+								: language == 1 ? porSumm[7].split(" ")
+										: language == 2 ? engSumm[7].split(" ") : frSumm[7].split(" ");
 						sumItem.setBounds(0, 200, 650, 550);
 						if (wordL < wordT.length)
 							sumItem.setText(sumItem.getText().concat(wordT[wordL++] + " "));
@@ -1767,7 +1854,8 @@ public class Pesos extends JFrame {
 						}
 					} else {
 						String[] wordT = language == 0 ? espSumm[8].split(" ")
-								: language == 1 ? porSumm[8].split(" ") : engSumm[8].split(" ");
+								: language == 1 ? porSumm[8].split(" ")
+										: language == 2 ? engSumm[8].split(" ") : frSumm[8].split(" ");
 						sumItem.setBounds(0, 120, 650, 550);
 						if (wordL < wordT.length)
 							sumItem.setText(sumItem.getText().concat(wordT[wordL++] + " "));
@@ -1787,7 +1875,8 @@ public class Pesos extends JFrame {
 					if (agregadoT == 0) {
 						sumItem.setBounds(0, 140, 650, 550);
 						String[] wordT = language == 0 ? espSumm[9].split(" ")
-								: language == 1 ? porSumm[9].split(" ") : engSumm[9].split(" ");
+								: language == 1 ? porSumm[9].split(" ")
+										: language == 2 ? engSumm[9].split(" ") : frSumm[9].split(" ");
 						if (wordL < wordT.length)
 							sumItem.setText(sumItem.getText().concat(wordT[wordL++] + " "));
 						else {
@@ -1800,9 +1889,10 @@ public class Pesos extends JFrame {
 							}
 						}
 					} else {
-						sumItem.setBounds(0, 100, 650, 550);
+						sumItem.setBounds(0, 120, 650, 550);
 						String[] wordT = language == 0 ? espSumm[10].split(" ")
-								: language == 1 ? porSumm[10].split(" ") : engSumm[10].split(" ");
+								: language == 1 ? porSumm[10].split(" ")
+										: language == 2 ? engSumm[10].split(" ") : frSumm[10].split(" ");
 						if (wordL < wordT.length)
 							sumItem.setText(sumItem.getText().concat(wordT[wordL++] + " "));
 						else {
@@ -1820,7 +1910,8 @@ public class Pesos extends JFrame {
 				case 4: {// diferrence start
 					if (totalO == totalCaja) {
 						String[] wordT = language == 0 ? espSumm[11].split(" ")
-								: language == 1 ? porSumm[11].split(" ") : engSumm[11].split(" ");
+								: language == 1 ? porSumm[11].split(" ")
+										: language == 2 ? engSumm[11].split(" ") : frSumm[11].split(" ");
 						sumItem.setBounds(0, 220, 650, 550);
 						if (wordL < wordT.length)
 							sumItem.setText(sumItem.getText().concat(wordT[wordL++] + " "));
@@ -1835,7 +1926,8 @@ public class Pesos extends JFrame {
 						}
 					} else {
 						String[] wordT = language == 0 ? espSumm[12].split(" ")
-								: language == 1 ? porSumm[12].split(" ") : engSumm[12].split(" ");
+								: language == 1 ? porSumm[12].split(" ")
+										: language == 2 ? engSumm[12].split(" ") : frSumm[12].split(" ");
 						sumItem.setBounds(0, 200, 650, 550);
 						if (wordL < wordT.length)
 							sumItem.setText(sumItem.getText().concat(wordT[wordL++] + " "));
@@ -1853,7 +1945,8 @@ public class Pesos extends JFrame {
 				}
 				case 5: {// remain for tmrw
 					String[] wordT = language == 0 ? espSumm[13].split(" ")
-							: language == 1 ? porSumm[13].split(" ") : engSumm[13].split(" ");
+							: language == 1 ? porSumm[13].split(" ")
+									: language == 2 ? engSumm[13].split(" ") : frSumm[13].split(" ");
 					sumItem.setBounds(0, 220, 650, 550);
 					if (wordL < wordT.length)
 						sumItem.setText(sumItem.getText().concat(wordT[wordL++] + " "));
@@ -1870,7 +1963,8 @@ public class Pesos extends JFrame {
 				}
 				case 6: {// export button
 					String[] wordT = language == 0 ? espSumm[14].split(" ")
-							: language == 1 ? porSumm[14].split(" ") : engSumm[14].split(" ");
+							: language == 1 ? porSumm[14].split(" ")
+									: language == 2 ? engSumm[14].split(" ") : frSumm[14].split(" ");
 					if (wordL < wordT.length)
 						sumItem.setText(sumItem.getText().concat(wordT[wordL++] + " "));
 					else {
@@ -1895,7 +1989,8 @@ public class Pesos extends JFrame {
 				case 0: {// details start
 					if (totalVenta == 0) {
 						char[] wordT = language == 0 ? espSumm[0].toCharArray()
-								: language == 1 ? porSumm[0].toCharArray() : engSumm[0].toCharArray();
+								: language == 1 ? porSumm[0].toCharArray()
+										: language == 2 ? engSumm[0].toCharArray() : frSumm[0].toCharArray();
 						sumItem.setBounds(0, 240, 650, 550);
 						if (wordL < wordT.length)
 							sumItem.setText(sumItem.getText() + wordT[wordL++]);
@@ -1910,7 +2005,8 @@ public class Pesos extends JFrame {
 						}
 					} else if (nbVentas() == 1) {
 						char[] wordT = language == 0 ? espSumm[1].toCharArray()
-								: language == 1 ? porSumm[1].toCharArray() : engSumm[1].toCharArray();
+								: language == 1 ? porSumm[1].toCharArray()
+										: language == 2 ? engSumm[1].toCharArray() : frSumm[1].toCharArray();
 						sumItem.setBounds(0, 240, 650, 550);
 						if (wordL < wordT.length)
 							sumItem.setText(sumItem.getText() + wordT[wordL++]);
@@ -1925,7 +2021,8 @@ public class Pesos extends JFrame {
 						}
 					} else {
 						char[] wordT = language == 0 ? espSumm[2].toCharArray()
-								: language == 1 ? porSumm[2].toCharArray() : engSumm[2].toCharArray();
+								: language == 1 ? porSumm[2].toCharArray()
+										: language == 2 ? engSumm[2].toCharArray() : frSumm[2].toCharArray();
 						sumItem.setBounds(0, 200, 650, 550);
 						if (wordL < wordT.length)
 							sumItem.setText(sumItem.getText() + wordT[wordL++]);
@@ -1944,7 +2041,8 @@ public class Pesos extends JFrame {
 				case 1: {// gastos start
 					if (gastosT == 0) {
 						char[] wordT = language == 0 ? espSumm[3].toCharArray()
-								: language == 1 ? porSumm[3].toCharArray() : engSumm[3].toCharArray();
+								: language == 1 ? porSumm[3].toCharArray()
+										: language == 2 ? engSumm[3].toCharArray() : frSumm[3].toCharArray();
 						sumItem.setBounds(0, 240, 650, 550);
 						if (wordL < wordT.length)
 							sumItem.setText(sumItem.getText() + wordT[wordL++]);
@@ -1959,7 +2057,8 @@ public class Pesos extends JFrame {
 						}
 					} else if (nbGastos() == 1) {
 						char[] wordT = language == 0 ? espSumm[4].toCharArray()
-								: language == 1 ? porSumm[4].toCharArray() : engSumm[4].toCharArray();
+								: language == 1 ? porSumm[4].toCharArray()
+										: language == 2 ? engSumm[4].toCharArray() : frSumm[4].toCharArray();
 						sumItem.setBounds(0, 200, 650, 550);
 						if (wordL < wordT.length)
 							sumItem.setText(sumItem.getText() + (wordT[wordL++]));
@@ -1974,7 +2073,8 @@ public class Pesos extends JFrame {
 						}
 					} else {
 						char[] wordT = language == 0 ? espSumm[5].toCharArray()
-								: language == 1 ? porSumm[5].toCharArray() : engSumm[5].toCharArray();
+								: language == 1 ? porSumm[5].toCharArray()
+										: language == 2 ? engSumm[5].toCharArray() : frSumm[5].toCharArray();
 						sumItem.setBounds(0, 120, 650, 550);
 						if (wordL < wordT.length)
 							sumItem.setText(sumItem.getText() + (wordT[wordL++]));
@@ -1993,7 +2093,8 @@ public class Pesos extends JFrame {
 				case 2: {// agg start
 					if (agregadoT == 0) {
 						char[] wordT = language == 0 ? espSumm[6].toCharArray()
-								: language == 1 ? porSumm[6].toCharArray() : engSumm[6].toCharArray();
+								: language == 1 ? porSumm[6].toCharArray()
+										: language == 2 ? engSumm[6].toCharArray() : frSumm[6].toCharArray();
 						sumItem.setBounds(0, 240, 650, 550);
 						if (wordL < wordT.length)
 							sumItem.setText(sumItem.getText() + (wordT[wordL++]));
@@ -2008,7 +2109,8 @@ public class Pesos extends JFrame {
 						}
 					} else if (nbAgregados() == 1) {
 						char[] wordT = language == 0 ? espSumm[7].toCharArray()
-								: language == 1 ? porSumm[7].toCharArray() : engSumm[7].toCharArray();
+								: language == 1 ? porSumm[7].toCharArray()
+										: language == 2 ? engSumm[7].toCharArray() : frSumm[7].toCharArray();
 						sumItem.setBounds(0, 200, 650, 550);
 						if (wordL < wordT.length)
 							sumItem.setText(sumItem.getText() + (wordT[wordL++]));
@@ -2023,7 +2125,8 @@ public class Pesos extends JFrame {
 						}
 					} else {
 						char[] wordT = language == 0 ? espSumm[8].toCharArray()
-								: language == 1 ? porSumm[8].toCharArray() : engSumm[8].toCharArray();
+								: language == 1 ? porSumm[8].toCharArray()
+										: language == 2 ? engSumm[8].toCharArray() : frSumm[8].toCharArray();
 						sumItem.setBounds(0, 120, 650, 550);
 						if (wordL < wordT.length)
 							sumItem.setText(sumItem.getText() + (wordT[wordL++]));
@@ -2041,10 +2144,10 @@ public class Pesos extends JFrame {
 				}
 				case 3: {// SUMMARY start
 					if (agregadoT == 0) {
-						sumItem.setBounds(0, 120, 650, 550);
-						sumItem.setBounds(0, 120, 650, 550);
+						sumItem.setBounds(0, 140, 650, 550);
 						char[] wordT = language == 0 ? espSumm[9].toCharArray()
-								: language == 1 ? porSumm[9].toCharArray() : engSumm[9].toCharArray();
+								: language == 1 ? porSumm[9].toCharArray()
+										: language == 2 ? engSumm[9].toCharArray() : frSumm[9].toCharArray();
 						if (wordL < wordT.length)
 							sumItem.setText(sumItem.getText() + (wordT[wordL++]));
 						else {
@@ -2055,11 +2158,13 @@ public class Pesos extends JFrame {
 								wordL = 0;
 								sumItem.setText("");
 							}
+							;
 						}
 					} else {
-						sumItem.setBounds(0, 100, 650, 550);
+						sumItem.setBounds(0, 120, 650, 550);
 						char[] wordT = language == 0 ? espSumm[10].toCharArray()
-								: language == 1 ? porSumm[10].toCharArray() : engSumm[10].toCharArray();
+								: language == 1 ? porSumm[10].toCharArray()
+										: language == 2 ? engSumm[10].toCharArray() : frSumm[10].toCharArray();
 						if (wordL < wordT.length) {
 							sumItem.setText(sumItem.getText() + (wordT[wordL++]));
 						} else {
@@ -2077,7 +2182,8 @@ public class Pesos extends JFrame {
 				case 4: {// diferrence start
 					if (totalO == totalCaja) {
 						char[] wordT = language == 0 ? espSumm[11].toCharArray()
-								: language == 1 ? porSumm[11].toCharArray() : engSumm[11].toCharArray();
+								: language == 1 ? porSumm[11].toCharArray()
+										: language == 2 ? engSumm[11].toCharArray() : frSumm[11].toCharArray();
 						sumItem.setBounds(0, 200, 650, 550);
 						if (wordL < wordT.length)
 							sumItem.setText(sumItem.getText() + (wordT[wordL++]));
@@ -2092,7 +2198,8 @@ public class Pesos extends JFrame {
 						}
 					} else {
 						char[] wordT = language == 0 ? espSumm[12].toCharArray()
-								: language == 1 ? porSumm[12].toCharArray() : engSumm[12].toCharArray();
+								: language == 1 ? porSumm[12].toCharArray()
+										: language == 2 ? engSumm[12].toCharArray() : frSumm[12].toCharArray();
 						sumItem.setBounds(0, 200, 650, 550);
 						if (wordL < wordT.length)
 							sumItem.setText(sumItem.getText() + (wordT[wordL++]));
@@ -2110,7 +2217,8 @@ public class Pesos extends JFrame {
 				}
 				case 5: {// remain for tmrw
 					char[] wordT = language == 0 ? espSumm[13].toCharArray()
-							: language == 1 ? porSumm[13].toCharArray() : engSumm[13].toCharArray();
+							: language == 1 ? porSumm[13].toCharArray()
+									: language == 2 ? engSumm[13].toCharArray() : frSumm[13].toCharArray();
 					sumItem.setBounds(0, 220, 650, 550);
 					if (wordL < wordT.length)
 						sumItem.setText(sumItem.getText() + (wordT[wordL++]));
@@ -2127,7 +2235,8 @@ public class Pesos extends JFrame {
 				}
 				case 6: {// export button
 					char[] wordT = language == 0 ? espSumm[14].toCharArray()
-							: language == 1 ? porSumm[14].toCharArray() : engSumm[14].toCharArray();
+							: language == 1 ? porSumm[14].toCharArray()
+									: language == 2 ? engSumm[14].toCharArray() : frSumm[14].toCharArray();
 					sumItem.setBounds(0, 200, 650, 550);
 					if (wordL < wordT.length)
 						sumItem.setText(sumItem.getText() + (wordT[wordL++]));
@@ -2145,6 +2254,7 @@ public class Pesos extends JFrame {
 				}
 			}
 		};
+
 		if (effChooser == 0) {
 			if (conf[6] == null || conf[6].equals("1"))
 				speedValue = 15;
@@ -2293,36 +2403,67 @@ public class Pesos extends JFrame {
 					System.lineSeparator() + "*WILL BE OUT TOMORROW APPROXIMATELY $" + restN + System.lineSeparator(), // 14
 					System.lineSeparator() + "*THANKS AND SEE YOU TOMORROW :)" // 15
 			};
+			String[] frSumm = { "*VENTES :\nVOUS N'AVEZ RIEN VENDU" + System.lineSeparator(), // 0
+					"*VENTES :\nVOUS VENDEZ UNE SEULE VENTE D'UNE VALEUR $" + totalVenta + System.lineSeparator(), // 1
+					"*VENTES :\nVOUS VENDEZ $" + totalVenta + ", SE DIVISANT EN " + nbVentas() + " VENTES, "
+							+ "AVEC $ MOYEN" + (nbVentas() == 0 ? 0 : totalVenta / nbVentas()) + System.lineSeparator(), // 2
+					System.lineSeparator() + "*COÛTS :\nVOUS N'AVEZ PAS DE COÛTS !" + System.lineSeparator(), // 3
+					System.lineSeparator() + "*COÛTS :\nVOUS AVEZ DÉPENSÉ AU TOTAL $" + gastosT + "\n"
+							+ "COMME DÉTAILLÉ :\n" + gastosDetalles(), // 4
+					System.lineSeparator() + "*COÛTS :\nVOUS AVEZ UN TOTAL $" + gastosT + " COMME COÛTS, "
+							+ "DIVISÉ PAR " + nbGastos() + " CHOSES, " + "AVEC MOYENNE DE $"
+							+ (nbGastos() == 0 ? 0 : gastosT / nbGastos()) + "\n" + "DÉTAILLÉ COMME:\n"
+							+ gastosDetalles(), // 5
+					System.lineSeparator() + "*AGRÉGATS :\nVOUS AVEZ AU TOTAL UNE VALEUR AGRÉGÉE $" + agregadoT + "\n"
+							+ "DETAILED LIKE :\n" + agregadoDetalles(), // 6
+					System.lineSeparator() + "*AGRÉGATS :\nVOUS AVEZ UN TOTAL $" + agregadoT + " COMME AGRÉGATS, "
+							+ "DIVISE PAR " + nbAgregados() + " CHOSES, " + "AVEC MOYENNE DE $"
+							+ (nbAgregados() == 0 ? 0 : agregadoT / nbAgregados()) + "\n" + "DÉTAILLÉ COMME:\n"
+							+ agregadoDetalles(), // 7
+					System.lineSeparator() + "*POUR RÉSUMER :\n" + "NOUS COMMENÇONS LA JOURNÉE AVEC $"
+							+ initialDay.getText() + "\nVENDRE $" + totalVenta + "\nDÉPENSER $" + gastosT
+							+ "\nCE QUI SE TERMINERA EN $" + totalO + " AU TOTAL" + System.lineSeparator(), // 8
+					System.lineSeparator() + "*POUR RÉSUMER :\n" + "NOUS COMMENÇONS LA JOURNÉE AVEC $"
+							+ initialDay.getText() + "\nVENDRE $" + totalVenta + "\nDÉPENSER $" + gastosT
+							+ "\nAJOUTER $" + agregadoT + "\nCE QUI SE TERMINERA EN $" + totalO + " AU TOTAL"
+							+ System.lineSeparator(), // 9
+					System.lineSeparator() + "*L'ARGENT A BIEN FAIT, " + "PAS DE DIFFERENCE" + System.lineSeparator(), // 10
+					System.lineSeparator() + "*L'ARGENT N'A PAS CONVENU," + "RESSEMBLE À"
+							+ diffResult[1].getText().toUpperCase() + System.lineSeparator(), // 11
+					System.lineSeparator() + "*SERA DISPONIBLE DEMAIN ENVIRON $" + restN + System.lineSeparator(), // 12
+					System.lineSeparator() + "*MERCI ET A DEMAIN :)" // 16
+			};
 			savedF.write(titleName()
 					+ (lang == 0 ? " - SUMARIO POR EL DIA "
-							: lang == 1 ? " - SUMÁRIO DO DIA " : " - SUMMARY OF THE DAY ")
+							: lang == 1 ? " - SUMÁRIO DO DIA "
+									: lang == 2 ? " - SUMMARY OF THE DAY " : " - RÉSUMÉ DE LA JOURNÉE ")
 					+ dayS + " " + dayN + "-" + monthS + "-" + yearS + System.lineSeparator() + System.lineSeparator());
 			if (totalVenta == 0)
-				savedF.write(lang == 0 ? espSumm[0] : lang == 1 ? porSumm[0] : engSumm[0]);
+				savedF.write(lang == 0 ? espSumm[0] : lang == 1 ? porSumm[0] : lang == 2 ? engSumm[0] : frSumm[0]);
 			else if (nbVentas() == 1)
-				savedF.write(lang == 0 ? espSumm[1] : lang == 1 ? porSumm[1] : engSumm[1]);
+				savedF.write(lang == 0 ? espSumm[1] : lang == 1 ? porSumm[1] : lang == 2 ? engSumm[1] : frSumm[1]);
 			else
-				savedF.write(lang == 0 ? espSumm[2] : lang == 1 ? porSumm[2] : engSumm[2]);
+				savedF.write(lang == 0 ? espSumm[2] : lang == 1 ? porSumm[2] : lang == 2 ? engSumm[2] : frSumm[2]);
 			if (gastosT == 0)// GASTOS SAVE
-				savedF.write(lang == 0 ? espSumm[3] : lang == 1 ? porSumm[3] : engSumm[3]);
+				savedF.write(lang == 0 ? espSumm[3] : lang == 1 ? porSumm[3] : lang == 2 ? engSumm[3] : frSumm[3]);
 			else if (nbGastos() == 1)
-				savedF.write(lang == 0 ? espSumm[4] : lang == 1 ? porSumm[4] : engSumm[4]);
+				savedF.write(lang == 0 ? espSumm[4] : lang == 1 ? porSumm[4] : lang == 2 ? engSumm[4] : frSumm[4]);
 			else
-				savedF.write(lang == 0 ? espSumm[5] : lang == 1 ? porSumm[5] : engSumm[5]);
+				savedF.write(lang == 0 ? espSumm[5] : lang == 1 ? porSumm[5] : lang == 2 ? engSumm[5] : frSumm[5]);
 			if (nbAgregados() != 0) { // AGG SAVE if 1
 				if (nbAgregados() == 1)
-					savedF.write(lang == 0 ? espSumm[6] : lang == 1 ? porSumm[6] : engSumm[6]);
+					savedF.write(lang == 0 ? espSumm[6] : lang == 1 ? porSumm[6] : lang == 2 ? engSumm[6] : frSumm[6]);
 				else
-					savedF.write(lang == 0 ? espSumm[7] : lang == 1 ? porSumm[7] : engSumm[7]);
-				savedF.write(lang == 0 ? espSumm[9] : lang == 1 ? porSumm[9] : engSumm[9]);
+					savedF.write(lang == 0 ? espSumm[7] : lang == 1 ? porSumm[7] : lang == 2 ? engSumm[7] : frSumm[7]);
+				savedF.write(lang == 0 ? espSumm[9] : lang == 1 ? porSumm[9] : lang == 2 ? engSumm[9] : frSumm[9]);
 			} else
-				savedF.write(lang == 0 ? espSumm[8] : lang == 1 ? porSumm[8] : engSumm[8]);
+				savedF.write(lang == 0 ? espSumm[8] : lang == 1 ? porSumm[8] : lang == 2 ? engSumm[8] : frSumm[8]);
 			if (totalO == totalCaja)
-				savedF.write(lang == 0 ? espSumm[10] : lang == 1 ? porSumm[10] : engSumm[10]);
+				savedF.write(lang == 0 ? espSumm[10] : lang == 1 ? porSumm[10] : lang == 2 ? engSumm[10] : frSumm[10]);
 			else
-				savedF.write(lang == 0 ? espSumm[11] : lang == 1 ? porSumm[11] : engSumm[11]);
-			savedF.write(lang == 0 ? espSumm[12] : lang == 1 ? porSumm[12] : engSumm[12]);
-			savedF.write(lang == 0 ? espSumm[13] : lang == 1 ? porSumm[13] : engSumm[13]);
+				savedF.write(lang == 0 ? espSumm[11] : lang == 1 ? porSumm[11] : lang == 2 ? engSumm[11] : frSumm[11]);
+			savedF.write(lang == 0 ? espSumm[12] : lang == 1 ? porSumm[12] : lang == 2 ? engSumm[12] : frSumm[12]);// resttmrw
+			savedF.write(lang == 0 ? espSumm[13] : lang == 1 ? porSumm[13] : lang == 2 ? engSumm[13] : frSumm[13]);// THANKS
 			savedF.close();
 			First.savedCorrectly(lang);
 		} catch (Exception e2) {
@@ -2500,7 +2641,7 @@ public class Pesos extends JFrame {
 		JLabel op2 = new JLabel(idiomaString(language)[6]);
 		op2.setBounds(50, 90, 200, 40);
 		op2.setFont(First.myFont);
-		String lan[] = { "ESPAÑOL", "PORTUGUÊS", "ENGLISH" };
+		String lan[] = { "ESPAÑOL", "PORTUGUÊS", "ENGLISH", "FRENCH" };
 		JComboBox<String> lang = new JComboBox<>(lan);
 		lang.setRenderer(dlcr);
 		lang.setBounds(355, 90, 200, 40);
@@ -3712,7 +3853,7 @@ public class Pesos extends JFrame {
 			keyShortcut.setText("ATALHOS DO TECLADO");
 			creator.setText("SOBRE O CRIADOR");
 			about.setText("SOBRE O APLICATIVO");
-		} else {
+		} else if (idioma == 2) {
 			gastos.setText("B I L L S");// Spend of the day TITLE
 			agregado.setText("A G G R E G A T E S");// Added to cash title
 			hideBtn.setText("BUTTONS");
@@ -3764,6 +3905,58 @@ public class Pesos extends JFrame {
 			keyShortcut.setText("KEY SHORTCUT");
 			creator.setText("ABOUT THE CREATOR");
 			about.setText("ABOUT THE APP");
+		} else {
+			gastos.setText("F A C T U R E S");// Spend of the day TITLE
+			agregado.setText("A G R É G A T S");// Added to cash title
+			hideBtn.setText("BOUTONS");
+			noHide.setText("RIEN");
+			hideDate.setText("DATE");
+			hideAll.setText("TOUTE");
+			newDay.setText("<html><center>Restera<br>Pour demain</center></html>");// REST
+			resoD.setText("OPTIMAL");
+			aggPanel.setText("↑PLUS↓");
+			gastosPanel.setText("↑PLUS↓");
+			summaryT[0].setText("Initial");
+			summaryT[1].setText("Factures");
+			summaryT[2].setText("Agrégats");
+			summaryT[3].setText("Ventes");
+			summaryT[4].setText("Total");
+
+			diffResult[0].setText("Différence");
+			file.setText("FICHER");
+			novo.setText("NOUVEAU JOUR");
+			clear.setText("NETTOIE TOUT");
+			calc.setText("ASSUMER");
+			save.setText("SAUVER");
+			screenShot.setText("CAPTURE D'ÉCRAN");
+			option.setText("PARAMÈTRES");
+			exit.setText("SORTIE");
+
+			summary.setText("RÉSUMÉ");
+			sumV.setText("VISUALISATION SOMMAIRE");
+			effectChooser.setText("CHOISISSEZ VOTRE EFFET");
+			sumV1.setText("DÉCOLORATION");
+			sumV2.setText("APPARAÎTRE MOT PAR MOT");
+			sumV3.setText("APPARAÎTRE LETTRE PAR LETTRE");
+			exMenu.setText("ENREGISTRER LE RÉSUMÉ");
+			speedChooser.setText("LA VITESSE D'ANIMATION");
+			speed1.setText("LENTE");
+			speed2.setText("MOYEN");
+			speed3.setText("RAPIDE");
+
+			goTo.setText("ALLER");
+			fatura.setText("FACTURE");
+			firstFrame.setText("PREMIER CADRE");
+			reso.setText("RÉSOLUTION");
+			reso1.setText("GRAND");
+			reso2.setText("MOYEN");
+			reso3.setText("PETIT");
+			reso4.setText("X-PETIT");
+			help.setText("AIDER");
+			hideMenu.setText("CACHER");
+			keyShortcut.setText("RACCOURCI TOUCHE");
+			creator.setText("À PROPOS DU CRÉATEUR");
+			about.setText("À PROPOS DE L'APPLICATION");
 		}
 	}
 
@@ -3781,8 +3974,7 @@ public class Pesos extends JFrame {
 						+ "TIENE MARCO PARA CERRAR LA CAJA TANTO EN REALES COMO PESOS.\r\n"
 						+ "TIENE UN MARCO PARA CALCULAR EL TROCO DE UNA VENTA TANTO EN REALES COMO PESOS.\r\n"
 						+ "SABE CÓMO QUEDARÁ PARA EL PRÓXIMO DÍA.\r\n" + "3 MÉTODOS PARA DAR EL CAMBIO.\r\n"
-						+ "CAMBIARÁ TODO SEGÚN EL ICONO SELECCIONADO.\r\n" + "\r\n" + "MOHAMAD ABDALLAH ABBASS ©"// about
-																													// 3
+						+ "CAMBIARÁ TODO SEGÚN EL ICONO SELECCIONADO.\r\n" + "\r\n" + "MOHAMAD ABDALLAH ABBASS ©"// about3
 				, "CONFIGURACIÓN"// conf title 4
 				, "ICONO"// icon 5
 				, "IDIOMA"// LANGUAGE 6
@@ -3809,6 +4001,7 @@ public class Pesos extends JFrame {
 				, "SOBRE MI"// about me 27
 				, "GASTOS"// 28
 				, "AGREGADOS"// 29
+				, "OTROS"// 30
 		};
 		String[] portugues = { "• CTRL + S → ir para a fatura.\n" + "• CTRL + R → ir para os reales.\n"
 				+ "• CTRL + B → excluir tudo.\n" + "• CTRL + N → prepare-se para o dia seguinte.\n"
@@ -3849,8 +4042,9 @@ public class Pesos extends JFrame {
 				, "SOBRE MIM"// about me 28
 				, "GASTOS"// 29
 				, "AGREGADOS"// 30
+				, "OUTROS"// 37
 		};
-		String[] english = { "• CTRL + S → go to invoice.\n" + "• CTRL + P → go to the reales.\n"
+		String[] english = { "• CTRL + S → go to invoice.\n" + "• CTRL + R → go to the reales.\n"
 				+ "• CTRL + B → delete all.\n" + "• CTRL + N → get ready for the next day.\n"
 				+ "• arrows → up, down, left and right.\n" + "• CTRL + D → go to details.\n"
 				+ "• CTRL + I → go to the beginning.\n" + "• CTRL + G → go to expenses.\n"
@@ -3891,13 +4085,60 @@ public class Pesos extends JFrame {
 				, "ABOUT ME"// about me 27
 				, "BILLS"// 29
 				, "AGGREGATES"// 30
+				, "OTHERS"// 37
+		};
+		String[] french = { "• CTRL + S → aller à la facture.\n" + "• CTRL + R → aller aux reales.\n"
+				+ "• CTRL + B → tout supprimer.\n" + "• CTRL + N → préparez-vous pour le lendemain.\n"
+				+ "• flèches → haut, bas, gauche et droite.\n" + "• CTRL + D → aller aux détails.\n"
+				+ "• CTRL + I → aller au début.\n" + "• CTRL + G → aller aux dépenses.\n"
+				+ "• CTRL + A → aller à l'agrégat.\n" + "• CTRL + T → aller à la caisse.\n"
+				+ "• CTRL + E → aller au dernier numéro.\n"
+				+ "• CTRL + M → ajouter un ensemble de 100 ou 1000 si possible.\n"
+				+ "• CTRL + C → ouvrir les paramètres."// 0
+				, "RACCOURCIS TOUCHES" // tecla de atalho 1
+				, "Crédit et conçu par MhmdSAbdlh ©"// créateur 2
+				,
+				"CETTE APPLICATION EST CONÇUE POUR LA BOUTIQUE GRATUITE CEDROS ET NARJES.\r\n"
+						+ "A UN CADRE POUR FERMER LA BOÎTE EN REALS ET PESOS.\r\n"
+						+ "IL EXISTE UN CADRE POUR CALCULER LE CHANGEMENT POUR UNE VENTE, À LA FOIS EN BRL ET EN PESOS.\r\n"
+						+ "SAVOIR COMBIEN CELA SERA LE LENDEMAIN.\r\n" + "3 MÉTHODES POUR RENDRE LA CHANGE.\r\n"
+						+ "VA TOUT CHANGER SELON L'ICÔNE SÉLECTIONNÉ.\r\n" + "\r\n" + "MOHAMAD ABDALLAH ABBASS ©"// about3
+				, "CONFIGURATION"// titre de la conf4
+				, "ICÔNE"// icône5
+				, "LANGUE"// PREMIÈRE IMAGE6
+				, "RACCOURCI TOUCHE"// RACCOURCI TOUCHE7
+				, "AUTO-SAVUVER"// ENREGISTREMENT AUTO8
+				, "DEFAUT"// DEFAUT 9
+				, "SAVUVER"// ENREGISTRER 11
+				, "OUI"// OUI 12
+				, "NON"// NON 13
+				, "Êtes-vous sûr de vouloir partir ?"// exit 14
+				, "QUITTER"// exit15
+				, "OUI /NOUVEAU JOUR"// nouveau jour 16
+				, "VOULEZ-VOUS COMMENCER UNE NOUVELLE JOURNÉE ?" // nouveau jour 17
+				, "NOUVEAU JOUR" // nouveau jour 18
+				, "VOULEZ-VOUS TOUT SUPPRIMER ?"// clear 19
+				, "TOUT SUPPRIMER" // clear20
+				, "Plus " // mas 21
+				, "<html><center>Il n'y a pas de différence</html>"// diif 22
+				, "Plus de $" // fin 23
+				, "$ manqué" // falta 24
+				, "LA CAPTURE D'ÉCRAN PREND BIEN" // SCREENSJOT 25
+				, "SAUVEGARDER AVEC SUCCÈS, MERCI" // ÉCONOMISEZ 26
+				, "CASH CLOSING - $"// TITRE 27
+				, "À PROPOS DE MOI"// à propos de moi 28
+				, "FACTURES"// 29
+				, "GRANULATS"// 30
+				, "AUTRES"// 37
 		};
 		if (idioma == 0)
 			return espanol;
 		else if (idioma == 1)
 			return portugues;
-		else
+		else if (idioma == 2)
 			return english;
+		else
+			return french;
 	}
 
 	private String agregadoDetalles() {

@@ -165,8 +165,10 @@ public class FaturaR extends JFrame {
 			language = 0;
 		else if (conf[7].equals("1"))
 			language = 1;
-		else
+		else if (conf[7].equals("2"))
 			language = 2;
+		else
+			language = 3;
 		// icon
 		if (conf[0] == null || !conf[0].equals("3"))
 			this.setIconImage(new ImageIcon(getClass().getResource("images/icon/cedrosI.png")).getImage());
@@ -789,7 +791,6 @@ public class FaturaR extends JFrame {
 				int selectedOption = JOptionPane.showOptionDialog(null, idiomaString(language)[12],
 						idiomaString(language)[13], JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null,
 						options, options[0]);
-
 				if (selectedOption == JOptionPane.YES_OPTION)
 					System.exit(0);
 			}
@@ -802,9 +803,12 @@ public class FaturaR extends JFrame {
 		JPanel panel = new JPanel(new BorderLayout(5, 5));
 
 		JPanel label = new JPanel(new GridLayout(0, 1, 2, 2));
-		label.add(new JLabel(language == 0 ? "Nombre" : language == 1 ? "Nome" : "Name", SwingConstants.RIGHT));
+		label.add(new JLabel(language == 0 ? "Nombre" : language == 1 ? "Nome" : language == 2 ? "Name" : "Nom",
+				SwingConstants.RIGHT));
 		label.add(new JLabel("DNI", SwingConstants.RIGHT));
-		label.add(new JLabel(language == 0 ? "Moneda" : language == 1 ? "Moeda" : "Currency", SwingConstants.RIGHT));
+		label.add(
+				new JLabel(language == 0 ? "Moneda" : language == 1 ? "Moeda" : language == 2 ? "Currency" : "Monnaie",
+						SwingConstants.RIGHT));
 		panel.add(label, BorderLayout.WEST);
 
 		JPanel controls = new JPanel(new GridLayout(0, 1, 2, 2));
@@ -970,7 +974,7 @@ public class FaturaR extends JFrame {
 		JLabel op2 = new JLabel(idiomaString(language)[6]);
 		op2.setBounds(50, 90, 200, 40);
 		op2.setFont(First.myFont);
-		String lan[] = { "ESPAÑOL", "PORTUGUÊS", "ENGLISH" };
+		String lan[] = { "ESPAÑOL", "PORTUGUÊS", "ENGLISH", "FRENCH" };
 		JComboBox<String> lang = new JComboBox<>(lan);
 		lang.setRenderer(dlcr);
 		lang.setBounds(355, 90, 200, 40);
@@ -3156,7 +3160,7 @@ public class FaturaR extends JFrame {
 			help.setText("AJUDA");
 			creator.setText("SOBRE O CRIADOR");
 			about.setText("SOBRE O APLICATIVO");
-		} else {
+		} else if (idioma == 2) {
 			resoD.setText("OPTIMAL");
 			file.setText("FILE");
 			clear.setText("CLEAN ALL");
@@ -3172,6 +3176,22 @@ public class FaturaR extends JFrame {
 			help.setText("HELP");
 			creator.setText("ABOUT THE CREATOR");
 			about.setText("ABOUT THE APP");
+		} else {
+			resoD.setText("OPTIMAL");
+			file.setText("FICHIER");
+			clear.setText("NETTOIE TOUT");
+			calc.setText("ASSUMER");
+			option.setText("CONFIGURATION");
+			goTo.setText("ALLER");
+			pesos.setText("REALES");
+			reso.setText("RÉSOLUTION");
+			reso1.setText("GRAND");
+			reso2.setText("MOYEN");
+			reso3.setText("PETIT");
+			reso4.setText("X-PETIT");
+			help.setText("AIDER");
+			creator.setText("À PROPOS DU CRÉATEUR");
+			about.setText("À PROPOS DE L'APPLICATION");
 		}
 	}
 
@@ -3290,12 +3310,53 @@ public class FaturaR extends JFrame {
 				, "FILE"// 28
 				, "PRINT IT"// 28
 		};
+		String[] french = {
+				"• CTRL + S → aller au réel.\n" + "• CTRL + O → masquer les boutons.\n"
+						+ "• MAJ → basculer entre les deux tableaux.\n" + "• FLECHES → haut, bas, droite et gauche.\n",
+				"KEY RACCOURCIS" // tecla de atalho 2
+				, "Crédit et conçu par MhmdSAbdlh ©" // créateur 3
+				,
+				"CETTE APPLICATION EST CONÇUE POUR LA BOUTIQUE GRATUITE CEDROS ET NARJES.\r\n"
+						+ "A UN CADRE POUR FERMER LA BOÎTE EN REALS ET PESOS.\r\n"
+						+ "IL EXISTE UN CADRE POUR CALCULER LE CHANGEMENT POUR UNE VENTE, À LA FOIS EN BRL ET EN PESOS.\r\n"
+						+ "SAVOIR COMBIEN CELA SERA LE LENDEMAIN.\r\n" + "3 MÉTHODES POUR RENDRE LA CHANGE.\r\n"
+						+ "VA TOUT CHANGER SELON L'ICÔNE SÉLECTIONNÉ.\r\n" + "\r\n" + "MOHAMAD ABDALLAH ABBASS ©"// à
+																													// propos
+				, "PARAMÈTRES" // conf titre 5
+				, "ICÔNE"// icône 6
+				, "LANGUE"// LANGUE 7
+				, "AUTO-SAUVER"// ENREGISTREMENT AUTO 8
+				, "DEFAUT"// DEFAUT 9
+				, "SAUVER"// ENREGISTRER 10
+				, "OUI"// OUI 11
+				, "NON"// NON 12
+				, "Êtes-vous sûr de vouloir partir ?"// sortie 13
+				, "SORTIE"// sortie 14
+				, "TOUT NETTOYER" // effacer 14
+				, "QNT"// CANTIDAD 16
+				, "DÉTAIL"// DÉTAILS 17
+				, "P/U"// P/U 18
+				, "VALEUR"// VALEUR 19
+				, "CASH"// CASH 20
+				, "CLIENT"// CL 21
+				, "CHANGER"// CHANGER 22
+				, "<html><center>" + "METHODE" + "<br>" + "SMART" + "</center></html>"// S M 23
+				, "<html><center>" + "MÉTHODE" + "<br>" + "POP" + "</center></html>"// P M 24
+				, "<html><center>" + "METHODE" + "<br>" + "BASIQUE" + "</center></html>"// B M 25
+				, "FACTURE - R$"// 25
+				, "MASQUER LES BOUTONS"// 26
+				, "AFFICHER LES BOUTONS"// 27
+				, "FICHIER"// 28
+				, "IMPRIMER"// 28
+		};
 		if (idioma == 0)
 			return espanol;
 		else if (idioma == 1)
 			return portugues;
-		else
+		else if (idioma == 2)
 			return english;
+		else
+			return french;
 	}
 
 	private Image getScaledImage(Image srcImg, int w, int h) {

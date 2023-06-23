@@ -99,8 +99,8 @@ public class First extends JFrame {
 	javax.swing.Timer timer;
 	int order = 0, wordL = 0;
 
-	static String appVersion = "v7.6";
-	private int language;
+	static String appVersion = "v7.7";
+	private static int language;
 
 	String currentpath = System.getProperty("user.dir");
 	File tempFile0 = new File(currentpath + "\\data");
@@ -166,8 +166,10 @@ public class First extends JFrame {
 			language = 0;
 		else if (conf[7].equals("1"))
 			language = 1;
-		else
+		else if (conf[7].equals("2"))
 			language = 2;
+		else
+			language = 3;
 		myBirthday(language);// my birthday norification
 		this.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 		this.setAlwaysOnTop(false);
@@ -264,8 +266,12 @@ public class First extends JFrame {
 		login.addActionListener(e -> {
 			String hoy = new SimpleDateFormat("hh").format(Calendar.getInstance().getTime())
 					+ new SimpleDateFormat("mm").format(Calendar.getInstance().getTime());
-			if (String.valueOf(passTF.getPassword()).equals("Teoria2019")
-					|| String.valueOf(passTF.getPassword()).equals(hoy)) {
+			String hoy2 = new SimpleDateFormat("HH").format(Calendar.getInstance().getTime())
+					+ new SimpleDateFormat("mm").format(Calendar.getInstance().getTime());
+			if ((conf[0].equalsIgnoreCase("3") && String.valueOf(passTF.getPassword()).equals("Teoria2013"))
+					|| (!conf[0].equalsIgnoreCase("3") && String.valueOf(passTF.getPassword()).equals("Teoria2019"))
+					|| String.valueOf(passTF.getPassword()).equals(hoy)
+					|| String.valueOf(passTF.getPassword()).equals(hoy2)) {
 				passTF.setText("");
 				this.dispose();
 				if (conf[5] == null || conf[5].equals("null") || conf[5].equals("0"))
@@ -281,7 +287,7 @@ public class First extends JFrame {
 					while (0 < 1)
 						JOptionPane.showMessageDialog(null, "ZOOMBIE", "GHTAYMI", JOptionPane.ERROR_MESSAGE);
 				else if (String.valueOf(passTF.getPassword()).equalsIgnoreCase(""))
-					JOptionPane.showMessageDialog(null, "!!!VOID!!!", "?!?!", JOptionPane.ERROR_MESSAGE);
+					passTF.setText("");
 				else
 					JOptionPane.showMessageDialog(null, idiomaString(language)[2], "Atencion",
 							JOptionPane.ERROR_MESSAGE);
@@ -383,8 +389,18 @@ public class First extends JFrame {
 
 			@Override
 			public void run() {
-				JOptionPane.showMessageDialog(null, "<html><div font-weight: bold>YA ES CASI LA HORA DE CERRAR!<br><br>"
-						+ "HAZ LA CAJA!<br></div></html>", "ATENCIÓN", JOptionPane.WARNING_MESSAGE);
+				JOptionPane.showMessageDialog(null, language == 0
+						? "<html><div font-weight: bold>YA ES CASI LA HORA DE CERRAR!<br><br>"
+								+ "HAZ LA CAJA!<br></div></html>"
+						: language == 1
+								? "<html><div font-weight: bold>ESTÁ QUASE NA HORA DE FECHAR<br><br>"
+										+ "FAÇA A CAIXA!<br></div></html>"
+								: language == 2
+										? "<html><div font-weight: bold>IT'S ALMOST CLOSING TIME<br><br>"
+												+ "MAKE THE CASH!<br></div></html>"
+										: "<html><div font-weight: bold>C'EST PRESQUE L'HEURE DE LA FERMETURE<br><br>"
+												+ "FAIRE LA BOÎTE!<br></div></html>",
+						"ATENCIÓN", JOptionPane.WARNING_MESSAGE);
 			}
 		};
 		Calendar date = Calendar.getInstance();
@@ -410,7 +426,9 @@ public class First extends JFrame {
 						? "<html><div font-weight: bold>ES MI CUMPLEAÑOS<br><br>DESÉAME UN FELIZ AÑO :)<br></div></html>"
 						: lang == 1
 								? "<html><div font-weight: bold>É MEU ANIVERSÁRIO<br><br>ME DESEJE UM FELIZ ANO :)<br></div></html>"
-								: "<html><div font-weight: bold>IT'S MY BIRTHDAY<br><br>WISH ME A HAPPY YEAR :)<br></div></html>",
+								: lang == 2
+										? "<html><div font-weight: bold>IT'S MY BIRTHDAY<br><br>WISH ME A HAPPY YEAR :)<br></div></html>"
+										: "<html><div font-weight: bold>C'EST MON ANNIVERSAIRE<br><br>SOUHAITE-MOI UNE BONNE ANNEE :)<br></div></html>",
 						"INFORMATION", JOptionPane.WARNING_MESSAGE);
 			}
 		};
@@ -444,7 +462,7 @@ public class First extends JFrame {
 			creator.setText("SOBRE O CRIADOR");
 			about.setText("SOBRE O APLICATIVO");
 			option.setText("CONFIGURAÇÃO");
-		} else {
+		} else if (idioma == 2) {
 			inputText.setText("Type the password");
 			showHide.setText("Show");
 			// menu
@@ -452,6 +470,15 @@ public class First extends JFrame {
 			exit.setText("EXIT");
 			creator.setText("ABOUT THE CREATOR");
 			about.setText("ABOUT THE APP");
+			option.setText("CONFIGURATION");
+		} else {
+			inputText.setText("Tapez le mot de passe");
+			showHide.setText("Montrer");
+			// menu
+			file.setText("AIDER");
+			exit.setText("SORTIE");
+			creator.setText("À PROPOS DU CRÉATEUR");
+			about.setText("À PROPOS DE L'APPLICATION");
 			option.setText("CONFIGURATION");
 		}
 	}
@@ -528,12 +555,38 @@ public class First extends JFrame {
 				, "ARE YOU SURE YOU WANT TO CLOSE?"// exit 14
 				, "EXIT"// exit
 		};
+		String[] french = { "Montrer", "Masquer", // passer masquer afficher
+				"<html><div style=color:red>Mot de passe incorrect.</div>"
+						+ "<div style=color:blue>Astuce : Mot de passe du magasin !</div></html>",
+				"Créé et conçu par MhmdSAbdlh ©"// créateur
+				,
+				"CETTE APPLICATION EST CONÇUE POUR LA BOUTIQUE GRATUITE CEDROS ET NARJES.\r\n"
+						+ "A UN CADRE POUR FERMER LA BOÎTE EN REALS ET PESOS.\r\n"
+						+ "IL EXISTE UN CADRE POUR CALCULER LE CHANGEMENT POUR UNE VENTE, À LA FOIS EN BRL ET EN PESOS.\r\n"
+						+ "SAVOIR COMBIEN CELA SERA LE LENDEMAIN.\r\n" + "3 MÉTHODES POUR RENDRE LA CHANGE.\r\n"
+						+ "VA TOUT CHANGER SELON L'ICÔNE SÉLECTIONNÉ.\r\n" + "\r\n" + "MOHAMAD ABDALLAH ABBASS ©"// à
+																													// propos
+				, "CONFIGURATION" // titre de la conf
+				, "ICÔNE" // icône
+				, "PREMIÈRE IMAGE"// PREMIÈRE IMAGE
+				, "LANGUE"// LANGUE
+				, "RACCOURCI TOUCHE"// RACCOURCI TOUCHE
+				, "AUTO-SAUVER"// ENREGISTREMENT AUTO
+				, "DEFAUT"// PAR DEFAUT
+				, "SAUVER"// ENREGISTRER
+				, "OUI"// OUI
+				, "NON"// NON
+				, "ÊTES-VOUS SÛR DE VOULOIR FERMER ?"// exit 14
+				, "QUITTER"// quitter
+		};
 		if (idioma == 0)
 			return espanol;
 		else if (idioma == 1)
 			return portugues;
-		else
+		else if (idioma == 2)
 			return english;
+		else
+			return french;
 	}
 
 	private void confFrame(String[] conf, int height, JLabel photoLabel) {
@@ -617,7 +670,7 @@ public class First extends JFrame {
 		JLabel op2 = new JLabel(idiomaString(language)[8]);
 		op2.setBounds(50, 160, 200, 40);
 		op2.setFont(myFont);
-		String lan[] = { "ESPAÑOL", "PORTUGUÊS", "ENGLISH" };
+		String lan[] = { "ESPAÑOL", "PORTUGUÊS", "ENGLISH", "FRENCH" };
 		JComboBox<String> lang = new JComboBox<>(lan);
 		lang.setRenderer(dlcr);
 		lang.setBounds(355, 160, 200, 40);
@@ -1011,8 +1064,7 @@ public class First extends JFrame {
 			if (!found && Character.isLetter(chars[i])) {
 				chars[i] = Character.toUpperCase(chars[i]);
 				found = true;
-			} else if (Character.isWhitespace(chars[i]) || chars[i] == '.' || chars[i] == '\'') { // You can add other
-																									// chars here
+			} else if (Character.isWhitespace(chars[i]) || chars[i] == '.' || chars[i] == '\'') {
 				found = false;
 			}
 		}
@@ -1154,7 +1206,8 @@ public class First extends JFrame {
 
 	static void savedCorrectly(int lang) {
 		JOptionPane opt = new JOptionPane(
-				lang == 0 ? "SALVADO CON ÉXITO" : lang == 1 ? "SALVO COM SUCESSO" : "SAVED SUCCESSFULLY",
+				lang == 0 ? "SALVADO CON ÉXITO"
+						: lang == 1 ? "SALVO COM SUCESSO" : lang == 2 ? "SAVED SUCCESSFULLY" : "ENREGISTRÉ AVEC SUCCÈS",
 				JOptionPane.NO_OPTION);
 		final JDialog dlg = opt.createDialog("SALVO");
 		new Thread(new Runnable() {

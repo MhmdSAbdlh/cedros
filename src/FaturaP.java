@@ -175,8 +175,10 @@ public class FaturaP extends JFrame {
 			language = 0;
 		else if (conf[7].equals("1"))
 			language = 1;
-		else
+		else if (conf[7].equals("2"))
 			language = 2;
+		else
+			language = 3;
 
 		// BTNS
 		JButton cambioN = new JButton(idiomaString(language)[22]);
@@ -805,9 +807,12 @@ public class FaturaP extends JFrame {
 		JPanel panel = new JPanel(new BorderLayout(5, 5));
 
 		JPanel label = new JPanel(new GridLayout(0, 1, 2, 2));
-		label.add(new JLabel(language == 0 ? "Nombre" : language == 1 ? "Nome" : "Name", SwingConstants.RIGHT));
+		label.add(new JLabel(language == 0 ? "Nombre" : language == 1 ? "Nome" : language == 2 ? "Name" : "Nom",
+				SwingConstants.RIGHT));
 		label.add(new JLabel("DNI", SwingConstants.RIGHT));
-		label.add(new JLabel(language == 0 ? "Moneda" : language == 1 ? "Moeda" : "Currency", SwingConstants.RIGHT));
+		label.add(
+				new JLabel(language == 0 ? "Moneda" : language == 1 ? "Moeda" : language == 2 ? "Currency" : "Monnaie",
+						SwingConstants.RIGHT));
 		panel.add(label, BorderLayout.WEST);
 
 		JPanel controls = new JPanel(new GridLayout(0, 1, 2, 2));
@@ -989,7 +994,7 @@ public class FaturaP extends JFrame {
 		JLabel op2 = new JLabel(idiomaString(language)[6]);
 		op2.setBounds(50, 90, 200, 40);
 		op2.setFont(First.myFont);
-		String lan[] = { "ESPAÑOL", "PORTUGUÊS", "ENGLISH" };
+		String lan[] = { "ESPAÑOL", "PORTUGUÊS", "ENGLISH", "FRENCH" };
 		JComboBox<String> lang = new JComboBox<>(lan);
 		lang.setRenderer(dlcr);
 		lang.setBounds(355, 90, 200, 40);
@@ -3580,7 +3585,7 @@ public class FaturaP extends JFrame {
 			calc.setText("ASUMAR");
 			option.setText("CONFIGURACIÓN");
 			goTo.setText("IR A");
-			pesos.setText("REALES");
+			pesos.setText("PESOS");
 			reso.setText("RESOLUCIÓN");
 			reso1.setText("GRANDE");
 			reso2.setText("MEDIO");
@@ -3596,7 +3601,7 @@ public class FaturaP extends JFrame {
 			calc.setText("ASSUMIR");
 			option.setText("CONFIGURAÇÃO");
 			goTo.setText("VAI");
-			pesos.setText("REALES");
+			pesos.setText("PESOS");
 			reso.setText("RESOLUÇÃO");
 			reso1.setText("GRANDE");
 			reso2.setText("MEDIO");
@@ -3605,14 +3610,14 @@ public class FaturaP extends JFrame {
 			help.setText("AJUDA");
 			creator.setText("SOBRE O CRIADOR");
 			about.setText("SOBRE O APLICATIVO");
-		} else {
+		} else if (idioma == 2) {
 			resoD.setText("OPTIMAL");
 			file.setText("FILE");
 			clear.setText("CLEAN ALL");
 			calc.setText("ASSUME");
 			option.setText("CONFIGURATION");
 			goTo.setText("GO");
-			pesos.setText("REALES");
+			pesos.setText("PESOS");
 			reso.setText("RESOLUTION");
 			reso1.setText("LARGE");
 			reso2.setText("MEDIUM");
@@ -3621,6 +3626,22 @@ public class FaturaP extends JFrame {
 			help.setText("HELP");
 			creator.setText("ABOUT THE CREATOR");
 			about.setText("ABOUT THE APP");
+		} else {
+			resoD.setText("OPTIMAL");
+			file.setText("FICHIER");
+			clear.setText("NETTOIE TOUT");
+			calc.setText("ASSUMER");
+			option.setText("CONFIGURATION");
+			goTo.setText("ALLER");
+			pesos.setText("PESOS");
+			reso.setText("RÉSOLUTION");
+			reso1.setText("GRAND");
+			reso2.setText("MOYEN");
+			reso3.setText("PETIT");
+			reso4.setText("X-PETIT");
+			help.setText("AIDER");
+			creator.setText("À PROPOS DU CRÉATEUR");
+			about.setText("À PROPOS DE L'APPLICATION");
 		}
 	}
 
@@ -3701,7 +3722,7 @@ public class FaturaP extends JFrame {
 				, "IMPRIMA"// 28
 		};
 		String[] english = {
-				"• CTRL + S → go to real.\n" + "• CTRL + O → hide buttons.\n"
+				"• CTRL + S → go to pesos.\n" + "• CTRL + O → hide buttons.\n"
 						+ "• SHIFT → switch between the two tables.\n" + "• ARROWS → up, down, right and left.\n",
 				"KEY SHORTCUTS" // tecla de atalho 2
 				, "Credit and Designed by MhmdSAbdlh ©"// creator 3
@@ -3739,12 +3760,53 @@ public class FaturaP extends JFrame {
 				, "FILE"// 28
 				, "PRINT IT"// 28
 		};
+		String[] french = {
+				"• CTRL + S → aller au PESOS.\n" + "• CTRL + O → masquer les boutons.\n"
+						+ "• MAJ → basculer entre les deux tableaux.\n" + "• FLECHES → haut, bas, droite et gauche.\n",
+				"KEY RACCOURCIS" // tecla de atalho 2
+				, "Crédit et conçu par MhmdSAbdlh ©" // créateur 3
+				,
+				"CETTE APPLICATION EST CONÇUE POUR LA BOUTIQUE GRATUITE CEDROS ET NARJES.\r\n"
+						+ "A UN CADRE POUR FERMER LA BOÎTE EN REALS ET PESOS.\r\n"
+						+ "IL EXISTE UN CADRE POUR CALCULER LE CHANGEMENT POUR UNE VENTE, À LA FOIS EN BRL ET EN PESOS.\r\n"
+						+ "SAVOIR COMBIEN CELA SERA LE LENDEMAIN.\r\n" + "3 MÉTHODES POUR RENDRE LA CHANGE.\r\n"
+						+ "VA TOUT CHANGER SELON L'ICÔNE SÉLECTIONNÉ.\r\n" + "\r\n" + "MOHAMAD ABDALLAH ABBASS ©"// à
+																													// propos
+				, "PARAMÈTRES" // conf titre 5
+				, "ICÔNE"// icône 6
+				, "LANGUE"// LANGUE 7
+				, "AUTO-SAUVER"// ENREGISTREMENT AUTO 8
+				, "DEFAUT"// DEFAUT 9
+				, "SAUVER"// ENREGISTRER 10
+				, "OUI"// OUI 11
+				, "NON"// NON 12
+				, "Êtes-vous sûr de vouloir partir ?"// sortie 13
+				, "SORTIE"// sortie 14
+				, "TOUT NETTOYER" // effacer 14
+				, "QNT"// CANTIDAD 16
+				, "DÉTAIL"// DÉTAILS 17
+				, "P/U"// P/U 18
+				, "VALEUR"// VALEUR 19
+				, "CASH"// CASH 20
+				, "CLIENT"// CL 21
+				, "CHANGER"// CHANGER 22
+				, "<html><center>" + "METHODE" + "<br>" + "SMART" + "</center></html>"// S M 23
+				, "<html><center>" + "MÉTHODE" + "<br>" + "POP" + "</center></html>"// P M 24
+				, "<html><center>" + "METHODE" + "<br>" + "BASIQUE" + "</center></html>"// B M 25
+				, "FACTURE - P$"// 25
+				, "MASQUER LES BOUTONS"// 26
+				, "AFFICHER LES BOUTONS"// 27
+				, "FICHIER"// 28
+				, "IMPRIMER"// 28
+		};
 		if (idioma == 0)
 			return espanol;
 		else if (idioma == 1)
 			return portugues;
-		else
+		else if (idioma == 2)
 			return english;
+		else
+			return french;
 	}
 
 	private Image getScaledImage(Image srcImg, int w, int h) {
