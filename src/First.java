@@ -94,6 +94,10 @@ public class First extends JFrame {
 	private ImageIcon sumI = new ImageIcon(symPhoto);
 	private URL introP = getClass().getResource("images/menubar/intro.png");
 	private ImageIcon introI = new ImageIcon(introP);
+	private URL englP = getClass().getResource("images/eng.png");
+	private URL esplP = getClass().getResource("images/esp.png");
+	private URL frlP = getClass().getResource("images/france.png");
+	private URL porlP = getClass().getResource("images/por.png");
 	static String dayN = new SimpleDateFormat("dd").format(Calendar.getInstance().getTime());
 	static String monthN = new SimpleDateFormat("M").format(Calendar.getInstance().getTime());
 	javax.swing.Timer timer;
@@ -670,8 +674,12 @@ public class First extends JFrame {
 		JLabel op2 = new JLabel(idiomaString(language)[8]);
 		op2.setBounds(50, 160, 200, 40);
 		op2.setFont(myFont);
-		String lan[] = { "ESPAÑOL", "PORTUGUÊS", "ENGLISH", "FRENCH" };
-		JComboBox<String> lang = new JComboBox<>(lan);
+		ImageIcon iconImages2[] = new ImageIcon[4];
+		iconImages2[0] = new ImageIcon(getScaledImage(new ImageIcon(esplP).getImage(), 180, 50));
+		iconImages2[1] = new ImageIcon(getScaledImage(new ImageIcon(porlP).getImage(), 180, 50));
+		iconImages2[2] = new ImageIcon(getScaledImage(new ImageIcon(englP).getImage(), 180, 50));
+		iconImages2[3] = new ImageIcon(getScaledImage(new ImageIcon(frlP).getImage(), 180, 50));
+		JComboBox<ImageIcon> lang = new JComboBox<>(iconImages2);
 		lang.setRenderer(dlcr);
 		lang.setBounds(355, 160, 200, 40);
 		lang.setBackground(lightC);
