@@ -9,8 +9,6 @@ import java.awt.Toolkit;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -36,27 +34,27 @@ import javax.swing.DefaultListCellRenderer;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
-import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import javax.swing.JPasswordField;
-import javax.swing.JTextField;
 import javax.swing.JTextPane;
-import javax.swing.JToggleButton;
 import javax.swing.UIDefaults;
 import javax.swing.UIManager;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.plaf.ColorUIResource;
-import javax.swing.plaf.metal.MetalToggleButtonUI;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
+
+import com.formdev.flatlaf.FlatIntelliJLaf;
+
+import raven.toast.Notifications;
+import switchbutton.SwitchButton;
 
 @SuppressWarnings("serial")
 public class First extends JFrame {
@@ -72,13 +70,20 @@ public class First extends JFrame {
 	static Color grisD = new Color(212, 212, 212);
 	static Color blueD = new Color(48, 107, 161);
 	static Color blueC = new Color(70, 156, 235);
-	static Color darkC = new Color(40, 40, 40);
+	static Color defaultColor = new Color(0x282a2b);
+	static Color blackM = new Color(0x282a2b);
+	static Color goldM = new Color(0xa4973f);
+	static Color blueM = new Color(0x091727);
+	static Color redM = new Color(0x781f19);
+	static Color greenM = new Color(0x09443c);
 	static Color lightC = new Color(236, 236, 236);
 	static Border border = new LineBorder(Color.white, 2);
 	static Border workM = new LineBorder(Color.yellow, 3);
 	private URL enter = getClass().getResource("images/enter.png");
 	private ImageIcon enterI = new ImageIcon(enter);
-	private URL icon = getClass().getResource("images/icon/cedros0.png");
+	private URL passShowP = getClass().getResource("images/passhow.png");
+	private ImageIcon passShowI = new ImageIcon(passShowP);
+	private URL icon = getClass().getResource("images/icon/cedros1.png");
 	private ImageIcon iconI = new ImageIcon(icon);
 	private URL setting = getClass().getResource("images/setting.png");
 	private ImageIcon settingI = new ImageIcon(setting);
@@ -103,25 +108,29 @@ public class First extends JFrame {
 	javax.swing.Timer timer;
 	int order = 0, wordL = 0;
 
-	static String appVersion = "v7.7";
+	static String appVersion = "v7.8";
+	static JLabel lastChange = new JLabel();
 	private static int language;
 
 	String currentpath = System.getProperty("user.dir");
 	File tempFile0 = new File(currentpath + "\\data");
 	File newFile = new File(tempFile0, "conf.dll");
-	static String conf[] = new String[10];
+	static String conf[] = new String[11];
 
 	public static void main(String[] args) {
+		FlatIntelliJLaf.setup();
 		new First();
 	}
 
 	First() {
+		// Setup notifications with jfram
 		// Dimension
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		int width = (int) screenSize.getWidth() - 100;
 		int height = (int) screenSize.getHeight() - 100;
-		JLabel photoLabel = new JLabel();
 
+		Notifications.getInstance().setJFrame(this);
+		FancyIcon icon1 = new FancyIcon();
 		timeToClose();// TIMER TO END THE DAY
 		// Open Conf
 		tempFile0.mkdir();
@@ -129,29 +138,7 @@ public class First extends JFrame {
 		String line = "";
 		int z = 0;
 		// Check if a conf is exist
-		File conFile = new File(tempFile0, "conf.dll");
-		if (!conFile.exists()) {
-			try {
-				FileWriter savedF = new FileWriter(newFile);
-				savedF.write(0 + System.lineSeparator());// icon
-				savedF.write(0 + System.lineSeparator());/// btn hide
-				savedF.write("false" + System.lineSeparator());// key shortcut
-				savedF.write(0 + System.lineSeparator());// res
-				savedF.write("false" + System.lineSeparator());// auto save
-				savedF.write(0 + System.lineSeparator());// first frame
-				savedF.write(1 + System.lineSeparator());// speed
-				savedF.write(0 + System.lineSeparator());// lang
-				savedF.write(0 + System.lineSeparator());// effect chooser
-				savedF.write("1,1" + System.lineSeparator());// intro
-				savedF.close();
-			} catch (Exception e1) {
-				JOptionPane opt = new JOptionPane(
-						language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
-						JOptionPane.ERROR_MESSAGE);
-				opt.show();
-			}
-			confFrame(conf, height, photoLabel);
-		} // OPEN CONF
+		// OPEN CONF
 		try {
 			dataOpened = new BufferedReader(new FileReader(newFile));
 			while ((line = dataOpened.readLine()) != null) {
@@ -165,6 +152,28 @@ public class First extends JFrame {
 					JOptionPane.ERROR_MESSAGE);
 			opt.show();
 		}
+		confNull();
+		if (conf[0] == null || !newFile.exists()) {
+			try {
+				FileWriter savedF = new FileWriter(newFile);
+				savedF.write(0 + System.lineSeparator());// icon
+				savedF.write(0 + System.lineSeparator());/// btn hide
+				savedF.write("false" + System.lineSeparator());// key shortcut
+				savedF.write(0 + System.lineSeparator());// res
+				savedF.write("false" + System.lineSeparator());// auto save
+				savedF.write(0 + System.lineSeparator());// first frame
+				savedF.write(1 + System.lineSeparator());// speed
+				savedF.write(0 + System.lineSeparator());// lang
+				savedF.write(0 + System.lineSeparator());// effect chooser
+				savedF.write("1,1" + System.lineSeparator());// intro
+				savedF.write("0" + System.lineSeparator());// theme
+				savedF.close();
+			} catch (Exception e1) {
+				System.out.println("catch");
+			}
+			confFrame(conf, height, icon1);
+		}
+
 		// LANGUAGE
 		if (conf[7] == null || conf[7].equals("0"))
 			language = 0;
@@ -174,6 +183,9 @@ public class First extends JFrame {
 			language = 2;
 		else
 			language = 3;
+		lastChange.setText((language == 0 ? "ÚLTIMA ACTUALIZACIÓN: "
+				: language == 1 ? "ÚLTIMA ATUALIZAÇÃO: " : language == 2 ? "LAST UPDATE: " : "DERNIÈRE MISE À JOUR: ")
+				+ "07:30:00");
 		myBirthday(language);// my birthday norification
 		this.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 		this.setAlwaysOnTop(false);
@@ -181,22 +193,37 @@ public class First extends JFrame {
 		this.setLocationRelativeTo(null);
 		this.setResizable(false);
 		this.setLayout(null);
-		this.getContentPane().setBackground(darkC);
+		// theme
+		JLabel blackL = new JLabel(new ImageIcon(getClass().getResource("images/black.jpg"))),
+				redL = new JLabel(new ImageIcon(getClass().getResource("images/red.jpg"))),
+				greenL = new JLabel(new ImageIcon(getClass().getResource("images/green.jpg"))),
+				blueL = new JLabel(new ImageIcon(getClass().getResource("images/blue.jpg"))),
+				goldL = new JLabel(new ImageIcon(getClass().getResource("images/gold.jpg")));
+		if (conf[10] == null || conf[10].equalsIgnoreCase("0") || conf[10].equalsIgnoreCase("null"))
+			this.setContentPane(blackL);
+		else if (conf[10].equalsIgnoreCase("1"))
+			this.setContentPane(redL);
+		else if (conf[10].equalsIgnoreCase("2"))
+			this.setContentPane(greenL);
+		else if (conf[10].equalsIgnoreCase("3"))
+			this.setContentPane(blueL);
+		else
+			this.setContentPane(goldL);
 
 		// Logo
 		URL url;
 		iconI = new ImageIcon(getScaledImage(iconI.getImage(), 50, 50));
 		if (conf[0] == null || conf[0].equals("0")) {
 			this.setTitle("CEDROS " + appVersion);
-			url = getClass().getResource("images/icon/cedros0.png");
-		} else if (conf[0].equals("1")) {
 			url = getClass().getResource("images/icon/cedros1.png");
-			this.setTitle("CEDROS " + appVersion);
-		} else if (conf[0].equals("2")) {
+		} else if (conf[0].equals("1")) {
 			url = getClass().getResource("images/icon/cedros2.png");
 			this.setTitle("CEDROS " + appVersion);
+		} else if (conf[0].equals("2")) {
+			url = getClass().getResource("images/icon/narjes1.png");
+			this.setTitle("NARJES " + appVersion);
 		} else {
-			url = getClass().getResource("images/icon/narjes.png");
+			url = getClass().getResource("images/icon/narjes2.png");
 			this.setTitle("NARJES " + appVersion);
 		}
 		if (conf[0] == null || !conf[0].equals("3"))
@@ -208,34 +235,106 @@ public class First extends JFrame {
 		JButton settingL = new JButton();
 		ImageIcon photo = new ImageIcon(url);
 		JLabel inputText = new JLabel();
-		JPasswordField passTF = new JPasswordField();
+		JLabel userText = new JLabel();
+		PasswordField passTF = new PasswordField();
+		TextField usarioName = new TextField();
 		JButton showHide = new JButton();
+		JLabel descTienda = new JLabel();
+
+		// part left
+		String intro = language == 0 ? "<html><div style=\"text-align: left;\">" + "<h3>BIENVENIDO A<</h3><h1>"
+				+ ((conf[0].equals("0") || conf[0].equals("1")) ? "CEDROS" : "NARJES") + " FREE SHOP</h1>"
+				+ "<h3>AQUÍ PUEDES HACER LA CAJA MEJOR QUE NUNCA,<br> CON OPCIÓN A RESUMEN TODO</h3></div>"
+				+ "<div style=\"text-align: left;\">" + "<h2><br>TIENE:</h2>"
+				+ "<h3> - HACER LA CAJA POR REALES Y PESOS</h3>" + "<h3> - EXPORTAR EL RESUMEN DEL DÍA, MES Y AÑO</h3>"
+				+ "<h3> - DAR EL CAMBIO A CUALQUIER VENTA SEGUN 3 MÉTODOS</h3>"
+				+ "<h3> - GUARDAR LO QUE SEPARAMOS Y PROTEGERLO</h3>"
+				+ "<h3> - MUCHOS OPCIONES PARA FACILITAR EL CALCULO</h3>" + "<h3> - Y MUCHO MAS .....</h3>" + "</div>"
+				+ "<div style=\"text-align: right;\">" + "<h4>MhmdSAbdlh</h4></div></html>"// spanish
+				: language == 1 ? "<html><div style=\"text-align: left;\">" + "<h3>BEM-VINDO A<</h3><h1>"
+						+ ((conf[0].equals("0") || conf[0].equals("1")) ? "CEDROS" : "NARJES") + " FREE SHOP</h1>"
+						+ "<h3>AQUI VOCÊ PODE FAZER A CAIXA MELHOR DO QUE NUNCA,<br> COM OPÇÃO DE RESUMIR TUDO</h3></div>"
+						+ "<div style=\"text-align: left;\">" + "<h2><br>TEM:</h2>"
+						+ "<h3> - FAÇA A CAIXA PARA REAIS E PESOS</h3>"
+						+ "<h3> - EXPORTAR RESUMO DE DIA, MÊS E ANO</h3>"
+						+ "<h3> - DÊ TROCO EM QUALQUER VENDA DE ACORDO COM 3 MÉTODOS</h3>"
+						+ "<h3> - SALVAR O QUE SEPARAMOS E PROTEGER</h3>"
+						+ "<h3> - MUITAS OPÇÕES PARA FACILITAR O CÁLCULO</h3>" + "<h3> - E MUITO MAIS .....</h3>"
+						+ "</div>" + "<div style=\"text-align: right;\">" + "<h4>MhmdSAbdlh</h4></div></html>"// portugues
+						: language == 2 ? "<html><div style=\"text-align: left;\">" + "<h3>WELCOME TO<</h3><h1>"
+								+ ((conf[0].equals("0") || conf[0].equals("1")) ? "CEDROS" : "NARJES")
+								+ " FREE SHOP</h1>"
+								+ "<h3>HERE YOU CAN MAKE THE BOX BETTER THAN EVER,<br> WITH OPTION TO SUMMARIZE EVERYTHING</h3></div>"
+								+ "<div style=\"text-align: left;\">" + "<h2><br>IT HAS:</h2>"
+								+ "<h3> - MAKE THE BOX FOR REALS AND PESOS</h3>"
+								+ "<h3> - EXPORT SUMMARY OF DAY, MONTH AND YEAR</h3>"
+								+ "<h3> - GIVE CHANGE TO ANY SALE ACCORDING TO 3 METHODS</h3>"
+								+ "<h3> - SAVE WHAT WE SEPARATE AND PROTECT IT</h3>"
+								+ "<h3> - MANY OPTIONS TO FACILITATE THE CALCULATION</h3>"
+								+ "<h3> - AND MUCH MORE .....</h3>" + "</div>" + "<div style=\"text-align: right;\">"
+								+ "<h4>MhmdSAbdlh</h4></div></html>"// english
+								: "<html><div style=\"text-align: left;\">" + "<h3>BIENVENUE À<</h3><h1>"
+										+ ((conf[0].equals("0") || conf[0].equals("1")) ? "CEDROS" : "NARJES")
+										+ " FREE SHOP</h1>"
+										+ "<h3>ICI, VOUS POUVEZ RENDRE LA BOÎTE MEILLEURE QUE JAMAIS,<br> AVEC L'OPTION DE TOUT RÉSUMER</h3></div>"
+										+ "<div style=\"text-align: left;\">" + "<h2><br>VOUS AVEZ :</h2>"
+										+ "<h3> - FAITES LA BOÎTE POUR LES RÉELS ET LES PESOS</h3>"
+										+ "<h3> - RÉSUMÉ DES EXPORTATIONS DU JOUR, DU MOIS ET DE L'ANNÉE</h3>"
+										+ "<h3> - RENDRE LA CHANGE À TOUTE VENTE SELON 3 MÉTHODES</h3>"
+										+ "<h3> - CONSERVEZ CE QUE NOUS SÉPARONS ET PROTÉGEZ-LE</h3>"
+										+ "<h3> - DE NOMBREUSES OPTIONS POUR FACILITER LE CALCUL</h3>"
+										+ "<h3> - ET BEAUCOUP PLUS .....</h3>" + "</div>"
+										+ "<div style=\"text-align: right;\">" + "<h4>MhmdSAbdlh</h4></div></html>";
+		icon1.start();
+		icon1.setBounds(this.getWidth() / 2 - height / 6, (this.getHeight() - height / 3) / 2, height / 3, height / 3);
+		icon1.setImage(photo);
+		this.add(icon1);
+
+		descTienda.setBounds(50, 0, width / 2, height);
+		descTienda.setText(intro);
+		descTienda.setFont(new Font("Segoe Script", Font.BOLD, 25));
+		descTienda.setForeground(Color.white);
+		this.add(descTienda);
+
+		// part right
 		settingL.setContentAreaFilled(false);
 		settingL.setBorderPainted(false);
 		settingL.setBounds(width - 115, 20, 75, 75);
 		settingI = new ImageIcon(getScaledImage(settingI.getImage(), 75, 75));
 		settingL.setIcon(settingI);
-		settingL.addActionListener(e -> confFrame(conf, height, photoLabel));
-		photo = new ImageIcon(getScaledImage(photo.getImage(), height / 3, height / 3));
-		photoLabel.setBounds((width - height / 3) / 2, 50, height / 3, height / 3);
-		photoLabel.setIcon(photo);
-		inputText.setBounds(0, height / 4, width, height / 2);
+		settingL.addActionListener(e -> confFrame(conf, height, icon1));
+
+		userText.setBounds(this.getWidth() / 2, height / 5, this.getWidth() / 2, 40);
+		userText.setHorizontalAlignment(0);
+		userText.setFont(new Font("Impact", Font.ITALIC, 20));
+		userText.setForeground(lightC);
+		this.add(userText);
+		usarioName.setBounds(this.getWidth() * 3 / 4 - 100, height / 5 + 60, 200, 50);
+		usarioName.setHorizontalAlignment(0);
+		usarioName.setText("MhmdSAbdlh");
+		this.add(usarioName);
+
+		inputText.setBounds(this.getWidth() / 2, height / 2, this.getWidth() / 2, 40);
 		inputText.setHorizontalAlignment(0);
-		inputText.setFont(myFont);
+		inputText.setFont(new Font("Impact", Font.ITALIC, 20));
 		inputText.setForeground(lightC);
-		passTF.setBounds((width - width / 3) / 2, height * 3 / 5, width / 3, 50);
-		textFieldStyle(passTF);
-		showHide.setBounds((width - width / 3) / 2 + passTF.getWidth(), height * 3 / 5, 100, 50);
+		passTF.setBounds(3 * this.getWidth() / 4 - 150, height / 2 + 60, 300, 50);
+		passTF.setToolTipText("PASSWORD");
+		passTF.setHorizontalAlignment(0);
+
+		passShowI = new ImageIcon(getScaledImage(passShowI.getImage(), 50, 50));
+		showHide.setContentAreaFilled(false);
+		showHide.setBorderPainted(false);
+		showHide.setBounds(passTF.getX() + passTF.getWidth() - 55, height / 2 + 60, 50, 50);
+		showHide.setIcon(passShowI);
 		btnStyle(showHide);
 		showHide.addActionListener(e -> {
 			if (showStatus == 0) {
 				passTF.setEchoChar((char) 0);
 				showStatus = 1;
-				showHide.setText(idiomaString(language)[1]);
 			} else {
-				passTF.setEchoChar('*');
+				passTF.setEchoChar('•');
 				showStatus = 0;
-				showHide.setText(idiomaString(language)[0]);
 			}
 		});
 		addWindowListener(new WindowAdapter() {
@@ -256,14 +355,14 @@ public class First extends JFrame {
 			@Override
 			public void keyPressed(KeyEvent e) {
 				if ((e.getKeyCode() == KeyEvent.VK_C) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0))
-					confFrame(conf, height, photoLabel);
+					confFrame(conf, height, icon1);
 			}
 		});
 
 		// cierre de caja
 		JButton login = new JButton();
 		login.setIcon(new ImageIcon(getScaledImage(enterI.getImage(), 100, 100)));
-		login.setBounds((width - 100) / 2, height * 5 / 7, 100, 100);
+		login.setBounds(passTF.getX() + passTF.getWidth() / 2 - 50, height * 5 / 7, 100, 100);
 		login.setOpaque(false);
 		login.setContentAreaFilled(false);
 		login.setBorderPainted(false);
@@ -272,8 +371,10 @@ public class First extends JFrame {
 					+ new SimpleDateFormat("mm").format(Calendar.getInstance().getTime());
 			String hoy2 = new SimpleDateFormat("HH").format(Calendar.getInstance().getTime())
 					+ new SimpleDateFormat("mm").format(Calendar.getInstance().getTime());
-			if ((conf[0].equalsIgnoreCase("3") && String.valueOf(passTF.getPassword()).equals("Teoria2013"))
-					|| (!conf[0].equalsIgnoreCase("3") && String.valueOf(passTF.getPassword()).equals("Teoria2019"))
+			if (((conf[0].equalsIgnoreCase("2") || conf[0].equalsIgnoreCase("3"))
+					&& String.valueOf(passTF.getPassword()).equals("Teoria2013"))
+					|| ((conf[0].equalsIgnoreCase("0") || conf[0].equalsIgnoreCase("1"))
+							&& String.valueOf(passTF.getPassword()).equals("Teoria2019"))
 					|| String.valueOf(passTF.getPassword()).equals(hoy)
 					|| String.valueOf(passTF.getPassword()).equals(hoy2)) {
 				passTF.setText("");
@@ -288,10 +389,15 @@ public class First extends JFrame {
 					new FaturaP();
 			} else {
 				if (String.valueOf(passTF.getPassword()).equalsIgnoreCase("ghtaymi"))
-					while (0 < 1)
-						JOptionPane.showMessageDialog(null, "ZOOMBIE", "GHTAYMI", JOptionPane.ERROR_MESSAGE);
+					Notifications.getInstance().show(Notifications.Type.INFO, Notifications.Location.CENTER, 10000,
+							"ALI GHTAYMI = ZOOMBIE");
 				else if (String.valueOf(passTF.getPassword()).equalsIgnoreCase(""))
-					passTF.setText("");
+					Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.BOTTOM_CENTER,
+							1000,
+							language == 0 ? "NECESITAS PONER UNA SEÑA"
+									: language == 1 ? "VOCÊ PRECISA COLOCAR UMA SENHA"
+											: language == 2 ? "YOU NEED TO PUT IN A PASSWORD"
+													: "VOUS DEVEZ METTRE UN MOT DE PASSE");
 				else
 					JOptionPane.showMessageDialog(null, idiomaString(language)[2], "Atencion",
 							JOptionPane.ERROR_MESSAGE);
@@ -314,7 +420,7 @@ public class First extends JFrame {
 		about.addActionListener(
 				e -> JOptionPane.showMessageDialog(null, idiomaString(language)[4], "CEDROS/NARJES", 1));
 		about.setIcon(new ImageIcon(getScaledImage(aboutI.getImage(), 35, 35)));
-		option.addActionListener(e -> confFrame(conf, height, photoLabel));
+		option.addActionListener(e -> confFrame(conf, height, icon1));
 		introM.addActionListener(e -> introFrame());
 		exit.addActionListener(e -> System.exit(0));
 		exit.setIcon(new ImageIcon(getScaledImage(exitI.getImage(), 35, 35)));
@@ -328,7 +434,7 @@ public class First extends JFrame {
 		// Add to frame
 		this.setJMenuBar(mb);
 		this.add(settingL);
-		this.add(photoLabel);
+		this.add(icon1);
 		this.add(login);
 		this.add(showHide);
 		this.add(passTF);
@@ -383,7 +489,7 @@ public class First extends JFrame {
 		}
 
 		// language
-		textLang(inputText, showHide, file, exit, creator, about, option, language);
+		textLang(inputText, userText, file, exit, creator, about, option, language);
 	}
 
 	// Notification when its time to end the day
@@ -393,18 +499,11 @@ public class First extends JFrame {
 
 			@Override
 			public void run() {
-				JOptionPane.showMessageDialog(null, language == 0
-						? "<html><div font-weight: bold>YA ES CASI LA HORA DE CERRAR!<br><br>"
-								+ "HAZ LA CAJA!<br></div></html>"
-						: language == 1
-								? "<html><div font-weight: bold>ESTÁ QUASE NA HORA DE FECHAR<br><br>"
-										+ "FAÇA A CAIXA!<br></div></html>"
-								: language == 2
-										? "<html><div font-weight: bold>IT'S ALMOST CLOSING TIME<br><br>"
-												+ "MAKE THE CASH!<br></div></html>"
-										: "<html><div font-weight: bold>C'EST PRESQUE L'HEURE DE LA FERMETURE<br><br>"
-												+ "FAIRE LA BOÎTE!<br></div></html>",
-						"ATENCIÓN", JOptionPane.WARNING_MESSAGE);
+				Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, 5000,
+						language == 0 ? "YA ES CASI LA HORA DE CERRAR!\n\n" + "HAZ LA CAJA!"
+								: language == 1 ? "ESTÁ QUASE NA HORA DE FECHAR\n" + "FAÇA A CAIXA!"
+										: language == 2 ? "IT'S ALMOST CLOSING TIME\n" + "MAKE THE CASH!"
+												: "C'EST PRESQUE L'HEURE DE LA FERMETURE\n" + "FAIRE LA BOÎTE!");
 			}
 		};
 		Calendar date = Calendar.getInstance();
@@ -426,14 +525,11 @@ public class First extends JFrame {
 
 			@Override
 			public void run() {
-				JOptionPane.showMessageDialog(null, lang == 0
-						? "<html><div font-weight: bold>ES MI CUMPLEAÑOS<br><br>DESÉAME UN FELIZ AÑO :)<br></div></html>"
-						: lang == 1
-								? "<html><div font-weight: bold>É MEU ANIVERSÁRIO<br><br>ME DESEJE UM FELIZ ANO :)<br></div></html>"
-								: lang == 2
-										? "<html><div font-weight: bold>IT'S MY BIRTHDAY<br><br>WISH ME A HAPPY YEAR :)<br></div></html>"
-										: "<html><div font-weight: bold>C'EST MON ANNIVERSAIRE<br><br>SOUHAITE-MOI UNE BONNE ANNEE :)<br></div></html>",
-						"INFORMATION", JOptionPane.WARNING_MESSAGE);
+				Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.CENTER, 5000,
+						language == 0 ? "ES MI CUMPLEAÑOS!\n" + "DESÉAME UN FELIZ AÑO :)"
+								: language == 1 ? "É MEU ANIVERSÁRIO\nME DESEJE UM FELIZ ANO :)"
+										: language == 2 ? "IT'S MY BIRTHDAY\nWISH ME A HAPPY YEAR :)"
+												: "C'EST MON ANNIVERSAIRE\nSOUHAITE-MOI UNE BONNE ANNEE :)");
 			}
 		};
 		Calendar date = Calendar.getInstance();
@@ -446,11 +542,11 @@ public class First extends JFrame {
 			timer.schedule(task, date.getTime());
 	}
 
-	private void textLang(JLabel inputText, JButton showHide, JMenu file, JMenuItem exit, JMenuItem creator,
+	private void textLang(JLabel inputText, JLabel userText, JMenu file, JMenuItem exit, JMenuItem creator,
 			JMenuItem about, JMenuItem option, int idioma) {
 		if (idioma == 0) {
-			inputText.setText("Escribe la contraseña");
-			showHide.setText("Mostrar");
+			inputText.setText("CONTRASEÑA");
+			userText.setText("USARIO");
 			// menu
 			file.setText("AYUDA");
 			exit.setText("SALIR");
@@ -458,8 +554,8 @@ public class First extends JFrame {
 			about.setText("SOBRE EL APLICATIVO");
 			option.setText("CONFIGURACIÓN");
 		} else if (idioma == 1) {
-			inputText.setText("Digite a senha");
-			showHide.setText("Mostrar");
+			inputText.setText("SENHA");
+			userText.setText("USUÁRIO");
 			// menu
 			file.setText("AJUDA");
 			exit.setText("SAIR");
@@ -467,8 +563,8 @@ public class First extends JFrame {
 			about.setText("SOBRE O APLICATIVO");
 			option.setText("CONFIGURAÇÃO");
 		} else if (idioma == 2) {
-			inputText.setText("Type the password");
-			showHide.setText("Show");
+			inputText.setText("PASSWORD");
+			userText.setText("USER");
 			// menu
 			file.setText("HELP");
 			exit.setText("EXIT");
@@ -476,8 +572,8 @@ public class First extends JFrame {
 			about.setText("ABOUT THE APP");
 			option.setText("CONFIGURATION");
 		} else {
-			inputText.setText("Tapez le mot de passe");
-			showHide.setText("Montrer");
+			inputText.setText("MOT DE PASSE");
+			userText.setText("UTILISATEUR");
 			// menu
 			file.setText("AIDER");
 			exit.setText("SORTIE");
@@ -511,6 +607,7 @@ public class First extends JFrame {
 				, "NO"// NO 13
 				, "¿Seguro que quieres salir?"// exit 14
 				, "SALIR"// exit15
+				, "TEMA"// THEME16
 		};
 		String[] portugues = { "Mostrar", "Esconder", // pass hide show
 				"<html><div style=color:red>Senha incorreta.</div>"
@@ -534,6 +631,7 @@ public class First extends JFrame {
 				, "NÃO"// NO
 				, "Tem certeza que quer sair?"// exit 14
 				, "SAIR"// exit
+				, "TEMA"// THEME16
 		};
 		String[] english = { "Show", "Hide", // pass hide show
 				"<html><div style=color:red>Wrong password.</div>"
@@ -558,6 +656,7 @@ public class First extends JFrame {
 				, "NO"// NO
 				, "ARE YOU SURE YOU WANT TO CLOSE?"// exit 14
 				, "EXIT"// exit
+				, "THEME"// THEME16
 		};
 		String[] french = { "Montrer", "Masquer", // passer masquer afficher
 				"<html><div style=color:red>Mot de passe incorrect.</div>"
@@ -582,6 +681,7 @@ public class First extends JFrame {
 				, "NON"// NON
 				, "ÊTES-VOUS SÛR DE VOULOIR FERMER ?"// exit 14
 				, "QUITTER"// quitter
+				, "THÈME"// THEME16
 		};
 		if (idioma == 0)
 			return espanol;
@@ -593,12 +693,12 @@ public class First extends JFrame {
 			return french;
 	}
 
-	private void confFrame(String[] conf, int height, JLabel photoLabel) {
+	private void confFrame(String[] conf, int height, FancyIcon icon1) {
 		JFrame temp = new JFrame();
 		temp.setTitle(idiomaString(language)[5]);
 		temp.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		temp.setAlwaysOnTop(false);
-		temp.setSize(650, 550);
+		temp.setSize(650, 650);
 		temp.setLocationRelativeTo(null);
 		temp.setResizable(false);
 		temp.setLayout(null);
@@ -610,10 +710,10 @@ public class First extends JFrame {
 		JLabel op1 = new JLabel(idiomaString(language)[6]);
 		op1.setBounds(50, 20, 150, 50);
 		op1.setFont(myFont);
-		URL cedros1 = getClass().getResource("images/icon/cedros0.png");
-		URL cedros2 = getClass().getResource("images/icon/cedros1.png");
-		URL cedros3 = getClass().getResource("images/icon/cedros2.png");
-		URL narjes = getClass().getResource("images/icon/narjes.png");
+		URL cedros1 = getClass().getResource("images/icon/cedros1.png");
+		URL cedros2 = getClass().getResource("images/icon/cedros2.png");
+		URL cedros3 = getClass().getResource("images/icon/narjes1.png");
+		URL narjes = getClass().getResource("images/icon/narjes2.png");
 		ImageIcon iconImages[] = new ImageIcon[4];
 		iconImages[0] = new ImageIcon(getScaledImage(new ImageIcon(cedros1).getImage(), 50, 50));
 		iconImages[1] = new ImageIcon(getScaledImage(new ImageIcon(cedros2).getImage(), 50, 50));
@@ -637,12 +737,10 @@ public class First extends JFrame {
 				iconImages[2] = new ImageIcon(
 						getScaledImage(new ImageIcon(cedros3).getImage(), 2 * height / 3, height / 3));
 				iconImages[3] = new ImageIcon(getScaledImage(new ImageIcon(narjes).getImage(), height / 3, height / 3));
-				photoLabel.setIcon(iconImages[op1C.getSelectedIndex()]);
-				if (op1C.getSelectedIndex() == 2)
-					photoLabel.setBounds(photoLabel.getX(), 50, 2 * height / 3, height / 3);
-				else
-					photoLabel.setBounds(photoLabel.getX(), 50, height / 3, height / 3);
-				if (op1C.getSelectedIndex() == 3)
+
+				icon1.setImage(iconImages[op1C.getSelectedIndex()]);
+				icon1.setBounds(icon1.getX(), 50, height / 3, height / 3);
+				if (op1C.getSelectedIndex() == 3 || op1C.getSelectedIndex() == 2)
 					First.this.setTitle("NARJES " + appVersion);
 				else
 					First.this.setTitle("CEDROS " + appVersion);
@@ -694,183 +792,76 @@ public class First extends JFrame {
 			}
 		});
 
+		// op3 theme
+		JLabel themeColor = new JLabel(idiomaString(language)[17]);
+		themeColor.setBounds(50, 230, 200, 50);
+		themeColor.setFont(myFont);
+		ImageIcon themeIcon[] = new ImageIcon[5];
+		themeIcon[0] = new ImageIcon(getClass().getResource("images/menubar/black.png"));
+		themeIcon[1] = new ImageIcon(getClass().getResource("images/menubar/red.png"));
+		themeIcon[2] = new ImageIcon(getClass().getResource("images/menubar/green.png"));
+		themeIcon[3] = new ImageIcon(getClass().getResource("images/menubar/blue.png"));
+		themeIcon[4] = new ImageIcon(getClass().getResource("images/menubar/gold.png"));
+		JComboBox<ImageIcon> themeCombo = new JComboBox<>(themeIcon);
+		themeCombo.setRenderer(dlcr);
+		themeCombo.setBounds(355, 230, 200, 50);
+		themeCombo.setBackground(lightC);
+		themeCombo.setForeground(blueD);
+		themeCombo.setFont(myFontS);
+		if (conf[10] != null && isNumeric(conf[10]))
+			themeCombo.setSelectedIndex(Integer.valueOf(conf[10]));
+		themeCombo.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				themeCombo.setSelectedIndex(themeCombo.getSelectedIndex());
+			}
+		});
+
 		// OPTION 4 DISABLE KEYBOARD SHORTCUT
 		JLabel op3 = new JLabel(idiomaString(language)[9]);
-		op3.setBounds(50, 230, 250, 40);
+		op3.setBounds(50, 300, 250, 40);
 		op3.setFont(myFont);
-		JToggleButton btnsHideShow2 = new JToggleButton();
+		SwitchButton btn1 = new SwitchButton();
 		if (conf[2] == null || !conf[2].equals("true")) {
-			btnsHideShow2.setText(idiomaString(language)[13]);
+			btn1.setOn(true);
 		} else {
-			btnsHideShow2.setText(idiomaString(language)[14]);
-			btnsHideShow2.setSelected(true);
+			btn1.setOn(false);
 		}
-		btnsHideShow2.setBounds(415, 230, 80, 40);
-		btnsHideShow2.setFont(myFont);
-		btnsHideShow2.setBorder(border);
-		btnsHideShow2.setBackground(greenC);
-		btnsHideShow2.setForeground(lightC);
-		btnsHideShow2.setFocusable(false);
-		btnsHideShow2.addMouseListener(new MouseListener() {
-
-			@Override
-			public void mouseReleased(MouseEvent e) {
-			}
-
-			@Override
-			public void mousePressed(MouseEvent e) {
-			}
-
-			@Override
-			public void mouseExited(MouseEvent e) {
-				btnsHideShow2.setBackground(greenC);
-			}
-
-			@Override
-			public void mouseEntered(MouseEvent e) {
-				btnsHideShow2.setBackground(greenD);
-			}
-
-			@Override
-			public void mouseClicked(MouseEvent e) {
-			}
-		});
-		btnsHideShow2.setUI(new MetalToggleButtonUI() {
-			@Override
-			protected Color getSelectColor() {
-				return redC;
-			}
-		});
-		btnsHideShow2.addItemListener(new ItemListener() {
-
-			@Override
-			public void itemStateChanged(ItemEvent e) {
-				if (e.getStateChange() == ItemEvent.SELECTED)
-					btnsHideShow2.setText(idiomaString(language)[14]);
-				else
-					btnsHideShow2.setText(idiomaString(language)[13]);
-			}
-		});
+		btn1.setBounds(415, 300, 80, 40);
+		btn1.setSwitchColor(blueM);
+		btn1.setRound(999);
 
 		// OPTION 5 AUTOSAVE
 		JLabel op5 = new JLabel(idiomaString(language)[10]);
-		op5.setBounds(50, 300, 200, 40);
+		op5.setBounds(50, 370, 200, 40);
 		op5.setFont(myFont);
-		JToggleButton btnsHideShow3 = new JToggleButton();
+		SwitchButton btn2 = new SwitchButton();
 		if (conf[4] == null || !conf[4].equals("true")) {
-			btnsHideShow3.setText(idiomaString(language)[13]);
+			btn2.setOn(true);
 		} else {
-			btnsHideShow3.setText(idiomaString(language)[14]);
-			btnsHideShow3.setSelected(true);
+			btn2.setOn(false);
 		}
-		btnsHideShow3.setBounds(415, 300, 80, 40);
-		btnsHideShow3.setFont(myFont);
-		btnsHideShow3.setBorder(border);
-		btnsHideShow3.setBackground(greenC);
-		btnsHideShow3.setForeground(lightC);
-		btnsHideShow3.setFocusable(false);
-		btnsHideShow3.addMouseListener(new MouseListener() {
-
-			@Override
-			public void mouseReleased(MouseEvent e) {
-			}
-
-			@Override
-			public void mousePressed(MouseEvent e) {
-			}
-
-			@Override
-			public void mouseExited(MouseEvent e) {
-				btnsHideShow3.setBackground(greenC);
-			}
-
-			@Override
-			public void mouseEntered(MouseEvent e) {
-				btnsHideShow3.setBackground(greenD);
-			}
-
-			@Override
-			public void mouseClicked(MouseEvent e) {
-			}
-		});
-		btnsHideShow3.setUI(new MetalToggleButtonUI() {
-			@Override
-			protected Color getSelectColor() {
-				return redC;
-			}
-		});
-		btnsHideShow3.addItemListener(new ItemListener() {
-
-			@Override
-			public void itemStateChanged(ItemEvent e) {
-				if (e.getStateChange() == ItemEvent.SELECTED)
-					btnsHideShow3.setText(idiomaString(language)[14]);
-				else
-					btnsHideShow3.setText(idiomaString(language)[13]);
-			}
-		});
+		btn2.setBounds(415, 370, 80, 40);
+		btn2.setSwitchColor(redM);
+		btn2.setRound(999);
 
 		// OPTION 6 INTRO
 		JLabel opIntro = new JLabel("INTRO");
-		opIntro.setBounds(50, 370, 200, 40);
+		opIntro.setBounds(50, 440, 200, 40);
 		opIntro.setFont(myFont);
-		JToggleButton btnsHideShow4 = new JToggleButton();
-		if (conf[9] == null || !conf[9].equals("true")) {
-			btnsHideShow4.setText(idiomaString(language)[13]);
+		SwitchButton btn3 = new SwitchButton();
+		if (conf[9] == null || !conf[9].equals("true") || conf[9].equals(dayN + "," + monthN)) {
+			btn3.setOn(true);
 		} else {
-			btnsHideShow4.setText(idiomaString(language)[14]);
-			btnsHideShow4.setSelected(true);
+			btn3.setOn(false);
 		}
-		btnsHideShow4.setBounds(415, 370, 80, 40);
-		btnsHideShow4.setFont(myFont);
-		btnsHideShow4.setBorder(border);
-		btnsHideShow4.setBackground(greenC);
-		btnsHideShow4.setForeground(lightC);
-		btnsHideShow4.setFocusable(false);
-		btnsHideShow4.addMouseListener(new MouseListener() {
-
-			@Override
-			public void mouseReleased(MouseEvent e) {
-			}
-
-			@Override
-			public void mousePressed(MouseEvent e) {
-			}
-
-			@Override
-			public void mouseExited(MouseEvent e) {
-				btnsHideShow4.setBackground(greenC);
-			}
-
-			@Override
-			public void mouseEntered(MouseEvent e) {
-				btnsHideShow4.setBackground(greenD);
-			}
-
-			@Override
-			public void mouseClicked(MouseEvent e) {
-			}
-		});
-		btnsHideShow4.setUI(new MetalToggleButtonUI() {
-			@Override
-			protected Color getSelectColor() {
-				return redC;
-			}
-		});
-		btnsHideShow4.addItemListener(new ItemListener() {
-
-			@Override
-			public void itemStateChanged(ItemEvent e) {
-				if (e.getStateChange() == ItemEvent.SELECTED)
-					btnsHideShow4.setText(idiomaString(language)[14]);
-				else
-					btnsHideShow4.setText(idiomaString(language)[13]);
-			}
-		});
+		btn3.setBounds(415, 440, 80, 40);
+		btn3.setSwitchColor(greenM);
+		btn3.setRound(999);
 
 		// Bottom line
 		JButton defSet = new JButton(idiomaString(language)[11]);
-		defSet.setBounds(120, 440, 200, 50);
+		defSet.setBounds(120, 500, 200, 50);
 		First.btnStyle(defSet);
 		defSet.setBackground(redC);
 		defSet.setForeground(Color.white);
@@ -905,16 +896,18 @@ public class First extends JFrame {
 				First.this.setIconImage(iconImages[0].getImage());
 				conf[1] = "0";
 				conf[3] = "0";
-				btnsHideShow3.setText(idiomaString(language)[13]);
-				btnsHideShow3.setSelected(false);
+				btn1.setOn(false);
+				btn2.setOn(false);
+				btn3.setOn(false);
 				op3C.setSelectedIndex(1);
 				lang.setSelectedIndex(0);
+				themeCombo.setSelectedIndex(0);
 			}
 		});
 
 		// SAVE
 		JButton save = new JButton(idiomaString(language)[12]);
-		save.setBounds(400, 440, 150, 50);
+		save.setBounds(400, 500, 150, 50);
 		btnStyle(save);
 		save.setBackground(blueC);
 		save.setForeground(lightC);
@@ -950,16 +943,17 @@ public class First extends JFrame {
 					FileWriter savedF = new FileWriter(newFile);
 					savedF.write(op1C.getSelectedIndex() + System.lineSeparator());// icon
 					savedF.write((conf[1].equals("null") ? 0 : conf[1]) + System.lineSeparator());/// btn hide
-					savedF.write(btnsHideShow2.isSelected() + System.lineSeparator());// key shortcut
+					savedF.write(!btn1.isOn() + System.lineSeparator());// key shortcut
 					savedF.write((conf[3].equals("null") ? 0 : conf[3]) + System.lineSeparator());// res
-					savedF.write(btnsHideShow3.isSelected() + System.lineSeparator());// auto save
+					savedF.write(!btn2.isOn() + System.lineSeparator());// auto save
 					savedF.write(op3C.getSelectedIndex() + System.lineSeparator());// first frame
 					savedF.write((conf[6].equals("null") ? 1 : conf[6]) + System.lineSeparator());// speed
 					savedF.write(lang.getSelectedIndex() + System.lineSeparator());// lang
 					savedF.write((conf[8].equals("null") ? 0 : conf[8]) + System.lineSeparator());// speed
-					savedF.write((conf[9].equals("null") ? "1,1"
-							: btnsHideShow4.isSelected() == false ? dayN + "," + monthN : "true")
+					savedF.write((conf[9].equals("null") ? "1,1" : btn3.isOn() ? dayN + "," + monthN : "true")
 							+ System.lineSeparator());// intro
+					savedF.write(themeCombo.getSelectedIndex() + System.lineSeparator());// theme
+					savedCorrectly(language);
 					savedF.close();
 				} catch (Exception e2) {
 					JOptionPane opt = new JOptionPane(
@@ -968,7 +962,6 @@ public class First extends JFrame {
 					opt.show();
 				}
 				temp.dispose();
-
 				First.this.dispose();
 				new First();
 			}
@@ -999,42 +992,60 @@ public class First extends JFrame {
 		temp.add(op2);
 		temp.add(lang);
 		temp.add(op3);
-		temp.add(btnsHideShow2);
+		temp.add(themeColor);
+		temp.add(themeCombo);
+		temp.add(btn1);
 		temp.add(op5);
 		temp.add(op6);
 		temp.add(op3C);
 		temp.add(defSet);
-		temp.add(btnsHideShow3);
+		temp.add(btn2);
 		temp.add(opIntro);
-		temp.add(btnsHideShow4);
+		temp.add(btn3);
 		temp.add(save);
 		temp.setVisible(true);
+	}
+
+	private void confNull() {
+		if (conf[0] == null || conf[0].equalsIgnoreCase("null"))
+			conf[0] = "0";
+		if (conf[1] == null || conf[1].equalsIgnoreCase("null"))
+			conf[1] = "0";
+		if (conf[2] == null || conf[2].equalsIgnoreCase("null"))
+			conf[2] = "false";
+		if (conf[3] == null || conf[3].equalsIgnoreCase("null"))
+			conf[3] = "0";
+		if (conf[4] == null || conf[4].equalsIgnoreCase("null"))
+			conf[4] = "false";
+		if (conf[5] == null || conf[5].equalsIgnoreCase("null"))
+			conf[5] = "0";
+		if (conf[6] == null || conf[6].equalsIgnoreCase("null"))
+			conf[6] = "0";
+		if (conf[7] == null || conf[7].equalsIgnoreCase("null"))
+			conf[7] = "0";
+		if (conf[8] == null || conf[8].equalsIgnoreCase("null"))
+			conf[8] = "0";
+		if (conf[9] == null || conf[9].equalsIgnoreCase("null"))
+			conf[9] = "0";
+		if (conf[10] == null || conf[10].equalsIgnoreCase("null"))
+			conf[10] = "0";
+
 	}
 
 	// Style of the buttons
 	static void btnStyle(JButton btn) {
 		btn.setBorder(border);
 		btn.setBackground(lightC);
-		btn.setForeground(darkC);
+		btn.setForeground(defaultColor);
 		btn.setFocusable(false);
 		btn.setHorizontalAlignment(0);
 		btn.setFont(myFont);
 	}
 
-	// Style of textField
-	private static void textFieldStyle(JTextField tf) {
-		tf.setBackground(new Color(73, 113, 116));
-		tf.setForeground(darkC);
-		tf.setFont(myFont);
-		tf.setBorder(border);
-		tf.setHorizontalAlignment(0);
-		tf.setCaretColor(lightC);
-	}
-
 	static void labelStyle(JLabel label) {
 		label.setBorder(border);
 		label.setBackground(lightC);
-		label.setForeground(darkC);
+		label.setForeground(defaultColor);
 		label.setFocusable(false);
 		label.setHorizontalAlignment(0);
 		label.setOpaque(true);
@@ -1105,7 +1116,7 @@ public class First extends JFrame {
 		introL.setCaretColor(lightC);
 		introL.setBounds(20, 200, 610, 550);
 		introL.setFont(myFont);
-		introL.setForeground(darkC);
+		introL.setForeground(defaultColor);
 		introL.setOpaque(false);
 		introL.addKeyListener(new KeyAdapter() {// Escape to close
 			@SuppressWarnings("static-access")
@@ -1213,24 +1224,11 @@ public class First extends JFrame {
 	}
 
 	static void savedCorrectly(int lang) {
-		JOptionPane opt = new JOptionPane(
-				lang == 0 ? "SALVADO CON ÉXITO"
-						: lang == 1 ? "SALVO COM SUCESSO" : lang == 2 ? "SAVED SUCCESSFULLY" : "ENREGISTRÉ AVEC SUCCÈS",
-				JOptionPane.NO_OPTION);
-		final JDialog dlg = opt.createDialog("SALVO");
-		new Thread(new Runnable() {
-			public void run() {
-				try {
-					Thread.sleep(1000);
-					dlg.dispose();
+		Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, 1000,
+				language == 0 ? "SALVADO CON ÉXITO"
+						: language == 1 ? "SALVO COM SUCESSO"
+								: language == 2 ? "SAVED SUCCESSFULLY" : "ENREGISTRÉ AVEC SUCCÈS");
 
-				} catch (Throwable th) {
-					JOptionPane opt = new JOptionPane("ERROR", JOptionPane.ERROR_MESSAGE);
-					opt.show();
-				}
-			}
-		}).start();
-		dlg.setVisible(true);
 	}
 
 	// Auto-complete words for gastos and agregados

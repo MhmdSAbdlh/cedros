@@ -12,8 +12,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
@@ -44,9 +42,9 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
-import javax.swing.JToggleButton;
 import javax.swing.SwingConstants;
-import javax.swing.plaf.metal.MetalToggleButtonUI;
+
+import switchbutton.SwitchButton;
 
 @SuppressWarnings("serial")
 public class FaturaP extends JFrame {
@@ -142,7 +140,6 @@ public class FaturaP extends JFrame {
 	JLabel cambioC = new JLabel();
 	JLabel title[] = new JLabel[4];
 	JLabel caja = new JLabel();
-	private MouseListener m1, m2, m3;
 	String currentpath = System.getProperty("user.dir");
 	File tempFile0 = new File(currentpath + "\\data");
 	File newFile = new File(tempFile0, "conf.dll");
@@ -156,7 +153,7 @@ public class FaturaP extends JFrame {
 		BufferedReader dataOpened = null;
 		String line = "";
 		int tempC = 0;
-		String conf[] = new String[10];
+		String conf[] = new String[11];
 		try {
 			dataOpened = new BufferedReader(new FileReader(newFile));
 			while ((line = dataOpened.readLine()) != null) {
@@ -170,10 +167,26 @@ public class FaturaP extends JFrame {
 					JOptionPane.ERROR_MESSAGE);
 			opt.show();
 		} // icon
-		if (conf[0] == null || !conf[0].equals("3"))
+		if (conf[0] == null || conf[0].equals("0") || conf[0].equals("1"))
 			this.setIconImage(new ImageIcon(getClass().getResource("images/icon/cedrosI.png")).getImage());
 		else
 			this.setIconImage(new ImageIcon(getClass().getResource("images/icon/narjesI.png")).getImage());
+		// theme
+		JLabel blackL = new JLabel(new ImageIcon(getClass().getResource("images/black.jpg"))),
+				redL = new JLabel(new ImageIcon(getClass().getResource("images/red.jpg"))),
+				greenL = new JLabel(new ImageIcon(getClass().getResource("images/green.jpg"))),
+				blueL = new JLabel(new ImageIcon(getClass().getResource("images/blue.jpg"))),
+				goldL = new JLabel(new ImageIcon(getClass().getResource("images/gold.jpg")));
+		if (conf[10] == null || conf[10].equalsIgnoreCase("0") || conf[10].equalsIgnoreCase("null"))
+			this.setContentPane(blackL);
+		else if (conf[10].equalsIgnoreCase("1"))
+			this.setContentPane(redL);
+		else if (conf[10].equalsIgnoreCase("2"))
+			this.setContentPane(greenL);
+		else if (conf[10].equalsIgnoreCase("3"))
+			this.setContentPane(blueL);
+		else
+			this.setContentPane(goldL);
 		// LANGUAGE
 		if (conf[7] == null || conf[7].equals("0"))
 			language = 0;
@@ -211,7 +224,6 @@ public class FaturaP extends JFrame {
 		this.setLocationRelativeTo(null);
 		this.setResizable(false);
 		this.setLayout(null);
-		this.getContentPane().setBackground(First.darkC);
 
 		// hide btns
 		if (conf[1] == null || conf[1].equals("0") || conf[1].equals("1")) {
@@ -369,97 +381,23 @@ public class FaturaP extends JFrame {
 		cambio[2].setText(idiomaString(language)[21]);
 
 		// 1ST CAMBIO
-		m1 = new MouseListener() {
-			@Override
-			public void mouseReleased(MouseEvent e) {
-			}
-
-			@Override
-			public void mousePressed(MouseEvent e) {
-			}
-
-			@Override
-			public void mouseExited(MouseEvent e) {
-				cambioN.setBackground(redD);
-			}
-
-			@Override
-			public void mouseEntered(MouseEvent e) {
-				cambioN.setBackground(redC);
-			}
-
-			@Override
-			public void mouseClicked(MouseEvent e) {
-			}
-		};
-		m2 = new MouseListener() {
-			@Override
-			public void mouseReleased(MouseEvent e) {
-			}
-
-			@Override
-			public void mousePressed(MouseEvent e) {
-			}
-
-			@Override
-			public void mouseExited(MouseEvent e) {
-				cambioN2.setBackground(violetD);
-			}
-
-			@Override
-			public void mouseEntered(MouseEvent e) {
-				cambioN2.setBackground(violetC);
-			}
-
-			@Override
-			public void mouseClicked(MouseEvent e) {
-			}
-		};
-		m3 = new MouseListener() {
-			@Override
-			public void mouseReleased(MouseEvent e) {
-			}
-
-			@Override
-			public void mousePressed(MouseEvent e) {
-			}
-
-			@Override
-			public void mouseExited(MouseEvent e) {
-				cambioN3.setBackground(turD);
-			}
-
-			@Override
-			public void mouseEntered(MouseEvent e) {
-				cambioN3.setBackground(turC);
-			}
-
-			@Override
-			public void mouseClicked(MouseEvent e) {
-			}
-		};
-		cambioN.setEnabled(false);
 		cambioN.setBorder(First.border);
 		cambioN.setForeground(First.lightC);
 		cambioN.setBackground(redD);
 		cambioN.setFocusable(false);
 		cambioN.addActionListener(e -> {
-			cambioF();
-			cambioN.setText(idiomaString(language)[22]);
-			cambioN2.setText(idiomaString(language)[23]);
-			cambioN3.setText(idiomaString(language)[24]);
-			cambioN.setEnabled(false);
-			cambioN2.setEnabled(false);
-			cambioN3.setEnabled(false);
-			cambioN.removeMouseListener(m1);
-			cambioN2.removeMouseListener(m2);
-			cambioN3.removeMouseListener(m3);
-			cambioN.setBorder(First.border);
-			cambioN2.setBorder(First.border);
-			cambioN3.setBorder(First.border);
-			cambioN.setBackground(redD);
-			cambioN2.setBackground(violetD);
-			cambioN3.setBackground(turD);
+			if (cambioN.getBackground() != redD) {
+				cambioF();
+				cambioN.setText(idiomaString(language)[22]);
+				cambioN2.setText(idiomaString(language)[23]);
+				cambioN3.setText(idiomaString(language)[24]);
+				cambioN.setBorder(First.border);
+				cambioN2.setBorder(First.border);
+				cambioN3.setBorder(First.border);
+				cambioN.setBackground(redD);
+				cambioN2.setBackground(violetD);
+				cambioN3.setBackground(turD);
+			}
 		});
 		this.add(cambioN);
 		for (int i = 0; i < 2; i++)
@@ -476,28 +414,24 @@ public class FaturaP extends JFrame {
 			}
 
 		// 2ND CAMBIO
-		cambioN2.setEnabled(false);
+
 		cambioN2.setBorder(First.border);
 		cambioN2.setForeground(First.lightC);
 		cambioN2.setBackground(violetD);
 		cambioN2.setFocusable(false);
 		cambioN2.addActionListener(e -> {
-			cambioF2();
-			cambioN.setText(idiomaString(language)[22]);
-			cambioN2.setText(idiomaString(language)[23]);
-			cambioN3.setText(idiomaString(language)[24]);
-			cambioN.setEnabled(false);
-			cambioN2.setEnabled(false);
-			cambioN3.setEnabled(false);
-			cambioN.removeMouseListener(m1);
-			cambioN2.removeMouseListener(m2);
-			cambioN3.removeMouseListener(m3);
-			cambioN.setBorder(First.border);
-			cambioN2.setBorder(First.border);
-			cambioN3.setBorder(First.border);
-			cambioN.setBackground(redD);
-			cambioN2.setBackground(violetD);
-			cambioN3.setBackground(turD);
+			if (cambioN2.getBackground() != violetD) {
+				cambioF2();
+				cambioN.setText(idiomaString(language)[22]);
+				cambioN2.setText(idiomaString(language)[23]);
+				cambioN3.setText(idiomaString(language)[24]);
+				cambioN.setBorder(First.border);
+				cambioN2.setBorder(First.border);
+				cambioN3.setBorder(First.border);
+				cambioN.setBackground(redD);
+				cambioN2.setBackground(violetD);
+				cambioN3.setBackground(turD);
+			}
 		});
 		this.add(cambioN2);
 		for (int i = 0; i < 2; i++)
@@ -514,28 +448,24 @@ public class FaturaP extends JFrame {
 			}
 
 		// 3RD CAMBIO
-		cambioN3.setEnabled(false);
+
 		cambioN3.setBorder(First.border);
 		cambioN3.setForeground(First.lightC);
 		cambioN3.setBackground(turD);
 		cambioN3.setFocusable(false);
 		cambioN3.addActionListener(e -> {
-			cambioF3();
-			cambioN.setText(idiomaString(language)[22]);
-			cambioN2.setText(idiomaString(language)[23]);
-			cambioN3.setText(idiomaString(language)[24]);
-			cambioN.setEnabled(false);
-			cambioN2.setEnabled(false);
-			cambioN3.setEnabled(false);
-			cambioN.removeMouseListener(m1);
-			cambioN2.removeMouseListener(m2);
-			cambioN3.removeMouseListener(m3);
-			cambioN.setBorder(First.border);
-			cambioN2.setBorder(First.border);
-			cambioN3.setBorder(First.border);
-			cambioN.setBackground(redD);
-			cambioN2.setBackground(violetD);
-			cambioN3.setBackground(turD);
+			if (cambioN3.getBackground() != turD) {
+				cambioF3();
+				cambioN.setText(idiomaString(language)[22]);
+				cambioN2.setText(idiomaString(language)[23]);
+				cambioN3.setText(idiomaString(language)[24]);
+				cambioN.setBorder(First.border);
+				cambioN2.setBorder(First.border);
+				cambioN3.setBorder(First.border);
+				cambioN.setBackground(redD);
+				cambioN2.setBackground(violetD);
+				cambioN3.setBackground(turD);
+			}
 		});
 		this.add(cambioN3);
 		for (int i = 0; i < 2; i++)
@@ -637,6 +567,7 @@ public class FaturaP extends JFrame {
 				savedF.write((conf[7].equals("null") ? 0 : conf[7]) + System.lineSeparator());// lan
 				savedF.write((conf[8].equals("null") ? 0 : conf[8]) + System.lineSeparator());// effchooser
 				savedF.write((conf[9].equals("null") ? "1,1" : conf[9]) + System.lineSeparator());// intro
+				savedF.write((conf[10].equals("null") ? "1,1" : conf[10]) + System.lineSeparator());// theme
 				savedF.close();
 			} catch (Exception e2) {
 				JOptionPane opt = new JOptionPane(
@@ -660,6 +591,7 @@ public class FaturaP extends JFrame {
 				savedF.write((conf[7].equals("null") ? 0 : conf[7]) + System.lineSeparator());// lan
 				savedF.write((conf[8].equals("null") ? 0 : conf[8]) + System.lineSeparator());// effchooser
 				savedF.write((conf[9].equals("null") ? "1,1" : conf[9]) + System.lineSeparator());// intro
+				savedF.write((conf[10].equals("null") ? "1,1" : conf[10]) + System.lineSeparator());// theme
 				savedF.close();
 			} catch (Exception e2) {
 				JOptionPane opt = new JOptionPane(
@@ -683,6 +615,7 @@ public class FaturaP extends JFrame {
 				savedF.write((conf[7].equals("null") ? 0 : conf[7]) + System.lineSeparator());// lan
 				savedF.write((conf[8].equals("null") ? 0 : conf[8]) + System.lineSeparator());// effchooser
 				savedF.write((conf[9].equals("null") ? "1,1" : conf[9]) + System.lineSeparator());// intro
+				savedF.write((conf[10].equals("null") ? "1,1" : conf[10]) + System.lineSeparator());// theme
 				savedF.close();
 			} catch (Exception e2) {
 				JOptionPane opt = new JOptionPane(
@@ -706,6 +639,7 @@ public class FaturaP extends JFrame {
 				savedF.write((conf[7].equals("null") ? 0 : conf[7]) + System.lineSeparator());// lan
 				savedF.write((conf[8].equals("null") ? 0 : conf[8]) + System.lineSeparator());// effchooser
 				savedF.write((conf[9].equals("null") ? "1,1" : conf[9]) + System.lineSeparator());// intro
+				savedF.write((conf[10].equals("null") ? "1,1" : conf[10]) + System.lineSeparator());// theme
 				savedF.close();
 			} catch (Exception e2) {
 				JOptionPane opt = new JOptionPane(
@@ -729,6 +663,7 @@ public class FaturaP extends JFrame {
 				savedF.write((conf[7].equals("null") ? 0 : conf[7]) + System.lineSeparator());// lan
 				savedF.write((conf[8].equals("null") ? 0 : conf[8]) + System.lineSeparator());// effchooser
 				savedF.write((conf[9].equals("null") ? "1,1" : conf[9]) + System.lineSeparator());// intro
+				savedF.write((conf[10].equals("null") ? "1,1" : conf[10]) + System.lineSeparator());// theme
 				savedF.close();
 			} catch (Exception e2) {
 				JOptionPane opt = new JOptionPane(
@@ -825,7 +760,7 @@ public class FaturaP extends JFrame {
 		JTextField password = new JTextField();
 		controls.add(password);
 		String s1[] = { "USD", "PESOS" };
-		JComboBox lang = new JComboBox(s1);
+		JComboBox<String> lang = new JComboBox<String>(s1);
 		controls.add(lang);
 		panel.add(controls, BorderLayout.CENTER);
 
@@ -973,10 +908,10 @@ public class FaturaP extends JFrame {
 		JLabel op1 = new JLabel(idiomaString(language)[5]);
 		op1.setBounds(50, 20, 150, 50);
 		op1.setFont(First.myFont);
-		URL cedros1 = getClass().getResource("images/icon/cedros0.png");
-		URL cedros2 = getClass().getResource("images/icon/cedros1.png");
-		URL cedros3 = getClass().getResource("images/icon/cedros2.png");
-		URL narjes = getClass().getResource("images/icon/narjes.png");
+		URL cedros1 = getClass().getResource("images/icon/cedros1.png");
+		URL cedros2 = getClass().getResource("images/icon/cedros2.png");
+		URL cedros3 = getClass().getResource("images/icon/narjes1.png");
+		URL narjes = getClass().getResource("images/icon/narjes2.png");
 		ImageIcon iconImages[] = new ImageIcon[4];
 		iconImages[0] = new ImageIcon(getScaledImage(new ImageIcon(cedros1).getImage(), 50, 50));
 		iconImages[1] = new ImageIcon(getScaledImage(new ImageIcon(cedros2).getImage(), 50, 50));
@@ -1018,119 +953,58 @@ public class FaturaP extends JFrame {
 			}
 		});
 
-		// OPTION 3 DISABLE KEYBOARD SHORTCUT
+		// op3 theme
+		JLabel themeColor = new JLabel(idiomaString(language)[30]);
+		themeColor.setBounds(50, 160, 200, 50);
+		themeColor.setFont(First.myFont);
+		ImageIcon themeIcon[] = new ImageIcon[5];
+		themeIcon[0] = new ImageIcon(getClass().getResource("images/menubar/black.png"));
+		themeIcon[1] = new ImageIcon(getClass().getResource("images/menubar/red.png"));
+		themeIcon[2] = new ImageIcon(getClass().getResource("images/menubar/green.png"));
+		themeIcon[3] = new ImageIcon(getClass().getResource("images/menubar/blue.png"));
+		themeIcon[4] = new ImageIcon(getClass().getResource("images/menubar/gold.png"));
+		JComboBox<ImageIcon> themeCombo = new JComboBox<>(themeIcon);
+		themeCombo.setRenderer(dlcr);
+		themeCombo.setBounds(355, 160, 200, 50);
+		themeCombo.setBackground(First.lightC);
+		themeCombo.setForeground(First.blueD);
+		themeCombo.setFont(First.myFontS);
+		if (conf[10] != null && First.isNumeric(conf[10]))
+			themeCombo.setSelectedIndex(Integer.valueOf(conf[10]));
+		themeCombo.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				themeCombo.setSelectedIndex(themeCombo.getSelectedIndex());
+			}
+		});
+
+		// OPTION 2 DISABLE KEYBOARD SHORTCUT
 		JLabel op3 = new JLabel(idiomaString(language)[1]);
-		op3.setBounds(50, 160, 250, 40);
+		op3.setBounds(50, 230, 260, 40);
 		op3.setFont(First.myFont);
-		JToggleButton btnsHideShow2 = new JToggleButton();
-		if (conf[2] == null || conf[2].equals("false")) {
-			btnsHideShow2.setText(idiomaString(language)[10]);
+		SwitchButton btn1 = new SwitchButton();
+		if (conf[2] == null || !conf[2].equals("true")) {
+			btn1.setOn(true);
 		} else {
-			btnsHideShow2.setText(idiomaString(language)[11]);
-			btnsHideShow2.setSelected(true);
+			btn1.setOn(false);
 		}
-		btnsHideShow2.setBounds(405, 160, 100, 40);
-		btnsHideShow2.setFont(First.myFont);
-		btnsHideShow2.setBorder(First.border);
-		btnsHideShow2.setBackground(First.greenC);
-		btnsHideShow2.setForeground(First.lightC);
-		btnsHideShow2.setFocusable(false);
-		btnsHideShow2.addMouseListener(new MouseListener() {
-			@Override
-			public void mouseReleased(MouseEvent e) {
-			}
-
-			@Override
-			public void mousePressed(MouseEvent e) {
-			}
-
-			@Override
-			public void mouseExited(MouseEvent e) {
-				btnsHideShow2.setBackground(First.greenC);
-			}
-
-			@Override
-			public void mouseEntered(MouseEvent e) {
-				btnsHideShow2.setBackground(First.greenD);
-			}
-
-			@Override
-			public void mouseClicked(MouseEvent e) {
-			}
-		});
-		btnsHideShow2.setUI(new MetalToggleButtonUI() {
-			@Override
-			protected Color getSelectColor() {
-				return First.redC;
-			}
-		});
-		btnsHideShow2.addItemListener(new ItemListener() {
-			@Override
-			public void itemStateChanged(ItemEvent e) {
-				if (e.getStateChange() == ItemEvent.SELECTED)
-					btnsHideShow2.setText(idiomaString(language)[11]);
-				else
-					btnsHideShow2.setText(idiomaString(language)[10]);
-			}
-		});
+		btn1.setBounds(415, 230, 80, 40);
+		btn1.setSwitchColor(First.blueM);
+		btn1.setRound(999);
 
 		// OPTION 5 AUTOSAVE
 		JLabel op5 = new JLabel(idiomaString(language)[7]);
-		op5.setBounds(50, 230, 200, 40);
+		op5.setBounds(50, 300, 200, 40);
 		op5.setFont(First.myFont);
-		JToggleButton btnsHideShow3 = new JToggleButton();
-		if (conf[4] == null || conf[4].equals("false")) {
-			btnsHideShow3.setText(idiomaString(language)[10]);
+		SwitchButton btn2 = new SwitchButton();
+		if (conf[4] == null || !conf[4].equals("true")) {
+			btn2.setOn(true);
 		} else {
-			btnsHideShow3.setText(idiomaString(language)[11]);
-			btnsHideShow3.setSelected(true);
+			btn2.setOn(false);
 		}
-		btnsHideShow3.setBounds(415, 230, 80, 40);
-		btnsHideShow3.setFont(First.myFont);
-		btnsHideShow3.setBorder(First.border);
-		btnsHideShow3.setBackground(First.greenC);
-		btnsHideShow3.setForeground(First.lightC);
-		btnsHideShow3.setFocusable(false);
-		btnsHideShow3.addMouseListener(new MouseListener() {
-
-			@Override
-			public void mouseReleased(MouseEvent e) {
-			}
-
-			@Override
-			public void mousePressed(MouseEvent e) {
-			}
-
-			@Override
-			public void mouseExited(MouseEvent e) {
-				btnsHideShow3.setBackground(First.greenC);
-			}
-
-			@Override
-			public void mouseEntered(MouseEvent e) {
-				btnsHideShow3.setBackground(First.greenD);
-			}
-
-			@Override
-			public void mouseClicked(MouseEvent e) {
-			}
-		});
-		btnsHideShow3.setUI(new MetalToggleButtonUI() {
-			@Override
-			protected Color getSelectColor() {
-				return First.redC;
-			}
-		});
-		btnsHideShow3.addItemListener(new ItemListener() {
-
-			@Override
-			public void itemStateChanged(ItemEvent e) {
-				if (e.getStateChange() == ItemEvent.SELECTED)
-					btnsHideShow3.setText(idiomaString(language)[11]);
-				else
-					btnsHideShow3.setText(idiomaString(language)[10]);
-			}
-		});
+		btn2.setBounds(415, 300, 80, 40);
+		btn2.setSwitchColor(First.redM);
+		btn2.setRound(999);
 
 		// bottom line
 		JButton defSet = new JButton(idiomaString(language)[8]);
@@ -1168,14 +1042,13 @@ public class FaturaP extends JFrame {
 				op1C.setSelectedIndex(0);// icon
 				FaturaP.this.setIconImage(iconImages[0].getImage());// icon
 				conf[1] = "0";// btn hide
-				btnsHideShow2.setText(idiomaString(language)[10]);// key shortcut
-				btnsHideShow2.setSelected(false);// key shortcut
+				btn1.setOn(false);
+				btn2.setOn(false);
 				conf[3] = "0";// res
-				btnsHideShow3.setText(idiomaString(language)[10]);// autosave
-				btnsHideShow3.setSelected(false);// autosave
 				conf[6] = "1";// speed
 				lang.setSelectedIndex(0);// lan
 				conf[8] = "0";// eff
+				themeCombo.setSelectedIndex(0);
 			}
 		});
 		// SAVE
@@ -1215,14 +1088,16 @@ public class FaturaP extends JFrame {
 					FileWriter savedF = new FileWriter(newFile);
 					savedF.write(op1C.getSelectedIndex() + System.lineSeparator());// icon
 					savedF.write((conf[1].equals("null") ? 0 : conf[1]) + System.lineSeparator());// btn hide
-					savedF.write(btnsHideShow2.isSelected() + System.lineSeparator());// key shortcut
+					savedF.write(!btn1.isOn() + System.lineSeparator());// key shortcut
 					savedF.write((conf[3].equals("null") ? 0 : conf[3]) + System.lineSeparator());// res
-					savedF.write(btnsHideShow3.isSelected() + System.lineSeparator());// autosave
+					savedF.write(!btn2.isOn() + System.lineSeparator());// key shortcut
 					savedF.write((conf[5].equals("null") ? 0 : conf[5]) + System.lineSeparator());// FIRST OPEN
 					savedF.write((conf[6].equals("null") ? 1 : conf[6]) + System.lineSeparator());// SPEED
 					savedF.write(lang.getSelectedIndex() + System.lineSeparator());// lan
 					savedF.write((conf[8].equals("null") ? 0 : conf[8]) + System.lineSeparator());// effchooser
 					savedF.write((conf[9].equals("null") ? "1,1" : conf[9]) + System.lineSeparator());// intro
+					savedF.write(themeCombo.getSelectedIndex() + System.lineSeparator());// theme
+					First.savedCorrectly(language);
 					savedF.close();
 				} catch (Exception e2) {
 					JOptionPane opt = new JOptionPane(
@@ -1252,9 +1127,11 @@ public class FaturaP extends JFrame {
 		temp.add(op2);
 		temp.add(lang);
 		temp.add(op3);
-		temp.add(btnsHideShow2);
+		temp.add(themeColor);
+		temp.add(themeCombo);
+		temp.add(btn1);
 		temp.add(op5);
-		temp.add(btnsHideShow3);
+		temp.add(btn2);
 		temp.add(defSet);
 		temp.add(save);
 		temp.setVisible(true);
@@ -1272,9 +1149,7 @@ public class FaturaP extends JFrame {
 		cambioN.setText(idiomaString(language)[22]);
 		cambioN2.setText(idiomaString(language)[23]);
 		cambioN3.setText(idiomaString(language)[24]);
-		cambioN.setEnabled(false);
-		cambioN2.setEnabled(false);
-		cambioN3.setEnabled(false);
+
 	}
 
 	// Focus for the fatura
@@ -1624,30 +1499,24 @@ public class FaturaP extends JFrame {
 			troco3[1][0].setText("!");
 		}
 		if (cambioN.getText().equals("√")) {
-			cambioN.setEnabled(true);
-			cambioN.addMouseListener(m1);
+			cambioN.setBackground(redC);
 			cambioN.setBorder(First.workM);
 		} else {
-			cambioN.setEnabled(false);
-			cambioN.removeMouseListener(m1);
+			cambioN.setBackground(redD);
 			cambioN.setBorder(First.border);
 		}
 		if (cambioN2.getText().equals("√")) {
-			cambioN2.setEnabled(true);
-			cambioN2.addMouseListener(m2);
+			cambioN2.setBackground(violetC);
 			cambioN2.setBorder(First.workM);
 		} else {
-			cambioN2.setEnabled(false);
-			cambioN2.removeMouseListener(m2);
+			cambioN2.setBackground(violetD);
 			cambioN2.setBorder(First.border);
 		}
 		if (cambioN3.getText().equals("√")) {
-			cambioN3.setEnabled(true);
-			cambioN3.addMouseListener(m3);
+			cambioN3.setBackground(turC);
 			cambioN3.setBorder(First.workM);
 		} else {
-			cambioN3.setEnabled(false);
-			cambioN3.removeMouseListener(m3);
+			cambioN3.setBackground(turD);
 			cambioN3.setBorder(First.border);
 		}
 	}
@@ -2295,7 +2164,7 @@ public class FaturaP extends JFrame {
 		tf.setFont(First.myFont);
 		tf.setBorder(First.border);
 		tf.setHorizontalAlignment(0);
-		tf.setCaretColor(First.darkC);
+		tf.setCaretColor(First.defaultColor);
 		tf.addFocusListener(new FocusListener() {
 			@Override
 			public void focusGained(FocusEvent e) {
@@ -2330,7 +2199,7 @@ public class FaturaP extends JFrame {
 		tf.setFont(First.myFont);
 		tf.setBorder(First.border);
 		tf.setHorizontalAlignment(0);
-		tf.setCaretColor(First.darkC);
+		tf.setCaretColor(First.defaultColor);
 		tf.addFocusListener(new FocusListener() {
 			@Override
 			public void focusGained(FocusEvent e) {
@@ -3691,6 +3560,7 @@ public class FaturaP extends JFrame {
 				, "MOSTRAR LOS BOTONES"// 27
 				, "ARCHIVO"// 28
 				, "IMPRÍMELO"// 29
+				, "TEMA"// THEME16
 		};
 		String[] portugues = { "• CTRL + S → ir para o pesos.\n" + "• CTRL + O → ocultar os botões.\n"
 				+ "• SHIFT → alternar entre as duas tabelas.\n" + "• SETAS → cima, baixo, direita e esquerda.\n",
@@ -3728,6 +3598,7 @@ public class FaturaP extends JFrame {
 				, "MOSTRAR OS BOTÕES"// 27
 				, "ARCHIVO"// 28
 				, "IMPRIMA"// 28
+				, "TEMA"// THEME16
 		};
 		String[] english = {
 				"• CTRL + S → go to pesos.\n" + "• CTRL + O → hide buttons.\n"
@@ -3767,6 +3638,7 @@ public class FaturaP extends JFrame {
 				, "SHOW THE BUTTONS"// 27
 				, "FILE"// 28
 				, "PRINT IT"// 28
+				, "THEME"// THEME16
 		};
 		String[] french = {
 				"• CTRL + S → aller au PESOS.\n" + "• CTRL + O → masquer les boutons.\n"
@@ -3806,6 +3678,7 @@ public class FaturaP extends JFrame {
 				, "AFFICHER LES BOUTONS"// 27
 				, "FICHIER"// 28
 				, "IMPRIMER"// 28
+				, "THÈME"// THEME16
 		};
 		if (idioma == 0)
 			return espanol;

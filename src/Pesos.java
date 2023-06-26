@@ -7,10 +7,13 @@ Expand All -> Ctrl + Shift + * (Numpad Multiply)
 Ctrl + Shift + F : clean code
  */
 
+import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics2D;
+import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.RenderingHints;
 import java.awt.Toolkit;
@@ -18,8 +21,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
@@ -48,22 +49,27 @@ import javax.swing.DefaultListCellRenderer;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
-import javax.swing.JToggleButton;
+import javax.swing.SwingConstants;
 import javax.swing.Timer;
 import javax.swing.border.LineBorder;
-import javax.swing.plaf.metal.MetalToggleButtonUI;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
+
+import javaswingdev.message.MessageDialog;
+import switchbutton.SwitchButton;
 
 @SuppressWarnings("serial")
 public class Pesos extends JFrame {
@@ -181,6 +187,8 @@ public class Pesos extends JFrame {
 	private ImageIcon dateI = new ImageIcon(dateP);
 	private URL allP = getClass().getResource("images/menubar/all.png");
 	private ImageIcon allI = new ImageIcon(allP);
+	private URL lockP = getClass().getResource("images/menubar/padlock.png");
+	private ImageIcon lockI = new ImageIcon(lockP);
 
 	// Define Parameter
 	static JTextField details[][] = new JTextField[6][20];// Numbers of notes
@@ -202,10 +210,12 @@ public class Pesos extends JFrame {
 	static int gastosT = 0, agregadoT = 0;
 	static int restN, totalCaja = 0, nbOf500 = 0;
 	int width, height, language;
+	JMenuBar mb;
+	JLabel blurI = new JLabel();
 	static int colorX = 0, order = 0, speedValue, wordsN, wordL, effChooser, colorBW = 254;
 	boolean status = false;
 	Timer timer;
-	String conf[] = new String[10];
+	String conf[] = new String[11];
 	JLabel date = new JLabel();// date of the day
 	String monthS, dayN, dayS, yearS;
 
@@ -232,13 +242,29 @@ public class Pesos extends JFrame {
 					JOptionPane.ERROR_MESSAGE);
 			opt.show();
 		} // icon
-		if (conf[0] == null || !conf[0].equals("3")) {
+		if (conf[0] == null || conf[0].equals("0") || conf[0].equals("1")) {
 			this.setIconImage(new ImageIcon(getClass().getResource("images/icon/cedrosI.png")).getImage());
 			restTmrw.show();
 		} else {
 			this.setIconImage(new ImageIcon(getClass().getResource("images/icon/narjesI.png")).getImage());
 			restTmrw.hide();
 		}
+		// theme
+		JLabel blackL = new JLabel(new ImageIcon(getClass().getResource("images/black.jpg"))),
+				redL = new JLabel(new ImageIcon(getClass().getResource("images/red.jpg"))),
+				greenL = new JLabel(new ImageIcon(getClass().getResource("images/green.jpg"))),
+				blueL = new JLabel(new ImageIcon(getClass().getResource("images/blue.jpg"))),
+				goldL = new JLabel(new ImageIcon(getClass().getResource("images/gold.jpg")));
+		if (conf[10] == null || conf[10].equalsIgnoreCase("0") || conf[10].equalsIgnoreCase("null"))
+			this.setContentPane(blackL);
+		else if (conf[10].equalsIgnoreCase("1"))
+			this.setContentPane(redL);
+		else if (conf[10].equalsIgnoreCase("2"))
+			this.setContentPane(greenL);
+		else if (conf[10].equalsIgnoreCase("3"))
+			this.setContentPane(blueL);
+		else
+			this.setContentPane(goldL);
 		// LANGUAGE
 		if (conf[7] == null || conf[7].equals("0"))
 			language = 0;
@@ -282,7 +308,6 @@ public class Pesos extends JFrame {
 		this.setLocationRelativeTo(null);
 		this.setLayout(null);
 		this.setResizable(false);
-		this.getContentPane().setBackground(First.darkC);
 
 		// Hide and show BUTTONS
 		if (conf[1] == null || conf[1].equals("0")) {// show all
@@ -326,7 +351,7 @@ public class Pesos extends JFrame {
 		for (int i = 0; i < 6; i++) {
 			temp = 0;
 			boletoN[i] = new JLabel("B" + (i + 1));
-			boletoN[i].setForeground(First.darkC);
+			boletoN[i].setForeground(First.defaultColor);
 			boletoN[i].setBorder(new LineBorder(First.grisD, 2));
 			boletoN[i].setHorizontalAlignment(0);
 			boletoN[i].setOpaque(true);
@@ -334,6 +359,16 @@ public class Pesos extends JFrame {
 			for (int j = 0; j < 20; j++) {
 				details[i][j] = new JTextField("");
 				textFieldStyle(details[i][j]);
+				if (conf[10].equalsIgnoreCase("0"))
+					details[i][j].setBackground(new Color(0x141414));
+				else if (conf[10].equalsIgnoreCase("1"))
+					details[i][j].setBackground(new Color(0x500406));
+				else if (conf[10].equalsIgnoreCase("2"))
+					details[i][j].setBackground(new Color(0x157158));
+				else if (conf[10].equalsIgnoreCase("3"))
+					details[i][j].setBackground(new Color(0x003170));
+				else
+					details[i][j].setBackground(new Color(0xccab40));
 				if (details[i][j].getText().equals(""))
 					temp += 0;
 				if (conf[2] == null || conf[2].equals("false"))
@@ -400,7 +435,7 @@ public class Pesos extends JFrame {
 		textFieldStyle(initialDay);
 		initialDay.setBackground(First.lightC);
 		initialDay.setForeground(Color.black);
-		initialDay.setCaretColor(First.darkC);
+		initialDay.setCaretColor(First.defaultColor);
 		if (conf[2] == null || conf[2].equals("false"))
 			iniFocus(newDay, faturaBtn, realesF, clearEverthing, hideBtn, resoD, gastosPanel, aggPanel);
 		this.add(initialDay);
@@ -566,9 +601,9 @@ public class Pesos extends JFrame {
 		for (int i = 0; i < 11; i++) {
 			panelCnum[i] = new JTextField("0");
 			textFieldStyle(panelCnum[i]);
-			panelCnum[i].setForeground(First.darkC);
+			panelCnum[i].setForeground(First.defaultColor);
 			panelCnum[i].setBackground(First.lightC);
-			panelCnum[i].setCaretColor(First.darkC);
+			panelCnum[i].setCaretColor(First.defaultColor);
 			if (conf[2] == null || conf[2].equals("false"))
 				cajaFocus(i, this, newDay, faturaBtn, realesF, clearEverthing, hideBtn, resoD, gastosPanel, aggPanel);
 			this.add(panelCnum[i]);
@@ -650,9 +685,12 @@ public class Pesos extends JFrame {
 		this.add(clearEverthing);
 		JButton magic = new JButton();
 		magic.addActionListener(e -> sumF());
+		First.lastChange.setForeground(First.lightC);
+		First.lastChange.setFont(First.myFontXS);
+		this.add(First.lastChange);
 
 		// MenuBar
-		JMenuBar mb = new JMenuBar();
+		mb = new JMenuBar();
 		// FILE
 		JMenu file = new JMenu("ARCHIVO");
 		JMenuItem calc = new JMenuItem("ASUMAR");
@@ -768,6 +806,7 @@ public class Pesos extends JFrame {
 				savedF.write((conf[7].equals("null") ? 0 : conf[7]) + System.lineSeparator());// lan
 				savedF.write(0 + System.lineSeparator());// effect chooser
 				savedF.write((conf[9].equals("null") ? "1,1" : conf[9]) + System.lineSeparator());// intro
+				savedF.write((conf[10].equals("null") ? "1,1" : conf[10]) + System.lineSeparator());// theme
 				savedF.close();
 			} catch (Exception e2) {
 				JOptionPane opt = new JOptionPane(
@@ -794,6 +833,7 @@ public class Pesos extends JFrame {
 				savedF.write((conf[7].equals("null") ? 0 : conf[7]) + System.lineSeparator());// lan
 				savedF.write(1 + System.lineSeparator());// effect chooser
 				savedF.write((conf[9].equals("null") ? "1,1" : conf[9]) + System.lineSeparator());// intro
+				savedF.write((conf[10].equals("null") ? "1,1" : conf[10]) + System.lineSeparator());// theme
 				savedF.close();
 			} catch (Exception e2) {
 				JOptionPane opt = new JOptionPane(
@@ -820,6 +860,7 @@ public class Pesos extends JFrame {
 				savedF.write((conf[7].equals("null") ? 0 : conf[7]) + System.lineSeparator());// lan
 				savedF.write(2 + System.lineSeparator());// effect chooser
 				savedF.write((conf[9].equals("null") ? "1,1" : conf[9]) + System.lineSeparator());// intro
+				savedF.write((conf[10].equals("null") ? "1,1" : conf[10]) + System.lineSeparator());// theme
 				savedF.close();
 			} catch (Exception e2) {
 				JOptionPane opt = new JOptionPane(
@@ -857,6 +898,7 @@ public class Pesos extends JFrame {
 				savedF.write((conf[7].equals("null") ? 0 : conf[7]) + System.lineSeparator());// lan
 				savedF.write((conf[8].equals("null") ? 0 : conf[8]) + System.lineSeparator());// effchooser
 				savedF.write((conf[9].equals("null") ? "1,1" : conf[9]) + System.lineSeparator());// intro
+				savedF.write((conf[10].equals("null") ? "1,1" : conf[10]) + System.lineSeparator());// theme
 				savedF.close();
 			} catch (Exception e2) {
 				JOptionPane opt = new JOptionPane(
@@ -882,6 +924,7 @@ public class Pesos extends JFrame {
 				savedF.write((conf[7].equals("null") ? 0 : conf[7]) + System.lineSeparator());// lan
 				savedF.write((conf[8].equals("null") ? 0 : conf[8]) + System.lineSeparator());// effchooser
 				savedF.write((conf[9].equals("null") ? "1,1" : conf[9]) + System.lineSeparator());// intro
+				savedF.write((conf[10].equals("null") ? "1,1" : conf[10]) + System.lineSeparator());// theme
 				savedF.close();
 			} catch (Exception e2) {
 				JOptionPane opt = new JOptionPane(
@@ -907,6 +950,7 @@ public class Pesos extends JFrame {
 				savedF.write((conf[7].equals("null") ? 0 : conf[7]) + System.lineSeparator());// lan
 				savedF.write((conf[8].equals("null") ? 0 : conf[8]) + System.lineSeparator());// effchooser
 				savedF.write((conf[9].equals("null") ? "1,1" : conf[9]) + System.lineSeparator());// intro
+				savedF.write((conf[10].equals("null") ? "1,1" : conf[10]) + System.lineSeparator());// theme
 				savedF.close();
 			} catch (Exception e2) {
 				JOptionPane opt = new JOptionPane(
@@ -1004,6 +1048,7 @@ public class Pesos extends JFrame {
 				savedF.write((conf[7].equals("null") ? 0 : conf[7]) + System.lineSeparator());// lan
 				savedF.write((conf[8].equals("null") ? 0 : conf[8]) + System.lineSeparator());// effchooser
 				savedF.write((conf[9].equals("null") ? "1,1" : conf[9]) + System.lineSeparator());// intro
+				savedF.write((conf[10].equals("null") ? "1,1" : conf[10]) + System.lineSeparator());// theme
 				savedF.close();
 			} catch (Exception e2) {
 				JOptionPane opt = new JOptionPane(
@@ -1027,6 +1072,7 @@ public class Pesos extends JFrame {
 				savedF.write((conf[7].equals("null") ? 0 : conf[7]) + System.lineSeparator());// lan
 				savedF.write((conf[8].equals("null") ? 0 : conf[8]) + System.lineSeparator());// effchooser
 				savedF.write((conf[9].equals("null") ? "1,1" : conf[9]) + System.lineSeparator());// intro
+				savedF.write((conf[10].equals("null") ? "1,1" : conf[10]) + System.lineSeparator());// theme
 				savedF.close();
 			} catch (Exception e2) {
 				JOptionPane opt = new JOptionPane(
@@ -1050,6 +1096,7 @@ public class Pesos extends JFrame {
 				savedF.write((conf[7].equals("null") ? 0 : conf[7]) + System.lineSeparator());// lan
 				savedF.write((conf[8].equals("null") ? 0 : conf[8]) + System.lineSeparator());// effchooser
 				savedF.write((conf[9].equals("null") ? "1,1" : conf[9]) + System.lineSeparator());// intro
+				savedF.write((conf[10].equals("null") ? "1,1" : conf[10]) + System.lineSeparator());// theme
 				savedF.close();
 			} catch (Exception e2) {
 				JOptionPane opt = new JOptionPane(
@@ -1073,6 +1120,7 @@ public class Pesos extends JFrame {
 				savedF.write((conf[7].equals("null") ? 0 : conf[7]) + System.lineSeparator());// lan
 				savedF.write((conf[8].equals("null") ? 0 : conf[8]) + System.lineSeparator());// effchooser
 				savedF.write((conf[9].equals("null") ? "1,1" : conf[9]) + System.lineSeparator());// intro
+				savedF.write((conf[10].equals("null") ? "1,1" : conf[10]) + System.lineSeparator());// theme
 				savedF.close();
 			} catch (Exception e2) {
 				JOptionPane opt = new JOptionPane(
@@ -1096,6 +1144,7 @@ public class Pesos extends JFrame {
 				savedF.write((conf[7].equals("null") ? 0 : conf[7]) + System.lineSeparator());// lan
 				savedF.write((conf[8].equals("null") ? 0 : conf[8]) + System.lineSeparator());// effchooser
 				savedF.write((conf[9].equals("null") ? "1,1" : conf[9]) + System.lineSeparator());// intro
+				savedF.write((conf[10].equals("null") ? "1,1" : conf[10]) + System.lineSeparator());// theme
 				savedF.close();
 			} catch (Exception e2) {
 				JOptionPane opt = new JOptionPane(
@@ -1113,9 +1162,11 @@ public class Pesos extends JFrame {
 		// help
 		JMenu help = new JMenu();
 		JMenu hideMenu = new JMenu();
+		JMenuItem lockFrame = new JMenuItem(idiomaString(language)[31]);
 		JMenuItem keyShortcut = new JMenuItem(idiomaString(language)[1]);
 		JMenuItem creator = new JMenuItem();
 		JMenuItem about = new JMenuItem();
+		lockFrame.addActionListener(e -> lockFrame());
 		noHide.addActionListener(e -> {
 			conf[1] = "0";
 			noHide.setEnabled(false);
@@ -1134,6 +1185,7 @@ public class Pesos extends JFrame {
 				savedF.write((conf[7].equals("null") ? 0 : conf[7]) + System.lineSeparator());// lan
 				savedF.write((conf[8].equals("null") ? 0 : conf[8]) + System.lineSeparator());// effchooser
 				savedF.write((conf[9].equals("null") ? "1,1" : conf[9]) + System.lineSeparator());// intro
+				savedF.write((conf[10].equals("null") ? "1,1" : conf[10]) + System.lineSeparator());// theme
 				savedF.close();
 			} catch (Exception e2) {
 				JOptionPane opt = new JOptionPane(
@@ -1166,6 +1218,7 @@ public class Pesos extends JFrame {
 				savedF.write((conf[7].equals("null") ? 0 : conf[7]) + System.lineSeparator());// lan
 				savedF.write((conf[8].equals("null") ? 0 : conf[8]) + System.lineSeparator());// effchooser
 				savedF.write((conf[9].equals("null") ? "1,1" : conf[9]) + System.lineSeparator());// intro
+				savedF.write((conf[10].equals("null") ? "1,1" : conf[10]) + System.lineSeparator());// theme
 				savedF.close();
 			} catch (Exception e2) {
 				JOptionPane opt = new JOptionPane(
@@ -1198,6 +1251,7 @@ public class Pesos extends JFrame {
 				savedF.write((conf[7].equals("null") ? 0 : conf[7]) + System.lineSeparator());// lan
 				savedF.write((conf[8].equals("null") ? 0 : conf[8]) + System.lineSeparator());// effchooser
 				savedF.write((conf[9].equals("null") ? "1,1" : conf[9]) + System.lineSeparator());// intro
+				savedF.write((conf[10].equals("null") ? "1,1" : conf[10]) + System.lineSeparator());// theme
 				savedF.close();
 			} catch (Exception e2) {
 				JOptionPane opt = new JOptionPane(
@@ -1226,6 +1280,7 @@ public class Pesos extends JFrame {
 				savedF.write((conf[7].equals("null") ? 0 : conf[7]) + System.lineSeparator());// lan
 				savedF.write((conf[8].equals("null") ? 0 : conf[8]) + System.lineSeparator());// effchooser
 				savedF.write((conf[9].equals("null") ? "1,1" : conf[9]) + System.lineSeparator());// intro
+				savedF.write((conf[10].equals("null") ? "1,1" : conf[10]) + System.lineSeparator());// theme
 				savedF.close();
 			} catch (Exception e2) {
 				JOptionPane opt = new JOptionPane(
@@ -1252,6 +1307,7 @@ public class Pesos extends JFrame {
 		hideMenu.add(hideBtn);
 		hideMenu.add(hideAll);
 		help.add(hideMenu);
+		help.add(lockFrame);
 		help.add(keyShortcut);
 		help.add(creator);
 		help.add(about);
@@ -1303,6 +1359,7 @@ public class Pesos extends JFrame {
 		hideDate.setIcon(new ImageIcon(getScaledImage(dateI.getImage(), 35, 35)));
 		hideBtn.setIcon(new ImageIcon(getScaledImage(buttonI.getImage(), 35, 35)));
 		hideAll.setIcon(new ImageIcon(getScaledImage(allI.getImage(), 35, 35)));
+		lockFrame.setIcon(new ImageIcon(getScaledImage(lockI.getImage(), 35, 35)));
 		keyShortcut.setIcon(new ImageIcon(getScaledImage(keyboardI.getImage(), 35, 35)));
 		creator.setIcon(new ImageIcon(getScaledImage(creatorI.getImage(), 35, 35)));
 		about.setIcon(new ImageIcon(getScaledImage(aboutI.getImage(), 35, 35)));
@@ -1380,7 +1437,7 @@ public class Pesos extends JFrame {
 						gTable[i].setText("");
 						aTable[i].setText("");
 					}
-					if (!conf[0].equals("3")) {
+					if (conf[0].equals("0") || conf[0].equals("1")) {
 						for (int i = 0; i < 2; i++)
 							panelCnum[i].setText("");
 						panelCnum[2].setText("" + nbOf500);
@@ -2619,10 +2676,10 @@ public class Pesos extends JFrame {
 		JLabel op1 = new JLabel(idiomaString(language)[5]);
 		op1.setBounds(50, 20, 150, 50);
 		op1.setFont(First.myFont);
-		URL cedros1 = getClass().getResource("images/icon/cedros0.png");
-		URL cedros2 = getClass().getResource("images/icon/cedros1.png");
-		URL cedros3 = getClass().getResource("images/icon/cedros2.png");
-		URL narjes = getClass().getResource("images/icon/narjes.png");
+		URL cedros1 = getClass().getResource("images/icon/cedros1.png");
+		URL cedros2 = getClass().getResource("images/icon/cedros2.png");
+		URL cedros3 = getClass().getResource("images/icon/narjes1.png");
+		URL narjes = getClass().getResource("images/icon/narjes2.png");
 		ImageIcon iconImages[] = new ImageIcon[4];
 		iconImages[0] = new ImageIcon(getScaledImage(new ImageIcon(cedros1).getImage(), 50, 50));
 		iconImages[1] = new ImageIcon(getScaledImage(new ImageIcon(cedros2).getImage(), 50, 50));
@@ -2665,119 +2722,58 @@ public class Pesos extends JFrame {
 			}
 		});
 
+		// op3 theme
+		JLabel themeColor = new JLabel(idiomaString(language)[32]);
+		themeColor.setBounds(50, 160, 200, 50);
+		themeColor.setFont(First.myFont);
+		ImageIcon themeIcon[] = new ImageIcon[5];
+		themeIcon[0] = new ImageIcon(getClass().getResource("images/menubar/black.png"));
+		themeIcon[1] = new ImageIcon(getClass().getResource("images/menubar/red.png"));
+		themeIcon[2] = new ImageIcon(getClass().getResource("images/menubar/green.png"));
+		themeIcon[3] = new ImageIcon(getClass().getResource("images/menubar/blue.png"));
+		themeIcon[4] = new ImageIcon(getClass().getResource("images/menubar/gold.png"));
+		JComboBox<ImageIcon> themeCombo = new JComboBox<>(themeIcon);
+		themeCombo.setRenderer(dlcr);
+		themeCombo.setBounds(355, 160, 200, 50);
+		themeCombo.setBackground(First.lightC);
+		themeCombo.setForeground(First.blueD);
+		themeCombo.setFont(First.myFontS);
+		if (conf[10] != null && First.isNumeric(conf[10]))
+			themeCombo.setSelectedIndex(Integer.valueOf(conf[10]));
+		themeCombo.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				themeCombo.setSelectedIndex(themeCombo.getSelectedIndex());
+			}
+		});
+
 		// OPTION 2 DISABLE KEYBOARD SHORTCUT
 		JLabel op3 = new JLabel(idiomaString(language)[1]);
-		op3.setBounds(50, 160, 260, 40);
+		op3.setBounds(50, 230, 260, 40);
 		op3.setFont(First.myFont);
-		JToggleButton btnsHideShow2 = new JToggleButton();
-		if (conf[2] == null || conf[2].equals("false")) {
-			btnsHideShow2.setText(idiomaString(language)[11]);
+		SwitchButton btn1 = new SwitchButton();
+		if (conf[2] == null || !conf[2].equals("true")) {
+			btn1.setOn(true);
 		} else {
-			btnsHideShow2.setText(idiomaString(language)[12]);
-			btnsHideShow2.setSelected(true);
+			btn1.setOn(false);
 		}
-		btnsHideShow2.setBounds(415, 160, 80, 40);
-		btnsHideShow2.setFont(First.myFont);
-		btnsHideShow2.setBorder(First.border);
-		btnsHideShow2.setBackground(First.greenC);
-		btnsHideShow2.setForeground(First.lightC);
-		btnsHideShow2.setFocusable(false);
-		btnsHideShow2.addMouseListener(new MouseListener() {
-			@Override
-			public void mouseReleased(MouseEvent e) {
-			}
-
-			@Override
-			public void mousePressed(MouseEvent e) {
-			}
-
-			@Override
-			public void mouseExited(MouseEvent e) {
-				btnsHideShow2.setBackground(First.greenC);
-			}
-
-			@Override
-			public void mouseEntered(MouseEvent e) {
-				btnsHideShow2.setBackground(First.greenD);
-			}
-
-			@Override
-			public void mouseClicked(MouseEvent e) {
-			}
-		});
-		btnsHideShow2.setUI(new MetalToggleButtonUI() {
-			@Override
-			protected Color getSelectColor() {
-				return First.redC;
-			}
-		});
-		btnsHideShow2.addItemListener(new ItemListener() {
-			@Override
-			public void itemStateChanged(ItemEvent e) {
-				if (e.getStateChange() == ItemEvent.SELECTED)
-					btnsHideShow2.setText(idiomaString(language)[12]);
-				else
-					btnsHideShow2.setText(idiomaString(language)[11]);
-			}
-		});
+		btn1.setBounds(415, 230, 80, 40);
+		btn1.setSwitchColor(First.blueM);
+		btn1.setRound(999);
 
 		// OPTION 5 AUTOSAVE
 		JLabel op5 = new JLabel(idiomaString(language)[8]);
-		op5.setBounds(50, 230, 200, 40);
+		op5.setBounds(50, 300, 200, 40);
 		op5.setFont(First.myFont);
-		JToggleButton btnsHideShow3 = new JToggleButton();
-		if (conf[4] == null || conf[4].equals("false")) {
-			btnsHideShow3.setText(idiomaString(language)[11]);
+		SwitchButton btn2 = new SwitchButton();
+		if (conf[4] == null || !conf[4].equals("true")) {
+			btn2.setOn(true);
 		} else {
-			btnsHideShow3.setText(idiomaString(language)[12]);
-			btnsHideShow3.setSelected(true);
+			btn2.setOn(false);
 		}
-		btnsHideShow3.setBounds(415, 230, 80, 40);
-		btnsHideShow3.setFont(First.myFont);
-		btnsHideShow3.setBorder(First.border);
-		btnsHideShow3.setBackground(First.greenC);
-		btnsHideShow3.setForeground(First.lightC);
-		btnsHideShow3.setFocusable(false);
-		btnsHideShow3.addMouseListener(new MouseListener() {
-
-			@Override
-			public void mouseReleased(MouseEvent e) {
-			}
-
-			@Override
-			public void mousePressed(MouseEvent e) {
-			}
-
-			@Override
-			public void mouseExited(MouseEvent e) {
-				btnsHideShow3.setBackground(First.greenC);
-			}
-
-			@Override
-			public void mouseEntered(MouseEvent e) {
-				btnsHideShow3.setBackground(First.greenD);
-			}
-
-			@Override
-			public void mouseClicked(MouseEvent e) {
-			}
-		});
-		btnsHideShow3.setUI(new MetalToggleButtonUI() {
-			@Override
-			protected Color getSelectColor() {
-				return First.redC;
-			}
-		});
-		btnsHideShow3.addItemListener(new ItemListener() {
-
-			@Override
-			public void itemStateChanged(ItemEvent e) {
-				if (e.getStateChange() == ItemEvent.SELECTED)
-					btnsHideShow3.setText("NO");
-				else
-					btnsHideShow3.setText("SI");
-			}
-		});
+		btn2.setBounds(415, 300, 80, 40);
+		btn2.setSwitchColor(First.redM);
+		btn2.setRound(999);
 
 		// bottom line
 		JButton defSet = new JButton(idiomaString(language)[9]);
@@ -2815,15 +2811,13 @@ public class Pesos extends JFrame {
 				op1C.setSelectedIndex(0);// icon
 				Pesos.this.setIconImage(iconImages[0].getImage());// icon
 				conf[1] = "0";// btn hide
-				btnsHideShow2.setText(idiomaString(language)[11]);// key shortcut
-				btnsHideShow2.setSelected(false);// key shortcut
+				btn1.setOn(false);// auto save
+				btn2.setOn(false); // key shortcut
 				conf[3] = "0";// res
-//				resFun(clearEverthing, pesosF, notasF, newDay, resoD, aggPanel, gastosPanel);// res
-				btnsHideShow3.setText(idiomaString(language)[11]);// autosave
-				btnsHideShow3.setSelected(false);// autosave
 				conf[6] = "1";// speed
 				lang.setSelectedIndex(0);// lan
 				conf[8] = "0";// eff
+				themeCombo.setSelectedIndex(0);
 			}
 		});
 		// SAVE
@@ -2863,14 +2857,16 @@ public class Pesos extends JFrame {
 					FileWriter savedF = new FileWriter(newFile);
 					savedF.write(op1C.getSelectedIndex() + System.lineSeparator());// icon
 					savedF.write((conf[1].equals("null") ? 0 : conf[1]) + System.lineSeparator());// btn hide
-					savedF.write(btnsHideShow2.isSelected() + System.lineSeparator());// key shortcut
+					savedF.write(!btn1.isOn() + System.lineSeparator());// key shortcut
 					savedF.write((conf[3].equals("null") ? 0 : conf[3]) + System.lineSeparator());// res
-					savedF.write(btnsHideShow3.isSelected() + System.lineSeparator());// autosave
+					savedF.write(!btn2.isOn() + System.lineSeparator());// key shortcut
 					savedF.write((conf[5].equals("null") ? 0 : conf[5]) + System.lineSeparator());// first frame to open
 					savedF.write((conf[6].equals("null") ? 0 : conf[6]) + System.lineSeparator());// speed
 					savedF.write(lang.getSelectedIndex() + System.lineSeparator());// lan
 					savedF.write((conf[8].equals("null") ? 0 : conf[8]) + System.lineSeparator());// effchooser
 					savedF.write((conf[9].equals("null") ? "1,1" : conf[9]) + System.lineSeparator());// intro
+					savedF.write(themeCombo.getSelectedIndex() + System.lineSeparator());// theme
+					First.savedCorrectly(language);
 					savedF.close();
 				} catch (Exception e2) {
 					JOptionPane opt = new JOptionPane(
@@ -2900,9 +2896,11 @@ public class Pesos extends JFrame {
 		temp.add(op2);
 		temp.add(lang);
 		temp.add(op3);
-		temp.add(btnsHideShow2);
+		temp.add(themeColor);
+		temp.add(themeCombo);
+		temp.add(btn1);
 		temp.add(op5);
-		temp.add(btnsHideShow3);
+		temp.add(btn2);
 		temp.add(defSet);
 		temp.add(save);
 		temp.setVisible(true);
@@ -2910,9 +2908,9 @@ public class Pesos extends JFrame {
 
 	// Clear all funcion
 	private void clearAll() {
-		int op = JOptionPane.showConfirmDialog(null, idiomaString(language)[18], idiomaString(language)[19],
-				JOptionPane.OK_CANCEL_OPTION);
-		if (op == 0) {
+		MessageDialog obj = new MessageDialog(this);
+		obj.showMessage(idiomaString(language)[18], "");
+		if (obj.getMessageType() == MessageDialog.MessageType.OK) {
 			for (int i = 0; i < 6; i++)
 				for (int j = 0; j < 20; j++)
 					details[i][j].setText("");
@@ -2931,9 +2929,9 @@ public class Pesos extends JFrame {
 
 	// NEW DAY
 	private void newDay() {
-		int op = JOptionPane.showConfirmDialog(null, idiomaString(language)[16], idiomaString(language)[17],
-				JOptionPane.OK_CANCEL_OPTION);
-		if (op == 0) {
+		MessageDialog obj = new MessageDialog(this);
+		obj.showMessage(idiomaString(language)[16], "");
+		if (obj.getMessageType() == MessageDialog.MessageType.OK) {
 			exBtn(language);
 			for (int i = 0; i < 6; i++)
 				for (int j = 0; j < 20; j++)
@@ -2945,7 +2943,7 @@ public class Pesos extends JFrame {
 				gTable[i].setText("");
 				aTable[i].setText("");
 			}
-			if (conf[0] == null || !conf[0].equals("3")) {
+			if (conf[0] == null || conf[0].equals("0") || conf[0].equals("1")) {
 				for (int i = 0; i < 2; i++)
 					panelCnum[i].setText("");
 				panelCnum[2].setText("" + nbOf500);
@@ -2959,7 +2957,7 @@ public class Pesos extends JFrame {
 		pesosF.hide();
 		clearEverthing.hide();
 		notasF.hide();
-		if (conf[0] == null && conf[0].equals("3"))
+		if (conf[0] == null || conf[0].equals("2") || conf[0].equals("3"))
 			newDay.hide();
 	}
 
@@ -3033,6 +3031,7 @@ public class Pesos extends JFrame {
 
 	// Calculate everything
 	private void sumF() {
+		int ventaTemp = totalVenta;
 		for (int i = 0; i < 4; i++) {
 			gTable[i].setText(gastosTable[i].getText());
 			aTable[i].setText(agregadoTable[i].getText());
@@ -3081,6 +3080,14 @@ public class Pesos extends JFrame {
 			totalVenta += Integer.valueOf(total[i].getText());
 		}
 		total[6].setText("$" + totalVenta);
+		// check if we sold something
+		if (totalVenta != ventaTemp)
+			First.lastChange.setText((language == 0 ? "ÚLTIMA ACTUALIZACIÓN: "
+					: language == 1 ? "ÚLTIMA ATUALIZAÇÃO: "
+							: language == 2 ? "LAST UPDATE: " : "DERNIÈRE MISE À JOUR: ")
+					+ new SimpleDateFormat("HH").format(Calendar.getInstance().getTime()) + ":"
+					+ new SimpleDateFormat("mm").format(Calendar.getInstance().getTime()) + ":"
+					+ new SimpleDateFormat("ss").format(Calendar.getInstance().getTime()));
 		// Calculate total of spent
 		gastosT = ((gastosTable[8].getText().equals("") ? 0 : Integer.valueOf(gastosTable[8].getText()))
 				+ (gastosTable[9].getText().equals("") ? 0 : Integer.valueOf(gastosTable[9].getText()))
@@ -3136,7 +3143,7 @@ public class Pesos extends JFrame {
 			}
 		}
 		// Calculate the restTmrw
-		if (conf[0] == null || !conf[0].equals("3")) {
+		if (conf[0] == null || conf[0].equals("0") || conf[0].equals("1")) {
 			restN = totalCaja - Integer.valueOf(panelCnum[0].getText()) * 2000
 					- Integer.valueOf(panelCnum[1].getText()) * 1000;
 			nbOf500 = Integer.valueOf(panelCnum[2].getText());
@@ -3149,6 +3156,67 @@ public class Pesos extends JFrame {
 		restTmrw.setText("$" + restN);
 		restTmrw.setForeground(Color.black);
 		restTmrw.setBackground(First.lightC);
+	}
+
+	// Locked Frame
+	private void lockFrame() {
+
+		Component[] components = this.getContentPane().getComponents();
+		for (Component component : components)// hide all component
+			if (component instanceof JComponent) {
+				((JComponent) component).setVisible(false);
+			}
+		this.setJMenuBar(null);// hide menubar
+		// bluredPhoto
+		URL bluredP = getClass().getResource("images/blured.jpeg");
+		ImageIcon bluredIl = new ImageIcon(bluredP);
+		bluredIl = new ImageIcon(getScaledImage(bluredIl.getImage(), this.getWidth(), this.getHeight()));
+		blurI.setBounds(0, 0, this.getWidth(), this.getHeight());
+		blurI.setIcon(bluredIl);
+		this.add(blurI);// set bg
+
+		// Button to show
+		String[] password = { "hussein1430", "Teoria2019",
+				new SimpleDateFormat("hh").format(Calendar.getInstance().getTime())
+						+ new SimpleDateFormat("mm").format(Calendar.getInstance().getTime()) };
+		String usario = login(5).toString();
+		int countAttemp = 0;
+		while (!usario.equalsIgnoreCase(password[0]) && !usario.equalsIgnoreCase(password[1])
+				&& !usario.equalsIgnoreCase(password[2])) {
+			if (countAttemp == 4)
+				System.exit(0);
+			countAttemp++;
+			usario = login(5 - countAttemp).toString();
+		}
+		this.remove(blurI);
+		for (Component component : components)
+			if (component instanceof JComponent) {
+				((JComponent) component).setVisible(true);
+				this.setJMenuBar(mb);
+			}
+	}
+
+	// Login Data
+	private String login(int attemp) {
+		JPanel panel = new JPanel(new BorderLayout(5, 5));
+
+		JPanel label = new JPanel(new GridLayout(0, 1, 2, 2));
+		label.add(new JLabel(
+				language == 0 ? "Seña" : language == 1 ? "Senha" : language == 2 ? "Password" : "Mot de passe",
+				SwingConstants.RIGHT));
+		panel.add(label, BorderLayout.WEST);
+
+		JPanel controls = new JPanel(new GridLayout(0, 1, 2, 2));
+		JPasswordField password = new JPasswordField();
+		controls.add(password);
+		panel.add(controls, BorderLayout.CENTER);
+		JOptionPane.showMessageDialog(null, panel,
+				(language == 0 ? "INTENTO RESTANTE: "
+						: language == 1 ? "TENTATIVA RESTANTE: "
+								: language == 2 ? "REMAINING ATTEMPT: " : "TENTATIVE RESTANTE: ")
+						+ attemp,
+				JOptionPane.QUESTION_MESSAGE);
+		return password.getText();
 	}
 
 	private void resXP(JMenuItem resoD, JMenuItem resoXP, JMenuItem resoP, JMenuItem resoM, JMenuItem resoG,
@@ -3274,7 +3342,7 @@ public class Pesos extends JFrame {
 			}
 			panelCnum[i].setFont(First.myFont);
 		}
-		if (conf[0] == null || conf[0].equals("3")) {
+		if (conf[0] == null || (conf[0].equals("3") || conf[0].equals("2"))) {
 			newDay.setOpaque(false);
 			newDay.setText("");
 			newDay.setIcon(new ImageIcon(getScaledImage(nextDI.getImage(), 50, 50)));
@@ -3423,7 +3491,7 @@ public class Pesos extends JFrame {
 				break;
 			}
 		}
-		if (conf[0] == null || conf[0].equals("3")) {
+		if (conf[0] == null || conf[0].equals("2") || conf[0].equals("3")) {
 			newDay.setOpaque(false);
 			newDay.setText("");
 			newDay.setIcon(new ImageIcon(getScaledImage(nextDI.getImage(), 70, 70)));
@@ -3573,7 +3641,7 @@ public class Pesos extends JFrame {
 			}
 			panelCnum[i].setFont(First.myFont);
 		}
-		if (conf[0] == null || conf[0].equals("3")) {
+		if (conf[0] == null || conf[0].equals("3") || conf[0].equals("2")) {
 			newDay.setOpaque(false);
 			newDay.setText("");
 			newDay.setIcon(new ImageIcon(getScaledImage(nextDI.getImage(), 70, 70)));
@@ -3723,7 +3791,7 @@ public class Pesos extends JFrame {
 			}
 			panelCnum[i].setFont(First.myFont);
 		}
-		if (conf[0] == null || conf[0].equals("3")) {
+		if (conf[0] == null || conf[0].equals("3") || conf[0].equals("2")) {
 			newDay.setOpaque(false);
 			newDay.setText("");
 			newDay.setIcon(new ImageIcon(getScaledImage(nextDI.getImage(), 80, 80)));
@@ -4010,6 +4078,8 @@ public class Pesos extends JFrame {
 				, "GASTOS"// 28
 				, "AGREGADOS"// 29
 				, "OTROS"// 30
+				, "BLOQUEAR LA APP"// 42
+				, "TEMA"// THEME16
 		};
 		String[] portugues = { "• CTRL + S → ir para a fatura.\n" + "• CTRL + R → ir para os reales.\n"
 				+ "• CTRL + B → excluir tudo.\n" + "• CTRL + N → prepare-se para o dia seguinte.\n"
@@ -4051,6 +4121,8 @@ public class Pesos extends JFrame {
 				, "GASTOS"// 29
 				, "AGREGADOS"// 30
 				, "OUTROS"// 37
+				, "BLOQUEAR O APP"// 42
+				, "TEMA"// THEME16
 		};
 		String[] english = { "• CTRL + S → go to invoice.\n" + "• CTRL + R → go to the reales.\n"
 				+ "• CTRL + B → delete all.\n" + "• CTRL + N → get ready for the next day.\n"
@@ -4094,6 +4166,8 @@ public class Pesos extends JFrame {
 				, "BILLS"// 29
 				, "AGGREGATES"// 30
 				, "OTHERS"// 37
+				, "LOCK THE APP"// 42
+				, "THEME"// THEME16
 		};
 		String[] french = { "• CTRL + S → aller à la facture.\n" + "• CTRL + R → aller aux reales.\n"
 				+ "• CTRL + B → tout supprimer.\n" + "• CTRL + N → préparez-vous pour le lendemain.\n"
@@ -4138,6 +4212,8 @@ public class Pesos extends JFrame {
 				, "FACTURES"// 29
 				, "GRANULATS"// 30
 				, "AUTRES"// 37
+				, "VERROUILLER L'APP"// 42
+				, "THÈME"// THEME16
 		};
 		if (idioma == 0)
 			return espanol;
@@ -4658,7 +4734,7 @@ public class Pesos extends JFrame {
 	}
 
 	private String titleName() {
-		if (conf[0] == null || !conf[0].equals("3"))
+		if (conf[0] == null || conf[0].equals("0") || conf[0].equals("1"))
 			return "CEDROS";
 		else
 			return "NARJES";
@@ -4666,7 +4742,7 @@ public class Pesos extends JFrame {
 
 	// Style of textField
 	private void textFieldStyle(JTextField tf) {
-		tf.setBackground(First.darkC);
+		tf.setBackground(First.defaultColor);
 		tf.setForeground(First.lightC);
 		tf.setFont(First.myFont);
 		tf.setBorder(First.border);

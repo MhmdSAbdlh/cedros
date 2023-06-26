@@ -7,11 +7,14 @@ Expand All -> Ctrl + Shift + * (Numpad Multiply)
 Ctrl + Shift + F : clean code
  */
 
+import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Graphics2D;
+import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.RenderingHints;
 import java.awt.Toolkit;
@@ -19,8 +22,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
@@ -50,25 +51,29 @@ import javax.swing.DefaultListCellRenderer;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
-import javax.swing.JDialog;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
-import javax.swing.JToggleButton;
+import javax.swing.SwingConstants;
 import javax.swing.Timer;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
-import javax.swing.plaf.metal.MetalToggleButtonUI;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
+
+import javaswingdev.message.MessageDialog;
+import raven.toast.Notifications;
+import switchbutton.SwitchButton;
 
 @SuppressWarnings("serial")
 public class Reales extends JFrame {
@@ -195,6 +200,8 @@ public class Reales extends JFrame {
 	private ImageIcon monthlyI = new ImageIcon(monthlyP);
 	private URL yearP = getClass().getResource("images/menubar/year.png");
 	private ImageIcon yearI = new ImageIcon(yearP);
+	private URL lockP = getClass().getResource("images/menubar/padlock.png");
+	private ImageIcon lockI = new ImageIcon(lockP);
 	// months
 	private URL monthP[] = new URL[12];
 	private ImageIcon monthI[] = new ImageIcon[12];
@@ -227,18 +234,19 @@ public class Reales extends JFrame {
 	static int colorX = 0, order = 0, speedValue, wordsN, wordL, effChooser, colorBW = 254;
 	boolean status = false;
 	Timer timer;
-	String conf[] = new String[10];
+	String conf[] = new String[11];
 	// date
 	JLabel dateLabel = new JLabel();
 	DateModified currentDate;
 	String dayN = new SimpleDateFormat("dd").format(Calendar.getInstance().getTime());
 	String yearS = new SimpleDateFormat("yyyy").format(Calendar.getInstance().getTime());
-	String monthS, dayS, lastChanged;
+	String monthS, dayS;
 	int dayReturned = 1, monthReturned = 1, value22;
 	int sameDayAvg, dailyAvg, monthlyAvg, dailyAvg22;
 	ArrayList<String> con23 = new ArrayList<String>();
 	ArrayList<String> con22 = new ArrayList<String>();
-	JLabel lastChange = new JLabel();
+	JMenuBar mb;
+	JLabel blurI = new JLabel();
 
 	String currentpath = System.getProperty("user.dir");
 	File tempFile0 = new File(currentpath + "\\data");
@@ -270,10 +278,26 @@ public class Reales extends JFrame {
 					JOptionPane.ERROR_MESSAGE);
 			opt.show();
 		} // icon
-		if (conf[0] == null || !conf[0].equals("3"))
+		if (conf[0] == null || conf[0].equals("0") || conf[0].equals("1"))
 			this.setIconImage(new ImageIcon(getClass().getResource("images/icon/cedrosI.png")).getImage());
 		else
 			this.setIconImage(new ImageIcon(getClass().getResource("images/icon/narjesI.png")).getImage());
+		// theme
+		JLabel blackL = new JLabel(new ImageIcon(getClass().getResource("images/black.jpg"))),
+				redL = new JLabel(new ImageIcon(getClass().getResource("images/red.jpg"))),
+				greenL = new JLabel(new ImageIcon(getClass().getResource("images/green.jpg"))),
+				blueL = new JLabel(new ImageIcon(getClass().getResource("images/blue.jpg"))),
+				goldL = new JLabel(new ImageIcon(getClass().getResource("images/gold.jpg")));
+		if (conf[10] == null || conf[10].equalsIgnoreCase("0") || conf[10].equalsIgnoreCase("null"))
+			this.setContentPane(blackL);
+		else if (conf[10].equalsIgnoreCase("1"))
+			this.setContentPane(redL);
+		else if (conf[10].equalsIgnoreCase("2"))
+			this.setContentPane(greenL);
+		else if (conf[10].equalsIgnoreCase("3"))
+			this.setContentPane(blueL);
+		else
+			this.setContentPane(goldL);
 		// LANGUAGE
 		if (conf[7] == null || conf[7].equals("0"))
 			language = 0;
@@ -307,7 +331,7 @@ public class Reales extends JFrame {
 
 		try {// open the data for 2022
 			String appV;
-			if (conf[0] == null || !conf[0].equals("3"))
+			if (conf[0] == null || conf[0].equals("0") || conf[0].equals("1"))
 				appV = "2022C.dll";
 			else
 				appV = "2022N.dll";
@@ -366,7 +390,6 @@ public class Reales extends JFrame {
 		this.setLocationRelativeTo(null);
 		this.setLayout(null);
 		this.setResizable(false);
-		this.getContentPane().setBackground(First.darkC);
 
 		// BUTTONS
 		if (conf[1] == null || conf[1].equals("0")) {// show all
@@ -408,7 +431,7 @@ public class Reales extends JFrame {
 		for (int i = 0; i < 6; i++) {
 			temp = 0;
 			boletoN[i] = new JLabel("B" + (i + 1));
-			boletoN[i].setForeground(First.darkC);
+			boletoN[i].setForeground(First.defaultColor);
 			boletoN[i].setBorder(new LineBorder(First.grisD, 2));
 			boletoN[i].setHorizontalAlignment(0);
 			boletoN[i].setOpaque(true);
@@ -416,6 +439,16 @@ public class Reales extends JFrame {
 			for (int j = 0; j < 20; j++) {
 				details[i][j] = new JTextField("");
 				textFieldStyle(details[i][j]);
+				if (conf[10].equalsIgnoreCase("0"))
+					details[i][j].setBackground(new Color(0x141414));
+				else if (conf[10].equalsIgnoreCase("1"))
+					details[i][j].setBackground(new Color(0x500406));
+				else if (conf[10].equalsIgnoreCase("2"))
+					details[i][j].setBackground(new Color(0x157158));
+				else if (conf[10].equalsIgnoreCase("3"))
+					details[i][j].setBackground(new Color(0x003170));
+				else
+					details[i][j].setBackground(new Color(0xccab40));
 				if (details[i][j].getText().equals("")) {
 					temp += 0;
 				}
@@ -482,7 +515,7 @@ public class Reales extends JFrame {
 		summaryT[4].setBackground(Color.black);
 		summaryT[4].setForeground(Color.white);
 		textFieldStyle(initialDay);
-		initialDay.setCaretColor(First.darkC);
+		initialDay.setCaretColor(First.defaultColor);
 		initialDay.setBackground(First.lightC);
 		initialDay.setForeground(Color.black);
 		if (conf[2] == null || conf[2].equals("false"))
@@ -642,8 +675,8 @@ public class Reales extends JFrame {
 		for (int i = 0; i < 11; i++) {
 			panelCnum[i] = new JTextField("0");
 			textFieldStyle(panelCnum[i]);
-			panelCnum[i].setCaretColor(First.darkC);
-			panelCnum[i].setForeground(First.darkC);
+			panelCnum[i].setCaretColor(First.defaultColor);
+			panelCnum[i].setForeground(First.defaultColor);
 			panelCnum[i].setBackground(First.lightC);
 			if (conf[2] == null || conf[2].equals("false"))
 				cajaFocus(i, this, newDay, notasF, pesosF, clearEverthing, hideBtn, resoD, gastosPanel, aggPanel);
@@ -672,7 +705,7 @@ public class Reales extends JFrame {
 		// pix btn
 		pixMore.setText(idiomaString(language)[41]);
 		First.btnStyle(pixMore);
-		pixMore.setBackground(First.darkC);
+		pixMore.setBackground(First.defaultColor);
 		pixMore.setForeground(First.lightC);
 		pixMore.addActionListener(e -> pixFrame());
 		pixMore.addMouseListener(new MouseListener() {
@@ -690,7 +723,7 @@ public class Reales extends JFrame {
 
 			@Override
 			public void mouseExited(MouseEvent e) {
-				pixMore.setBackground(First.darkC);
+				pixMore.setBackground(First.defaultColor);
 			}
 
 			@Override
@@ -772,15 +805,12 @@ public class Reales extends JFrame {
 		this.add(clearEverthing);
 		JButton magic = new JButton();
 		magic.addActionListener(e -> sumF());
-		lastChange.setText((language == 0 ? "ÚLTIMA ACTUALIZACIÓN: "
-				: language == 1 ? "ÚLTIMA ATUALIZAÇÃO: " : language == 2 ? "LAST UPDATE: " : "DERNIÈRE MISE À JOUR: ")
-				+ "07:30:00");
-		lastChange.setForeground(First.lightC);
-		lastChange.setFont(First.myFontXS);
-		this.add(lastChange);
+		First.lastChange.setForeground(First.lightC);
+		First.lastChange.setFont(First.myFontXS);
+		this.add(First.lastChange);
 
 		// MenuBar
-		JMenuBar mb = new JMenuBar();
+		mb = new JMenuBar();
 		// FILE
 		JMenu file = new JMenu("ARCHIVO");
 		JMenuItem novo = new JMenuItem("NOVO DIA");
@@ -1019,10 +1049,12 @@ public class Reales extends JFrame {
 		// HELP
 		JMenu help = new JMenu("AYUDA");
 		JMenu hideMenu = new JMenu("ESCONDER");
+		JMenuItem lockFrame = new JMenuItem(idiomaString(language)[42]);
 		JMenuItem keyShortcut = new JMenuItem(idiomaString(language)[1]);
 		JMenuItem creator = new JMenuItem("SOBRE EL CREADOR");
 		JMenuItem about = new JMenuItem("SOBRE EL APLICATIVO");
 		hideActionListener(hideBtn, noHide, hideDate, hideAll, clearEverthing, pesosF, notasF, newDay);
+		lockFrame.addActionListener(e -> lockFrame());
 		if (conf[2] == null || conf[2].equals("false"))
 			keyShortcut.addActionListener(
 					e -> JOptionPane.showMessageDialog(null, idiomaString(language)[0], idiomaString(language)[1], 1));
@@ -1037,6 +1069,7 @@ public class Reales extends JFrame {
 		hideMenu.add(hideBtn);
 		hideMenu.add(hideAll);
 		help.add(hideMenu);
+		help.add(lockFrame);
 		help.add(keyShortcut);
 		help.add(creator);
 		help.add(about);
@@ -1099,6 +1132,7 @@ public class Reales extends JFrame {
 		hideDate.setIcon(new ImageIcon(getScaledImage(dateI.getImage(), 35, 35)));
 		hideBtn.setIcon(new ImageIcon(getScaledImage(buttonI.getImage(), 35, 35)));
 		hideAll.setIcon(new ImageIcon(getScaledImage(allI.getImage(), 35, 35)));
+		lockFrame.setIcon(new ImageIcon(getScaledImage(lockI.getImage(), 35, 35)));
 		keyShortcut.setIcon(new ImageIcon(getScaledImage(keyboardI.getImage(), 35, 35)));
 		creator.setIcon(new ImageIcon(getScaledImage(creatorI.getImage(), 35, 35)));
 		about.setIcon(new ImageIcon(getScaledImage(aboutI.getImage(), 35, 35)));
@@ -1938,7 +1972,7 @@ public class Reales extends JFrame {
 					titleSep[j].setBackground(First.blueD);
 					titleSep[j].setOpaque(true);
 					titleSep[j].setHorizontalAlignment(0);
-					titleSep[j].setBorder(new LineBorder(First.darkC, 2));
+					titleSep[j].setBorder(new LineBorder(First.defaultColor, 2));
 					extraF.add(titleSep[j]);
 				}
 				sepLabel[i][j] = new JTextField(sepData[k++]);
@@ -1947,7 +1981,7 @@ public class Reales extends JFrame {
 				sepLabel[i][j].setFont(new Font("Tahoma", Font.BOLD, 18));
 				sepLabel[i][j].setForeground(First.lightC);
 				sepLabel[i][j].setBackground(First.blueC);
-				sepLabel[i][j].setBorder(new LineBorder(First.darkC, 2));
+				sepLabel[i][j].setBorder(new LineBorder(First.defaultColor, 2));
 				sepLabel[i][j].setHorizontalAlignment(0);
 				sepLabel[i][j].addFocusListener(new FocusListener() {
 
@@ -1984,7 +2018,7 @@ public class Reales extends JFrame {
 		totalSep.setBackground(First.blueD);
 		totalSep.setOpaque(true);
 		totalSep.setHorizontalAlignment(0);
-		totalSep.setBorder(new LineBorder(First.darkC, 2));
+		totalSep.setBorder(new LineBorder(First.defaultColor, 2));
 		extraF.add(totalSep);
 		titleSep[0].setText(idiomaString(language)[38]);
 		titleSep[1].setText(idiomaString(language)[39]);
@@ -3559,10 +3593,12 @@ public class Reales extends JFrame {
 		}
 
 		// export at the end of the month
-		if (Integer.valueOf(dayN) == currentDate.maxDays())
+		if (Integer.valueOf(dayN) == currentDate.maxDays() || (Integer.valueOf(dayN) == currentDate.maxDays() - 1
+				&& dayName(currentDate, 2).equalsIgnoreCase("saturday")))
 			exMonthFrame(Integer.valueOf(First.monthN));
 
-		if (Integer.valueOf(dayN) == 31 && Integer.valueOf(First.monthN) == 12)
+		if ((Integer.valueOf(dayN) == 31 && Integer.valueOf(First.monthN) == 12) || (Integer.valueOf(dayN) == 30
+				&& Integer.valueOf(First.monthN) == 12 && dayName(currentDate, 2).equalsIgnoreCase("saturday")))
 			exYearFrame();
 
 		if (language == lang)
@@ -3723,7 +3759,7 @@ public class Reales extends JFrame {
 					: language == 1
 							? (" - COMPARAÇÃO ENTRE ESTE ANO E O ANO PASSADO DO "
 									+ currentDate.getMonthForInt(month - 1, 1))
-							: language == 1
+							: language == 2
 									? (" - COMPARISON BETWEEN THIS YEAR AND LAST YEAR FOR "
 											+ currentDate.getMonthForInt(month - 1, 2))
 									: (" - COMPARAISON ENTRE CETTE ANNÉE ET L'ANNÉE DERNIÈRE POUR ")
@@ -3962,10 +3998,10 @@ public class Reales extends JFrame {
 		JLabel op1 = new JLabel(idiomaString(language)[5]);
 		op1.setBounds(50, 20, 150, 50);
 		op1.setFont(First.myFont);
-		URL cedros1 = getClass().getResource("images/icon/cedros0.png");
-		URL cedros2 = getClass().getResource("images/icon/cedros1.png");
-		URL cedros3 = getClass().getResource("images/icon/cedros2.png");
-		URL narjes = getClass().getResource("images/icon/narjes.png");
+		URL cedros1 = getClass().getResource("images/icon/cedros1.png");
+		URL cedros2 = getClass().getResource("images/icon/cedros2.png");
+		URL cedros3 = getClass().getResource("images/icon/narjes1.png");
+		URL narjes = getClass().getResource("images/icon/narjes2.png");
 		ImageIcon iconImages[] = new ImageIcon[4];
 		iconImages[0] = new ImageIcon(getScaledImage(new ImageIcon(cedros1).getImage(), 50, 50));
 		iconImages[1] = new ImageIcon(getScaledImage(new ImageIcon(cedros2).getImage(), 50, 50));
@@ -4008,118 +4044,58 @@ public class Reales extends JFrame {
 			}
 		});
 
+		// op3 theme
+		JLabel themeColor = new JLabel(idiomaString(language)[43]);
+		themeColor.setBounds(50, 160, 200, 50);
+		themeColor.setFont(First.myFont);
+		ImageIcon themeIcon[] = new ImageIcon[5];
+		themeIcon[0] = new ImageIcon(getClass().getResource("images/menubar/black.png"));
+		themeIcon[1] = new ImageIcon(getClass().getResource("images/menubar/red.png"));
+		themeIcon[2] = new ImageIcon(getClass().getResource("images/menubar/green.png"));
+		themeIcon[3] = new ImageIcon(getClass().getResource("images/menubar/blue.png"));
+		themeIcon[4] = new ImageIcon(getClass().getResource("images/menubar/gold.png"));
+		JComboBox<ImageIcon> themeCombo = new JComboBox<>(themeIcon);
+		themeCombo.setRenderer(dlcr);
+		themeCombo.setBounds(355, 160, 200, 50);
+		themeCombo.setBackground(First.lightC);
+		themeCombo.setForeground(First.blueD);
+		themeCombo.setFont(First.myFontS);
+		if (conf[10] != null && First.isNumeric(conf[10]))
+			themeCombo.setSelectedIndex(Integer.valueOf(conf[10]));
+		themeCombo.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				themeCombo.setSelectedIndex(themeCombo.getSelectedIndex());
+			}
+		});
+
 		// OPTION 2 DISABLE KEYBOARD SHORTCUT
 		JLabel op3 = new JLabel(idiomaString(language)[1]);
-		op3.setBounds(50, 160, 260, 40);
+		op3.setBounds(50, 230, 260, 40);
 		op3.setFont(First.myFont);
-		JToggleButton btnsHideShow2 = new JToggleButton();
-		if (conf[2] == null || conf[2].equals("false")) {
-			btnsHideShow2.setText(idiomaString(language)[11]);
+		SwitchButton btn1 = new SwitchButton();
+		if (conf[2] == null || !conf[2].equals("true")) {
+			btn1.setOn(true);
 		} else {
-			btnsHideShow2.setText(idiomaString(language)[12]);
-			btnsHideShow2.setSelected(true);
+			btn1.setOn(false);
 		}
-		btnsHideShow2.setBounds(415, 160, 80, 40);
-		btnsHideShow2.setFont(First.myFont);
-		btnsHideShow2.setBorder(First.border);
-		btnsHideShow2.setBackground(First.greenC);
-		btnsHideShow2.setForeground(First.lightC);
-		btnsHideShow2.setFocusable(false);
-		btnsHideShow2.addMouseListener(new MouseListener() {
-			@Override
-			public void mouseReleased(MouseEvent e) {
-			}
-
-			@Override
-			public void mousePressed(MouseEvent e) {
-			}
-
-			@Override
-			public void mouseExited(MouseEvent e) {
-				btnsHideShow2.setBackground(First.greenC);
-			}
-
-			@Override
-			public void mouseEntered(MouseEvent e) {
-				btnsHideShow2.setBackground(First.greenD);
-			}
-
-			@Override
-			public void mouseClicked(MouseEvent e) {
-			}
-		});
-		btnsHideShow2.setUI(new MetalToggleButtonUI() {
-			@Override
-			protected Color getSelectColor() {
-				return First.redC;
-			}
-		});
-		btnsHideShow2.addItemListener(new ItemListener() {
-			@Override
-			public void itemStateChanged(ItemEvent e) {
-				if (e.getStateChange() == ItemEvent.SELECTED)
-					btnsHideShow2.setText(idiomaString(language)[12]);
-				else
-					btnsHideShow2.setText(idiomaString(language)[11]);
-			}
-		});
+		btn1.setBounds(415, 230, 80, 40);
+		btn1.setSwitchColor(First.blueM);
+		btn1.setRound(999);
 
 		// OPTION 5 AUTOSAVE
 		JLabel op5 = new JLabel(idiomaString(language)[8]);
-		op5.setBounds(50, 230, 200, 40);
+		op5.setBounds(50, 300, 200, 40);
 		op5.setFont(First.myFont);
-		JToggleButton btnsHideShow3 = new JToggleButton();
-		if (conf[4] == null || conf[4].equals("false")) {
-			btnsHideShow3.setText(idiomaString(language)[11]);
+		SwitchButton btn2 = new SwitchButton();
+		if (conf[4] == null || !conf[4].equals("true")) {
+			btn2.setOn(true);
 		} else {
-			btnsHideShow3.setText(idiomaString(language)[12]);
-			btnsHideShow3.setSelected(true);
+			btn2.setOn(false);
 		}
-		btnsHideShow3.setBounds(415, 230, 80, 40);
-		btnsHideShow3.setFont(First.myFont);
-		btnsHideShow3.setBorder(First.border);
-		btnsHideShow3.setBackground(First.greenC);
-		btnsHideShow3.setForeground(First.lightC);
-		btnsHideShow3.setFocusable(false);
-		btnsHideShow3.addMouseListener(new MouseListener() {
-
-			@Override
-			public void mouseReleased(MouseEvent e) {
-			}
-
-			@Override
-			public void mousePressed(MouseEvent e) {
-			}
-
-			@Override
-			public void mouseExited(MouseEvent e) {
-				btnsHideShow3.setBackground(First.greenC);
-			}
-
-			@Override
-			public void mouseEntered(MouseEvent e) {
-				btnsHideShow3.setBackground(First.greenD);
-			}
-
-			@Override
-			public void mouseClicked(MouseEvent e) {
-			}
-		});
-		btnsHideShow3.setUI(new MetalToggleButtonUI() {
-			@Override
-			protected Color getSelectColor() {
-				return First.redC;
-			}
-		});
-		btnsHideShow3.addItemListener(new ItemListener() {
-			@Override
-			public void itemStateChanged(ItemEvent e) {
-				if (e.getStateChange() == ItemEvent.SELECTED)
-					btnsHideShow3.setText(idiomaString(language)[12]);
-				else
-					btnsHideShow3.setText(idiomaString(language)[11]);
-			}
-		});
+		btn2.setBounds(415, 300, 80, 40);
+		btn2.setSwitchColor(First.redM);
+		btn2.setRound(999);
 
 		// Bottom line
 		JButton defSet = new JButton(idiomaString(language)[9]);
@@ -4157,14 +4133,13 @@ public class Reales extends JFrame {
 				op1C.setSelectedIndex(0);// icon
 				Reales.this.setIconImage(iconImages[0].getImage());// icon
 				conf[1] = "0";// btn hide
-				btnsHideShow2.setText(idiomaString(language)[11]);// key shortcut
-				btnsHideShow2.setSelected(false);// key shortcut
 				conf[3] = "0";// res
-				btnsHideShow3.setText(idiomaString(language)[11]);// autosave
-				btnsHideShow3.setSelected(false);// autosave
+				btn1.setOn(false);// auto save
+				btn2.setOn(false); // key shortcut
 				conf[6] = "1";// speed
 				lang.setSelectedIndex(0);// lan
 				conf[8] = "0";// eff
+				themeCombo.setSelectedIndex(0);
 			}
 		});
 		// SAVE
@@ -4204,14 +4179,16 @@ public class Reales extends JFrame {
 					FileWriter savedF = new FileWriter(newFile);
 					savedF.write(op1C.getSelectedIndex() + System.lineSeparator());// icon
 					savedF.write((conf[1].equals("null") ? 0 : conf[1]) + System.lineSeparator());// btn hide
-					savedF.write(btnsHideShow2.isSelected() + System.lineSeparator());// key shortcut
+					savedF.write(!btn1.isOn() + System.lineSeparator());// key shortcut
 					savedF.write((conf[3].equals("null") ? 0 : conf[3]) + System.lineSeparator());// res
-					savedF.write(btnsHideShow3.isSelected() + System.lineSeparator());// autosave
+					savedF.write(!btn2.isOn() + System.lineSeparator());// key shortcut
 					savedF.write((conf[5].equals("null") ? 0 : conf[5]) + System.lineSeparator());// first frame to open
 					savedF.write((conf[6].equals("null") ? 0 : conf[6]) + System.lineSeparator());// speed
 					savedF.write(lang.getSelectedIndex() + System.lineSeparator());// lan
 					savedF.write((conf[8].equals("null") ? 0 : conf[8]) + System.lineSeparator());// effchooser
 					savedF.write((conf[9].equals("null") ? "1,1" : conf[9]) + System.lineSeparator());// intro
+					savedF.write(themeCombo.getSelectedIndex() + System.lineSeparator());// theme
+					First.savedCorrectly(language);
 					savedF.close();
 				} catch (Exception e2) {
 					JOptionPane opt = new JOptionPane(
@@ -4241,9 +4218,11 @@ public class Reales extends JFrame {
 		temp.add(op2);
 		temp.add(lang);
 		temp.add(op3);
-		temp.add(btnsHideShow2);
+		temp.add(themeColor);
+		temp.add(themeCombo);
+		temp.add(btn1);
 		temp.add(op5);
-		temp.add(btnsHideShow3);
+		temp.add(btn2);
 		temp.add(defSet);
 		temp.add(save);
 		temp.setVisible(true);
@@ -4258,9 +4237,9 @@ public class Reales extends JFrame {
 
 	// Clear all
 	private void clearAll() {
-		int op = JOptionPane.showConfirmDialog(null, idiomaString(language)[18], idiomaString(language)[19],
-				JOptionPane.OK_CANCEL_OPTION);
-		if (op == 0) {
+		MessageDialog obj = new MessageDialog(this);
+		obj.showMessage(idiomaString(language)[18], "");
+		if (obj.getMessageType() == MessageDialog.MessageType.OK) {
 			for (int i = 0; i < 6; i++)
 				for (int j = 0; j < 20; j++)
 					details[i][j].setText("");
@@ -4279,9 +4258,9 @@ public class Reales extends JFrame {
 
 	// NEW DAY
 	private void newDay() {
-		int op = JOptionPane.showConfirmDialog(null, idiomaString(language)[16], idiomaString(language)[17],
-				JOptionPane.OK_CANCEL_OPTION);
-		if (op == 0) {
+		MessageDialog obj = new MessageDialog(this);
+		obj.showMessage(idiomaString(language)[16], "");
+		if (obj.getMessageType() == MessageDialog.MessageType.OK) {
 			if (currentDate.d != 29 || currentDate.m != 2)
 				currentDate.saveTotal23(totalVenta);
 			exBtn(language);
@@ -4455,15 +4434,13 @@ public class Reales extends JFrame {
 		}
 		total[6].setText("R$" + totalVenta);
 		// check if we sold something
-		if (totalVenta != ventaTemp) {
-			lastChanged = (language == 0 ? "ÚLTIMA ACTUALIZACIÓN: "
+		if (totalVenta != ventaTemp)
+			First.lastChange.setText((language == 0 ? "ÚLTIMA ACTUALIZACIÓN: "
 					: language == 1 ? "ÚLTIMA ATUALIZAÇÃO: "
 							: language == 2 ? "LAST UPDATE: " : "DERNIÈRE MISE À JOUR: ")
 					+ new SimpleDateFormat("HH").format(Calendar.getInstance().getTime()) + ":"
 					+ new SimpleDateFormat("mm").format(Calendar.getInstance().getTime()) + ":"
-					+ new SimpleDateFormat("ss").format(Calendar.getInstance().getTime());
-		}
-		lastChange.setText(lastChanged);
+					+ new SimpleDateFormat("ss").format(Calendar.getInstance().getTime()));
 		// Calculate total of spent
 		gastosT = ((gastosTable[8].getText().equals("") ? 0 : Integer.valueOf(gastosTable[8].getText()))
 				+ (gastosTable[9].getText().equals("") ? 0 : Integer.valueOf(gastosTable[9].getText()))
@@ -4583,8 +4560,8 @@ public class Reales extends JFrame {
 		initialDay.setFont(First.myFont);
 		dateLabel.setFont(First.myFont);
 		dateLabel.setBounds(500, 10, 405, 25);
-		lastChange.setFont(First.myFontXS);
-		lastChange.setBounds(550, 515, 405, 25);
+		First.lastChange.setFont(First.myFontXS);
+		First.lastChange.setBounds(550, 515, 405, 25);
 		for (int i = 0; i < 5; i++) {
 			summaryT[i].setBounds(420, 50 + i * 30, 100, 30);
 			summaryT[i].setFont(First.myFont);
@@ -4728,8 +4705,8 @@ public class Reales extends JFrame {
 		total[8].setFont(First.myFont);
 		dateLabel.setFont(First.myFont);
 		dateLabel.setBounds(650, 10, 320, 30);
-		lastChange.setFont(First.myFontXS);
-		lastChange.setBounds(700, 610, 405, 30);
+		First.lastChange.setFont(First.myFontXS);
+		First.lastChange.setBounds(700, 610, 405, 30);
 		for (int i = 0; i < 5; i++) {
 			summaryT[i].setBounds(520, 50 + i * 40, 120, 40);
 			summaryT[i].setFont(First.myFont);
@@ -4872,8 +4849,8 @@ public class Reales extends JFrame {
 		total[8].setFont(First.myFont);
 		dateLabel.setFont(First.myFont);
 		dateLabel.setBounds(700, 10, 450, 30);
-		lastChange.setFont(First.myFontXS);
-		lastChange.setBounds(800, 700, 405, 30);
+		First.lastChange.setFont(First.myFontXS);
+		First.lastChange.setBounds(800, 700, 405, 30);
 		for (int i = 0; i < 5; i++) {
 			summaryT[i].setFont(First.myFont);
 			summaryT[i].setBounds(570, 50 + i * 50, 140, 50);
@@ -5019,8 +4996,8 @@ public class Reales extends JFrame {
 		total[8].setFont(First.myFont);
 		dateLabel.setFont(First.myFont);
 		dateLabel.setBounds(900, 10, 550, 30);
-		lastChange.setFont(First.myFontXS);
-		lastChange.setBounds(950, 900, 405, 30);
+		First.lastChange.setFont(First.myFontXS);
+		First.lastChange.setBounds(950, 900, 405, 30);
 		for (int i = 0; i < 5; i++) {
 			summaryT[i].setBounds(700, 50 + i * 60, 160, 60);
 			summaryT[i].setFont(First.myFont);
@@ -5384,6 +5361,8 @@ public class Reales extends JFrame {
 				, "FECHA"// 39
 				, "REVISIÓN DEL AÑO"// 40
 				, "MÁS"// 41
+				, "BLOQUEAR LA APP"// 42
+				, "TEMA"// THEME16
 		};
 		String[] portugues = { "• CTRL + S → ir para a fatura.\n" + "• CTRL + P → ir para os pesos.\n"
 				+ "• CTRL + B → excluir tudo.\n" + "• CTRL + N → prepare-se para o dia seguinte.\n"
@@ -5437,6 +5416,8 @@ public class Reales extends JFrame {
 				, "DATA"// 39
 				, "REVISÃO DO ANO" // 40
 				, "MAIS"// 41
+				, "BLOQUEAR O APP"// 42
+				, "TEMA"// THEME16
 		};
 		String[] english = {
 				"• CTRL + S → go to invoice.\n" + "• CTRL + P → go to the pesos.\n" + "• CTRL + B → delete all.\n"
@@ -5492,6 +5473,8 @@ public class Reales extends JFrame {
 				, "DATE"// 39
 				, "ANNUAL REVIEW" // 40
 				, "MORE"// 41
+				, "LOCK THE APP"// 42
+				, "THEME"// THEME16
 		};
 		String[] french = { "• CTRL + S → aller à la facture.\n" + "• CTRL + P → aller aux pesos.\n"
 				+ "• CTRL + B → tout supprimer.\n" + "• CTRL + N → préparez-vous pour le lendemain.\n"
@@ -5547,6 +5530,8 @@ public class Reales extends JFrame {
 				, "DATE"// 39
 				, "REVUE ANNUELLE" // 40
 				, "PLUS"// 41
+				, "VERROUILLER L'APP"// 42
+				, "THÈME"// THEME16
 		};
 		if (idioma == 0)
 			return espanol;
@@ -5607,6 +5592,69 @@ public class Reales extends JFrame {
 		aggBtn[1].hide();
 	}
 
+	// Locked Frame
+	private void lockFrame() {
+
+		Component[] components = this.getContentPane().getComponents();
+		for (Component component : components)// hide all component
+			if (component instanceof JComponent) {
+				((JComponent) component).setVisible(false);
+			}
+		this.setJMenuBar(null);// hide menubar
+		// bluredPhoto
+		URL bluredP = getClass().getResource("images/blured.jpeg");
+		ImageIcon bluredIl = new ImageIcon(bluredP);
+		bluredIl = new ImageIcon(getScaledImage(bluredIl.getImage(), this.getWidth(), this.getHeight()));
+		blurI.setBounds(0, 0, this.getWidth(), this.getHeight());
+		blurI.setIcon(bluredIl);
+		this.add(blurI);// set bg
+
+		// Button to show
+		String[] password = { "hussein1430", "Teoria2019",
+				new SimpleDateFormat("hh").format(Calendar.getInstance().getTime())
+						+ new SimpleDateFormat("mm").format(Calendar.getInstance().getTime()) };
+		String usario = login(5).toString();
+		int countAttemp = 0;
+		while (!usario.equalsIgnoreCase(password[0]) && !usario.equalsIgnoreCase(password[1])
+				&& !usario.equalsIgnoreCase(password[2])) {
+			if (countAttemp == 4)
+				System.exit(0);
+			countAttemp++;
+			usario = login(5 - countAttemp).toString();
+		}
+		this.remove(blurI);
+		for (Component component : components)
+			if (component instanceof JComponent) {
+				((JComponent) component).setVisible(true);
+				this.setJMenuBar(mb);
+			}
+		aggBtn[0].hide();
+		aggBtn[1].hide();
+	}
+
+	// Login Data
+	private String login(int attemp) {
+		JPanel panel = new JPanel(new BorderLayout(5, 5));
+
+		JPanel label = new JPanel(new GridLayout(0, 1, 2, 2));
+		label.add(new JLabel(
+				language == 0 ? "Seña" : language == 1 ? "Senha" : language == 2 ? "Password" : "Mot de passe",
+				SwingConstants.RIGHT));
+		panel.add(label, BorderLayout.WEST);
+
+		JPanel controls = new JPanel(new GridLayout(0, 1, 2, 2));
+		JPasswordField password = new JPasswordField();
+		controls.add(password);
+		panel.add(controls, BorderLayout.CENTER);
+		JOptionPane.showMessageDialog(null, panel,
+				(language == 0 ? "INTENTO RESTANTE: "
+						: language == 1 ? "TENTATIVA RESTANTE: "
+								: language == 2 ? "REMAINING ATTEMPT: " : "TENTATIVE RESTANTE: ")
+						+ attemp,
+				JOptionPane.QUESTION_MESSAGE);
+		return password.getText();
+	}
+
 	// Key listener for the table
 	private void tableFocus(int i, int j, JFrame frame, JButton newDay, JButton notasF, JButton pesosF,
 			JButton clearEverthing, JMenuItem hideBtn, JMenuItem resoD, JButton gastosPanel, JButton aggPanel) {
@@ -5633,6 +5681,9 @@ public class Reales extends JFrame {
 				} else// Clear
 				if ((e.getKeyCode() == KeyEvent.VK_B) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
 					clearAll();
+				} else// LOCK FRAME
+				if ((e.getKeyCode() == KeyEvent.VK_L) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+					lockFrame();
 				} else// new day
 				if ((e.getKeyCode() == KeyEvent.VK_N) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
 					newDay();
@@ -5743,6 +5794,9 @@ public class Reales extends JFrame {
 				} else// new day
 				if ((e.getKeyCode() == KeyEvent.VK_N) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
 					newDay();
+				} else// LOCK FRAME
+				if ((e.getKeyCode() == KeyEvent.VK_L) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+					lockFrame();
 				} else // GO TO GASTOS
 				if ((e.getKeyCode() == KeyEvent.VK_G) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
 					initialDay.setNextFocusableComponent(gastosTable[0]);
@@ -5795,6 +5849,9 @@ public class Reales extends JFrame {
 				} // Conf
 				else if ((e.getKeyCode() == KeyEvent.VK_C) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
 					confFrame(conf, notasF, pesosF, newDay, clearEverthing, hideBtn, resoD, gastosPanel, aggPanel);
+				} else// LOCK FRAME
+				if ((e.getKeyCode() == KeyEvent.VK_L) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+					lockFrame();
 				} else// Clear
 				if ((e.getKeyCode() == KeyEvent.VK_B) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
 					clearAll();
@@ -5914,6 +5971,9 @@ public class Reales extends JFrame {
 				} // Conf
 				else if ((e.getKeyCode() == KeyEvent.VK_C) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
 					confFrame(conf, notasF, pesosF, newDay, clearEverthing, hideBtn, resoD, gastosPanel, aggPanel);
+				} else// LOCK FRAME
+				if ((e.getKeyCode() == KeyEvent.VK_L) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+					lockFrame();
 				} else// Clear
 				if ((e.getKeyCode() == KeyEvent.VK_B) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
 					clearAll();
@@ -6034,6 +6094,9 @@ public class Reales extends JFrame {
 				} // Conf
 				else if ((e.getKeyCode() == KeyEvent.VK_C) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
 					confFrame(conf, notasF, pesosF, newDay, clearEverthing, hideBtn, resoD, gastosPanel, aggPanel);
+				} else// LOCK FRAME
+				if ((e.getKeyCode() == KeyEvent.VK_L) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+					lockFrame();
 				} else // Clear
 				if ((e.getKeyCode() == KeyEvent.VK_B) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
 					clearAll();
@@ -6089,7 +6152,7 @@ public class Reales extends JFrame {
 
 	// Style of textField
 	private void textFieldStyle(JTextField tf) {
-		tf.setBackground(First.darkC);
+		tf.setBackground(First.defaultColor);
 		tf.setForeground(First.lightC);
 		tf.setFont(First.myFont);
 		tf.setBorder(First.border);
@@ -6181,14 +6244,14 @@ public class Reales extends JFrame {
 		pixFrame.setLocationRelativeTo(null);
 		pixFrame.setResizable(false);
 		pixFrame.setLayout(null);
-		pixFrame.getContentPane().setBackground(First.darkC);
+		pixFrame.getContentPane().setBackground(First.defaultColor);
 		pixFrame.setIconImage(pixI.getImage());
 		JTextField pixNmb[] = new JTextField[5];
 		for (int i = 0; i < 5; i++) {
 			pixNmb[i] = new JTextField();
 			textFieldStyle(pixNmb[i]);
 			pixNmb[i].setBounds(0, 2 + 45 * i, 150, 45);
-			pixNmb[i].setBackground(First.darkC);
+			pixNmb[i].setBackground(First.defaultColor);
 			pixNmb[i].removeFocusListener(textFocus);
 			pixNmb[i].setForeground(First.lightC);
 			pixNmb[i].addKeyListener(new KeyAdapter() {// Escape to close
@@ -6355,25 +6418,9 @@ public class Reales extends JFrame {
 			addSetMil();
 		else if (aggBtn[1].isShowing())
 			addSetHun();
-		else {
-			JOptionPane opt = new JOptionPane(idiomaString(language)[24], JOptionPane.ERROR_MESSAGE);
-			final JDialog dlg = opt.createDialog("Error");
-			new Thread(new Runnable() {
-				public void run() {
-					try {
-						Thread.sleep(2000);
-						dlg.dispose();
-
-					} catch (Throwable th) {
-						JOptionPane opt = new JOptionPane(
-								language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
-								JOptionPane.ERROR_MESSAGE);
-						opt.show();
-					}
-				}
-			}).start();
-			dlg.setVisible(true);
-		}
+		else
+			Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.CENTER, 1000,
+					idiomaString(language)[24]);
 	}
 
 	// Resize the image w/o cropping
@@ -6397,7 +6444,7 @@ public class Reales extends JFrame {
 		panel.setLocationRelativeTo(null);
 		panel.setResizable(false);
 		panel.setLayout(new FlowLayout());
-		panel.getContentPane().setBackground(First.darkC);
+		panel.getContentPane().setBackground(First.defaultColor);
 		DefaultListCellRenderer dlcr = new DefaultListCellRenderer();
 		dlcr.setHorizontalAlignment(DefaultListCellRenderer.CENTER);
 		String[] months = { currentDate.getMonthForInt(0, language), currentDate.getMonthForInt(1, language),
@@ -6568,6 +6615,7 @@ public class Reales extends JFrame {
 				savedF.write((conf[7].equals("null") ? 0 : conf[7]) + System.lineSeparator());// lan
 				savedF.write((conf[8].equals("null") ? 0 : conf[8]) + System.lineSeparator());// effchooser
 				savedF.write((conf[9].equals("null") ? "1,1" : conf[9]) + System.lineSeparator());// intro
+				savedF.write((conf[10].equals("null") ? "1,1" : conf[10]) + System.lineSeparator());// theme
 				savedF.close();
 			} catch (Exception e2) {
 				JOptionPane opt = new JOptionPane(
@@ -6592,6 +6640,7 @@ public class Reales extends JFrame {
 				savedF.write((conf[7].equals("null") ? 0 : conf[7]) + System.lineSeparator());// lan
 				savedF.write((conf[8].equals("null") ? 0 : conf[8]) + System.lineSeparator());// effchooser
 				savedF.write((conf[9].equals("null") ? "1,1" : conf[9]) + System.lineSeparator());// intro
+				savedF.write((conf[10].equals("null") ? "1,1" : conf[10]) + System.lineSeparator());// theme
 				savedF.close();
 			} catch (Exception e2) {
 				JOptionPane opt = new JOptionPane(
@@ -6616,6 +6665,7 @@ public class Reales extends JFrame {
 				savedF.write((conf[7].equals("null") ? 0 : conf[7]) + System.lineSeparator());// lan
 				savedF.write((conf[8].equals("null") ? 0 : conf[8]) + System.lineSeparator());// effchooser
 				savedF.write((conf[9].equals("null") ? "1,1" : conf[9]) + System.lineSeparator());// intro
+				savedF.write((conf[10].equals("null") ? "1,1" : conf[10]) + System.lineSeparator());// theme
 				savedF.close();
 			} catch (Exception e2) {
 				JOptionPane opt = new JOptionPane(
@@ -6640,6 +6690,7 @@ public class Reales extends JFrame {
 				savedF.write((conf[7].equals("null") ? 0 : conf[7]) + System.lineSeparator());// lan
 				savedF.write((conf[8].equals("null") ? 0 : conf[8]) + System.lineSeparator());// effchooser
 				savedF.write((conf[9].equals("null") ? "1,1" : conf[9]) + System.lineSeparator());// intro
+				savedF.write((conf[10].equals("null") ? "1,1" : conf[10]) + System.lineSeparator());// theme
 				savedF.close();
 			} catch (Exception e2) {
 				JOptionPane opt = new JOptionPane(
@@ -6664,6 +6715,7 @@ public class Reales extends JFrame {
 				savedF.write((conf[7].equals("null") ? 0 : conf[7]) + System.lineSeparator());// lan
 				savedF.write((conf[8].equals("null") ? 0 : conf[8]) + System.lineSeparator());// effchooser
 				savedF.write((conf[9].equals("null") ? "1,1" : conf[9]) + System.lineSeparator());// intro
+				savedF.write((conf[10].equals("null") ? "1,1" : conf[10]) + System.lineSeparator());// theme
 				savedF.close();
 			} catch (Exception e2) {
 				JOptionPane opt = new JOptionPane(
@@ -6694,6 +6746,7 @@ public class Reales extends JFrame {
 				savedF.write((conf[7].equals("null") ? 0 : conf[7]) + System.lineSeparator());// lan
 				savedF.write(0 + System.lineSeparator());// effect chooser
 				savedF.write((conf[9].equals("null") ? "1,1" : conf[9]) + System.lineSeparator());// intro
+				savedF.write((conf[10].equals("null") ? "1,1" : conf[10]) + System.lineSeparator());// theme
 				savedF.close();
 			} catch (Exception e2) {
 				JOptionPane opt = new JOptionPane(
@@ -6720,6 +6773,7 @@ public class Reales extends JFrame {
 				savedF.write((conf[7].equals("null") ? 0 : conf[7]) + System.lineSeparator());// lan
 				savedF.write(1 + System.lineSeparator());// effect chooser
 				savedF.write((conf[9].equals("null") ? "1,1" : conf[9]) + System.lineSeparator());// intro
+				savedF.write((conf[10].equals("null") ? "1,1" : conf[10]) + System.lineSeparator());// theme
 				savedF.close();
 			} catch (Exception e2) {
 				JOptionPane opt = new JOptionPane(
@@ -6746,6 +6800,7 @@ public class Reales extends JFrame {
 				savedF.write((conf[7].equals("null") ? 0 : conf[7]) + System.lineSeparator());// lan
 				savedF.write(2 + System.lineSeparator());// effect chooser
 				savedF.write((conf[9].equals("null") ? "1,1" : conf[9]) + System.lineSeparator());// intro
+				savedF.write((conf[10].equals("null") ? "1,1" : conf[10]) + System.lineSeparator());// theme
 				savedF.close();
 			} catch (Exception e2) {
 				JOptionPane opt = new JOptionPane(
@@ -6772,6 +6827,7 @@ public class Reales extends JFrame {
 				savedF.write((conf[7].equals("null") ? 0 : conf[7]) + System.lineSeparator());// lan
 				savedF.write((conf[8].equals("null") ? 0 : conf[8]) + System.lineSeparator());// effchooser
 				savedF.write((conf[9].equals("null") ? "1,1" : conf[9]) + System.lineSeparator());// intro
+				savedF.write((conf[10].equals("null") ? "1,1" : conf[10]) + System.lineSeparator());// theme
 				savedF.close();
 			} catch (Exception e2) {
 				JOptionPane opt = new JOptionPane(
@@ -6797,6 +6853,7 @@ public class Reales extends JFrame {
 				savedF.write((conf[7].equals("null") ? 0 : conf[7]) + System.lineSeparator());// lan
 				savedF.write((conf[8].equals("null") ? 0 : conf[8]) + System.lineSeparator());// effchooser
 				savedF.write((conf[9].equals("null") ? "1,1" : conf[9]) + System.lineSeparator());// intro
+				savedF.write((conf[10].equals("null") ? "1,1" : conf[10]) + System.lineSeparator());// theme
 				savedF.close();
 			} catch (Exception e2) {
 				JOptionPane opt = new JOptionPane(
@@ -6822,6 +6879,7 @@ public class Reales extends JFrame {
 				savedF.write((conf[7].equals("null") ? 0 : conf[7]) + System.lineSeparator());// lan
 				savedF.write((conf[8].equals("null") ? 0 : conf[8]) + System.lineSeparator());// effchooser
 				savedF.write((conf[9].equals("null") ? "1,1" : conf[9]) + System.lineSeparator());// intro
+				savedF.write((conf[10].equals("null") ? "1,1" : conf[10]) + System.lineSeparator());// theme
 				savedF.close();
 			} catch (Exception e2) {
 				JOptionPane opt = new JOptionPane(
@@ -6856,6 +6914,7 @@ public class Reales extends JFrame {
 				savedF.write((conf[7].equals("null") ? 0 : conf[7]) + System.lineSeparator());// lan
 				savedF.write((conf[8].equals("null") ? 0 : conf[8]) + System.lineSeparator());// effchooser
 				savedF.write((conf[9].equals("null") ? "1,1" : conf[9]) + System.lineSeparator());// intro
+				savedF.write((conf[10].equals("null") ? "1,1" : conf[10]) + System.lineSeparator());// theme
 				savedF.close();
 			} catch (Exception e2) {
 				JOptionPane opt = new JOptionPane(
@@ -6886,6 +6945,7 @@ public class Reales extends JFrame {
 				savedF.write((conf[7].equals("null") ? 0 : conf[7]) + System.lineSeparator());// lan
 				savedF.write((conf[8].equals("null") ? 0 : conf[8]) + System.lineSeparator());// effchooser
 				savedF.write((conf[9].equals("null") ? "1,1" : conf[9]) + System.lineSeparator());// intro
+				savedF.write((conf[10].equals("null") ? "1,1" : conf[10]) + System.lineSeparator());// theme
 				savedF.close();
 			} catch (Exception e2) {
 				JOptionPane opt = new JOptionPane(
@@ -6916,6 +6976,7 @@ public class Reales extends JFrame {
 				savedF.write((conf[7].equals("null") ? 0 : conf[7]) + System.lineSeparator());// lan
 				savedF.write((conf[8].equals("null") ? 0 : conf[8]) + System.lineSeparator());// effchooser
 				savedF.write((conf[9].equals("null") ? "1,1" : conf[9]) + System.lineSeparator());// intro
+				savedF.write((conf[10].equals("null") ? "1,1" : conf[10]) + System.lineSeparator());// theme
 				savedF.close();
 			} catch (Exception e2) {
 				JOptionPane opt = new JOptionPane(
@@ -6944,6 +7005,7 @@ public class Reales extends JFrame {
 				savedF.write((conf[7].equals("null") ? 0 : conf[7]) + System.lineSeparator());// lan
 				savedF.write((conf[8].equals("null") ? 0 : conf[8]) + System.lineSeparator());// effchooser
 				savedF.write((conf[9].equals("null") ? "1,1" : conf[9]) + System.lineSeparator());// intro
+				savedF.write((conf[10].equals("null") ? "1,1" : conf[10]) + System.lineSeparator());// theme
 				savedF.close();
 			} catch (Exception e2) {
 				JOptionPane opt = new JOptionPane(
@@ -6958,7 +7020,7 @@ public class Reales extends JFrame {
 
 	// Know the app title
 	private String titleName() {
-		if (conf[0] == null || !conf[0].equals("3"))
+		if (conf[0] == null || conf[0].equals("0") || conf[0].equals("1"))
 			return "CEDROS";
 		else
 			return "NARJES";
@@ -7040,7 +7102,7 @@ public class Reales extends JFrame {
 		DateModified date = new DateModified(1, 1, 2022);
 		String date22[] = new String[366];
 		String appV;
-		if (First.conf[0] == null || !First.conf[0].equals("3"))
+		if (First.conf[0] == null || First.conf[0].equals("0") || conf[0].equals("1"))
 			appV = "2022C.dll";
 		else
 			appV = "2022N.dll";
@@ -7093,7 +7155,7 @@ public class Reales extends JFrame {
 			}
 		else {
 			String appV;
-			if (conf[0] == null || !conf[0].equals("3"))
+			if (conf[0] == null || conf[0].equals("0") || conf[0].equals("1"))
 				appV = "2022C.dll";
 			else
 				appV = "2022N.dll";
