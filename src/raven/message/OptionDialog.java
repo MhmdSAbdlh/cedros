@@ -1,6 +1,7 @@
 package raven.message;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
@@ -13,7 +14,7 @@ import org.jdesktop.animation.timing.TimingTargetAdapter;
 
 import raven.swing.Glass;
 
-public class MessageDialog extends javax.swing.JDialog {
+public class OptionDialog extends javax.swing.JDialog {
 
 	private static final long serialVersionUID = 1L;
 	private final JFrame fram;
@@ -22,15 +23,18 @@ public class MessageDialog extends javax.swing.JDialog {
 	private boolean show;
 	private MessageType messageType = MessageType.CANCEL;
 
-	public MessageDialog(JFrame fram) {
+	public OptionDialog(JFrame fram) {
 		super(fram, true);
 		this.fram = fram;
 		initComponents();
 		init();
+		this.getRootPane().setDefaultButton(cmdOK);
 	}
 
 	private void init() {
 		setBackground(new Color(0, 0, 0, 0));
+		tryLeft.setOpaque(false);
+		tryLeft.setBackground(new Color(0, 0, 0, 0));
 		setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
 		addWindowListener(new WindowAdapter() {
 			@Override
@@ -73,13 +77,15 @@ public class MessageDialog extends javax.swing.JDialog {
 		animator.start();
 	}
 
-	public void showMessage(String title) {
+	public String showMessage(String title, String tLeft) {
 		fram.setGlassPane(glass);
 		glass.setVisible(true);
 		lbTitle.setText(title);
+		tryLeft.setText(tLeft);
 		setLocationRelativeTo(fram);
 		startAnimator(true);
 		setVisible(true);
+		return txt.getText();
 	}
 
 	public void closeMessage() {
@@ -97,6 +103,8 @@ public class MessageDialog extends javax.swing.JDialog {
 		cmdOK = new JButton();
 		lbIcon = new javax.swing.JLabel();
 		lbTitle = new javax.swing.JLabel();
+		tryLeft = new javax.swing.JLabel();
+		txt = new javax.swing.JPasswordField();
 
 		setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 		setUndecorated(true);
@@ -124,12 +132,20 @@ public class MessageDialog extends javax.swing.JDialog {
 		});
 
 		lbIcon.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-		lbIcon.setIcon(new javax.swing.ImageIcon(getClass().getResource("/raven/message/icon.png"))); // NOI18N
+		lbIcon.setIcon(new javax.swing.ImageIcon(getClass().getResource("/raven/message/lock.png"))); // NOI18N
 
 		lbTitle.setFont(new java.awt.Font("sansserif", 1, 18)); // NOI18N
-		lbTitle.setForeground(new java.awt.Color(245, 71, 71));
+		lbTitle.setForeground(new java.awt.Color(0x09443c));
 		lbTitle.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
 		lbTitle.setText("Message Title");
+
+		tryLeft.setFont(new java.awt.Font("sansserif", Font.ITALIC, 14)); // NOI18N
+		tryLeft.setForeground(new java.awt.Color(0x282a2b));
+		tryLeft.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+		tryLeft.setText("TRY LEFT: 5");
+
+		txt.setFont(new java.awt.Font("sansserif", 0, 14)); // NOI18N
+		txt.setForeground(new java.awt.Color(76, 76, 76));
 
 		javax.swing.GroupLayout background1Layout = new javax.swing.GroupLayout(background1);
 		background1.setLayout(background1Layout);
@@ -142,13 +158,19 @@ public class MessageDialog extends javax.swing.JDialog {
 						.addComponent(lbIcon, javax.swing.GroupLayout.DEFAULT_SIZE,
 								javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
 						.addComponent(lbTitle, javax.swing.GroupLayout.DEFAULT_SIZE,
-								javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE));
+								javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+						.addComponent(tryLeft, javax.swing.GroupLayout.DEFAULT_SIZE,
+								javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+						.addComponent(txt));
 		background1Layout.setVerticalGroup(background1Layout
 				.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
 				.addGroup(javax.swing.GroupLayout.Alignment.TRAILING, background1Layout.createSequentialGroup()
 						.addComponent(lbIcon, javax.swing.GroupLayout.PREFERRED_SIZE, 74,
 								javax.swing.GroupLayout.PREFERRED_SIZE)
-						.addGap(35, 35, 35).addComponent(lbTitle).addGap(35, 35, 35)
+						.addGap(30, 30, 30).addComponent(lbTitle).addGap(15, 15, 15)
+						.addComponent(txt, javax.swing.GroupLayout.PREFERRED_SIZE, 40,
+								javax.swing.GroupLayout.PREFERRED_SIZE)
+						.addGap(20, 20, 20).addComponent(tryLeft).addGap(18, 18, 18)
 						.addGroup(background1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
 								.addComponent(cmdCancel, javax.swing.GroupLayout.PREFERRED_SIZE, 50,
 										javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -187,5 +209,7 @@ public class MessageDialog extends javax.swing.JDialog {
 	private JButton cmdOK;
 	private javax.swing.JLabel lbIcon;
 	private javax.swing.JLabel lbTitle;
+	private javax.swing.JPasswordField txt;
+	private javax.swing.JLabel tryLeft;
 	// End of variables declaration//GEN-END:variables
 }
