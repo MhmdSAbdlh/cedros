@@ -12,6 +12,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.awt.event.InputEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
@@ -44,7 +45,7 @@ import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
-import switchbutton.SwitchButton;
+import raven.switchbutton.SwitchButton;
 
 @SuppressWarnings("serial")
 public class FaturaR extends JFrame {
@@ -763,7 +764,7 @@ public class FaturaR extends JFrame {
 		JTextField password = new JTextField();
 		controls.add(password);
 		String s1[] = { "USD", "R$" };
-		JComboBox<String> lang = new JComboBox<String>(s1);
+		JComboBox<String> lang = new JComboBox<>(s1);
 		controls.add(lang);
 		panel.add(controls, BorderLayout.CENTER);
 
@@ -890,7 +891,7 @@ public class FaturaR extends JFrame {
 		temp.getContentPane().setBackground(First.grisD);
 		//
 		DefaultListCellRenderer dlcr = new DefaultListCellRenderer();
-		dlcr.setHorizontalAlignment(DefaultListCellRenderer.CENTER);
+		dlcr.setHorizontalAlignment(SwingConstants.CENTER);
 		// Op1 icon
 		JLabel op1 = new JLabel(idiomaString(language)[5]);
 		op1.setBounds(50, 20, 150, 50);
@@ -1100,9 +1101,10 @@ public class FaturaR extends JFrame {
 
 		// Escape to close
 		op1C.addKeyListener(new KeyAdapter() {
+			@Override
 			@SuppressWarnings("static-access")
 			public void keyPressed(KeyEvent ke) {
-				if (ke.getKeyCode() == ke.VK_ESCAPE)
+				if (ke.getKeyCode() == KeyEvent.VK_ESCAPE)
 					temp.dispose();
 			}
 		});
@@ -1172,16 +1174,16 @@ public class FaturaR extends JFrame {
 			@Override
 			public void keyPressed(KeyEvent e) {
 				// Hide
-				if ((e.getKeyCode() == KeyEvent.VK_O) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0))
+				if ((e.getKeyCode() == KeyEvent.VK_O) && ((e.getModifiers() & InputEvent.CTRL_MASK) != 0))
 					hideBtns(mainF, clearB, hideBtn);
 				// GO TO Main
-				else if ((e.getKeyCode() == KeyEvent.VK_S) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+				else if ((e.getKeyCode() == KeyEvent.VK_S) && ((e.getModifiers() & InputEvent.CTRL_MASK) != 0)) {
 					frame.dispose();
 					new Reales();
 				} else if ((e.getKeyCode() == KeyEvent.VK_SHIFT)) {
 					details[i][j].setNextFocusableComponent(trocoCT[0]);
 					details[i][j].nextFocus();
-				} else if ((e.getKeyCode() == KeyEvent.VK_I) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0))
+				} else if ((e.getKeyCode() == KeyEvent.VK_I) && ((e.getModifiers() & InputEvent.CTRL_MASK) != 0))
 					writeFatura();
 				else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
 					if (j < 2) {
@@ -1231,16 +1233,16 @@ public class FaturaR extends JFrame {
 			@Override
 			public void keyPressed(KeyEvent e) {
 				// Hide
-				if ((e.getKeyCode() == KeyEvent.VK_O) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0))
+				if ((e.getKeyCode() == KeyEvent.VK_O) && ((e.getModifiers() & InputEvent.CTRL_MASK) != 0))
 					hideBtns(mainF, clearB, hideBtn);
 				// GO TO Main
-				else if ((e.getKeyCode() == KeyEvent.VK_S) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+				else if ((e.getKeyCode() == KeyEvent.VK_S) && ((e.getModifiers() & InputEvent.CTRL_MASK) != 0)) {
 					frame.dispose();
 					new Reales();
 				} else if ((e.getKeyCode() == KeyEvent.VK_SHIFT)) {
 					trocoCT[i].setNextFocusableComponent(details[0][0]);
 					trocoCT[i].nextFocus();
-				} else if ((e.getKeyCode() == KeyEvent.VK_I) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0))
+				} else if ((e.getKeyCode() == KeyEvent.VK_I) && ((e.getModifiers() & InputEvent.CTRL_MASK) != 0))
 					writeFatura();
 				else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
 					if (i < 7) {
@@ -3259,7 +3261,7 @@ public class FaturaR extends JFrame {
 
 	// Auto
 	private ArrayList<String> listMercadoria() {
-		ArrayList<String> keywords = new ArrayList<String>(61);
+		ArrayList<String> keywords = new ArrayList<>(61);
 		keywords.add("frazada");
 		keywords.add("cobertor");
 		keywords.add("jarra");

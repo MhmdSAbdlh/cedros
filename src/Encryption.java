@@ -48,7 +48,7 @@ public class Encryption {
 			textList.add(Character.valueOf(character));
 			character++;
 		}
-		shuffledList = new ArrayList<Character>();
+		shuffledList = new ArrayList<>();
 		for (int i = 0; i < key.length(); i++)
 			shuffledList.add(key.charAt(i));
 	}

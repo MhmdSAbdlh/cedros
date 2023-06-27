@@ -13,7 +13,7 @@ public class AutoComplete implements DocumentListener {
 
 	private static enum Mode {
 		INSERT, COMPLETION
-	};
+	}
 
 	private JTextField textField;
 	private final List<String> keywords;
@@ -77,7 +77,7 @@ public class AutoComplete implements DocumentListener {
 
 	public class CommitAction extends AbstractAction {
 		/**
-		 * 
+		 *
 		 */
 		private static final long serialVersionUID = 5794543109646743416L;
 
@@ -105,6 +105,7 @@ public class AutoComplete implements DocumentListener {
 			this.position = position;
 		}
 
+		@Override
 		public void run() {
 			StringBuffer sb = new StringBuffer(textField.getText());
 			sb.insert(position, completion);

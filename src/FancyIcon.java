@@ -26,7 +26,7 @@ import raven.fbr.FancyBorderRadius;
 public class FancyIcon extends JComponent {
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
 

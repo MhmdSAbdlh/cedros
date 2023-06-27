@@ -108,7 +108,7 @@ public class DateModified {
 		File temp23 = new File(tempFile0 + "\\extra");
 		temp23.mkdir();
 		File file23 = new File(temp23, y + ".dll");
-		ArrayList<String> con23 = new ArrayList<String>();
+		ArrayList<String> con23 = new ArrayList<>();
 		try {// open the data for 2023
 			data23 = new BufferedReader(new FileReader(file23));
 			while ((l23 = data23.readLine()) != null) {
@@ -120,8 +120,8 @@ public class DateModified {
 		try {// save the data
 			FileWriter save23 = new FileWriter(file23);
 			int count = con23.size();
-			for (int i = 0; i < con23.size(); i++)
-				save23.write(con23.get(i) + System.lineSeparator());
+			for (String element : con23)
+				save23.write(element + System.lineSeparator());
 			count = con23.size();
 			while (count++ < (this.index() + Integer.valueOf(d) - 1))// write the days off
 				save23.write(0 + System.lineSeparator());

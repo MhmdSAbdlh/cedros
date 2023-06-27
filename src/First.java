@@ -9,6 +9,7 @@ import java.awt.Toolkit;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -41,6 +42,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JTextPane;
+import javax.swing.SwingConstants;
 import javax.swing.UIDefaults;
 import javax.swing.UIManager;
 import javax.swing.border.Border;
@@ -53,8 +55,8 @@ import javax.swing.text.StyledDocument;
 
 import com.formdev.flatlaf.FlatIntelliJLaf;
 
+import raven.switchbutton.SwitchButton;
 import raven.toast.Notifications;
-import switchbutton.SwitchButton;
 
 @SuppressWarnings("serial")
 public class First extends JFrame {
@@ -338,6 +340,7 @@ public class First extends JFrame {
 			}
 		});
 		addWindowListener(new WindowAdapter() {
+			@Override
 			public void windowOpened(WindowEvent e) {
 				passTF.requestFocus();
 			}
@@ -354,7 +357,7 @@ public class First extends JFrame {
 
 			@Override
 			public void keyPressed(KeyEvent e) {
-				if ((e.getKeyCode() == KeyEvent.VK_C) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0))
+				if ((e.getKeyCode() == KeyEvent.VK_C) && ((e.getModifiers() & InputEvent.CTRL_MASK) != 0))
 					confFrame(conf, height, icon1);
 			}
 		});
@@ -705,7 +708,7 @@ public class First extends JFrame {
 		temp.getContentPane().setBackground(grisD);
 
 		DefaultListCellRenderer dlcr = new DefaultListCellRenderer();
-		dlcr.setHorizontalAlignment(DefaultListCellRenderer.CENTER);
+		dlcr.setHorizontalAlignment(SwingConstants.CENTER);
 		// Op1 icon
 		JLabel op1 = new JLabel(idiomaString(language)[6]);
 		op1.setBounds(50, 20, 150, 50);
@@ -969,18 +972,20 @@ public class First extends JFrame {
 
 		// Escape to close
 		op1C.addKeyListener(new KeyAdapter() {
+			@Override
 			@SuppressWarnings("static-access")
 			public void keyPressed(KeyEvent ke) {
-				if (ke.getKeyCode() == ke.VK_ESCAPE)
+				if (ke.getKeyCode() == KeyEvent.VK_ESCAPE)
 					temp.dispose();
 			}
 		});
 
 		// Escape to close
 		op1C.addKeyListener(new KeyAdapter() {
+			@Override
 			@SuppressWarnings("static-access")
 			public void keyPressed(KeyEvent ke) {
-				if (ke.getKeyCode() == ke.VK_ESCAPE)
+				if (ke.getKeyCode() == KeyEvent.VK_ESCAPE)
 					temp.dispose();
 			}
 		});
@@ -1119,9 +1124,10 @@ public class First extends JFrame {
 		introL.setForeground(defaultColor);
 		introL.setOpaque(false);
 		introL.addKeyListener(new KeyAdapter() {// Escape to close
+			@Override
 			@SuppressWarnings("static-access")
 			public void keyPressed(KeyEvent ke) {
-				if (ke.getKeyCode() == ke.VK_ESCAPE) {
+				if (ke.getKeyCode() == KeyEvent.VK_ESCAPE) {
 					timer.stop();
 					wordL = 0;
 					order = 0;
@@ -1233,7 +1239,7 @@ public class First extends JFrame {
 
 	// Auto-complete words for gastos and agregados
 	static ArrayList<String> gastosYagregados() {
-		ArrayList<String> keywords = new ArrayList<String>(61);
+		ArrayList<String> keywords = new ArrayList<>(61);
 		keywords.add("narjes");
 		keywords.add("hamado");
 		keywords.add("almuerzo");
@@ -1294,6 +1300,7 @@ class FocusSetter extends WindowAdapter {
 		initComp = c;
 	}
 
+	@Override
 	public void windowOpened(WindowEvent e) {
 		initComp.requestFocus();
 		e.getWindow().removeWindowListener(this);

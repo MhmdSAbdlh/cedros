@@ -22,6 +22,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.awt.event.InputEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
@@ -71,9 +72,9 @@ import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 
-import javaswingdev.message.MessageDialog;
+import raven.message.MessageDialog;
+import raven.switchbutton.SwitchButton;
 import raven.toast.Notifications;
-import switchbutton.SwitchButton;
 
 @SuppressWarnings("serial")
 public class Reales extends JFrame {
@@ -243,8 +244,8 @@ public class Reales extends JFrame {
 	String monthS, dayS;
 	int dayReturned = 1, monthReturned = 1, value22;
 	int sameDayAvg, dailyAvg, monthlyAvg, dailyAvg22;
-	ArrayList<String> con23 = new ArrayList<String>();
-	ArrayList<String> con22 = new ArrayList<String>();
+	ArrayList<String> con23 = new ArrayList<>();
+	ArrayList<String> con22 = new ArrayList<>();
 	JMenuBar mb;
 	JLabel blurI = new JLabel();
 
@@ -1307,9 +1308,10 @@ public class Reales extends JFrame {
 			daysPerc[i] = daysPerc[i] / 100;
 		}
 		sumItem.addKeyListener(new KeyAdapter() {// Escape to close
+			@Override
 			@SuppressWarnings("static-access")
 			public void keyPressed(KeyEvent ke) {
-				if (ke.getKeyCode() == ke.VK_ESCAPE) {
+				if (ke.getKeyCode() == KeyEvent.VK_ESCAPE) {
 					wordL = 0;
 					order = 0;
 					timer.stop();
@@ -1550,6 +1552,7 @@ public class Reales extends JFrame {
 
 		// If close stop the timer
 		extraF.addWindowListener(new WindowAdapter() {
+			@Override
 			public void windowClosing(WindowEvent we) {
 				try {
 					wordL = 0;
@@ -1652,9 +1655,10 @@ public class Reales extends JFrame {
 			daysPerc[i] = daysPerc[i] / 100;
 		}
 		sumItem.addKeyListener(new KeyAdapter() {// Escape to close
+			@Override
 			@SuppressWarnings("static-access")
 			public void keyPressed(KeyEvent ke) {
-				if (ke.getKeyCode() == ke.VK_ESCAPE) {
+				if (ke.getKeyCode() == KeyEvent.VK_ESCAPE) {
 					wordL = 0;
 					order = 0;
 					timer.stop();
@@ -1886,6 +1890,7 @@ public class Reales extends JFrame {
 
 		// If close stop the timer
 		extraF.addWindowListener(new WindowAdapter() {
+			@Override
 			public void windowClosing(WindowEvent we) {
 				try {
 					wordL = 0;
@@ -1925,9 +1930,10 @@ public class Reales extends JFrame {
 		JLabel totalSep = new JLabel("T O T A L");
 		ImageIcon btnIcon = new ImageIcon(getScaledImage(dateI.getImage(), 40, 40));
 		KeyAdapter kA = new KeyAdapter() {// Escape to close
+			@Override
 			@SuppressWarnings("static-access")
 			public void keyPressed(KeyEvent ke) {
-				if (ke.getKeyCode() == ke.VK_ESCAPE) {
+				if (ke.getKeyCode() == KeyEvent.VK_ESCAPE) {
 					try {
 						tempFile0.mkdir();
 						File tempFile1 = new File(tempFile0 + "\\extra");
@@ -2025,6 +2031,7 @@ public class Reales extends JFrame {
 
 		// If close stop the timer
 		extraF.addWindowListener(new WindowAdapter() {
+			@Override
 			public void windowClosing(WindowEvent we) {
 				try {
 					// save the results
@@ -2085,9 +2092,10 @@ public class Reales extends JFrame {
 		sumItem.setCaretColor(First.lightC);
 		sumItem.setOpaque(false);
 		sumItem.addKeyListener(new KeyAdapter() {// Escape to close
+			@Override
 			@SuppressWarnings("static-access")
 			public void keyPressed(KeyEvent ke) {
-				if (ke.getKeyCode() == ke.VK_ESCAPE) {
+				if (ke.getKeyCode() == KeyEvent.VK_ESCAPE) {
 					wordL = 0;
 					order = 0;
 					timer.stop();
@@ -2314,6 +2322,7 @@ public class Reales extends JFrame {
 		timer.start();
 		// If close stop the timer
 		extraF.addWindowListener(new WindowAdapter() {
+			@Override
 			public void windowClosing(WindowEvent we) {
 				try {
 					order = 0;
@@ -2377,9 +2386,10 @@ public class Reales extends JFrame {
 		sumItem.setCaretColor(First.lightC);
 		sumItem.setOpaque(false);
 		sumItem.addKeyListener(new KeyAdapter() {// Escape to close
+			@Override
 			@SuppressWarnings("static-access")
 			public void keyPressed(KeyEvent ke) {
-				if (ke.getKeyCode() == ke.VK_ESCAPE) {
+				if (ke.getKeyCode() == KeyEvent.VK_ESCAPE) {
 					timer.stop();
 					colorX = 0;
 					order = 0;
@@ -3108,7 +3118,6 @@ public class Reales extends JFrame {
 								wordL = 0;
 								sumItem.setText("");
 							}
-							;
 						}
 					} else {
 						sumItem.setBounds(0, 120, 650, 550);
@@ -3237,6 +3246,7 @@ public class Reales extends JFrame {
 
 		// If close stop the timer
 		sum.addWindowListener(new WindowAdapter() {
+			@Override
 			public void windowClosing(WindowEvent we) {
 				try {
 					colorX = 0;
@@ -3993,7 +4003,7 @@ public class Reales extends JFrame {
 		temp.getContentPane().setBackground(First.grisD);
 		//
 		DefaultListCellRenderer dlcr = new DefaultListCellRenderer();
-		dlcr.setHorizontalAlignment(DefaultListCellRenderer.CENTER);
+		dlcr.setHorizontalAlignment(SwingConstants.CENTER);
 		// Op1 icon
 		JLabel op1 = new JLabel(idiomaString(language)[5]);
 		op1.setBounds(50, 20, 150, 50);
@@ -4204,9 +4214,10 @@ public class Reales extends JFrame {
 
 		// Escape to close
 		op1C.addKeyListener(new KeyAdapter() {
+			@Override
 			@SuppressWarnings("static-access")
 			public void keyPressed(KeyEvent ke) {
-				if (ke.getKeyCode() == ke.VK_ESCAPE)
+				if (ke.getKeyCode() == KeyEvent.VK_ESCAPE)
 					temp.dispose();
 			}
 		});
@@ -5662,7 +5673,7 @@ public class Reales extends JFrame {
 			@Override
 			public void keyPressed(KeyEvent e) {
 				// GO TO Notas
-				if ((e.getKeyCode() == KeyEvent.VK_S) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+				if ((e.getKeyCode() == KeyEvent.VK_S) && ((e.getModifiers() & InputEvent.CTRL_MASK) != 0)) {
 					saveProgress();
 					frame.dispose();
 					FaturaR.totalC.setText("0");
@@ -5671,21 +5682,21 @@ public class Reales extends JFrame {
 				} else if (details[i][j].getText().equals("mhmd"))
 					separadosFrame();
 				// GO TO Pesos
-				else if ((e.getKeyCode() == KeyEvent.VK_P) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+				else if ((e.getKeyCode() == KeyEvent.VK_P) && ((e.getModifiers() & InputEvent.CTRL_MASK) != 0)) {
 					saveProgress();
 					frame.dispose();
 					new Pesos();
 				} // Conf
-				else if ((e.getKeyCode() == KeyEvent.VK_C) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+				else if ((e.getKeyCode() == KeyEvent.VK_C) && ((e.getModifiers() & InputEvent.CTRL_MASK) != 0)) {
 					confFrame(conf, notasF, pesosF, newDay, clearEverthing, hideBtn, resoD, gastosPanel, aggPanel);
 				} else// Clear
-				if ((e.getKeyCode() == KeyEvent.VK_B) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+				if ((e.getKeyCode() == KeyEvent.VK_B) && ((e.getModifiers() & InputEvent.CTRL_MASK) != 0)) {
 					clearAll();
 				} else// LOCK FRAME
-				if ((e.getKeyCode() == KeyEvent.VK_L) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+				if ((e.getKeyCode() == KeyEvent.VK_L) && ((e.getModifiers() & InputEvent.CTRL_MASK) != 0)) {
 					lockFrame();
 				} else// new day
-				if ((e.getKeyCode() == KeyEvent.VK_N) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+				if ((e.getKeyCode() == KeyEvent.VK_N) && ((e.getModifiers() & InputEvent.CTRL_MASK) != 0)) {
 					newDay();
 				} else// Direction
 				if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
@@ -5741,23 +5752,23 @@ public class Reales extends JFrame {
 						}
 					}
 				} else// GO TO INITIAL
-				if ((e.getKeyCode() == KeyEvent.VK_I) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+				if ((e.getKeyCode() == KeyEvent.VK_I) && ((e.getModifiers() & InputEvent.CTRL_MASK) != 0)) {
 					details[i][j].setNextFocusableComponent(initialDay);
 					details[i][j].nextFocus();
 				} else// GO TO GASTOS
-				if ((e.getKeyCode() == KeyEvent.VK_G) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+				if ((e.getKeyCode() == KeyEvent.VK_G) && ((e.getModifiers() & InputEvent.CTRL_MASK) != 0)) {
 					details[i][j].setNextFocusableComponent(gastosTable[0]);
 					details[i][j].nextFocus();
 				} else// GO TO AGGREG
-				if ((e.getKeyCode() == KeyEvent.VK_A) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+				if ((e.getKeyCode() == KeyEvent.VK_A) && ((e.getModifiers() & InputEvent.CTRL_MASK) != 0)) {
 					details[i][j].setNextFocusableComponent(agregadoTable[0]);
 					details[i][j].nextFocus();
 				} else// GO TO TROCO
-				if ((e.getKeyCode() == KeyEvent.VK_T) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+				if ((e.getKeyCode() == KeyEvent.VK_T) && ((e.getModifiers() & InputEvent.CTRL_MASK) != 0)) {
 					details[i][j].setNextFocusableComponent(panelCnum[3]);
 					details[i][j].nextFocus();
 				} else// |Go to the last one
-				if ((e.getKeyCode() == KeyEvent.VK_E) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+				if ((e.getKeyCode() == KeyEvent.VK_E) && ((e.getModifiers() & InputEvent.CTRL_MASK) != 0)) {
 					int k = 0, l = 0;
 					schiffe_loop: while (k < 6) {
 						l = 0;
@@ -5774,7 +5785,7 @@ public class Reales extends JFrame {
 					details[i][j].setNextFocusableComponent(details[k][l]);
 					details[i][j].nextFocus();
 				} else // M for add set 100 and 1000
-				if ((e.getKeyCode() == KeyEvent.VK_M) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0))
+				if ((e.getKeyCode() == KeyEvent.VK_M) && ((e.getModifiers() & InputEvent.CTRL_MASK) != 0))
 					addSetKey();
 			}
 		});
@@ -5786,35 +5797,35 @@ public class Reales extends JFrame {
 		initialDay.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
-				if ((e.getKeyCode() == KeyEvent.VK_B) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {// Clear
+				if ((e.getKeyCode() == KeyEvent.VK_B) && ((e.getModifiers() & InputEvent.CTRL_MASK) != 0)) {// Clear
 					clearAll();
 				} // Conf
-				else if ((e.getKeyCode() == KeyEvent.VK_C) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+				else if ((e.getKeyCode() == KeyEvent.VK_C) && ((e.getModifiers() & InputEvent.CTRL_MASK) != 0)) {
 					confFrame(conf, notasF, pesosF, newDay, clearEverthing, hideBtn, resoD, gastosPanel, aggPanel);
 				} else// new day
-				if ((e.getKeyCode() == KeyEvent.VK_N) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+				if ((e.getKeyCode() == KeyEvent.VK_N) && ((e.getModifiers() & InputEvent.CTRL_MASK) != 0)) {
 					newDay();
 				} else// LOCK FRAME
-				if ((e.getKeyCode() == KeyEvent.VK_L) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+				if ((e.getKeyCode() == KeyEvent.VK_L) && ((e.getModifiers() & InputEvent.CTRL_MASK) != 0)) {
 					lockFrame();
 				} else // GO TO GASTOS
-				if ((e.getKeyCode() == KeyEvent.VK_G) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+				if ((e.getKeyCode() == KeyEvent.VK_G) && ((e.getModifiers() & InputEvent.CTRL_MASK) != 0)) {
 					initialDay.setNextFocusableComponent(gastosTable[0]);
 					initialDay.nextFocus();
 				} else // GO TO AGG
-				if ((e.getKeyCode() == KeyEvent.VK_A) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+				if ((e.getKeyCode() == KeyEvent.VK_A) && ((e.getModifiers() & InputEvent.CTRL_MASK) != 0)) {
 					initialDay.setNextFocusableComponent(agregadoTable[0]);
 					initialDay.nextFocus();
 				} else // GO TO Details
-				if ((e.getKeyCode() == KeyEvent.VK_D) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+				if ((e.getKeyCode() == KeyEvent.VK_D) && ((e.getModifiers() & InputEvent.CTRL_MASK) != 0)) {
 					initialDay.setNextFocusableComponent(details[0][0]);
 					initialDay.nextFocus();
 				} else // GO TO Troco
-				if ((e.getKeyCode() == KeyEvent.VK_T) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+				if ((e.getKeyCode() == KeyEvent.VK_T) && ((e.getModifiers() & InputEvent.CTRL_MASK) != 0)) {
 					initialDay.setNextFocusableComponent(panelCnum[3]);
 					initialDay.nextFocus();
 				} else // M for add set 100 and 1000
-				if ((e.getKeyCode() == KeyEvent.VK_M) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0))
+				if ((e.getKeyCode() == KeyEvent.VK_M) && ((e.getModifiers() & InputEvent.CTRL_MASK) != 0))
 					if (aggBtn[0].isShowing() && aggBtn[1].isShowing()) {
 						addSetMil();
 						addSetHun();
@@ -5835,43 +5846,43 @@ public class Reales extends JFrame {
 			@Override
 			public void keyPressed(KeyEvent e) {
 				// GO TO Notas
-				if ((e.getKeyCode() == KeyEvent.VK_S) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+				if ((e.getKeyCode() == KeyEvent.VK_S) && ((e.getModifiers() & InputEvent.CTRL_MASK) != 0)) {
 					saveProgress();
 					FaturaR.totalC.setText("0");
 					FaturaR.total.setText("0");
 					frame.dispose();
 					new FaturaR();
 				} else // GO TO Pesos
-				if ((e.getKeyCode() == KeyEvent.VK_P) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+				if ((e.getKeyCode() == KeyEvent.VK_P) && ((e.getModifiers() & InputEvent.CTRL_MASK) != 0)) {
 					saveProgress();
 					frame.dispose();
 					new Pesos();
 				} // Conf
-				else if ((e.getKeyCode() == KeyEvent.VK_C) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+				else if ((e.getKeyCode() == KeyEvent.VK_C) && ((e.getModifiers() & InputEvent.CTRL_MASK) != 0)) {
 					confFrame(conf, notasF, pesosF, newDay, clearEverthing, hideBtn, resoD, gastosPanel, aggPanel);
 				} else// LOCK FRAME
-				if ((e.getKeyCode() == KeyEvent.VK_L) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+				if ((e.getKeyCode() == KeyEvent.VK_L) && ((e.getModifiers() & InputEvent.CTRL_MASK) != 0)) {
 					lockFrame();
 				} else// Clear
-				if ((e.getKeyCode() == KeyEvent.VK_B) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+				if ((e.getKeyCode() == KeyEvent.VK_B) && ((e.getModifiers() & InputEvent.CTRL_MASK) != 0)) {
 					clearAll();
 				} else// new day
-				if ((e.getKeyCode() == KeyEvent.VK_N) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+				if ((e.getKeyCode() == KeyEvent.VK_N) && ((e.getModifiers() & InputEvent.CTRL_MASK) != 0)) {
 					newDay();
 				} else// GO TO INITIAL
-				if ((e.getKeyCode() == KeyEvent.VK_I) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+				if ((e.getKeyCode() == KeyEvent.VK_I) && ((e.getModifiers() & InputEvent.CTRL_MASK) != 0)) {
 					agregadoTable[i].setNextFocusableComponent(initialDay);
 					agregadoTable[i].nextFocus();
 				} else// GO TO GASTOS
-				if ((e.getKeyCode() == KeyEvent.VK_G) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+				if ((e.getKeyCode() == KeyEvent.VK_G) && ((e.getModifiers() & InputEvent.CTRL_MASK) != 0)) {
 					agregadoTable[i].setNextFocusableComponent(gastosTable[0]);
 					agregadoTable[i].nextFocus();
 				} else// GO TO Details
-				if ((e.getKeyCode() == KeyEvent.VK_D) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+				if ((e.getKeyCode() == KeyEvent.VK_D) && ((e.getModifiers() & InputEvent.CTRL_MASK) != 0)) {
 					agregadoTable[i].setNextFocusableComponent(details[0][0]);
 					agregadoTable[i].nextFocus();
 				} else// GO TO Troco
-				if ((e.getKeyCode() == KeyEvent.VK_T) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+				if ((e.getKeyCode() == KeyEvent.VK_T) && ((e.getModifiers() & InputEvent.CTRL_MASK) != 0)) {
 					agregadoTable[i].setNextFocusableComponent(panelCnum[3]);
 					agregadoTable[i].nextFocus();
 				} else// Direction
@@ -5924,7 +5935,7 @@ public class Reales extends JFrame {
 						agregadoTable[i].nextFocus();
 					}
 				} else// |Go to the last one
-				if ((e.getKeyCode() == KeyEvent.VK_E) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+				if ((e.getKeyCode() == KeyEvent.VK_E) && ((e.getModifiers() & InputEvent.CTRL_MASK) != 0)) {
 					int k = 0;
 					while (k < 3) {
 						if (agregadoTable[k].getText().isBlank())
@@ -5936,7 +5947,7 @@ public class Reales extends JFrame {
 					agregadoTable[i].setNextFocusableComponent(agregadoTable[k]);
 					agregadoTable[i].nextFocus();
 				} else // M for add set 100 and 1000
-				if ((e.getKeyCode() == KeyEvent.VK_M) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0))
+				if ((e.getKeyCode() == KeyEvent.VK_M) && ((e.getModifiers() & InputEvent.CTRL_MASK) != 0))
 					if (aggBtn[0].isShowing() && aggBtn[1].isShowing()) {
 						addSetMil();
 						addSetHun();
@@ -5957,44 +5968,44 @@ public class Reales extends JFrame {
 			@Override
 			public void keyPressed(KeyEvent e) {
 				// GO TO Notas
-				if ((e.getKeyCode() == KeyEvent.VK_S) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+				if ((e.getKeyCode() == KeyEvent.VK_S) && ((e.getModifiers() & InputEvent.CTRL_MASK) != 0)) {
 					saveProgress();
 					FaturaR.totalC.setText("0");
 					FaturaR.total.setText("0");
 					frame.dispose();
 					new FaturaR();
 				} else// GO TO Pesos
-				if ((e.getKeyCode() == KeyEvent.VK_P) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+				if ((e.getKeyCode() == KeyEvent.VK_P) && ((e.getModifiers() & InputEvent.CTRL_MASK) != 0)) {
 					saveProgress();
 					frame.dispose();
 					new Pesos();
 				} // Conf
-				else if ((e.getKeyCode() == KeyEvent.VK_C) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+				else if ((e.getKeyCode() == KeyEvent.VK_C) && ((e.getModifiers() & InputEvent.CTRL_MASK) != 0)) {
 					confFrame(conf, notasF, pesosF, newDay, clearEverthing, hideBtn, resoD, gastosPanel, aggPanel);
 				} else// LOCK FRAME
-				if ((e.getKeyCode() == KeyEvent.VK_L) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+				if ((e.getKeyCode() == KeyEvent.VK_L) && ((e.getModifiers() & InputEvent.CTRL_MASK) != 0)) {
 					lockFrame();
 				} else// Clear
-				if ((e.getKeyCode() == KeyEvent.VK_B) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+				if ((e.getKeyCode() == KeyEvent.VK_B) && ((e.getModifiers() & InputEvent.CTRL_MASK) != 0)) {
 					clearAll();
 				} else
 				// new day
-				if ((e.getKeyCode() == KeyEvent.VK_N) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+				if ((e.getKeyCode() == KeyEvent.VK_N) && ((e.getModifiers() & InputEvent.CTRL_MASK) != 0)) {
 					newDay();
 				} else// GO TO INITIAL
-				if ((e.getKeyCode() == KeyEvent.VK_I) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+				if ((e.getKeyCode() == KeyEvent.VK_I) && ((e.getModifiers() & InputEvent.CTRL_MASK) != 0)) {
 					gastosTable[i].setNextFocusableComponent(initialDay);
 					gastosTable[i].nextFocus();
 				} else// GO TO AGG
-				if ((e.getKeyCode() == KeyEvent.VK_A) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+				if ((e.getKeyCode() == KeyEvent.VK_A) && ((e.getModifiers() & InputEvent.CTRL_MASK) != 0)) {
 					gastosTable[i].setNextFocusableComponent(agregadoTable[0]);
 					gastosTable[i].nextFocus();
 				} else// GO TO Details
-				if ((e.getKeyCode() == KeyEvent.VK_D) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+				if ((e.getKeyCode() == KeyEvent.VK_D) && ((e.getModifiers() & InputEvent.CTRL_MASK) != 0)) {
 					gastosTable[i].setNextFocusableComponent(details[0][0]);
 					gastosTable[i].nextFocus();
 				} else// GO TO Troco
-				if ((e.getKeyCode() == KeyEvent.VK_T) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+				if ((e.getKeyCode() == KeyEvent.VK_T) && ((e.getModifiers() & InputEvent.CTRL_MASK) != 0)) {
 					gastosTable[i].setNextFocusableComponent(panelCnum[3]);
 					gastosTable[i].nextFocus();
 				} else// Direction
@@ -6047,7 +6058,7 @@ public class Reales extends JFrame {
 						gastosTable[i].nextFocus();
 					}
 				} else// |Go to the last one
-				if ((e.getKeyCode() == KeyEvent.VK_E) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+				if ((e.getKeyCode() == KeyEvent.VK_E) && ((e.getModifiers() & InputEvent.CTRL_MASK) != 0)) {
 					int k = 0;
 					while (k < 3) {
 						if (gastosTable[k].getText().isBlank())
@@ -6059,7 +6070,7 @@ public class Reales extends JFrame {
 					gastosTable[i].setNextFocusableComponent(gastosTable[k]);
 					gastosTable[i].nextFocus();
 				} else // M for add set 100 and 1000
-				if ((e.getKeyCode() == KeyEvent.VK_M) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0))
+				if ((e.getKeyCode() == KeyEvent.VK_M) && ((e.getModifiers() & InputEvent.CTRL_MASK) != 0))
 					if (aggBtn[0].isShowing() && aggBtn[1].isShowing()) {
 						addSetMil();
 						addSetHun();
@@ -6080,43 +6091,43 @@ public class Reales extends JFrame {
 			@Override
 			public void keyPressed(KeyEvent e) {
 				// GO TO Notas
-				if ((e.getKeyCode() == KeyEvent.VK_S) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+				if ((e.getKeyCode() == KeyEvent.VK_S) && ((e.getModifiers() & InputEvent.CTRL_MASK) != 0)) {
 					saveProgress();
 					FaturaR.totalC.setText("0");
 					FaturaR.total.setText("0");
 					frame.dispose();
 					new FaturaR();
 				} else // GO TO Pesos
-				if ((e.getKeyCode() == KeyEvent.VK_P) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+				if ((e.getKeyCode() == KeyEvent.VK_P) && ((e.getModifiers() & InputEvent.CTRL_MASK) != 0)) {
 					saveProgress();
 					frame.dispose();
 					new Pesos();
 				} // Conf
-				else if ((e.getKeyCode() == KeyEvent.VK_C) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+				else if ((e.getKeyCode() == KeyEvent.VK_C) && ((e.getModifiers() & InputEvent.CTRL_MASK) != 0)) {
 					confFrame(conf, notasF, pesosF, newDay, clearEverthing, hideBtn, resoD, gastosPanel, aggPanel);
 				} else// LOCK FRAME
-				if ((e.getKeyCode() == KeyEvent.VK_L) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+				if ((e.getKeyCode() == KeyEvent.VK_L) && ((e.getModifiers() & InputEvent.CTRL_MASK) != 0)) {
 					lockFrame();
 				} else // Clear
-				if ((e.getKeyCode() == KeyEvent.VK_B) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+				if ((e.getKeyCode() == KeyEvent.VK_B) && ((e.getModifiers() & InputEvent.CTRL_MASK) != 0)) {
 					clearAll();
 				} else// new day
-				if ((e.getKeyCode() == KeyEvent.VK_N) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+				if ((e.getKeyCode() == KeyEvent.VK_N) && ((e.getModifiers() & InputEvent.CTRL_MASK) != 0)) {
 					newDay();
 				} else // GO TO INITIAL
-				if ((e.getKeyCode() == KeyEvent.VK_I) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+				if ((e.getKeyCode() == KeyEvent.VK_I) && ((e.getModifiers() & InputEvent.CTRL_MASK) != 0)) {
 					panelCnum[i].setNextFocusableComponent(initialDay);
 					panelCnum[i].nextFocus();
 				} else // GO TO AGG
-				if ((e.getKeyCode() == KeyEvent.VK_A) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+				if ((e.getKeyCode() == KeyEvent.VK_A) && ((e.getModifiers() & InputEvent.CTRL_MASK) != 0)) {
 					panelCnum[i].setNextFocusableComponent(agregadoTable[0]);
 					panelCnum[i].nextFocus();
 				} else// GO TO Details
-				if ((e.getKeyCode() == KeyEvent.VK_D) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+				if ((e.getKeyCode() == KeyEvent.VK_D) && ((e.getModifiers() & InputEvent.CTRL_MASK) != 0)) {
 					panelCnum[i].setNextFocusableComponent(details[0][0]);
 					panelCnum[i].nextFocus();
 				} else// GO TO Gastos
-				if ((e.getKeyCode() == KeyEvent.VK_G) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+				if ((e.getKeyCode() == KeyEvent.VK_G) && ((e.getModifiers() & InputEvent.CTRL_MASK) != 0)) {
 					panelCnum[i].setNextFocusableComponent(gastosTable[0]);
 					panelCnum[i].nextFocus();
 				} else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
@@ -6136,7 +6147,7 @@ public class Reales extends JFrame {
 						panelCnum[i].nextFocus();
 					}
 				else // M for add set 100 and 1000
-				if ((e.getKeyCode() == KeyEvent.VK_M) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0))
+				if ((e.getKeyCode() == KeyEvent.VK_M) && ((e.getModifiers() & InputEvent.CTRL_MASK) != 0))
 					if (aggBtn[0].isShowing() && aggBtn[1].isShowing()) {
 						addSetMil();
 						addSetHun();
@@ -6255,9 +6266,10 @@ public class Reales extends JFrame {
 			pixNmb[i].removeFocusListener(textFocus);
 			pixNmb[i].setForeground(First.lightC);
 			pixNmb[i].addKeyListener(new KeyAdapter() {// Escape to close
+				@Override
 				@SuppressWarnings("static-access")
 				public void keyPressed(KeyEvent ke) {
-					if (ke.getKeyCode() == ke.VK_ESCAPE) {
+					if (ke.getKeyCode() == KeyEvent.VK_ESCAPE) {
 						pix = 0;
 						for (int i = 0; i < 5; i++)
 							if (First.isNumeric(pixNmb[i].getText()))
@@ -6310,9 +6322,10 @@ public class Reales extends JFrame {
 			gTable[i].removeFocusListener(textFocus);
 			gTable[i].setForeground(Color.white);
 			gTable[i].addKeyListener(new KeyAdapter() {// Escape to close
+				@Override
 				@SuppressWarnings("static-access")
 				public void keyPressed(KeyEvent ke) {
-					if (ke.getKeyCode() == ke.VK_ESCAPE) {
+					if (ke.getKeyCode() == KeyEvent.VK_ESCAPE) {
 						for (int i = 0; i < 16; i++)
 							gastosTable[i].setText(gTable[i].getText());
 						sumF();
@@ -6372,9 +6385,10 @@ public class Reales extends JFrame {
 			aTable[i].removeFocusListener(textFocus);
 			aTable[i].setForeground(Color.white);
 			aTable[i].addKeyListener(new KeyAdapter() {// Escape to close
+				@Override
 				@SuppressWarnings("static-access")
 				public void keyPressed(KeyEvent ke) {
-					if (ke.getKeyCode() == ke.VK_ESCAPE) {
+					if (ke.getKeyCode() == KeyEvent.VK_ESCAPE) {
 						for (int i = 0; i < 16; i++)
 							agregadoTable[i].setText(aTable[i].getText());
 						sumF();
@@ -6446,7 +6460,7 @@ public class Reales extends JFrame {
 		panel.setLayout(new FlowLayout());
 		panel.getContentPane().setBackground(First.defaultColor);
 		DefaultListCellRenderer dlcr = new DefaultListCellRenderer();
-		dlcr.setHorizontalAlignment(DefaultListCellRenderer.CENTER);
+		dlcr.setHorizontalAlignment(SwingConstants.CENTER);
 		String[] months = { currentDate.getMonthForInt(0, language), currentDate.getMonthForInt(1, language),
 				currentDate.getMonthForInt(2, language), currentDate.getMonthForInt(3, language),
 				currentDate.getMonthForInt(4, language), currentDate.getMonthForInt(5, language),
@@ -6473,6 +6487,7 @@ public class Reales extends JFrame {
 		}
 
 		panel.addWindowListener(new WindowAdapter() {
+			@Override
 			public void windowClosing(WindowEvent we) {
 				try {
 					sepLabel[i][1].setText(dayReturned + "-" + monthReturned);
@@ -7138,7 +7153,7 @@ public class Reales extends JFrame {
 		DateModified dateM = new DateModified(1, month, year);
 		int index = dateM.index();
 		int returned[] = { 0, 0 };
-		ArrayList<String> totalMes = new ArrayList<String>();
+		ArrayList<String> totalMes = new ArrayList<>();
 		String line = "";
 		if (year == 2023)
 			try {// open the data for 2023
@@ -7253,7 +7268,7 @@ public class Reales extends JFrame {
 		int index = tempDate.index();
 		int avgMonth = monTotalAverage(month)[1] == 0 ? 0 : monTotalAverage(month)[0] / monTotalAverage(month)[1];
 		int returned[] = { 0, 0, 0, 0 };
-		ArrayList<String> totalMes = new ArrayList<String>();
+		ArrayList<String> totalMes = new ArrayList<>();
 		String line = "";
 		try {// open the data for 2023
 			File extraFolder = new File(tempFile0 + "\\extra");
@@ -7307,7 +7322,7 @@ public class Reales extends JFrame {
 	private int avgSellOfDay(DateModified selectDate) {
 		DateModified date2 = new DateModified(1, 1, 2023);
 		int i = 0, counter = 0, nbOfDays = 0;
-		ArrayList<String> totalMes = new ArrayList<String>();
+		ArrayList<String> totalMes = new ArrayList<>();
 		String line = "";
 		try {// open the data for 2023
 			File extraFolder = new File(tempFile0 + "\\extra");
@@ -7338,7 +7353,7 @@ public class Reales extends JFrame {
 	private int avgSpeDayAccMonth(String day, int month) {
 		DateModified date2 = new DateModified(1, month, 2023);
 		int i = date2.index(), counter = 0, nbOfDays = 0, maxDays = i + date2.maxDays();
-		ArrayList<String> totalMes = new ArrayList<String>();
+		ArrayList<String> totalMes = new ArrayList<>();
 		String line = "";
 		try {// open the data for 2023
 			File extraFolder = new File(tempFile0 + "\\extra");
@@ -7368,7 +7383,7 @@ public class Reales extends JFrame {
 	// Average daily of current year
 	private int dailyAvg() {
 		int i = 0, counter = 0, nbOfDays = 0;
-		ArrayList<String> totalMes = new ArrayList<String>();
+		ArrayList<String> totalMes = new ArrayList<>();
 		String line = "";
 		try {// open the data for 2023
 			File extraFolder = new File(tempFile0 + "\\extra");
@@ -7396,7 +7411,7 @@ public class Reales extends JFrame {
 	// total for selected month->[0] and nbofdays->[1]
 	private int[] monTotalAverage(int month) {
 		DateModified date2 = new DateModified(1, month, 2023);
-		ArrayList<String> totalMes = new ArrayList<String>();
+		ArrayList<String> totalMes = new ArrayList<>();
 		String line = "";
 		int index = date2.index(), counter = 0, nbOfDays = 0;
 		try {// open the data for 2023
