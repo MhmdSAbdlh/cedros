@@ -78,5 +78,19 @@ LE CADRE DE FACTURE :
 
 PREVIEW:
 ![alt text](https://github.com/MhmdSAbdlh/cedros/blob/main/preview/intro1.png)
+![alt text](https://github.com/MhmdSAbdlh/cedros/blob/main/preview/intro2.png)
+![alt text](https://github.com/MhmdSAbdlh/cedros/blob/main/preview/intro3.png)
+![alt text](https://github.com/MhmdSAbdlh/cedros/blob/main/preview/intro4.png)
+![alt text](https://github.com/MhmdSAbdlh/cedros/blob/main/preview/intro5.png)
+![alt text](https://github.com/MhmdSAbdlh/cedros/blob/main/preview/intro6.png)
+![alt text](https://github.com/MhmdSAbdlh/cedros/blob/main/preview/reales%201.png)
+![alt text](https://github.com/MhmdSAbdlh/cedros/blob/main/preview/reales%202.png)
+![alt text](https://github.com/MhmdSAbdlh/cedros/blob/main/preview/reales%203.png)
+![alt text](https://github.com/MhmdSAbdlh/cedros/blob/main/preview/reales%204.png)
+![alt text](https://github.com/MhmdSAbdlh/cedros/blob/main/preview/reales%205.png)
+![alt text](https://github.com/MhmdSAbdlh/cedros/blob/main/preview/reales%206.png)
+![alt text](https://github.com/MhmdSAbdlh/cedros/blob/main/preview/pesos%201.png)
+![alt text](https://github.com/MhmdSAbdlh/cedros/blob/main/preview/invoice.png)
+![alt text](https://github.com/MhmdSAbdlh/cedros/blob/main/preview/key%20shortcut.png)
            
            MOHAMAD ABDALLAH ABBASS ©
