@@ -7,14 +7,12 @@ Expand All -> Ctrl + Shift + * (Numpad Multiply)
 Ctrl + Shift + F : clean code
  */
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Graphics2D;
-import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.RenderingHints;
 import java.awt.Toolkit;
@@ -59,7 +57,6 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
@@ -73,6 +70,7 @@ import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 
 import raven.message.MessageDialog;
+import raven.message.OptionDialog;
 import raven.switchbutton.SwitchButton;
 import raven.toast.Notifications;
 
@@ -1309,7 +1307,7 @@ public class Reales extends JFrame {
 		}
 		sumItem.addKeyListener(new KeyAdapter() {// Escape to close
 			@Override
-			@SuppressWarnings("static-access")
+
 			public void keyPressed(KeyEvent ke) {
 				if (ke.getKeyCode() == KeyEvent.VK_ESCAPE) {
 					wordL = 0;
@@ -1656,7 +1654,7 @@ public class Reales extends JFrame {
 		}
 		sumItem.addKeyListener(new KeyAdapter() {// Escape to close
 			@Override
-			@SuppressWarnings("static-access")
+
 			public void keyPressed(KeyEvent ke) {
 				if (ke.getKeyCode() == KeyEvent.VK_ESCAPE) {
 					wordL = 0;
@@ -1931,7 +1929,7 @@ public class Reales extends JFrame {
 		ImageIcon btnIcon = new ImageIcon(getScaledImage(dateI.getImage(), 40, 40));
 		KeyAdapter kA = new KeyAdapter() {// Escape to close
 			@Override
-			@SuppressWarnings("static-access")
+
 			public void keyPressed(KeyEvent ke) {
 				if (ke.getKeyCode() == KeyEvent.VK_ESCAPE) {
 					try {
@@ -2093,7 +2091,7 @@ public class Reales extends JFrame {
 		sumItem.setOpaque(false);
 		sumItem.addKeyListener(new KeyAdapter() {// Escape to close
 			@Override
-			@SuppressWarnings("static-access")
+
 			public void keyPressed(KeyEvent ke) {
 				if (ke.getKeyCode() == KeyEvent.VK_ESCAPE) {
 					wordL = 0;
@@ -2387,7 +2385,6 @@ public class Reales extends JFrame {
 		sumItem.setOpaque(false);
 		sumItem.addKeyListener(new KeyAdapter() {// Escape to close
 			@Override
-			@SuppressWarnings("static-access")
 			public void keyPressed(KeyEvent ke) {
 				if (ke.getKeyCode() == KeyEvent.VK_ESCAPE) {
 					timer.stop();
@@ -4215,7 +4212,6 @@ public class Reales extends JFrame {
 		// Escape to close
 		op1C.addKeyListener(new KeyAdapter() {
 			@Override
-			@SuppressWarnings("static-access")
 			public void keyPressed(KeyEvent ke) {
 				if (ke.getKeyCode() == KeyEvent.VK_ESCAPE)
 					temp.dispose();
@@ -4249,7 +4245,7 @@ public class Reales extends JFrame {
 	// Clear all
 	private void clearAll() {
 		MessageDialog obj = new MessageDialog(this);
-		obj.showMessage(idiomaString(language)[18], "");
+		obj.showMessage(idiomaString(language)[18]);
 		if (obj.getMessageType() == MessageDialog.MessageType.OK) {
 			for (int i = 0; i < 6; i++)
 				for (int j = 0; j < 20; j++)
@@ -4270,7 +4266,7 @@ public class Reales extends JFrame {
 	// NEW DAY
 	private void newDay() {
 		MessageDialog obj = new MessageDialog(this);
-		obj.showMessage(idiomaString(language)[16], "");
+		obj.showMessage(idiomaString(language)[16]);
 		if (obj.getMessageType() == MessageDialog.MessageType.OK) {
 			if (currentDate.d != 29 || currentDate.m != 2)
 				currentDate.saveTotal23(totalVenta);
@@ -5621,18 +5617,32 @@ public class Reales extends JFrame {
 		this.add(blurI);// set bg
 
 		// Button to show
-		String[] password = { "hussein1430", "Teoria2019",
-				new SimpleDateFormat("hh").format(Calendar.getInstance().getTime())
-						+ new SimpleDateFormat("mm").format(Calendar.getInstance().getTime()) };
-		String usario = login(5).toString();
+		OptionDialog op1 = new OptionDialog(this);
 		int countAttemp = 0;
-		while (!usario.equalsIgnoreCase(password[0]) && !usario.equalsIgnoreCase(password[1])
-				&& !usario.equalsIgnoreCase(password[2])) {
-			if (countAttemp == 4)
-				System.exit(0);
-			countAttemp++;
-			usario = login(5 - countAttemp).toString();
-		}
+		String usario = op1
+				.showMessage(
+						language == 0 ? "ESCRIBE LA CONTRASEÑA"
+								: language == 1 ? "ESCREVA A SENHA"
+										: language == 2 ? "WRITE THE PASSWORD" : "ÉCRIVEZ LE MOT DE PASSE",
+						(language == 0 ? "INTENTO RESTANTE: "
+								: language == 1 ? "TENTATIVA RESTANTE: "
+										: language == 2 ? "REMAINING ATTEMPT: " : "TENTATIVE RESTANTE: ")
+								+ (5 - countAttemp));
+		if (op1.getMessageType() == OptionDialog.MessageType.CANCEL)
+			System.exit(0);
+		else
+			while (!usario.equalsIgnoreCase("hussein1430") && !usario.equalsIgnoreCase("Teoria2019")
+					&& !usario.equalsIgnoreCase("1068")) {
+				if (countAttemp == 4)
+					System.exit(0);
+				countAttemp++;
+				usario = op1.showMessage(
+						language == 0 ? "Seña" : language == 1 ? "Senha" : language == 2 ? "Password" : "Mot de passe",
+						(language == 0 ? "INTENTO RESTANTE: "
+								: language == 1 ? "TENTATIVA RESTANTE: "
+										: language == 2 ? "REMAINING ATTEMPT: " : "TENTATIVE RESTANTE: ")
+								+ (5 - countAttemp));
+			}
 		this.remove(blurI);
 		for (Component component : components)
 			if (component instanceof JComponent) {
@@ -5641,29 +5651,6 @@ public class Reales extends JFrame {
 			}
 		aggBtn[0].hide();
 		aggBtn[1].hide();
-	}
-
-	// Login Data
-	private String login(int attemp) {
-		JPanel panel = new JPanel(new BorderLayout(5, 5));
-
-		JPanel label = new JPanel(new GridLayout(0, 1, 2, 2));
-		label.add(new JLabel(
-				language == 0 ? "Seña" : language == 1 ? "Senha" : language == 2 ? "Password" : "Mot de passe",
-				SwingConstants.RIGHT));
-		panel.add(label, BorderLayout.WEST);
-
-		JPanel controls = new JPanel(new GridLayout(0, 1, 2, 2));
-		JPasswordField password = new JPasswordField();
-		controls.add(password);
-		panel.add(controls, BorderLayout.CENTER);
-		JOptionPane.showMessageDialog(null, panel,
-				(language == 0 ? "INTENTO RESTANTE: "
-						: language == 1 ? "TENTATIVA RESTANTE: "
-								: language == 2 ? "REMAINING ATTEMPT: " : "TENTATIVE RESTANTE: ")
-						+ attemp,
-				JOptionPane.QUESTION_MESSAGE);
-		return password.getText();
 	}
 
 	// Key listener for the table
@@ -6267,7 +6254,7 @@ public class Reales extends JFrame {
 			pixNmb[i].setForeground(First.lightC);
 			pixNmb[i].addKeyListener(new KeyAdapter() {// Escape to close
 				@Override
-				@SuppressWarnings("static-access")
+
 				public void keyPressed(KeyEvent ke) {
 					if (ke.getKeyCode() == KeyEvent.VK_ESCAPE) {
 						pix = 0;
@@ -6323,7 +6310,7 @@ public class Reales extends JFrame {
 			gTable[i].setForeground(Color.white);
 			gTable[i].addKeyListener(new KeyAdapter() {// Escape to close
 				@Override
-				@SuppressWarnings("static-access")
+
 				public void keyPressed(KeyEvent ke) {
 					if (ke.getKeyCode() == KeyEvent.VK_ESCAPE) {
 						for (int i = 0; i < 16; i++)
@@ -6386,7 +6373,7 @@ public class Reales extends JFrame {
 			aTable[i].setForeground(Color.white);
 			aTable[i].addKeyListener(new KeyAdapter() {// Escape to close
 				@Override
-				@SuppressWarnings("static-access")
+
 				public void keyPressed(KeyEvent ke) {
 					if (ke.getKeyCode() == KeyEvent.VK_ESCAPE) {
 						for (int i = 0; i < 16; i++)

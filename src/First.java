@@ -973,7 +973,6 @@ public class First extends JFrame {
 		// Escape to close
 		op1C.addKeyListener(new KeyAdapter() {
 			@Override
-			@SuppressWarnings("static-access")
 			public void keyPressed(KeyEvent ke) {
 				if (ke.getKeyCode() == KeyEvent.VK_ESCAPE)
 					temp.dispose();
@@ -983,7 +982,6 @@ public class First extends JFrame {
 		// Escape to close
 		op1C.addKeyListener(new KeyAdapter() {
 			@Override
-			@SuppressWarnings("static-access")
 			public void keyPressed(KeyEvent ke) {
 				if (ke.getKeyCode() == KeyEvent.VK_ESCAPE)
 					temp.dispose();
@@ -1125,7 +1123,6 @@ public class First extends JFrame {
 		introL.setOpaque(false);
 		introL.addKeyListener(new KeyAdapter() {// Escape to close
 			@Override
-			@SuppressWarnings("static-access")
 			public void keyPressed(KeyEvent ke) {
 				if (ke.getKeyCode() == KeyEvent.VK_ESCAPE) {
 					timer.stop();

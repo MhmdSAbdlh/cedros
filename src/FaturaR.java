@@ -1102,7 +1102,6 @@ public class FaturaR extends JFrame {
 		// Escape to close
 		op1C.addKeyListener(new KeyAdapter() {
 			@Override
-			@SuppressWarnings("static-access")
 			public void keyPressed(KeyEvent ke) {
 				if (ke.getKeyCode() == KeyEvent.VK_ESCAPE)
 					temp.dispose();

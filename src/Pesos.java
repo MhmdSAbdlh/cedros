@@ -1496,7 +1496,7 @@ public class Pesos extends JFrame {
 		sumItem.setForeground(new Color(0, 0, 0, 255));
 		sumItem.addKeyListener(new KeyAdapter() {// Escape to close
 			@Override
-			@SuppressWarnings("static-access")
+
 			public void keyPressed(KeyEvent ke) {
 				if (ke.getKeyCode() == KeyEvent.VK_ESCAPE) {
 					timer.stop();
@@ -2563,7 +2563,7 @@ public class Pesos extends JFrame {
 			gTable[i].setForeground(Color.white);
 			gTable[i].addKeyListener(new KeyAdapter() {// Escape to close
 				@Override
-				@SuppressWarnings("static-access")
+
 				public void keyPressed(KeyEvent ke) {
 					if (ke.getKeyCode() == KeyEvent.VK_ESCAPE) {
 						for (int i = 0; i < 16; i++)
@@ -2625,7 +2625,7 @@ public class Pesos extends JFrame {
 			aTable[i].setForeground(Color.white);
 			aTable[i].addKeyListener(new KeyAdapter() {// Escape to close
 				@Override
-				@SuppressWarnings("static-access")
+
 				public void keyPressed(KeyEvent ke) {
 					if (ke.getKeyCode() == KeyEvent.VK_ESCAPE) {
 						for (int i = 0; i < 16; i++)
@@ -2887,7 +2887,7 @@ public class Pesos extends JFrame {
 		// Escape to close
 		op1C.addKeyListener(new KeyAdapter() {
 			@Override
-			@SuppressWarnings("static-access")
+
 			public void keyPressed(KeyEvent ke) {
 				if (ke.getKeyCode() == KeyEvent.VK_ESCAPE)
 					temp.dispose();
@@ -2914,7 +2914,7 @@ public class Pesos extends JFrame {
 	// Clear all funcion
 	private void clearAll() {
 		MessageDialog obj = new MessageDialog(this);
-		obj.showMessage(idiomaString(language)[18], "");
+		obj.showMessage(idiomaString(language)[18]);
 		if (obj.getMessageType() == MessageDialog.MessageType.OK) {
 			for (int i = 0; i < 6; i++)
 				for (int j = 0; j < 20; j++)
@@ -2935,7 +2935,7 @@ public class Pesos extends JFrame {
 	// NEW DAY
 	private void newDay() {
 		MessageDialog obj = new MessageDialog(this);
-		obj.showMessage(idiomaString(language)[16], "");
+		obj.showMessage(idiomaString(language)[16]);
 		if (obj.getMessageType() == MessageDialog.MessageType.OK) {
 			exBtn(language);
 			for (int i = 0; i < 6; i++)
