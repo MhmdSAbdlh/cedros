@@ -531,7 +531,7 @@ public class First extends JFrame {
 
 			@Override
 			public void run() {
-				Notifications.getInstance().show(Notifications.Type.BIRTHDAY, Notifications.Location.CENTER, 5000,
+				Notifications.getInstance().show(Notifications.Type.BIRTHDAY, Notifications.Location.CENTER, 86400000,
 						language == 0 ? "ES MI CUMPLEAÑOS!\n" + "DESÉAME UN FELIZ AÑO :)"
 								: language == 1 ? "É MEU ANIVERSÁRIO\nME DESEJE UM FELIZ ANO :)"
 										: language == 2 ? "IT'S MY BIRTHDAY\nWISH ME A HAPPY YEAR :)"
