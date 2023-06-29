@@ -3160,30 +3160,28 @@ public class Pesos extends JFrame {
 		// Button to show
 		OptionDialog op1 = new OptionDialog(this);
 		int countAttemp = 0;
-		String usario = op1
-				.showMessage(
-						language == 0 ? "ESCRIBE LA CONTRASEÑA"
-								: language == 1 ? "ESCREVA A SENHA"
-										: language == 2 ? "WRITE THE PASSWORD" : "ÉCRIVEZ LE MOT DE PASSE",
-						(language == 0 ? "INTENTO RESTANTE: "
-								: language == 1 ? "TENTATIVA RESTANTE: "
-										: language == 2 ? "REMAINING ATTEMPT: " : "TENTATIVE RESTANTE: ")
-								+ (5 - countAttemp));
-		if (op1.getMessageType() == OptionDialog.MessageType.CANCEL)
-			System.exit(0);
-		else
-			while (!usario.equalsIgnoreCase("hussein1430") && !usario.equalsIgnoreCase("Teoria2019")
-					&& !usario.equalsIgnoreCase("Teoria2014") && !usario.equalsIgnoreCase("1068")) {
-				if (countAttemp == 4)
-					System.exit(0);
-				countAttemp++;
-				usario = op1.showMessage(
-						language == 0 ? "Seña" : language == 1 ? "Senha" : language == 2 ? "Password" : "Mot de passe",
-						(language == 0 ? "INTENTO RESTANTE: "
-								: language == 1 ? "TENTATIVA RESTANTE: "
-										: language == 2 ? "REMAINING ATTEMPT: " : "TENTATIVE RESTANTE: ")
-								+ (5 - countAttemp));
-			}
+		op1.showMessage(
+				language == 0 ? "ESCRIBE LA CONTRASEÑA"
+						: language == 1 ? "ESCREVA A SENHA"
+								: language == 2 ? "WRITE THE PASSWORD" : "ÉCRIVEZ LE MOT DE PASSE",
+				(language == 0 ? "INTENTO RESTANTE: "
+						: language == 1 ? "TENTATIVA RESTANTE: "
+								: language == 2 ? "REMAINING ATTEMPT: " : "TENTATIVE RESTANTE: ")
+						+ (5 - countAttemp));
+		String usario = op1.getPasswod();
+		while (!usario.equalsIgnoreCase("hussein1430") && !usario.equalsIgnoreCase("Teoria2019")
+				&& !usario.equalsIgnoreCase("Teoria2014") && !usario.equalsIgnoreCase("1068")) {
+			if (op1.getMessageType() == OptionDialog.MessageType.CANCEL || countAttemp == 4)
+				System.exit(0);
+			op1.showMessage(
+					language == 0 ? "INTENTA DE NUVEO"
+							: language == 1 ? "TENTE NOVAMENTE" : language == 2 ? "TRY AGAIN" : "RÉESSAYER",
+					(language == 0 ? "INTENTO RESTANTE: "
+							: language == 1 ? "TENTATIVA RESTANTE: "
+									: language == 2 ? "REMAINING ATTEMPT: " : "TENTATIVE RESTANTE: ")
+							+ (5 - (++countAttemp)));
+			usario = op1.getPasswod();
+		}
 		this.remove(blurI);
 		for (Component component : components)
 			if (component instanceof JComponent) {

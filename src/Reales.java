@@ -933,10 +933,9 @@ public class Reales extends JFrame {
 			if (i > Integer.valueOf(First.monthN) - 1)
 				monthSelected[i].hide();
 		separadosM.addActionListener(e -> {
-
 			OptionDialog op1 = new OptionDialog(this);
 			int countAttemp = 0;
-			String usario = op1.showMessage(
+			op1.showMessage(
 					language == 0 ? "ESCRIBE LA CONTRASEÑA"
 							: language == 1 ? "ESCREVA A SENHA"
 									: language == 2 ? "WRITE THE PASSWORD" : "ÉCRIVEZ LE MOT DE PASSE",
@@ -944,23 +943,22 @@ public class Reales extends JFrame {
 							: language == 1 ? "TENTATIVA RESTANTE: "
 									: language == 2 ? "REMAINING ATTEMPT: " : "TENTATIVE RESTANTE: ")
 							+ (5 - countAttemp));
-			if (op1.getMessageType() != OptionDialog.MessageType.CANCEL) {
-				while (!usario.equalsIgnoreCase("hussein1430") && !usario.equalsIgnoreCase("Teoria2019")
-						&& !usario.equalsIgnoreCase("Teoria2014") && !usario.equalsIgnoreCase("1068")) {
-					if (countAttemp == 4)
-						break;
-					countAttemp++;
-					usario = op1.showMessage(
-							language == 0 ? "Seña"
-									: language == 1 ? "Senha" : language == 2 ? "Password" : "Mot de passe",
-							(language == 0 ? "INTENTO RESTANTE: "
-									: language == 1 ? "TENTATIVA RESTANTE: "
-											: language == 2 ? "REMAINING ATTEMPT: " : "TENTATIVE RESTANTE: ")
-									+ (5 - countAttemp));
-				}
-				if (countAttemp != 4)
-					separadosFrame();
+			String usario = op1.getPasswod();
+			while (!usario.equalsIgnoreCase("hussein1430") && !usario.equalsIgnoreCase("Teoria2019")
+					&& !usario.equalsIgnoreCase("Teoria2014") && !usario.equalsIgnoreCase("1068")) {
+				if (op1.getMessageType() == OptionDialog.MessageType.CANCEL || countAttemp == 4)
+					break;
+				op1.showMessage(
+						language == 0 ? "INTENTA DE NUVEO"
+								: language == 1 ? "TENTE NOVAMENTE" : language == 2 ? "TRY AGAIN" : "RÉESSAYER",
+						(language == 0 ? "INTENTO RESTANTE: "
+								: language == 1 ? "TENTATIVA RESTANTE: "
+										: language == 2 ? "REMAINING ATTEMPT: " : "TENTATIVE RESTANTE: ")
+								+ (5 - (++countAttemp)));
+				usario = op1.getPasswod();
 			}
+			if (countAttemp != 4 && op1.getMessageType() == OptionDialog.MessageType.OK)
+				separadosFrame();
 		});
 		yearSumm.addActionListener(e -> yearSumFram());
 		sumV.addActionListener(e -> summaryFrame());
@@ -5586,30 +5584,28 @@ public class Reales extends JFrame {
 		// Button to show
 		OptionDialog op1 = new OptionDialog(this);
 		int countAttemp = 0;
-		String usario = op1
-				.showMessage(
-						language == 0 ? "ESCRIBE LA CONTRASEÑA"
-								: language == 1 ? "ESCREVA A SENHA"
-										: language == 2 ? "WRITE THE PASSWORD" : "ÉCRIVEZ LE MOT DE PASSE",
-						(language == 0 ? "INTENTO RESTANTE: "
-								: language == 1 ? "TENTATIVA RESTANTE: "
-										: language == 2 ? "REMAINING ATTEMPT: " : "TENTATIVE RESTANTE: ")
-								+ (5 - countAttemp));
-		if (op1.getMessageType() == OptionDialog.MessageType.CANCEL)
-			System.exit(0);
-		else
-			while (!usario.equalsIgnoreCase("hussein1430") && !usario.equalsIgnoreCase("Teoria2019")
-					&& !usario.equalsIgnoreCase("Teoria2014") && !usario.equalsIgnoreCase("1068")) {
-				if (countAttemp == 4)
-					System.exit(0);
-				countAttemp++;
-				usario = op1.showMessage(
-						language == 0 ? "Seña" : language == 1 ? "Senha" : language == 2 ? "Password" : "Mot de passe",
-						(language == 0 ? "INTENTO RESTANTE: "
-								: language == 1 ? "TENTATIVA RESTANTE: "
-										: language == 2 ? "REMAINING ATTEMPT: " : "TENTATIVE RESTANTE: ")
-								+ (5 - countAttemp));
-			}
+		op1.showMessage(
+				language == 0 ? "ESCRIBE LA CONTRASEÑA"
+						: language == 1 ? "ESCREVA A SENHA"
+								: language == 2 ? "WRITE THE PASSWORD" : "ÉCRIVEZ LE MOT DE PASSE",
+				(language == 0 ? "INTENTO RESTANTE: "
+						: language == 1 ? "TENTATIVA RESTANTE: "
+								: language == 2 ? "REMAINING ATTEMPT: " : "TENTATIVE RESTANTE: ")
+						+ (5 - countAttemp));
+		String usario = op1.getPasswod();
+		while (!usario.equalsIgnoreCase("hussein1430") && !usario.equalsIgnoreCase("Teoria2019")
+				&& !usario.equalsIgnoreCase("Teoria2014") && !usario.equalsIgnoreCase("1068")) {
+			if (op1.getMessageType() == OptionDialog.MessageType.CANCEL || countAttemp == 4)
+				System.exit(0);
+			op1.showMessage(
+					language == 0 ? "INTENTA DE NUVEO"
+							: language == 1 ? "TENTE NOVAMENTE" : language == 2 ? "TRY AGAIN" : "RÉESSAYER",
+					(language == 0 ? "INTENTO RESTANTE: "
+							: language == 1 ? "TENTATIVA RESTANTE: "
+									: language == 2 ? "REMAINING ATTEMPT: " : "TENTATIVE RESTANTE: ")
+							+ (5 - (++countAttemp)));
+			usario = op1.getPasswod();
+		}
 		this.remove(blurI);
 		for (Component component : components)
 			if (component instanceof JComponent) {
@@ -6200,6 +6196,7 @@ public class Reales extends JFrame {
 					pixMore);
 	}
 
+	// pix
 	private void pixFrame() {
 		JFrame pixFrame = new JFrame();
 		pixFrame.setTitle("PIX");
@@ -6502,8 +6499,7 @@ public class Reales extends JFrame {
 		} else if (lang == 1) {
 			monthS = new SimpleDateFormat("MMMM", new Locale("pt")).format(Calendar.getInstance().getTime())
 					.toUpperCase();
-			dayS = new SimpleDateFormat("EEEE", new Locale("pt"))
-					.format(Calendar.getInstance().getTime())
+			dayS = new SimpleDateFormat("EEEE", new Locale("pt")).format(Calendar.getInstance().getTime())
 					.toUpperCase();
 		} else if (lang == 2) {
 			monthS = new SimpleDateFormat("MMMM", new Locale("en")).format(Calendar.getInstance().getTime())

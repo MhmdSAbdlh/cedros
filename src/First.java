@@ -113,7 +113,7 @@ public class First extends JFrame {
 	javax.swing.Timer timer;
 	int order = 0, wordL = 0;
 
-	static String appVersion = "v8.0";
+	static String appVersion = "v8.1";
 	static JLabel lastChange = new JLabel();
 	private static int language;
 
@@ -128,7 +128,6 @@ public class First extends JFrame {
 	}
 
 	First() {
-		// Setup notifications with jfram
 		// Dimension
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		int width = (int) screenSize.getWidth() - 100;
