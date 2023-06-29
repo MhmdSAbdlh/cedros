@@ -6502,7 +6502,8 @@ public class Reales extends JFrame {
 		} else if (lang == 1) {
 			monthS = new SimpleDateFormat("MMMM", new Locale("pt")).format(Calendar.getInstance().getTime())
 					.toUpperCase();
-			dayS = new SimpleDateFormat("EEEE", new Locale("pt")).format(Calendar.getInstance().getTime())
+			dayS = new SimpleDateFormat("EEEE", new Locale("pt"))
+					.format(Calendar.getInstance().getTime())
 					.toUpperCase();
 		} else if (lang == 2) {
 			monthS = new SimpleDateFormat("MMMM", new Locale("en")).format(Calendar.getInstance().getTime())

@@ -2,10 +2,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Locale;
 
 public class DateModified {
 	static int[] daysInMonth = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
@@ -86,17 +83,16 @@ public class DateModified {
 	}
 
 	String getMonthForInt(int num, int language) {
-		Calendar calendar = Calendar.getInstance();
-		calendar.set(Calendar.MONTH, num);
-		return language == 0 ? new SimpleDateFormat("MMMM", new Locale("es")).format(calendar.getTime()).toUpperCase()
-				: language == 1
-						? new SimpleDateFormat("MMMM", new Locale("pt")).format(calendar.getTime()).toUpperCase()
-						: language == 2
-								? new SimpleDateFormat("MMMM", new Locale("en")).format(calendar.getTime())
-										.toUpperCase()
-								: new SimpleDateFormat("MMMM", new Locale("fr")).format(calendar.getTime())
-										.toUpperCase();
-
+		String months[][] = {
+				{ "enero", "febrero", "marzo", "Abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre",
+						"noviembre", "diciembre" },
+				{ "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro",
+						"Novembro", "Dezembro" },
+				{ "January", "February", "March", "April", "May", "June", "July", "August", "September", "October",
+						"November", "December" },
+				{ "janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre",
+						"novembre", "décembre" } };
+		return months[language][num].toUpperCase();
 	}
 
 	// Save the new total to 2023
