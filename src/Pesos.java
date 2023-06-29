@@ -7,13 +7,11 @@ Expand All -> Ctrl + Shift + * (Numpad Multiply)
 Ctrl + Shift + F : clean code
  */
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics2D;
-import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.RenderingHints;
 import java.awt.Toolkit;
@@ -57,8 +55,6 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JPasswordField;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
@@ -70,6 +66,7 @@ import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 
 import raven.message.MessageDialog;
+import raven.message.OptionDialog;
 import raven.switchbutton.SwitchButton;
 
 @SuppressWarnings("serial")
@@ -708,25 +705,6 @@ public class Pesos extends JFrame {
 			First.savedCorrectly(language);
 		});
 		screenShot.addActionListener(e -> {
-			colorBW = 254;
-			ActionListener letterByLetter = new ActionListener() {
-
-				@Override
-				public void actionPerformed(ActionEvent e) {
-
-					Pesos.this.getContentPane().setBackground(new Color(colorBW, colorBW, colorBW));
-					if (colorBW > 40)// Details fade in
-						colorBW -= 3;
-					else {
-						colorBW = 40;
-						Pesos.this.getContentPane().setBackground(new Color(colorBW, colorBW, colorBW));
-						timer.stop();
-					}
-				}
-			};
-
-			timer = new Timer(1, letterByLetter);
-			timer.start();
 			screenShooter();
 			First.savedCorrectly(language);
 			try {// sounds
@@ -3165,7 +3143,6 @@ public class Pesos extends JFrame {
 
 	// Locked Frame
 	private void lockFrame() {
-
 		Component[] components = this.getContentPane().getComponents();
 		for (Component component : components)// hide all component
 			if (component instanceof JComponent) {
@@ -3181,47 +3158,38 @@ public class Pesos extends JFrame {
 		this.add(blurI);// set bg
 
 		// Button to show
-		String[] password = { "hussein1430", "Teoria2019",
-				new SimpleDateFormat("hh").format(Calendar.getInstance().getTime())
-						+ new SimpleDateFormat("mm").format(Calendar.getInstance().getTime()) };
-		String usario = login(5).toString();
+		OptionDialog op1 = new OptionDialog(this);
 		int countAttemp = 0;
-		while (!usario.equalsIgnoreCase(password[0]) && !usario.equalsIgnoreCase(password[1])
-				&& !usario.equalsIgnoreCase(password[2])) {
-			if (countAttemp == 4)
-				System.exit(0);
-			countAttemp++;
-			usario = login(5 - countAttemp).toString();
-		}
+		String usario = op1
+				.showMessage(
+						language == 0 ? "ESCRIBE LA CONTRASEÑA"
+								: language == 1 ? "ESCREVA A SENHA"
+										: language == 2 ? "WRITE THE PASSWORD" : "ÉCRIVEZ LE MOT DE PASSE",
+						(language == 0 ? "INTENTO RESTANTE: "
+								: language == 1 ? "TENTATIVA RESTANTE: "
+										: language == 2 ? "REMAINING ATTEMPT: " : "TENTATIVE RESTANTE: ")
+								+ (5 - countAttemp));
+		if (op1.getMessageType() == OptionDialog.MessageType.CANCEL)
+			System.exit(0);
+		else
+			while (!usario.equalsIgnoreCase("hussein1430") && !usario.equalsIgnoreCase("Teoria2019")
+					&& !usario.equalsIgnoreCase("Teoria2014") && !usario.equalsIgnoreCase("1068")) {
+				if (countAttemp == 4)
+					System.exit(0);
+				countAttemp++;
+				usario = op1.showMessage(
+						language == 0 ? "Seña" : language == 1 ? "Senha" : language == 2 ? "Password" : "Mot de passe",
+						(language == 0 ? "INTENTO RESTANTE: "
+								: language == 1 ? "TENTATIVA RESTANTE: "
+										: language == 2 ? "REMAINING ATTEMPT: " : "TENTATIVE RESTANTE: ")
+								+ (5 - countAttemp));
+			}
 		this.remove(blurI);
 		for (Component component : components)
 			if (component instanceof JComponent) {
 				((JComponent) component).setVisible(true);
 				this.setJMenuBar(mb);
 			}
-	}
-
-	// Login Data
-	private String login(int attemp) {
-		JPanel panel = new JPanel(new BorderLayout(5, 5));
-
-		JPanel label = new JPanel(new GridLayout(0, 1, 2, 2));
-		label.add(new JLabel(
-				language == 0 ? "Seña" : language == 1 ? "Senha" : language == 2 ? "Password" : "Mot de passe",
-				SwingConstants.RIGHT));
-		panel.add(label, BorderLayout.WEST);
-
-		JPanel controls = new JPanel(new GridLayout(0, 1, 2, 2));
-		JPasswordField password = new JPasswordField();
-		controls.add(password);
-		panel.add(controls, BorderLayout.CENTER);
-		JOptionPane.showMessageDialog(null, panel,
-				(language == 0 ? "INTENTO RESTANTE: "
-						: language == 1 ? "TENTATIVA RESTANTE: "
-								: language == 2 ? "REMAINING ATTEMPT: " : "TENTATIVE RESTANTE: ")
-						+ attemp,
-				JOptionPane.QUESTION_MESSAGE);
-		return password.getText();
 	}
 
 	private void resXP(JMenuItem resoD, JMenuItem resoXP, JMenuItem resoP, JMenuItem resoM, JMenuItem resoG,
@@ -4302,6 +4270,9 @@ public class Pesos extends JFrame {
 				} else// Clear
 				if ((e.getKeyCode() == KeyEvent.VK_B) && ((e.getModifiers() & InputEvent.CTRL_MASK) != 0)) {
 					clearAll();
+				} // LOCK FRAME
+				else if ((e.getKeyCode() == KeyEvent.VK_L) && ((e.getModifiers() & InputEvent.CTRL_MASK) != 0)) {
+					lockFrame();
 				} // Conf
 				else if ((e.getKeyCode() == KeyEvent.VK_C) && ((e.getModifiers() & InputEvent.CTRL_MASK) != 0)) {
 					confFrame(conf, notasF, pesosF, newDay, clearEverthing, hideBtn, resoD, gastosPanel, aggPanel);
@@ -4411,6 +4382,9 @@ public class Pesos extends JFrame {
 				} else// new day
 				if ((e.getKeyCode() == KeyEvent.VK_N) && ((e.getModifiers() & InputEvent.CTRL_MASK) != 0)) {
 					newDay();
+				} // LOCK FRAME
+				else if ((e.getKeyCode() == KeyEvent.VK_L) && ((e.getModifiers() & InputEvent.CTRL_MASK) != 0)) {
+					lockFrame();
 				} // Conf
 				else if ((e.getKeyCode() == KeyEvent.VK_C) && ((e.getModifiers() & InputEvent.CTRL_MASK) != 0)) {
 					confFrame(conf, notasF, pesosF, newDay, clearEverthing, hideBtn, resoD, gastosPanel, aggPanel);
@@ -4453,6 +4427,9 @@ public class Pesos extends JFrame {
 					saveProgress();
 					frame.dispose();
 					new Reales();
+				} // LOCK FRAME
+				else if ((e.getKeyCode() == KeyEvent.VK_L) && ((e.getModifiers() & InputEvent.CTRL_MASK) != 0)) {
+					lockFrame();
 				} // Conf
 				else if ((e.getKeyCode() == KeyEvent.VK_C) && ((e.getModifiers() & InputEvent.CTRL_MASK) != 0)) {
 					confFrame(conf, notasF, pesosF, newDay, clearEverthing, hideBtn, resoD, gastosPanel, aggPanel);
@@ -4562,6 +4539,9 @@ public class Pesos extends JFrame {
 					saveProgress();
 					frame.dispose();
 					new Reales();
+				} // LOCK FRAME
+				else if ((e.getKeyCode() == KeyEvent.VK_L) && ((e.getModifiers() & InputEvent.CTRL_MASK) != 0)) {
+					lockFrame();
 				} // Conf
 				else if ((e.getKeyCode() == KeyEvent.VK_C) && ((e.getModifiers() & InputEvent.CTRL_MASK) != 0)) {
 					confFrame(conf, notasF, pesosF, newDay, clearEverthing, hideBtn, resoD, gastosPanel, aggPanel);
@@ -4672,6 +4652,9 @@ public class Pesos extends JFrame {
 					saveProgress();
 					frame.dispose();
 					new Reales();
+				} // LOCK FRAME
+				else if ((e.getKeyCode() == KeyEvent.VK_L) && ((e.getModifiers() & InputEvent.CTRL_MASK) != 0)) {
+					lockFrame();
 				} // Conf
 				else if ((e.getKeyCode() == KeyEvent.VK_C) && ((e.getModifiers() & InputEvent.CTRL_MASK) != 0)) {
 					confFrame(conf, notasF, pesosF, newDay, clearEverthing, hideBtn, resoD, gastosPanel, aggPanel);

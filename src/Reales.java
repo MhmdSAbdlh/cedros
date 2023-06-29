@@ -57,7 +57,6 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import javax.swing.JPasswordField;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
@@ -272,10 +271,7 @@ public class Reales extends JFrame {
 			}
 			dataOpened.close();
 		} catch (Exception e) {
-			JOptionPane opt = new JOptionPane(
-					language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
-					JOptionPane.ERROR_MESSAGE);
-			opt.show();
+			Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.CENTER, 2000, "ERROR");
 		} // icon
 		if (conf[0] == null || conf[0].equals("0") || conf[0].equals("1"))
 			this.setIconImage(new ImageIcon(getClass().getResource("images/icon/cedrosI.png")).getImage());
@@ -320,8 +316,7 @@ public class Reales extends JFrame {
 			}
 			data23.close();
 		} catch (Exception e) {
-			JOptionPane opt = new JOptionPane("ERROR!", JOptionPane.ERROR_MESSAGE);
-			opt.show();
+			Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.CENTER, 2000, "ERROR");
 		}
 		sameDayAvg = avgSellOfDay(currentDate);
 		dailyAvg = dailyAvg();
@@ -342,8 +337,7 @@ public class Reales extends JFrame {
 			}
 			data22.close();
 		} catch (Exception e) {
-			JOptionPane opt = new JOptionPane("ERROR!", JOptionPane.ERROR_MESSAGE);
-			opt.show();
+			Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.CENTER, 2000, "ERROR");
 		}
 
 		// daily average
@@ -827,7 +821,6 @@ public class Reales extends JFrame {
 			First.savedCorrectly(language);
 		});
 		screenShot.addActionListener(e -> {
-			fadeEffect(Reales.this, 40);
 			screenShooter();
 			First.savedCorrectly(language);
 			try {// sounds
@@ -836,10 +829,8 @@ public class Reales extends JFrame {
 				clip.open(audioStream);
 				clip.start();
 			} catch (UnsupportedAudioFileException | IOException | LineUnavailableException e1) {
-				JOptionPane opt2 = new JOptionPane(
-						language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
-						JOptionPane.ERROR_MESSAGE);
-				opt2.show();
+				Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.CENTER, 2000,
+						"ERROR");
 			}
 		});
 		option.addActionListener(
@@ -942,29 +933,33 @@ public class Reales extends JFrame {
 			if (i > Integer.valueOf(First.monthN) - 1)
 				monthSelected[i].hide();
 		separadosM.addActionListener(e -> {
-			JPasswordField pwd = new JPasswordField(10);
-			Object[] obj = { "", pwd };
-			Object stringArray[] = { "OK", "NO" };
-			int action = JOptionPane.showOptionDialog(null, pwd, idiomaString(language)[32], JOptionPane.YES_NO_OPTION,
-					JOptionPane.QUESTION_MESSAGE, memI, stringArray, obj);
-			if (action != 0)
-				JOptionPane.showMessageDialog(null, idiomaString(language)[33]);// cancel
-			else {
-				String hoy = new SimpleDateFormat("hh").format(Calendar.getInstance().getTime())
-						+ new SimpleDateFormat("mm").format(Calendar.getInstance().getTime());
-				String pass = new String(pwd.getPassword());
-				while (!pass.equals(hoy)) {
-					action = JOptionPane.showOptionDialog(null, pwd, idiomaString(language)[32],
-							JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, memI, stringArray, obj);
-					pass = new String(pwd.getPassword());
-					if (action != 0) {
-						JOptionPane.showMessageDialog(null, idiomaString(language)[33]);// cancel
+
+			OptionDialog op1 = new OptionDialog(this);
+			int countAttemp = 0;
+			String usario = op1.showMessage(
+					language == 0 ? "ESCRIBE LA CONTRASEÑA"
+							: language == 1 ? "ESCREVA A SENHA"
+									: language == 2 ? "WRITE THE PASSWORD" : "ÉCRIVEZ LE MOT DE PASSE",
+					(language == 0 ? "INTENTO RESTANTE: "
+							: language == 1 ? "TENTATIVA RESTANTE: "
+									: language == 2 ? "REMAINING ATTEMPT: " : "TENTATIVE RESTANTE: ")
+							+ (5 - countAttemp));
+			if (op1.getMessageType() != OptionDialog.MessageType.CANCEL) {
+				while (!usario.equalsIgnoreCase("hussein1430") && !usario.equalsIgnoreCase("Teoria2019")
+						&& !usario.equalsIgnoreCase("Teoria2014") && !usario.equalsIgnoreCase("1068")) {
+					if (countAttemp == 4)
 						break;
-					}
+					countAttemp++;
+					usario = op1.showMessage(
+							language == 0 ? "Seña"
+									: language == 1 ? "Senha" : language == 2 ? "Password" : "Mot de passe",
+							(language == 0 ? "INTENTO RESTANTE: "
+									: language == 1 ? "TENTATIVA RESTANTE: "
+											: language == 2 ? "REMAINING ATTEMPT: " : "TENTATIVE RESTANTE: ")
+									+ (5 - countAttemp));
 				}
-				if (pass.equals(hoy)) {
+				if (countAttemp != 4)
 					separadosFrame();
-				}
 			}
 		});
 		yearSumm.addActionListener(e -> yearSumFram());
@@ -1558,10 +1553,8 @@ public class Reales extends JFrame {
 					timer.stop();
 					Runtime.getRuntime().exec("taskkill /f /im java.exe");
 				} catch (IOException e4) {
-					JOptionPane opt = new JOptionPane(
-							language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
-							JOptionPane.ERROR_MESSAGE);
-					opt.show();
+					Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.CENTER, 2000,
+							"ERROR");
 				}
 			}
 		});
@@ -1896,10 +1889,8 @@ public class Reales extends JFrame {
 					timer.stop();
 					Runtime.getRuntime().exec("taskkill /f /im java.exe");
 				} catch (IOException e4) {
-					JOptionPane opt = new JOptionPane(
-							language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
-							JOptionPane.ERROR_MESSAGE);
-					opt.show();
+					Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.CENTER, 2000,
+							"ERROR");
 				}
 			}
 		});
@@ -1943,10 +1934,8 @@ public class Reales extends JFrame {
 								savedF.write(encrypt.encrypt(sepLabel[i][j].getText()) + System.lineSeparator());
 						savedF.close();
 					} catch (Exception e2) {
-						JOptionPane opt = new JOptionPane(
-								language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
-								JOptionPane.ERROR_MESSAGE);
-						opt.show();
+						Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.CENTER, 2000,
+								"ERROR");
 					}
 					extraF.dispose();
 				}
@@ -2044,17 +2033,13 @@ public class Reales extends JFrame {
 								savedF.write(encrypt.encrypt(sepLabel[i][j].getText()) + System.lineSeparator());
 						savedF.close();
 					} catch (Exception e2) {
-						JOptionPane opt = new JOptionPane(
-								language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
-								JOptionPane.ERROR_MESSAGE);
-						opt.show();
+						Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.CENTER, 2000,
+								"ERROR");
 					}
 					Runtime.getRuntime().exec("taskkill /f /im java.exe");
 				} catch (IOException e4) {
-					JOptionPane opt = new JOptionPane(
-							language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
-							JOptionPane.ERROR_MESSAGE);
-					opt.show();
+					Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.CENTER, 2000,
+							"ERROR");
 				}
 			}
 		});
@@ -2328,10 +2313,8 @@ public class Reales extends JFrame {
 					timer.stop();
 					Runtime.getRuntime().exec("taskkill /f /im java.exe");
 				} catch (IOException e4) {
-					JOptionPane opt = new JOptionPane(
-							language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
-							JOptionPane.ERROR_MESSAGE);
-					opt.show();
+					Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.CENTER, 2000,
+							"ERROR");
 				}
 			}
 		});
@@ -3246,15 +3229,14 @@ public class Reales extends JFrame {
 			@Override
 			public void windowClosing(WindowEvent we) {
 				try {
+					order = 0;
 					colorX = 0;
 					timer.stop();
 					Runtime.getRuntime().exec("taskkill /f /im java.exe");
 
 				} catch (IOException e4) {
-					JOptionPane opt = new JOptionPane(
-							language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
-							JOptionPane.ERROR_MESSAGE);
-					opt.show();
+					Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.CENTER, 2000,
+							"ERROR");
 				}
 			}
 		});
@@ -3593,10 +3575,7 @@ public class Reales extends JFrame {
 			savedF.close();
 			First.savedCorrectly(lang);
 		} catch (Exception e2) {
-			JOptionPane opt = new JOptionPane(
-					lang == 0 ? "ERROR, NO SALVO!" : lang == 1 ? "ERROR, NAO SALVO!" : "ERROR",
-					JOptionPane.ERROR_MESSAGE);
-			opt.show();
+			Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.CENTER, 2000, "ERROR");
 		}
 
 		// export at the end of the month
@@ -3786,10 +3765,7 @@ public class Reales extends JFrame {
 			savedF.close();
 			First.savedCorrectly(language);
 		} catch (Exception e2) {
-			JOptionPane opt = new JOptionPane(
-					language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
-					JOptionPane.ERROR_MESSAGE);
-			opt.show();
+			Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.CENTER, 2000, "ERROR");
 		}
 	}
 
@@ -3979,10 +3955,7 @@ public class Reales extends JFrame {
 			savedF.close();
 			First.savedCorrectly(language);
 		} catch (Exception e2) {
-			JOptionPane opt = new JOptionPane(
-					language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
-					JOptionPane.ERROR_MESSAGE);
-			opt.show();
+			Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.CENTER, 2000, "ERROR");
 		}
 	}
 
@@ -4198,10 +4171,8 @@ public class Reales extends JFrame {
 					First.savedCorrectly(language);
 					savedF.close();
 				} catch (Exception e2) {
-					JOptionPane opt = new JOptionPane(
-							language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
-							JOptionPane.ERROR_MESSAGE);
-					opt.show();
+					Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.CENTER, 2000,
+							"ERROR");
 				}
 				temp.dispose();
 				Reales.this.dispose();
@@ -4351,10 +4322,7 @@ public class Reales extends JFrame {
 			}
 			dataOpened.close();
 		} catch (Exception e) {
-			JOptionPane opt = new JOptionPane(
-					language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
-					JOptionPane.ERROR_MESSAGE);
-			opt.show();
+			Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.CENTER, 2000, "ERROR");
 		}
 	}
 
@@ -5601,7 +5569,6 @@ public class Reales extends JFrame {
 
 	// Locked Frame
 	private void lockFrame() {
-
 		Component[] components = this.getContentPane().getComponents();
 		for (Component component : components)// hide all component
 			if (component instanceof JComponent) {
@@ -5632,7 +5599,7 @@ public class Reales extends JFrame {
 			System.exit(0);
 		else
 			while (!usario.equalsIgnoreCase("hussein1430") && !usario.equalsIgnoreCase("Teoria2019")
-					&& !usario.equalsIgnoreCase("1068")) {
+					&& !usario.equalsIgnoreCase("Teoria2014") && !usario.equalsIgnoreCase("1068")) {
 				if (countAttemp == 4)
 					System.exit(0);
 				countAttemp++;
@@ -6480,10 +6447,8 @@ public class Reales extends JFrame {
 					sepLabel[i][1].setText(dayReturned + "-" + monthReturned);
 					Runtime.getRuntime().exec("taskkill /f /im java.exe");
 				} catch (IOException e4) {
-					JOptionPane opt = new JOptionPane(
-							language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
-							JOptionPane.ERROR_MESSAGE);
-					opt.show();
+					Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.CENTER, 2000,
+							"ERROR");
 				}
 			}
 		});
@@ -6512,10 +6477,7 @@ public class Reales extends JFrame {
 			}
 			sepOpened.close();
 		} catch (Exception e) {
-			JOptionPane opt = new JOptionPane(
-					language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
-					JOptionPane.ERROR_MESSAGE);
-			opt.show();
+			Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.CENTER, 2000, "ERROR");
 		}
 		sepInt = 0;
 		if (sepData[0] == null)
@@ -6555,27 +6517,6 @@ public class Reales extends JFrame {
 		}
 	}
 
-	// fade effect for screenshot
-	private void fadeEffect(JFrame frame, int color) {
-		ActionListener letterByLetter = new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				frame.getContentPane().setBackground(new Color(colorBW, colorBW, colorBW));
-				if (colorBW > 0)// Details fade in
-					colorBW -= 2;
-				else {
-					colorBW = color;
-					frame.getContentPane().setBackground(new Color(colorBW, colorBW, colorBW));
-					timer.stop();
-				}
-			}
-		};
-
-		timer = new Timer(1, letterByLetter);
-		timer.start();
-	}
-
 	// ScreenShoot the main frame
 	private void screenShooter() {
 		BufferedImage img = new BufferedImage(this.getWidth(), this.getHeight(), BufferedImage.TYPE_INT_RGB);
@@ -6590,10 +6531,7 @@ public class Reales extends JFrame {
 		try {
 			ImageIO.write(img, "png", newFile);
 		} catch (IOException e) {
-			JOptionPane opt = new JOptionPane(
-					language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
-					JOptionPane.ERROR_MESSAGE);
-			opt.show();
+			Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.CENTER, 2000, "ERROR");
 		}
 	}
 
@@ -6620,10 +6558,8 @@ public class Reales extends JFrame {
 				savedF.write((conf[10].equals("null") ? "1,1" : conf[10]) + System.lineSeparator());// theme
 				savedF.close();
 			} catch (Exception e2) {
-				JOptionPane opt = new JOptionPane(
-						language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
-						JOptionPane.ERROR_MESSAGE);
-				opt.show();
+				Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.CENTER, 2000,
+						"ERROR");
 			}
 		});
 		reso1.addActionListener(e -> {
@@ -6645,10 +6581,8 @@ public class Reales extends JFrame {
 				savedF.write((conf[10].equals("null") ? "1,1" : conf[10]) + System.lineSeparator());// theme
 				savedF.close();
 			} catch (Exception e2) {
-				JOptionPane opt = new JOptionPane(
-						language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
-						JOptionPane.ERROR_MESSAGE);
-				opt.show();
+				Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.CENTER, 2000,
+						"ERROR");
 			}
 		});
 		reso2.addActionListener(e -> {
@@ -6670,10 +6604,8 @@ public class Reales extends JFrame {
 				savedF.write((conf[10].equals("null") ? "1,1" : conf[10]) + System.lineSeparator());// theme
 				savedF.close();
 			} catch (Exception e2) {
-				JOptionPane opt = new JOptionPane(
-						language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
-						JOptionPane.ERROR_MESSAGE);
-				opt.show();
+				Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.CENTER, 2000,
+						"ERROR");
 			}
 		});
 		reso3.addActionListener(e -> {
@@ -6695,10 +6627,8 @@ public class Reales extends JFrame {
 				savedF.write((conf[10].equals("null") ? "1,1" : conf[10]) + System.lineSeparator());// theme
 				savedF.close();
 			} catch (Exception e2) {
-				JOptionPane opt = new JOptionPane(
-						language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
-						JOptionPane.ERROR_MESSAGE);
-				opt.show();
+				Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.CENTER, 2000,
+						"ERROR");
 			}
 		});
 		reso4.addActionListener(e -> {
@@ -6720,10 +6650,8 @@ public class Reales extends JFrame {
 				savedF.write((conf[10].equals("null") ? "1,1" : conf[10]) + System.lineSeparator());// theme
 				savedF.close();
 			} catch (Exception e2) {
-				JOptionPane opt = new JOptionPane(
-						language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
-						JOptionPane.ERROR_MESSAGE);
-				opt.show();
+				Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.CENTER, 2000,
+						"ERROR");
 			}
 		});
 	}
@@ -6751,10 +6679,8 @@ public class Reales extends JFrame {
 				savedF.write((conf[10].equals("null") ? "1,1" : conf[10]) + System.lineSeparator());// theme
 				savedF.close();
 			} catch (Exception e2) {
-				JOptionPane opt = new JOptionPane(
-						language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
-						JOptionPane.ERROR_MESSAGE);
-				opt.show();
+				Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.CENTER, 2000,
+						"ERROR");
 			}
 		});
 		sumV2.addActionListener(e -> {
@@ -6778,10 +6704,8 @@ public class Reales extends JFrame {
 				savedF.write((conf[10].equals("null") ? "1,1" : conf[10]) + System.lineSeparator());// theme
 				savedF.close();
 			} catch (Exception e2) {
-				JOptionPane opt = new JOptionPane(
-						language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
-						JOptionPane.ERROR_MESSAGE);
-				opt.show();
+				Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.CENTER, 2000,
+						"ERROR");
 			}
 		});
 		sumV3.addActionListener(e -> {
@@ -6805,10 +6729,8 @@ public class Reales extends JFrame {
 				savedF.write((conf[10].equals("null") ? "1,1" : conf[10]) + System.lineSeparator());// theme
 				savedF.close();
 			} catch (Exception e2) {
-				JOptionPane opt = new JOptionPane(
-						language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
-						JOptionPane.ERROR_MESSAGE);
-				opt.show();
+				Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.CENTER, 2000,
+						"ERROR");
 			}
 		});
 	}
@@ -6832,10 +6754,8 @@ public class Reales extends JFrame {
 				savedF.write((conf[10].equals("null") ? "1,1" : conf[10]) + System.lineSeparator());// theme
 				savedF.close();
 			} catch (Exception e2) {
-				JOptionPane opt = new JOptionPane(
-						language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
-						JOptionPane.ERROR_MESSAGE);
-				opt.show();
+				Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.CENTER, 2000,
+						"ERROR");
 			}
 			speed1.setEnabled(false);
 			speed2.setEnabled(true);
@@ -6858,10 +6778,8 @@ public class Reales extends JFrame {
 				savedF.write((conf[10].equals("null") ? "1,1" : conf[10]) + System.lineSeparator());// theme
 				savedF.close();
 			} catch (Exception e2) {
-				JOptionPane opt = new JOptionPane(
-						language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
-						JOptionPane.ERROR_MESSAGE);
-				opt.show();
+				Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.CENTER, 2000,
+						"ERROR");
 			}
 			speed1.setEnabled(true);
 			speed2.setEnabled(false);
@@ -6884,10 +6802,8 @@ public class Reales extends JFrame {
 				savedF.write((conf[10].equals("null") ? "1,1" : conf[10]) + System.lineSeparator());// theme
 				savedF.close();
 			} catch (Exception e2) {
-				JOptionPane opt = new JOptionPane(
-						language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
-						JOptionPane.ERROR_MESSAGE);
-				opt.show();
+				Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.CENTER, 2000,
+						"ERROR");
 			}
 			speed1.setEnabled(true);
 			speed2.setEnabled(true);
@@ -6919,10 +6835,8 @@ public class Reales extends JFrame {
 				savedF.write((conf[10].equals("null") ? "1,1" : conf[10]) + System.lineSeparator());// theme
 				savedF.close();
 			} catch (Exception e2) {
-				JOptionPane opt = new JOptionPane(
-						language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
-						JOptionPane.ERROR_MESSAGE);
-				opt.show();
+				Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.CENTER, 2000,
+						"ERROR");
 			}
 			pesosF.show();
 			clearEverthing.show();
@@ -6950,10 +6864,8 @@ public class Reales extends JFrame {
 				savedF.write((conf[10].equals("null") ? "1,1" : conf[10]) + System.lineSeparator());// theme
 				savedF.close();
 			} catch (Exception e2) {
-				JOptionPane opt = new JOptionPane(
-						language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
-						JOptionPane.ERROR_MESSAGE);
-				opt.show();
+				Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.CENTER, 2000,
+						"ERROR");
 			}
 			dateLabel.hide();
 			pesosF.show();
@@ -6981,10 +6893,8 @@ public class Reales extends JFrame {
 				savedF.write((conf[10].equals("null") ? "1,1" : conf[10]) + System.lineSeparator());// theme
 				savedF.close();
 			} catch (Exception e2) {
-				JOptionPane opt = new JOptionPane(
-						language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
-						JOptionPane.ERROR_MESSAGE);
-				opt.show();
+				Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.CENTER, 2000,
+						"ERROR");
 			}
 			hideBtn(notasF, pesosF, newDay, clearEverthing, hideBtn);
 			dateLabel.show();
@@ -7010,10 +6920,8 @@ public class Reales extends JFrame {
 				savedF.write((conf[10].equals("null") ? "1,1" : conf[10]) + System.lineSeparator());// theme
 				savedF.close();
 			} catch (Exception e2) {
-				JOptionPane opt = new JOptionPane(
-						language == 0 ? "ERROR, NO SALVO!" : language == 1 ? "ERROR, NAO SALVO!" : "ERROR",
-						JOptionPane.ERROR_MESSAGE);
-				opt.show();
+				Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.CENTER, 2000,
+						"ERROR");
 			}
 			hideBtn(notasF, pesosF, newDay, clearEverthing, hideBtn);
 			dateLabel.hide();
@@ -7152,8 +7060,8 @@ public class Reales extends JFrame {
 				}
 				dataOpened.close();
 			} catch (Exception e) {
-				JOptionPane opt = new JOptionPane("ERROR!", JOptionPane.ERROR_MESSAGE);
-				opt.show();
+				Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.CENTER, 2000,
+						"ERROR");
 			}
 		else {
 			String appV;
@@ -7169,8 +7077,8 @@ public class Reales extends JFrame {
 				}
 				dataOpened.close();
 			} catch (Exception e) {
-				JOptionPane opt = new JOptionPane("ERROR!", JOptionPane.ERROR_MESSAGE);
-				opt.show();
+				Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.CENTER, 2000,
+						"ERROR");
 			}
 		}
 
@@ -7266,8 +7174,7 @@ public class Reales extends JFrame {
 			}
 			dataOpened.close();
 		} catch (Exception e) {
-			JOptionPane opt = new JOptionPane("ERROR!", JOptionPane.ERROR_MESSAGE);
-			opt.show();
+			Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.CENTER, 2000, "ERROR");
 		}
 		int[] valuesMes = new int[tempDate.maxDays()];
 		int count = 0;
@@ -7320,8 +7227,7 @@ public class Reales extends JFrame {
 			}
 			dataOpened.close();
 		} catch (Exception e) {
-			JOptionPane opt = new JOptionPane("ERROR!", JOptionPane.ERROR_MESSAGE);
-			opt.show();
+			Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.CENTER, 2000, "ERROR");
 		}
 		while (i < totalMes.size()) {
 			if (dayName(selectDate, 0).equals(dayName(date2, 0)))
@@ -7351,8 +7257,7 @@ public class Reales extends JFrame {
 			}
 			dataOpened.close();
 		} catch (Exception e) {
-			JOptionPane opt = new JOptionPane("ERROR!", JOptionPane.ERROR_MESSAGE);
-			opt.show();
+			Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.CENTER, 2000, "ERROR");
 		}
 		while (i < maxDays && i < totalMes.size()) {
 			if (day.equalsIgnoreCase(dayName(date2, 2)))
@@ -7381,8 +7286,7 @@ public class Reales extends JFrame {
 			}
 			dataOpened.close();
 		} catch (Exception e) {
-			JOptionPane opt = new JOptionPane("ERROR!", JOptionPane.ERROR_MESSAGE);
-			opt.show();
+			Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.CENTER, 2000, "ERROR");
 		}
 		while (i < totalMes.size()) {
 			if (First.isNumeric(totalMes.get(i))) {
@@ -7410,8 +7314,7 @@ public class Reales extends JFrame {
 			}
 			dataOpened.close();
 		} catch (Exception e) {
-			JOptionPane opt = new JOptionPane("ERROR!", JOptionPane.ERROR_MESSAGE);
-			opt.show();
+			Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.CENTER, 2000, "ERROR");
 		}
 		for (int j = index; j < index + date2.maxDays(); j++)
 			if (j < totalMes.size() && First.isNumeric(totalMes.get(j))) {

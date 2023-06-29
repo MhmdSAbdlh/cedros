@@ -544,7 +544,7 @@ public class FaturaP extends JFrame {
 		else
 			keyShortcut.hide();
 		hideBtn.addActionListener(e -> hideBtns(mainF, clearB, hideBtn));
-		creator.addActionListener(e -> JOptionPane.showMessageDialog(null, idiomaString(language)[2], "SOBRE MI", 1));
+		creator.addActionListener(e -> JOptionPane.showMessageDialog(null, idiomaString(language)[2], "MhmdSAbdlh", 1));
 		about.addActionListener(
 				e -> JOptionPane.showMessageDialog(null, idiomaString(language)[3], "CEDROS/NARJES", 1));
 		reso.add(resoD);

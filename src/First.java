@@ -316,7 +316,36 @@ public class First extends JFrame {
 		this.add(userText);
 		usarioName.setBounds(this.getWidth() * 3 / 4 - 100, height / 5 + 60, 200, 50);
 		usarioName.setHorizontalAlignment(0);
-		usarioName.setText("MhmdSAbdlh");
+		usarioName.setText("");
+		ArrayList<String> users = new ArrayList<>();
+		users.add("mhmdsabdlh");
+		users.add("claudia");
+		users.add("narjes");
+		users.add("cedros");
+		AutoComplete userAC = new AutoComplete(usarioName, users);
+		usarioName.getDocument().addDocumentListener(userAC);
+		addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowOpened(WindowEvent e) {
+				usarioName.requestFocus();
+			}
+		});
+		usarioName.addKeyListener(new KeyListener() {
+
+			@Override
+			public void keyTyped(KeyEvent e) {
+			}
+
+			@Override
+			public void keyReleased(KeyEvent e) {
+			}
+
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if ((e.getKeyCode() == KeyEvent.VK_C) && ((e.getModifiers() & InputEvent.CTRL_MASK) != 0))
+					confFrame(conf, height, icon1);
+			}
+		});
 		this.add(usarioName);
 
 		inputText.setBounds(this.getWidth() / 2, height / 2, this.getWidth() / 2, 40);
@@ -340,12 +369,6 @@ public class First extends JFrame {
 			} else {
 				passTF.setEchoChar('•');
 				showStatus = 0;
-			}
-		});
-		addWindowListener(new WindowAdapter() {
-			@Override
-			public void windowOpened(WindowEvent e) {
-				passTF.requestFocus();
 			}
 		});
 		passTF.addKeyListener(new KeyListener() {
@@ -373,16 +396,25 @@ public class First extends JFrame {
 		login.setContentAreaFilled(false);
 		login.setBorderPainted(false);
 		login.addActionListener(e -> {
-			String hoy = new SimpleDateFormat("hh").format(Calendar.getInstance().getTime())
-					+ new SimpleDateFormat("mm").format(Calendar.getInstance().getTime());
-			String hoy2 = new SimpleDateFormat("HH").format(Calendar.getInstance().getTime())
-					+ new SimpleDateFormat("mm").format(Calendar.getInstance().getTime());
-			if (((conf[0].equalsIgnoreCase("2") || conf[0].equalsIgnoreCase("3"))
-					&& String.valueOf(passTF.getPassword()).equals("Teoria2013"))
-					|| ((conf[0].equalsIgnoreCase("0") || conf[0].equalsIgnoreCase("1"))
-							&& String.valueOf(passTF.getPassword()).equals("Teoria2019"))
-					|| String.valueOf(passTF.getPassword()).equals(hoy)
-					|| String.valueOf(passTF.getPassword()).equals(hoy2)) {
+			boolean hoy = String.valueOf(passTF.getPassword())
+					.equals(new SimpleDateFormat("hh").format(Calendar.getInstance().getTime())
+							+ new SimpleDateFormat("mm").format(Calendar.getInstance().getTime()));
+			boolean hoy2 = String.valueOf(passTF.getPassword())
+					.equals(new SimpleDateFormat("HH").format(Calendar.getInstance().getTime())
+							+ new SimpleDateFormat("mm").format(Calendar.getInstance().getTime()));
+			boolean cond1 = usarioName.getText().equalsIgnoreCase("MhmdSAbdlh");
+			boolean cond2 = usarioName.getText().equalsIgnoreCase("Claudia")
+					|| usarioName.getText().equalsIgnoreCase("Narjes");
+			boolean narjesUser = ((conf[0].equalsIgnoreCase("2") || conf[0].equalsIgnoreCase("3"))
+					&& String.valueOf(passTF.getPassword()).equals("Teoria2014"));
+			boolean cedrosUser = ((conf[0].equalsIgnoreCase("0") || conf[0].equalsIgnoreCase("1"))
+					&& String.valueOf(passTF.getPassword()).equals("Teoria2019"));
+			if (!users.contains(usarioName.getText().toLowerCase()))
+				Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.CENTER, 1000,
+						language == 0 ? "USUARIO NO ENCONTRADO"
+								: language == 1 ? "USUÁRIO NÃO ENCONTRADO"
+										: language == 2 ? "USER NOT FOUND" : "UTILISATEUR NON TROUVÉ");
+			else if ((cond1 && (narjesUser || cedrosUser || hoy || hoy2)) || (cond2 && narjesUser)) {
 				passTF.setText("");
 				this.dispose();
 				if (conf[5] == null || conf[5].equals("null") || conf[5].equals("0"))
@@ -395,18 +427,17 @@ public class First extends JFrame {
 					new FaturaP();
 			} else {
 				if (String.valueOf(passTF.getPassword()).equalsIgnoreCase("ghtaymi"))
-					Notifications.getInstance().show(Notifications.Type.INFO, Notifications.Location.CENTER, 10000,
-							"ALI GHTAYMI = ZOOMBIE");
+					Notifications.getInstance().show(Notifications.Type.INFO, Notifications.Location.BOTTOM_CENTER,
+							10000, "ALI GHTAYMI = ZOOMBIE");
 				else if (String.valueOf(passTF.getPassword()).equalsIgnoreCase(""))
-					Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.BOTTOM_CENTER,
-							1000,
+					Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.CENTER, 1000,
 							language == 0 ? "NECESITAS PONER UNA SEÑA"
 									: language == 1 ? "VOCÊ PRECISA COLOCAR UMA SENHA"
 											: language == 2 ? "YOU NEED TO PUT IN A PASSWORD"
 													: "VOUS DEVEZ METTRE UN MOT DE PASSE");
 				else
-					JOptionPane.showMessageDialog(null, idiomaString(language)[2], "Atencion",
-							JOptionPane.ERROR_MESSAGE);
+					Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.CENTER, 1000,
+							idiomaString(language)[2]);
 				passTF.selectAll();
 			}
 		});
@@ -421,7 +452,7 @@ public class First extends JFrame {
 		JMenuItem introM = new JMenuItem("INTRO");
 		introM.setIcon(new ImageIcon(getScaledImage(introI.getImage(), 35, 35)));
 		option.setIcon(new ImageIcon(getScaledImage(confI.getImage(), 35, 35)));
-		creator.addActionListener(e -> JOptionPane.showMessageDialog(null, idiomaString(language)[3], "SOBRE MI", 1));
+		creator.addActionListener(e -> JOptionPane.showMessageDialog(null, idiomaString(language)[3], "MhmdSAbdlh", 1));
 		creator.setIcon(new ImageIcon(getScaledImage(creatorI.getImage(), 35, 35)));
 		about.addActionListener(
 				e -> JOptionPane.showMessageDialog(null, idiomaString(language)[4], "CEDROS/NARJES", 1));
@@ -505,7 +536,7 @@ public class First extends JFrame {
 
 			@Override
 			public void run() {
-				Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, 5000,
+				Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, 60000,
 						language == 0 ? "YA ES CASI LA HORA DE CERRAR!\n\n" + "HAZ LA CAJA!"
 								: language == 1 ? "ESTÁ QUASE NA HORA DE FECHAR\n" + "FAÇA A CAIXA!"
 										: language == 2 ? "IT'S ALMOST CLOSING TIME\n" + "MAKE THE CASH!"
@@ -591,8 +622,7 @@ public class First extends JFrame {
 
 	private String[] idiomaString(int idioma) {
 		String[] espanol = { "Mostrar", "Ocultar", // pass hide show0
-				"<html><div style=color:red>Contraseña Incorrecta.</div>"
-						+ "<div style=color:blue>Pista: Contraseña de la tienda!</div></html>", // PASS WRONG 1
+				"Contraseña Incorrecta.\nPista: Contraseña de la tienda", // PASS WRONG 1
 				"Crédito y Diseñado por MhmdSAbdlh ©"// creator 2
 				,
 				"ESTA APLICACIÓN ESTÁ DISEÑADA PARA CEDROS Y NARJES FREE SHOP.\r\n"
@@ -616,9 +646,7 @@ public class First extends JFrame {
 				, "TEMA"// THEME16
 		};
 		String[] portugues = { "Mostrar", "Esconder", // pass hide show
-				"<html><div style=color:red>Senha incorreta.</div>"
-						+ "<div style=color:blue>Dica: Senha da loja!</div></html>",
-				"Crédito e Desenhado por MhmdSAbdlh ©"// creator
+				"Senha incorreta.\nDica: Senha da loja!", "Crédito e Desenhado por MhmdSAbdlh ©"// creator
 				,
 				"ESTE APLICATIVO FOI PROJETADO PARA O FREE SHOP DE CEDROS E NARJES.\r\n"
 						+ "TEM MOLDURA PARA FECHAR A CAIXA TANTO EM REAIS QUANTO EM PESOS.\r\n"
@@ -640,9 +668,7 @@ public class First extends JFrame {
 				, "TEMA"// THEME16
 		};
 		String[] english = { "Show", "Hide", // pass hide show
-				"<html><div style=color:red>Wrong password.</div>"
-						+ "<div style=color:blue>Hint: Store's password!</div></html>",
-				"Created and designed by MhmdSAbdlh ©"// creator
+				"Wrong password.\nHint: Store's password!", "Created and designed by MhmdSAbdlh ©"// creator
 				,
 				"THIS APP IS DESIGNED FOR CEDROS AND NARJES FREE SHOP.\r\n"
 						+ "HAS A FRAME TO CLOSE THE BOX IN REALS AND PESOS.\r\n"
@@ -665,9 +691,7 @@ public class First extends JFrame {
 				, "THEME"// THEME16
 		};
 		String[] french = { "Montrer", "Masquer", // passer masquer afficher
-				"<html><div style=color:red>Mot de passe incorrect.</div>"
-						+ "<div style=color:blue>Astuce : Mot de passe du magasin !</div></html>",
-				"Créé et conçu par MhmdSAbdlh ©"// créateur
+				"Mot de passe incorrect.\nAstuce : Mot de passe du magasin !", "Créé et conçu par MhmdSAbdlh ©"// créateur
 				,
 				"CETTE APPLICATION EST CONÇUE POUR LA BOUTIQUE GRATUITE CEDROS ET NARJES.\r\n"
 						+ "A UN CADRE POUR FERMER LA BOÎTE EN REALS ET PESOS.\r\n"
@@ -1230,7 +1254,7 @@ public class First extends JFrame {
 	}
 
 	static void savedCorrectly(int lang) {
-		Notifications.getInstance().show(Notifications.Type.WARNING, Notifications.Location.TOP_CENTER, 1000,
+		Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, 1000,
 				language == 0 ? "SALVADO CON ÉXITO"
 						: language == 1 ? "SALVO COM SUCESSO"
 								: language == 2 ? "SAVED SUCCESSFULLY" : "ENREGISTRÉ AVEC SUCCÈS");
