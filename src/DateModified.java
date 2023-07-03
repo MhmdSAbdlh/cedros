@@ -4,6 +4,8 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.ArrayList;
 
+import raven.toast.Notifications;
+
 public class DateModified {
 	static int[] daysInMonth = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
 	int m;
@@ -13,7 +15,7 @@ public class DateModified {
 	String currentpath = System.getProperty("user.dir");
 	File tempFile0 = new File(currentpath + "\\data");
 	File temp23 = new File(tempFile0 + "\\extra");
-	File file23 = new File(temp23, "2023.dll");
+	File file23 = new File(temp23, y + ".dll");
 	String conf[] = new String[10];
 
 	DateModified(int d, int m, int y) {
@@ -95,8 +97,8 @@ public class DateModified {
 		return months[language][num].toUpperCase();
 	}
 
-	// Save the new total to 2023
-	void saveTotal23(int total) {
+	// Save the new total to currentDate
+	void saveToday(int total) {
 		// save what will rest for tmrw
 		BufferedReader data23 = null;
 		String l23 = "";
@@ -105,7 +107,7 @@ public class DateModified {
 		temp23.mkdir();
 		File file23 = new File(temp23, y + ".dll");
 		ArrayList<String> con23 = new ArrayList<>();
-		try {// open the data for 2023
+		try {// open the data for currentDate
 			data23 = new BufferedReader(new FileReader(file23));
 			while ((l23 = data23.readLine()) != null) {
 				con23.add(l23.toString());
@@ -125,6 +127,8 @@ public class DateModified {
 				save23.write(total + System.lineSeparator());// write the current day
 			save23.close();
 		} catch (Exception e2) {
+			Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.CENTER, 2000,
+					"ERROR" + e2);
 		}
 	}
 }

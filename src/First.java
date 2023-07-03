@@ -113,7 +113,7 @@ public class First extends JFrame {
 	javax.swing.Timer timer;
 	int order = 0, wordL = 0;
 
-	static String appVersion = "v8.1";
+	static String appVersion = "v8.2";
 	static JLabel lastChange = new JLabel();
 	private static int language;
 
