@@ -20,9 +20,11 @@ import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -56,6 +58,7 @@ import javax.swing.text.StyledDocument;
 import com.formdev.flatlaf.FlatIntelliJLaf;
 
 import raven.fancyicon.FancyIcon;
+import raven.message.MessageDialog;
 import raven.switchbutton.SwitchButton;
 import raven.textfield.PasswordField;
 import raven.textfield.TextField;
@@ -113,7 +116,7 @@ public class First extends JFrame {
 	javax.swing.Timer timer;
 	int order = 0, wordL = 0;
 
-	static String appVersion = "v8.2";
+	static String appVersion = "8.3";
 	static JLabel lastChange = new JLabel();
 	private static int language;
 
@@ -133,17 +136,18 @@ public class First extends JFrame {
 		int width = (int) screenSize.getWidth() - 100;
 		int height = (int) screenSize.getHeight() - 100;
 
-		Notifications.getInstance().setJFrame(this);
+		Notifications.getInstance().setJFrame(this);// PREPARE NOTIFICATION
 		FancyIcon icon1 = new FancyIcon();
 		timeToClose();// TIMER TO END THE DAY
+
 		// Open Conf
 		tempFile0.mkdir();
 		BufferedReader dataOpened = null;
 		String line = "";
 		int z = 0;
+
 		// Check if a conf is exist
-		// OPEN CONF
-		try {
+		try {// OPEN CONF
 			dataOpened = new BufferedReader(new FileReader(newFile));
 			while ((line = dataOpened.readLine()) != null) {
 				conf[z] = line.toString();
@@ -427,7 +431,7 @@ public class First extends JFrame {
 			} else {
 				if (String.valueOf(passTF.getPassword()).equalsIgnoreCase("ghtaymi"))
 					Notifications.getInstance().show(Notifications.Type.INFO, Notifications.Location.BOTTOM_CENTER,
-							10000, "ALI GHTAYMI = ZOOMBIE");
+							10000, "ALI GHTAYMI = ZOOMBIE!!!");
 				else if (String.valueOf(passTF.getPassword()).equalsIgnoreCase(""))
 					Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.CENTER, 1000,
 							language == 0 ? "NECESITAS PONER UNA SEÑA"
@@ -526,6 +530,114 @@ public class First extends JFrame {
 
 		// language
 		textLang(inputText, userText, file, exit, creator, about, option, language);
+
+		try {
+			updateAvailable();
+		} catch (IOException e1) {
+			Notifications.getInstance().show(Notifications.Type.INFO, Notifications.Location.CENTER, 1000,
+					"ERROR: " + e1);
+		}
+	}
+
+	// UPDATE THE APP
+	private void updateAvailable() throws IOException {
+		// VERSION DOWNLOAD
+		URL url = new URL("https://pastebin.com/raw/fzgi60tx");
+		File verFile = new File(tempFile0, "version.dll");
+		saveFileFromWeb(url, verFile);
+
+		// version open
+		String verAv = "";
+		try (BufferedReader verBR = new BufferedReader(new FileReader(verFile))) {
+			String lVers = "";
+			if ((lVers = verBR.readLine()) != null)
+				verAv = lVers.toString();
+			verBR.close();
+		} catch (Exception e) {
+			Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.CENTER, 1000,
+					"ERROR WHILE OPEN THE VERSION NUBER!");
+		}
+		if (!verAv.equals(appVersion)) {
+			MessageDialog obj = new MessageDialog(this);
+			obj.showMessage(language == 0 ? ("¿ACTUALIZAR A " + verAv + "?")
+					: language == 1 ? ("ATUALIZAR PARA " + verAv + "?")
+							: language == 2 ? ("UPDATE TO " + verAv + "?") : "MISE À JOUR VERS " + verAv + "?");
+			if (obj.getMessageType() == MessageDialog.MessageType.OK) {
+				if (conf[0] == null || conf[0].equals("0") || conf[0].equals("1")) {
+					URL cedrosURL = new URL("https://raw.githubusercontent.com/MhmdSAbdlh/cedros/main/Cedros.exe");
+					File cedFile = new File(currentpath, "cedros.exe");
+					File ced2File = new File(currentpath, "cedros.exe.temp");
+					// Rename the file
+					cedFile.renameTo(ced2File);
+					Notifications.getInstance().show(Notifications.Type.INFO, Notifications.Location.CENTER, 1000,
+							language == 0 ? ("ACTUALIZACIÓN EN CURSO, ESPERE UN SEGUNDO...")
+									: language == 1 ? ("ATUALIZAÇÃO EM ANDAMENTO, AGUARDE UM SEGUNDO...")
+											: language == 2 ? ("UPDATE IN PROGRESS, WAIT A SECONDS...")
+													: "MISE À JOUR EN COURS, ATTENDEZ UNE SECONDE...");
+					saveFileFromWeb(cedrosURL, cedFile);
+				} else {
+					URL narjesURL = new URL("https://raw.githubusercontent.com/MhmdSAbdlh/cedros/main/Narjes.exe");
+					File narFile = new File(currentpath, "narjes.exe");
+					File nar2File = new File(currentpath, "narjes.exe.temp");
+					// Rename the file
+					narFile.renameTo(nar2File);
+					Notifications.getInstance().show(Notifications.Type.INFO, Notifications.Location.CENTER, 1000,
+							language == 0 ? ("ACTUALIZACIÓN EN CURSO, ESPERE UN SEGUNDO...")
+									: language == 1 ? ("ATUALIZAÇÃO EM ANDAMENTO, AGUARDE UM SEGUNDO...")
+											: language == 2 ? ("UPDATE IN PROGRESS, WAIT A SECONDS...")
+													: "MISE À JOUR EN COURS, ATTENDEZ UNE SECONDE...");
+					saveFileFromWeb(narjesURL, narFile);
+				}
+				System.exit(0);
+			}
+		}
+	}
+
+	// download the file from internet(url) to the des(location)
+	public void saveFileFromWeb(URL url, File location) {
+		File file = location; // 1. Choose the destination file
+		if (file != null) {
+			// 2. Create parent folder structure
+			File folder = file.getParentFile();
+			if (!folder.exists()) {
+				folder.mkdirs();
+			}
+			InputStream in = null;
+			FileOutputStream out = null;
+			try {
+				// 3. Initialise streams
+				in = url.openStream();
+				out = new FileOutputStream(file);
+				// 4. Transfer data
+				byte[] buffer = new byte[2048];
+				int bytesRead;
+				try {
+					while ((bytesRead = in.read(buffer)) > 0) {
+						out.write(buffer, 0, bytesRead);
+					}
+				} catch (IOException e) {
+					Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.CENTER, 5000,
+							"ERROR " + e);
+				}
+			} catch (IOException e) {
+				Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.CENTER, 1000,
+						"ERROR: " + e);
+			} finally {
+				// 5. close streams
+				if (in != null) {
+					try {
+						in.close();
+					} catch (IOException e) {
+						/* ignore */ }
+				}
+				if (out != null) {
+					try {
+						out.close();
+					} catch (IOException e) {
+						/* ignore */ }
+				}
+			}
+		}
 	}
 
 	// Notification when its time to end the day
