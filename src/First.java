@@ -118,7 +118,7 @@ public class First extends JFrame {
 	javax.swing.Timer timer;
 	int order = 0, wordL = 0;
 
-	static String appVersion = "8.4";
+	static String appVersion = "8.5";
 	static JLabel lastChange = new JLabel();
 	private static int language;
 
@@ -585,7 +585,7 @@ public class First extends JFrame {
 					File ced2File = new File(currentpath, "cedros.exe.temp");
 					// Rename the file
 					cedFile.renameTo(ced2File);
-					Notifications.getInstance().show(Notifications.Type.INFO, Notifications.Location.CENTER, 1000,
+					Notifications.getInstance().show(Notifications.Type.INFO, Notifications.Location.CENTER, 3000,
 							language == 0 ? ("ACTUALIZACIÓN EN CURSO, ESPERE UN SEGUNDO...")
 									: language == 1 ? ("ATUALIZAÇÃO EM ANDAMENTO, AGUARDE UM SEGUNDO...")
 											: language == 2 ? ("UPDATE IN PROGRESS, WAIT A SECONDS...")
@@ -598,7 +598,7 @@ public class First extends JFrame {
 					File nar2File = new File(currentpath, "narjes.exe.temp");
 					// Rename the file
 					narFile.renameTo(nar2File);
-					Notifications.getInstance().show(Notifications.Type.INFO, Notifications.Location.CENTER, 1000,
+					Notifications.getInstance().show(Notifications.Type.INFO, Notifications.Location.CENTER, 3000,
 							language == 0 ? ("ACTUALIZACIÓN EN CURSO, ESPERE UN SEGUNDO...")
 									: language == 1 ? ("ATUALIZAÇÃO EM ANDAMENTO, AGUARDE UM SEGUNDO...")
 											: language == 2 ? ("UPDATE IN PROGRESS, WAIT A SECONDS...")
