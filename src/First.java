@@ -579,7 +579,8 @@ public class First extends JFrame {
 							: language == 2 ? ("UPDATE TO " + verAv + "?") : "MISE À JOUR VERS " + verAv + "?");
 			if (obj.getMessageType() == MessageDialog.MessageType.OK) {
 				if (conf[0] == null || conf[0].equals("0") || conf[0].equals("1")) {
-					URL cedrosURL = new URL("https://raw.githubusercontent.com/MhmdSAbdlh/cedros/main/Cedros.exe");
+					URL cedrosURL = new URL(
+							"https://github.com/MhmdSAbdlh/cedros/releases/download/v" + verAv + "/Cedros.exe");
 					File cedFile = new File(currentpath, "cedros.exe");
 					File ced2File = new File(currentpath, "cedros.exe.temp");
 					// Rename the file
@@ -591,7 +592,8 @@ public class First extends JFrame {
 													: "MISE À JOUR EN COURS, ATTENDEZ UNE SECONDE...");
 					saveFileFromWeb(cedrosURL, cedFile);
 				} else {
-					URL narjesURL = new URL("https://raw.githubusercontent.com/MhmdSAbdlh/cedros/main/Narjes.exe");
+					URL narjesURL = new URL(
+							"https://github.com/MhmdSAbdlh/cedros/releases/download/v" + verAv + "/Narjes.exe");
 					File narFile = new File(currentpath, "narjes.exe");
 					File nar2File = new File(currentpath, "narjes.exe.temp");
 					// Rename the file
