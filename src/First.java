@@ -107,6 +107,8 @@ public class First extends JFrame {
 	private ImageIcon sumI = new ImageIcon(symPhoto);
 	private URL introP = getClass().getResource("images/menubar/intro.png");
 	private ImageIcon introI = new ImageIcon(introP);
+	private URL updateP = getClass().getResource("images/menubar/update.png");
+	private ImageIcon updateI = new ImageIcon(updateP);
 	private URL englP = getClass().getResource("images/eng.png");
 	private URL esplP = getClass().getResource("images/esp.png");
 	private URL frlP = getClass().getResource("images/france.png");
@@ -116,7 +118,7 @@ public class First extends JFrame {
 	javax.swing.Timer timer;
 	int order = 0, wordL = 0;
 
-	static String appVersion = "8.3";
+	static String appVersion = "8.4";
 	static JLabel lastChange = new JLabel();
 	private static int language;
 
@@ -452,6 +454,7 @@ public class First extends JFrame {
 		JMenuItem creator = new JMenuItem();
 		JMenuItem about = new JMenuItem();
 		JMenuItem option = new JMenuItem();
+		JMenuItem updateCheck = new JMenuItem();
 		JMenuItem introM = new JMenuItem("INTRO");
 		introM.setIcon(new ImageIcon(getScaledImage(introI.getImage(), 35, 35)));
 		option.setIcon(new ImageIcon(getScaledImage(confI.getImage(), 35, 35)));
@@ -464,8 +467,20 @@ public class First extends JFrame {
 		introM.addActionListener(e -> introFrame());
 		exit.addActionListener(e -> System.exit(0));
 		exit.setIcon(new ImageIcon(getScaledImage(exitI.getImage(), 35, 35)));
+		updateCheck.addActionListener(e -> {
+			try {
+				if (updateAvailable().equalsIgnoreCase(appVersion))
+					Notifications.getInstance().show(Notifications.Type.INFO, Notifications.Location.CENTER, 1000,
+							language == 0 ? "NO HAY ACTUALIZACION"
+									: language == 1 ? "NÃO HÁ ATUALIZAÇÃO"
+											: language == 2 ? "THERE IS NO UPDATE" : "IL N'Y A PAS DE MISE À JOUR");
+			} catch (IOException e1) {
+			}
+		});
+		updateCheck.setIcon(new ImageIcon(getScaledImage(updateI.getImage(), 35, 35)));
 		file.add(option);
 		file.add(introM);
+		file.add(updateCheck);
 		file.add(creator);
 		file.add(about);
 		file.add(exit);
@@ -529,7 +544,7 @@ public class First extends JFrame {
 		}
 
 		// language
-		textLang(inputText, userText, file, exit, creator, about, option, language);
+		textLang(inputText, userText, file, exit, creator, about, option, language, updateCheck);
 
 		try {
 			updateAvailable();
@@ -540,7 +555,7 @@ public class First extends JFrame {
 	}
 
 	// UPDATE THE APP
-	private void updateAvailable() throws IOException {
+	private String updateAvailable() throws IOException {
 		// VERSION DOWNLOAD
 		URL url = new URL("https://pastebin.com/raw/fzgi60tx");
 		File verFile = new File(tempFile0, "version.dll");
@@ -591,6 +606,7 @@ public class First extends JFrame {
 				System.exit(0);
 			}
 		}
+		return verAv;
 	}
 
 	// download the file from internet(url) to the des(location)
@@ -691,7 +707,7 @@ public class First extends JFrame {
 	}
 
 	private void textLang(JLabel inputText, JLabel userText, JMenu file, JMenuItem exit, JMenuItem creator,
-			JMenuItem about, JMenuItem option, int idioma) {
+			JMenuItem about, JMenuItem option, int idioma, JMenuItem updateCheck) {
 		if (idioma == 0) {
 			inputText.setText("CONTRASEÑA");
 			userText.setText("USARIO");
@@ -701,6 +717,7 @@ public class First extends JFrame {
 			creator.setText("SOBRE EL CREADOR");
 			about.setText("SOBRE EL APLICATIVO");
 			option.setText("CONFIGURACIÓN");
+			updateCheck.setText("BUSCAR ACTUALIZACION");
 		} else if (idioma == 1) {
 			inputText.setText("SENHA");
 			userText.setText("USUÁRIO");
@@ -710,6 +727,7 @@ public class First extends JFrame {
 			creator.setText("SOBRE O CRIADOR");
 			about.setText("SOBRE O APLICATIVO");
 			option.setText("CONFIGURAÇÃO");
+			updateCheck.setText("VERIFIQUE ATUALIZAÇÕES");
 		} else if (idioma == 2) {
 			inputText.setText("PASSWORD");
 			userText.setText("USER");
@@ -717,8 +735,9 @@ public class First extends JFrame {
 			file.setText("HELP");
 			exit.setText("EXIT");
 			creator.setText("ABOUT THE CREATOR");
+			option.setText("SETTINGS");
 			about.setText("ABOUT THE APP");
-			option.setText("CONFIGURATION");
+			updateCheck.setText("CHECK FOR UPDATE");
 		} else {
 			inputText.setText("MOT DE PASSE");
 			userText.setText("UTILISATEUR");
@@ -728,6 +747,7 @@ public class First extends JFrame {
 			creator.setText("À PROPOS DU CRÉATEUR");
 			about.setText("À PROPOS DE L'APPLICATION");
 			option.setText("CONFIGURATION");
+			updateCheck.setText("VÉRIFIER LA MISE À JOUR");
 		}
 	}
 
