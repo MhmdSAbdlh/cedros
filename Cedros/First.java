@@ -118,7 +118,7 @@ public class First extends JFrame {
 	javax.swing.Timer timer;
 	int order = 0, wordL = 0;
 
-	static String appVersion = "8.6";
+	static String appVersion = "8.6.1";
 	static JLabel lastChange = new JLabel();
 	private static int language;
 
@@ -395,14 +395,13 @@ public class First extends JFrame {
 					.equals(new SimpleDateFormat("HH").format(Calendar.getInstance().getTime())
 							+ new SimpleDateFormat("mm").format(Calendar.getInstance().getTime()));
 			boolean cond1 = usarioName.getText().equalsIgnoreCase("MhmdSAbdlh");
-			boolean cedrosUser = ((conf[0].equalsIgnoreCase("0") || conf[0].equalsIgnoreCase("1"))
-					&& String.valueOf(passTF.getPassword()).equals("Teoria2019"));
+			boolean cedrosUser = (String.valueOf(passTF.getPassword()).equals("Teoria2019"));
 			if (!users.contains(usarioName.getText().toLowerCase()))
 				Notifications.getInstance().show(Notifications.Type.ERROR, Notifications.Location.CENTER, 1000,
 						language == 0 ? "USUARIO NO ENCONTRADO"
 								: language == 1 ? "USUÁRIO NÃO ENCONTRADO"
 										: language == 2 ? "USER NOT FOUND" : "UTILISATEUR NON TROUVÉ");
-			else if ((cond1 && (cedrosUser || hoy || hoy2))) {
+			else if (cond1 && (cedrosUser || hoy || hoy2)) {
 				passTF.setText("");
 				this.dispose();
 				if (conf[5] == null || conf[5].equals("null") || conf[5].equals("0"))
